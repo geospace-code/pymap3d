@@ -31,9 +31,9 @@ class EarthEllipsoid:
 # GM, omega, a, and 1/f. We need J2 instead of f:
        # self.J2 = get_J2 (self.a, self.b, self.omega, self.GM)
 
-def aer2ecef(az,el,srange,lat0,lon0,alt0):
+def aer2ecef(az,el,srange,lat0,lon0,alt0,ell=EarthEllipsoid()):
     # Origin of the local system in geocentric coordinates.
-    x0,y0,z0 = geodetic2ecef(lat0,lon0,alt0)
+    x0,y0,z0 = geodetic2ecef(lat0,lon0,alt0,ell)
     # Convert Local Spherical AER to ENU
     e1, n1, u1 = aer2enu(az, el, srange)
     # Rotating ENU to ECEF
@@ -70,7 +70,7 @@ def aer2ned(az,elev,slantRange):
 def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid()):
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell)
     az,elev,slantRange = enu2aer(xEast, yNorth, zUp)
-    returnaz,elev,slantRange
+    return az,elev,slantRange
 
 def ecef2enu(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid()):
     x0,y0,z0 = geodetic2ecef(lat0, lon0, h0,ell)
@@ -98,17 +98,17 @@ def ecef2geodetic(x,y,z,ell=EarthEllipsoid()):
     rho = arctan2(b*z,a*r)
 #Constant required for latitude equation
     c = (a**2 - b**2) / sqrt((a*r)**2 + (b*z)**2)
-    count = 0
 # Starter for the Newtons Iteration Method
     vnew = arctan2(a*z,b*r)
 # Initializing the parametric latitude
-    v = 0
+    v = 0.
+    count = 0
     while any(v != vnew) and count<5:
         v = vnew
 # Derivative of latitude equation
-        w = 2*(cos(v - rho) - c*cos(2*v))
+        w = 2*(cos(v - rho) - c*cos(2.*v))
 # Newtons Method for computing iterations
-        vnew = v - ((2*sin(v-rho)-c*sin(2*v))/w)
+        vnew = v - ((2*sin(v-rho)-c*sin(2.*v))/w)
  #       print(count)
         count+=1
 
@@ -225,9 +225,9 @@ def get_radius_normal(lat,ell):
 
 if __name__ == '__main__':
     #test suite
-    lat,lon,alt = 42,-82,200
+    lat,lon,alt = 42., -82., 200.
 
-    az,el,srange = 45,80,1000
+    az,el,srange = 45., 80., 1000.
 
     print('aer2enu ' + str(aer2enu(az,el,srange)))
     print('aer2ecef ' + str(aer2ecef(az,el,srange,lat,lon,alt)))
