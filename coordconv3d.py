@@ -3,7 +3,7 @@
 # GNU Octave Mapping Toolbox by
 # Copyright (c) 2013, Sandeep V. Mahanthi
 # Copyright (c) 2013, Felipe G. Nievinski
-from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,any,mod
+from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,any,mod,all
 
 
 class EarthEllipsoid:
@@ -113,11 +113,14 @@ def ecef2geodetic(x,y,z,ell=EarthEllipsoid()):
         count+=1
 
     #Computing latitude from the root of the latitude equation
-    lat = arctan2((a*tan(vnew)),b);
+    lat = degrees(arctan2((a*tan(vnew)),b));
     #by inspection
-    lon = arctan2(y,x)
+    lon = degrees(arctan2(y,x))
 
     alt = ((r-(a*cos(vnew)))*cos(lat)) + ((z-(b*sin(vnew)))*sin(lat))
+
+    #assert all(-90<=lat) and all(lat<=90)
+    #assert all(-180<=lon) and all(lon<=180)
 
     return lat,lon,alt
 
