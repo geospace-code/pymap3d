@@ -230,11 +230,14 @@ if __name__ == '__main__':
     #test suite
     lat,lon,alt = 42., -82., 200.
     az,el,srange = 45., 80., 1000.
+    x, y, z = 23893., 2193., 2389239.
 #test results
     et,nt,ut = aer2enu(az,el,srange)
     xt,yt,zt = aer2ecef(az,el,srange,lat,lon,alt)
     latt,lont,altt = aer2geodetic(az,el,srange,lat,lon,alt)
+    azt,elt,rngt = ecef2aer(x, y, z, lat, lon, alt)
 
     print('aer2enu ' + str((et,nt,ut)))
     print('aer2ecef ' + str((xt,yt,zt)))
     print('aer2geodetic ' + str((latt,lont,altt)))
+    print('ecef2aer ' + str((azt,elt,rngt)))
