@@ -60,7 +60,7 @@ def aer2geodetic(az,el,srange,lat0,lon0,alt0):
     x,y,z = aer2ecef(az,el,srange,lat0,lon0,alt0)
 
     lat1,lon1,alt1 = ecef2geodetic(x,y,z)
-    return degrees(lat1),degrees(lon1),alt1
+    return lat1, lon1, alt1
 
 def aer2ned(az,elev,slantRange):
     xNorth,yEast,zUp = aer2enu(az,elev,slantRange)
@@ -113,16 +113,16 @@ def ecef2geodetic(x,y,z,ell=EarthEllipsoid()):
         count+=1
 
     #Computing latitude from the root of the latitude equation
-    lat = degrees(arctan2((a*tan(vnew)),b));
+    lat = arctan2((a*tan(vnew)),b)
     #by inspection
-    lon = degrees(arctan2(y,x))
+    lon = arctan2(y,x)
 
     alt = ((r-(a*cos(vnew)))*cos(lat)) + ((z-(b*sin(vnew)))*sin(lat))
 
     #assert all(-90<=lat) and all(lat<=90)
     #assert all(-180<=lon) and all(lon<=180)
 
-    return lat,lon,alt
+    return degrees(lat),degrees(lon),alt
 
 def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid()):
     yEast, xNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell)
@@ -229,9 +229,12 @@ def get_radius_normal(lat,ell):
 if __name__ == '__main__':
     #test suite
     lat,lon,alt = 42., -82., 200.
-
     az,el,srange = 45., 80., 1000.
+#test results
+    et,nt,ut = aer2enu(az,el,srange)
+    xt,yt,zt = aer2ecef(az,el,srange,lat,lon,alt)
+    latt,lont,altt = aer2geodetic(az,el,srange,lat,lon,alt)
 
-    print('aer2enu ' + str(aer2enu(az,el,srange)))
-    print('aer2ecef ' + str(aer2ecef(az,el,srange,lat,lon,alt)))
-    print('aer2geodetic ' + str(aer2geodetic(az,el,srange,lat,lon,alt)))
+    print('aer2enu ' + str((et,nt,ut)))
+    print('aer2ecef ' + str((xt,yt,zt)))
+    print('aer2geodetic ' + str((latt,lont,altt)))
