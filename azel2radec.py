@@ -2,7 +2,7 @@
 
 from numpy import sin, cos, degrees, radians,arcsin, arctan2,atleast_1d
 import sys
-sys.path.append('../astrometry')
+sys.path.append('../astrometry') #https://github.com/scienceopen/astrometry/
 from datetime2hourangle import datetime2sidereal
 #from pdb import set_trace
 
