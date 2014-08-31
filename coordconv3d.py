@@ -3,7 +3,7 @@
 # GNU Octave Mapping Toolbox by
 # Copyright (c) 2013, Sandeep V. Mahanthi
 # Copyright (c) 2013, Felipe G. Nievinski
-from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,any,mod,all
+from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,any,mod
 
 
 class EarthEllipsoid:
@@ -127,10 +127,10 @@ def ecef2geodetic(x,y,z,ell=EarthEllipsoid()):
 def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid()):
     yEast, xNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell)
     zDown = -zUp
-    return North, yEast, zDown
+    return xNorth, yEast, zDown
 
 def ecef2ned_int(x, y, z, lat0, lon0):
-    xEast, yNorth, zUp = ecef2enuv(x, y, z, lat0, lon0)
+    xEast, yNorth, zUp = ecef2enu_int(x, y, z, lat0, lon0)
     zDown = -zUp
     return xEast, yNorth, zDown
 
@@ -160,7 +160,7 @@ def enu2ecef_int(es,nr,up,lat0,lon0):
 def enu2geodetic(East, North, Up, lat0, lon0, h0, ell):
 
     x, y, z = enu2ecef(East, North, Up, lat0, lon0, h0, ell)
-    lat, lon, h = ecef2geodetic(x, y, z,spheroid)
+    lat, lon, h = ecef2geodetic(x, y, z, ell)
     return lat, lon, h
 
 def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid()):
@@ -206,7 +206,7 @@ def ned2ecef(xNorth, yEast, zDown, lat0, lon0, h0, ell=EarthEllipsoid()):
     return x,y,z
 
 def ned2ecef_int(uNorth, vEast, wDown, lat0, lon0):
-    u, v, w= enu2ecefv(vEast, uNorth, -wDown, lat0, lon0, angleut)
+    u, v, w= enu2ecef_int(vEast, uNorth, -wDown, lat0, lon0)
     return u,v,w
 
 def ned2geodetic(xNorth, yEast, zDown, lat0, lon0, h0, ell=EarthEllipsoid()):
