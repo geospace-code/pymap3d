@@ -3,6 +3,7 @@
 # GNU Octave Mapping Toolbox by
 # Copyright (c) 2013, Sandeep V. Mahanthi
 # Copyright (c) 2013, Felipe G. Nievinski
+from __future__ import division
 from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod
 
 
