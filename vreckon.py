@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Ported by Michael Hirsch to Python.
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
-
+from __future__ import divison
 from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
                    radians, degrees, sign, ceil, mod,
                    zeros,arange,pi,sqrt,tile)
