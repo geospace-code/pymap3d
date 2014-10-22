@@ -2,7 +2,7 @@
 # Ported by Michael Hirsch to Python.
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 
-from numpy import (abs, sin, cos, tan,arctan2, any,atleast_1d,
+from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
                    radians, degrees, sign, ceil, mod,
                    zeros,arange,pi,sqrt,tile)
 
@@ -77,7 +77,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     azim = atleast_1d(azim)
 
 
-    if (abs(lat1) > 90):
+    if (absolute(lat1) > 90):
         raise RuntimeError('VRECKON: Input latitude must be between -90 and 90 degrees, inclusive.')
     if (lat1.size != 1 and rng.size > 1):
         raise RuntimeError('VRECKON: Variable ranges are only allowed for a single point.')
@@ -97,7 +97,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     lon1 = radians(lon1)            # intial longitude in radians
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
-    kidx = abs(pi/2-abs(lat1)) < 1e-10
+    kidx = absolute(pi/2-absolute(lat1)) < 1e-10
     lat1[kidx] = sign(lat1[kidx])*(pi/2-(1e-10))
 
     #  Allow for multiple circles starting from the same point
@@ -128,7 +128,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     sigmaP = 2*pi
 
     if sigma.size == 1:
-        while abs(sigma-sigmaP) > 1e-12:
+        while absolute(sigma-sigmaP) > 1e-12:
             cos2SigmaM = cos(2*sigma1 + sigma)
             sinSigma = sin(sigma)
             cosSigma = cos(sigma)
@@ -145,7 +145,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
         cosSigma = zeros(sigma.shape)
 
         for k in arange(sigma.size):
-            while any(abs(sigma[k]-sigmaP) > 1e-12):
+            while (absolute(sigma[k]-sigmaP) > 1e-12).any():
                 cos2SigmaM[k] = cos(2*sigma1[k] + sigma[k])
                 sinSigma[k]   = sin(sigma[k])
                 cosSigma[k]   = cos(sigma[k])
@@ -171,8 +171,8 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     lon2 = lon1 + L
 
     # Truncates angles into the [-pi pi] range
-    if any(lon2 > pi):
-        lon2 = pi*((abs(lon2)/pi) - 2*ceil(((abs(lon2)/pi)-1)/2)) * sign(lon2)
+    if (lon2 > pi).any():
+        lon2 = pi*((absolute(lon2)/pi) - 2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
 
     # output degrees
@@ -190,10 +190,10 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     p = ArgumentParser(description='Python port of vreckon.m')
-    p.add_argument('--lat',help='latitude WGS-84 [degrees]',type=float,required=True)
-    p.add_argument('--lon',help='longitude WGS-84 [degrees]',type=float,required=True)
-    p.add_argument('-r','--range',help='range to traverse from start point [meters]',type=float,required=True)
-    p.add_argument('-a','--azimuth',help='azimuth to start [deg.]',type=float,required=True)
+    p.add_argument('lat',help='latitude WGS-84 [degrees]',type=float)
+    p.add_argument('lon',help='longitude WGS-84 [degrees]',type=float)
+    p.add_argument('range',help='range to traverse from start point [meters]',type=float)
+    p.add_argument('azimuth',help='azimuth to start [deg.]',type=float)
     args = p.parse_args()
 
     lat2,lon2,a21 = vreckon(args.lat,args.lon,args.range,args.azimuth)
