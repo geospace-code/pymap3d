@@ -3,7 +3,7 @@
 # GNU Octave Mapping Toolbox by
 # Copyright (c) 2013, Sandeep V. Mahanthi
 # Copyright (c) 2013, Felipe G. Nievinski
-from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,any,mod
+from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod
 
 
 class EarthEllipsoid:
@@ -103,7 +103,7 @@ def ecef2geodetic(x,y,z,ell=EarthEllipsoid()):
 # Initializing the parametric latitude
     v = 0.
     count = 0
-    while any(v != vnew) and count<5:
+    while (v != vnew).any() and count<5:
         v = vnew
 # Derivative of latitude equation
         w = 2*(cos(v - rho) - c*cos(2.*v))
