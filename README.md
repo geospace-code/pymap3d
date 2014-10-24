@@ -1,3 +1,4 @@
+[![Health](https://landscape.io/github/scienceopen/python-mapping/master/landscape.png)](https://landscape.io/github/scienceopen/python-mapping/master)
 python-mapping
 ==============
 
