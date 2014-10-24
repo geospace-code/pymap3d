@@ -4,7 +4,7 @@
 # Copyright (c) 2013, Sandeep V. Mahanthi
 # Copyright (c) 2013, Felipe G. Nievinski
 from __future__ import division
-from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod
+from numpy import sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,atleast_2d,empty_like,array
 
 
 class EarthEllipsoid:
@@ -78,7 +78,9 @@ def ecef2enu_int(u, v, w, lat0, lon0):
     North = -sin(radians(lat0)) * t + cos(radians(lat0)) * w
     return East, North, Up
 
-def ecef2geodetic(x,y,z,ell=EarthEllipsoid()):
+def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid()):
+    if y is None:
+        x,y,z = depack(x)
     #Algorithm is based on
     #http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
     #This algorithm provides a converging solution to the latitude equation
@@ -151,7 +153,47 @@ def enu2ecef_int(es,nr,up,lat0,lon0):
 def enu2geodetic(East, North, Up, lat0, lon0, h0, ell):
     x, y, z = enu2ecef(East, North, Up, lat0, lon0, h0, ell)
     return ecef2geodetic(x, y, z, ell)
+#%% These are ported -- have not carefully verified yet.
+def eci2ecef(eci,lst):
+    eci = atleast_2d(eci)
+    N,trip = eci.shape
+    if eci.ndim > 2 or trip != 3:
+        raise RuntimeError('eci triplets must be shape (N,3)')
+    '''
+    ported from:
+    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
+    '''
+    ecef = empty_like(eci)
+    for i in range(N):
+        ecef[i,:] = rottrip(lst[i]).dot(eci[i,:])
+    return ecef
 
+def ecef2eci(ecef,lst):
+    ecef = atleast_2d(ecef)
+    N,trip = ecef.shape
+    if ecef.ndim > 2 or trip != 3:
+        raise RuntimeError('ecef triplets must be shape (N,3)')
+    '''
+    ported from:
+    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
+    '''
+    eci = empty_like(ecef)
+    for i in range(N):
+        eci[i,:] = rottrip(lst[i]).T.dot(ecef[i,:]) #this one is transposed
+    return eci
+
+def rottrip(ang):
+    ang = ang.squeeze()
+    if ang.size>1:
+        raise RuntimeError('this function is for one angle at a time')
+    '''
+    ported from:
+    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
+    '''
+    return array([[cos(ang),  sin(ang), 0],
+                 [-sin(ang), cos(ang), 0],
+                 [0,         0,        1]])
+#%%
 def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid()):
     East, North, Up = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell)
     return enu2aer(East, North, Up)
@@ -204,6 +246,22 @@ def get_radius_normal(lat,ell):
     a = ell.a;  b = ell.b;
     lat2 = radians(lat)
     return a**2 / sqrt( a**2 * (cos(lat2))**2 + b**2 * (sin(lat2))**2 )
+
+def depack(x0):
+    if x0.ndim>2:
+        raise RuntimeError('I expect Nx3 or 3XN triplets')
+    m,n = x0.shape
+    if m == 3: # 3xN triplets
+        x = x0[0,:]
+        y = x0[1,:]
+        z = x0[2,:]
+    elif n==3: # Nx3 triplets
+        x = x0[:,0]
+        y = x0[:,1]
+        z = x0[:,2]
+    else:
+        raise RuntimeError('I expect an Nx3 or 3xN input of x,y,z')
+    return x,y,z
 
 if __name__ == '__main__':
     #test suite
