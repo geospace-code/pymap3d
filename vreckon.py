@@ -174,17 +174,11 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     if (lon2 > pi).any():
         lon2 = pi*((absolute(lon2)/pi) - 2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
-
-    # output degrees
-    lat2 = degrees(lat2)
-    lon2 = degrees(lon2)
     # lon2 = mod(lon2,360); % follow [0,360] convention
     a21 = arctan2(sinAlpha, -tmp)
     a21  = 180 + degrees(a21) # note direction reversal
-    a21 = mod(a21,360)
 
-
-    return lat2,lon2,a21
+    return degrees(lat2),degrees(lon2), mod(a21,360)
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
