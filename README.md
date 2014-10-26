@@ -33,4 +33,4 @@ ned2geodetic
 vreckon
 
 for converting right ascension and declination to azimuth and elevation, please see the function radec2azel inside
-https://github.com/scienceopen/astrometry/blob/master/fits2azel.py
+https://github.com/scienceopen/astrometry/
