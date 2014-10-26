@@ -29,16 +29,28 @@ def azel2radec(az_deg,el_deg,lat_deg,lon_deg,dtime):
     return degrees(ra), degrees(dec)
 
 if __name__ == "__main__":
-    from numpy import linspace
     from dateutil.parser import parse
-    #test function
-    az = linspace(0,360,10)
-    el = linspace(0,90,10)
-    lat = 40
-    lon = -140
-    dtime = parse('2014-08-08T12:13:14Z')
+    from argparse import ArgumentParser
+
+    p = ArgumentParser(description='convert azimuth and elevation to right ascension and declination')
+    p.add_argument('azimuth',help='azimuth [degrees]',type=float)
+    p.add_argument('elevation',help='elevation [degrees]',type=float)
+    p.add_argument('latitude',help='WGS84 latitude of observer [deg] ',type=float)
+    p.add_argument('longitude',help='WGS84 longitude of observer [deg.]',type=float)
+    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',type=str)
+    args = p.parse_args()
+
+    az = args.azimuth
+    el = args.elevation
+    lat = args.latitude
+    lon = args.longitude
+    time = args.time
+
+    dtime = parse(time)
+
+    print(dtime)
 
     ra,dec = azel2radec(az,el,lat,lon,dtime)
 
-    print('testing!')
+
     print('ra / dec = ' + str((ra,dec)) )
