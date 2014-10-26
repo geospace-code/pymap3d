@@ -295,6 +295,7 @@ def depack(x0):
     return x,y,z
 
 if __name__ == '__main__':
+    from numpy.testing import assert_allclose
     #test suite
     tlat,tlon,talt = 42, -82, 200
     lat2, lon2, alt2 = 42.1, -81.9, 1300
@@ -321,54 +322,45 @@ if __name__ == '__main__':
     e2az, e2el, e2rn = 36.664402767128749, 4.477194667550686, 1.389837889201037e+04
     e2x, e2y, e2z = 2.198984328830889e+06, -1.084794996374469e+07, 3.605050273624581e+06
 #test results
-    try:
-        assert isclose(ecef2geodetic(tx,ty,tz),(ec2la,ec2lo,ec2a),rtol=0.01).all()
-    except AssertionError:
-        print('ecef2geodetic: ' + str(ecef2geodetic(tx,ty,tz)))
+    assert_allclose(ecef2geodetic(tx,ty,tz),(ec2la,ec2lo,ec2a),
+                    rtol=0.01,
+                    err_msg='ecef2geodetic: ' + str(ecef2geodetic(tx,ty,tz)) )
 
-    try:
-        assert isclose(geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt),
-                       (g2az,g2el,g2rn),rtol=0.05).all()
-    except AssertionError:
-        print('geodetic2aer: ' + str(geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt)))
+    assert_allclose(geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt), (g2az,g2el,g2rn),
+                    rtol=0.05,
+                    err_msg= 'geodetic2aer: ' + str(geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt)))
 
-    try:
-        assert isclose(geodetic2ecef(tlat,tlon,talt),
-                       (g2x,g2y,g2z),rtol=0.01).all()
-    except AssertionError:
-        print('geodetic2ecef: ' + str(geodetic2ecef(tlat,tlon,talt)))
+    assert_allclose(geodetic2ecef(tlat,tlon,talt),(g2x,g2y,g2z),
+                    rtol=0.01,
+                    err_msg='geodetic2ecef: ' + str(geodetic2ecef(tlat,tlon,talt)))
 
-    try:
-        assert isclose(aer2ecef(taz,tel,tsrange,tlat,tlon,talt),
-                        (a2x,a2y,a2z),rtol=0.01).all()
-    except AssertionError:
-        print(aer2ecef(taz,tel,tsrange,tlat,tlon,talt))
+    assert_allclose(aer2ecef(taz,tel,tsrange,tlat,tlon,talt), (a2x,a2y,a2z),
+                             rtol=0.01,
+                             err_msg='aer2ecef: ' + str(aer2ecef(taz,tel,tsrange,tlat,tlon,talt)))
 
-    try:
-        assert isclose(aer2enu(taz,tel,tsrange),(a2e,a2n,a2u),rtol=0.01).all()
-    except AssertionError:
-        print('aer2enu: ' + str(aer2enu(taz,tel,tsrange)))
+    assert_allclose(aer2enu(taz,tel,tsrange),(a2e,a2n,a2u),
+                    rtol=0.01,
+                    err_msg='aer2enu: ' + str(aer2enu(taz,tel,tsrange)))
 
-    try:
-        assert isclose(ecef2enu(tx,ty,tz, tlat, tlon, talt),(e2e,e2n,e2u),rtol=0.01).all()
-    except AssertionError:
-        print('ecef2enu: ' + str(ecef2enu(tx,ty,tz, tlat, tlon, talt)))
+    assert_allclose(ecef2enu(tx,ty,tz, tlat, tlon, talt),(e2e,e2n,e2u),
+                    rtol=0.01,
+                    err_msg='ecef2enu: ' + str(ecef2enu(tx,ty,tz, tlat, tlon, talt)))
 
-    try:
-        assert isclose(aer2geodetic(taz,tel,tsrange,tlat,tlon,talt),
-                       (a2la,a2lo,a2a),rtol=0.01).all()
-    except AssertionError:
-        print('aer2geodetic' + str(aer2geodetic(taz,tel,tsrange,tlat,tlon,talt)))
+    assert_allclose(aer2geodetic(taz,tel,tsrange,tlat,tlon,talt),(a2la,a2lo,a2a),
+                    rtol=0.01,err_msg='aer2geodetic' + str(aer2geodetic(taz,tel,tsrange,tlat,tlon,talt)))
 
-    try:
-        assert isclose(ecef2aer(tx, ty, tz, tlat, tlon,talt), (ec2az,ec2el,ec2rn),rtol=0.01).all()
-    except AssertionError: print('ecef2aer' + str(ecef2aer(a2x, a2y, a2z, tlat, tlon, talt)))
+    assert_allclose(ecef2aer(tx, ty, tz, tlat, tlon,talt), (ec2az,ec2el,ec2rn),
+                    rtol=0.01,
+                    err_msg='ecef2aer' + str(ecef2aer(a2x, a2y, a2z, tlat, tlon, talt)))
 
-    try:assert isclose(enu2aer(te,tn,tu), (e2az,e2el,e2rn),rtol=0.01).all()
-    except AssertionError:  print(enu2aer(te,tn,tu))
+    assert_allclose(enu2aer(te,tn,tu), (e2az,e2el,e2rn),
+                    rtol=0.01,
+                    err_msg='enu2aer: ' + str(enu2aer(te,tn,tu)))
 
-    try: assert isclose(enu2geodetic(te,tn,tu,tlat,tlon,talt),(lat2,lon2,alt2),rtol=0.01).all()
-    except AssertionError: print('enu2geodetic: ' + str(enu2geodetic(te,tn,tu,tlat,tlon,talt)))
+    assert_allclose(enu2geodetic(te,tn,tu,tlat,tlon,talt),(lat2,lon2,alt2),
+                    rtol=0.01,
+                    err_msg='enu2geodetic: ' + str(enu2geodetic(te,tn,tu,tlat,tlon,talt)))
 
-    try: assert isclose(enu2ecef(tx,ty,tz,tlat,tlon,talt),(e2x,e2y,e2z),rtol=0.01).all()
-    except AssertionError: print(enu2ecef(tx,ty,tz,tlat,tlon,talt))
+    assert_allclose(enu2ecef(tx,ty,tz,tlat,tlon,talt),(e2x,e2y,e2z),
+                    rtol=0.01,
+                    err_msg='enu2ecef: '+ str(enu2ecef(tx,ty,tz,tlat,tlon,talt)))
