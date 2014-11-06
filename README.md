@@ -1,4 +1,5 @@
 [![Health](https://landscape.io/github/scienceopen/python-mapping/master/landscape.png)](https://landscape.io/github/scienceopen/python-mapping/master)
+[![Build Status](https://travis-ci.org/scienceopen/python-mapping.svg)](https://travis-ci.org/scienceopen/python-mapping)
 python-mapping
 ==============
 
