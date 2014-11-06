@@ -6,4 +6,4 @@ before_install:
  sudo apt-get install -qq python-numpy python3-numpy
 install: pip install  -q --allow-all-external  -r requirements.txt
 
-script: coordconv3d.py
+script: ./coordconv3d.py
