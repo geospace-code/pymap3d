@@ -295,6 +295,7 @@ def depack(x0):
     return x,y,z
 
 if __name__ == '__main__':
+    #selftest
     from numpy.testing import assert_allclose
     #test suite
     tlat,tlon,talt = 42, -82, 200
@@ -364,3 +365,4 @@ if __name__ == '__main__':
     assert_allclose(enu2ecef(tx,ty,tz,tlat,tlon,talt),(e2x,e2y,e2z),
                     rtol=0.01,
                     err_msg='enu2ecef: '+ str(enu2ecef(tx,ty,tz,tlat,tlon,talt)))
+    exit(0)

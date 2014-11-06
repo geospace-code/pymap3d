@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.4"
+  - "2.7"
+before_install: 
+ sudo apt-get install -qq python-numpy python3-numpy
+install: pip install  -q --allow-all-external  -r travisrequirements.txt
+
+script: coordconv3d.py
