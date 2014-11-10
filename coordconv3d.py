@@ -10,7 +10,7 @@
 
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
-                   atleast_2d,empty_like,array,isclose)
+                   atleast_2d,empty_like,array)
 
 
 class EarthEllipsoid:
