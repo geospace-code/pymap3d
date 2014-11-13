@@ -3,7 +3,7 @@
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 from __future__ import division
 from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
-                   radians, degrees, sign, mod, empty,pi,sqrt,tile)
+                   radians, degrees, sign, mod, empty,pi,sqrt,tile,nan)
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
@@ -127,6 +127,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     sigmaP = 2*pi
 
     if sigma.size == 1:
+        sinSigma = nan; cosSigma = nan; cos2SigmaM = nan
         while absolute(sigma-sigmaP) > 1e-12:
             cos2SigmaM = cos(2*sigma1 + sigma)
             sinSigma = sin(sigma)
@@ -186,10 +187,10 @@ if __name__ == '__main__':
 
     p = ArgumentParser(description='Python port of vreckon.m')
     p.add_argument('--selftest',help='for travis ci',action='store_true')
-    p.add_argument('lat',help='latitude WGS-84 [degrees]',nargs='?',type=float)
-    p.add_argument('lon',help='longitude WGS-84 [degrees]',nargs='?',type=float)
-    p.add_argument('range',help='range to traverse from start point [meters]',nargs='?',type=float)
-    p.add_argument('azimuth',help='azimuth to start [deg.]',nargs='?',type=float)
+    p.add_argument('lat',help='latitude WGS-84 [degrees]',nargs='?',type=float,default=nan)
+    p.add_argument('lon',help='longitude WGS-84 [degrees]',nargs='?',type=float,default=nan)
+    p.add_argument('range',help='range to traverse from start point [meters]',nargs='?',type=float,default=nan)
+    p.add_argument('azimuth',help='azimuth to start [deg.]',nargs='?',type=float,default=nan)
     args = p.parse_args()
 
     if args.selftest:
