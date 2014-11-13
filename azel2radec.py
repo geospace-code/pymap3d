@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from numpy import sin, cos, degrees, radians,arcsin, arctan2,atleast_1d
+from numpy import sin, cos, degrees, radians,arcsin, arctan2,atleast_1d, nan
 import sys
 sys.path.append('../astrometry') #https://github.com/scienceopen/astrometry/
 from datetime2hourangle import datetime2sidereal
@@ -24,33 +24,32 @@ def azel2radec(az_deg,el_deg,lat_deg,lon_deg,dtime):
                    (sin(el) - sin(lat)*sin(dec)) / (cos(dec) * cos(lat)) )
 
     lst = datetime2sidereal(dtime,lon) #lon, ra in RADIANS
-    ra  = lst - lha
 
-    return degrees(ra), degrees(dec)
+    ''' by definition right ascension \in [0,360) degrees'''
+    return degrees(lst - lha) % 360, degrees(dec)
 
 if __name__ == "__main__":
     from dateutil.parser import parse
     from argparse import ArgumentParser
 
     p = ArgumentParser(description='convert azimuth and elevation to right ascension and declination')
-    p.add_argument('azimuth',help='azimuth [degrees]',type=float)
-    p.add_argument('elevation',help='elevation [degrees]',type=float)
-    p.add_argument('latitude',help='WGS84 latitude of observer [deg] ',type=float)
-    p.add_argument('longitude',help='WGS84 longitude of observer [deg.]',type=float)
-    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',type=str)
-    args = p.parse_args()
+    p.add_argument('azimuth',help='azimuth [degrees]',nargs='?',type=float,default=nan)
+    p.add_argument('elevation',help='elevation [degrees]',nargs='?',type=float,default=nan)
+    p.add_argument('lat',help='WGS84 latitude of observer [deg] ',nargs='?',type=float,default=nan)
+    p.add_argument('lon',help='WGS84 longitude of observer [deg.]',nargs='?',type=float,default=nan)
+    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',nargs='?',type=str,default='')
+    p.add_argument('--selftest',help='integration test',action='store_true')
+    a = p.parse_args()
 
-    az = args.azimuth
-    el = args.elevation
-    lat = args.latitude
-    lon = args.longitude
-    time = args.time
+    if a.selftest:
+        from numpy.testing import assert_almost_equal
+        ra,dec = azel2radec(180.1, 80, 65, -148,parse('2014-04-06T08:00:00Z'))
+        assert_almost_equal(ra,166.5032081149338)
+        assert_almost_equal(dec,55.000011165405752)
+        exit(0)
 
-    dtime = parse(time)
-
+    dtime = parse(a.time)
     print(dtime)
 
-    ra,dec = azel2radec(az,el,lat,lon,dtime)
-
-
-    print('ra / dec = ' + str((ra,dec)) )
+    ra,dec = azel2radec(a.azimuth,a.elevation,a.lat,a.lon,dtime)
+    print('ra / dec =',(ra,dec) )
