@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+from __future__ import division
 from numpy import sin, cos, degrees, radians,arcsin, arctan2,atleast_1d, nan
 import sys
 sys.path.append('../astrometry') #https://github.com/scienceopen/astrometry/
@@ -8,7 +8,7 @@ from datetime2hourangle import datetime2sidereal
 
 def azel2radec(az_deg,el_deg,lat_deg,lon_deg,dtime):
 
-#from D.Vallado Fundamentals of Astrodynamics and Applications p.258-259
+""" from D.Vallado Fundamentals of Astrodynamics and Applications p.258-259 """
     az = atleast_1d(radians(az_deg))
     el = atleast_1d(radians(el_deg))
     lat = atleast_1d(radians(lat_deg))
@@ -25,7 +25,7 @@ def azel2radec(az_deg,el_deg,lat_deg,lon_deg,dtime):
 
     lst = datetime2sidereal(dtime,lon) #lon, ra in RADIANS
 
-    ''' by definition right ascension \in [0,360) degrees'''
+    """ by definition right ascension \in [0,360) degrees """
     return degrees(lst - lha) % 360, degrees(dec)
 
 if __name__ == "__main__":
