@@ -12,4 +12,6 @@ before_install:
 install:
  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy 
 
-script: ./coordconv3d.py
+script: 
+ - python coordconv3d.py
+ - python vreckon.py --selftest
