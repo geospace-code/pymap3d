@@ -3,8 +3,7 @@
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 from __future__ import division
 from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
-                   radians, degrees, sign, ceil, mod,
-                   zeros,arange,pi,sqrt,tile)
+                   radians, degrees, sign, ceil, mod, zeros,pi,sqrt,tile)
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
@@ -144,7 +143,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
         sinSigma = zeros(sigma.shape)
         cosSigma = zeros(sigma.shape)
 
-        for k in arange(sigma.size):
+        for k in range(sigma.size):
             while (absolute(sigma[k]-sigmaP) > 1e-12).any():
                 cos2SigmaM[k] = cos(2*sigma1[k] + sigma[k])
                 sinSigma[k]   = sin(sigma[k])
