@@ -19,6 +19,8 @@ ecef2enuv
 ecef2geodetic
 ecef2ned
 ecef2nedv
+ecef2eci
+eci2ecef
 enu2aer
 enu2ecef
 enu2ecefv
