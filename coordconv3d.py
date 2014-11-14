@@ -1,17 +1,14 @@
-#!/usr/bin/env python3
-'''
+"""
  Michael Hirsch ported and adaptation from
  GNU Octave Mapping Toolbox by
   Copyright (c) 2013, Sandeep V. Mahanthi
  Copyright (c) 2013, Felipe G. Nievinski
 
  Input/output: units are METERS and DEGREES. boolean deg=True means degrees
- '''
-
+"""
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
-                   atleast_2d,empty_like,array)
-
+                   atleast_2d,atleast_1d,empty_like,array)
 
 class EarthEllipsoid:
     def __init__(self):
@@ -66,14 +63,14 @@ def ecef2enu_int(u, v, w, lat0, lon0,deg=True):
 def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid(),deg=True):
     if y is None:
         x,y,z = depack(x)
-    '''
-    #Algorithm is based on
-    #http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
-    #This algorithm provides a converging solution to the latitude equation
-    #in terms of the parametric or reduced latitude form (v)
-    #This algorithm provides a uniform solution over all latitudes as it does
-    #not involve division by cos(phi) or sin(phi)
-    '''
+    """
+    Algorithm is based on
+    http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
+    This algorithm provides a converging solution to the latitude equation
+    in terms of the parametric or reduced latitude form (v)
+    This algorithm provides a uniform solution over all latitudes as it does
+    not involve division by cos(phi) or sin(phi)
+    """
     ea = ell.a
     eb = ell.b
     rad = hypot(x,y)
@@ -100,8 +97,6 @@ def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid(),deg=True):
     lon = arctan2(y,x)
 
     alt = ((rad-ea*cos(vnew))*cos(lat)) + ((z-eb*sin(vnew))*sin(lat))
-
-    #assert alt>0
 
     if deg:
         return degrees(lat),degrees(lon),alt
@@ -180,40 +175,37 @@ def enu2geodetic(e, n, u, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     return ecef2geodetic(x, y, z, ell,deg=deg)
 #====================================================================
 #%%
-    '''
-    TThe following functions are ported -- have not carefully verified yet.
-    eci2ecef
-    ecef2eci
-    rottrip (used to go to/from eci/ecef)
-    -
+    """
     inputs:
     ece/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
     lst: length N vector of sidereal time angle [radians]. The function datetime2hourangle.py in
-        https://github.com/scienceopen/astrometry can provide this for you.
-    '''
+    https://github.com/scienceopen/astrometry can provide this for you.
+    """
 def eci2ecef(eci,lst):
+    lst = atleast_1d(lst)
     eci = atleast_2d(eci)
     N,trip = eci.shape
     if eci.ndim > 2 or trip != 3:
-        raise RuntimeError('eci triplets must be shape (N,3)')
-    '''
+        exit('eci2ecef: eci triplets must be shape (N,3)')
+    """
     ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    '''
+    """
     ecef = empty_like(eci)
     for i in range(N):
         ecef[i,:] = rottrip(lst[i]).dot(eci[i,:])
     return ecef
 
 def ecef2eci(ecef,lst):
+    lst = atleast_1d(lst)
     ecef = atleast_2d(ecef)
     N,trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
-        raise RuntimeError('ecef triplets must be shape (N,3)')
-    '''
+        exit('ecef2eci: ecef triplets must be shape (N,3)')
+    """
     ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    '''
+    """
     eci = empty_like(ecef)
     for i in range(N):
         eci[i,:] = rottrip(lst[i]).T.dot(ecef[i,:]) #this one is transposed
@@ -223,10 +215,10 @@ def rottrip(ang):
     ang = ang.squeeze()
     if ang.size>1:
         raise RuntimeError('this function is for one angle at a time')
-    '''
+    """
     ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    '''
+    """
     return array([[cos(ang),  sin(ang), 0],
                  [-sin(ang), cos(ang), 0],
                  [0,         0,        1]])
@@ -365,4 +357,11 @@ if __name__ == '__main__':
     assert_allclose(enu2ecef(tx,ty,tz,tlat,tlon,talt),(e2x,e2y,e2z),
                     rtol=0.01,
                     err_msg='enu2ecef: '+ str(enu2ecef(tx,ty,tz,tlat,tlon,talt)))
+    assert_allclose(eci2ecef((10e6,20e6,30e6),.230).squeeze(),
+                    (1.429621442075752e7,1.719355266475562e7,3e7),
+                    rtol=0.01)
+    assert_allclose(ecef2eci((1.429621442075752e7,1.719355266475562e7,3e7),.230).squeeze(),
+                    (10e6,20e6,30e6),
+                    rtol=0.01)
+
     exit(0)

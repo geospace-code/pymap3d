@@ -7,7 +7,7 @@ from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
-    '''
+    """
      VRECKON -  Computes points at a specified azimuth and range in an ellipsoidal earth
 
                    - Using the WGS-84 Earth ellipsoid, travel a given distance along
@@ -68,7 +68,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
      Also, lon2 is always converted to the [-180 180] interval
      Joaquim Luis
      $Id: $
-    '''
+    """
 
     lat1 = atleast_1d(lat1)
     lon1 = atleast_1d(lon1)
