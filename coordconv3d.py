@@ -1,5 +1,4 @@
-"""
- Michael Hirsch ported and adaptation from
+"""Michael Hirsch ported and adaptation from
  GNU Octave Mapping Toolbox by
   Copyright (c) 2013, Sandeep V. Mahanthi
  Copyright (c) 2013, Felipe G. Nievinski
@@ -63,8 +62,7 @@ def ecef2enu_int(u, v, w, lat0, lon0,deg=True):
 def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid(),deg=True):
     if y is None:
         x,y,z = depack(x)
-    """
-    Algorithm is based on
+    """Algorithm is based on
     http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
     This algorithm provides a converging solution to the latitude equation
     in terms of the parametric or reduced latitude form (v)
@@ -175,8 +173,8 @@ def enu2geodetic(e, n, u, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     return ecef2geodetic(x, y, z, ell,deg=deg)
 #====================================================================
 #%%
-    """
-    inputs:
+    """inputs:
+
     ece/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
     lst: length N vector of sidereal time angle [radians]. The function datetime2hourangle.py in
     https://github.com/scienceopen/astrometry can provide this for you.
@@ -187,8 +185,7 @@ def eci2ecef(eci,lst):
     N,trip = eci.shape
     if eci.ndim > 2 or trip != 3:
         exit('eci2ecef: eci triplets must be shape (N,3)')
-    """
-    ported from:
+    """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
     ecef = empty_like(eci)
@@ -202,8 +199,7 @@ def ecef2eci(ecef,lst):
     N,trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
         exit('ecef2eci: ecef triplets must be shape (N,3)')
-    """
-    ported from:
+    """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
     eci = empty_like(ecef)
@@ -214,9 +210,8 @@ def ecef2eci(ecef,lst):
 def rottrip(ang):
     ang = ang.squeeze()
     if ang.size>1:
-        raise RuntimeError('this function is for one angle at a time')
-    """
-    ported from:
+        exit('rottrip: only one angle allowed at a time')
+    """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
     return array([[cos(ang),  sin(ang), 0],
