@@ -267,7 +267,7 @@ def get_radius_normal(lat_radians,ell):
 
 def depack(x0):
     if x0.ndim>2:
-        raise RuntimeError('I expect Nx3 or 3XN triplets')
+        exit('I expect Nx3 or 3XN triplets')
     m,n = x0.shape
     if m == 3: # 3xN triplets
         x = x0[0,:]
@@ -278,7 +278,7 @@ def depack(x0):
         y = x0[:,1]
         z = x0[:,2]
     else:
-        raise RuntimeError('I expect an Nx3 or 3xN input of x,y,z')
+        exit('I expect an Nx3 or 3xN input of x,y,z')
     return x,y,z
 
 if __name__ == '__main__':
