@@ -6,6 +6,11 @@ python-mapping
 Python coordinate conversions simply ported from Matlab/Octave functions
 Credit goes to original .m file authors.
 
+Installation:
+```
+pip install https://github.com/scienceopen/python-mapping/archive/master.zip
+```
+
 Consider using python-geopy as well.
 
 Popular mapping toolbox functions ported to Python include:
