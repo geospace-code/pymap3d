@@ -21,7 +21,7 @@ def aer2ecef(az,el,srange,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
     # Convert Local Spherical AER to ENU
     e1, n1, u1 = aer2enu(az, el, srange, deg=deg)
     # Rotating ENU to ECEF
-    dx, dy, dz = enu2ecef_int(e1, n1, u1, lat0, lon0,deg=deg)
+    dx, dy, dz = _enu2ecef(e1, n1, u1, lat0, lon0,deg=deg)
     # Origin + offset from origin equals position in ECEF
     return x0 + dx, y0 + dy, z0 + dz
 
@@ -47,9 +47,9 @@ def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
 
 def ecef2enu(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     x0,y0,z0 = geodetic2ecef(lat0, lon0, h0,ell,deg=deg)
-    return ecef2enu_int(x - x0, y - y0, z - z0, lat0, lon0,deg=deg)
+    return _ecef2enu(x - x0, y - y0, z - z0,lat0,lon0,deg=deg)
 
-def ecef2enu_int(u, v, w, lat0, lon0,deg=True):
+def _ecef2enu(u, v, w,lat0,lon0,deg):
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -58,6 +58,7 @@ def ecef2enu_int(u, v, w, lat0, lon0,deg=True):
     Up    =  cos(lat0) * t + sin(lat0) * w
     North = -sin(lat0) * t + cos(lat0) * w
     return East, North, Up
+
 
 def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid(),deg=True):
     if y is None:
@@ -139,7 +140,7 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     return xNorth, yEast, -zUp
 
 def ecef2ned_int(x, y, z, lat0, lon0,deg=True):
-    xEast, yNorth, zUp = ecef2enu_int(x, y, z, lat0, lon0,deg=deg)
+    xEast, yNorth, zUp = _ecef2enu(x, y, z, lat0, lon0,deg=deg)
     return xEast, yNorth, -zUp
 
 def enu2aer(e, n, u,deg=True):
@@ -154,10 +155,10 @@ def enu2aer(e, n, u,deg=True):
 
 def enu2ecef(e1,n1,u1,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
     x0, y0, z0 = geodetic2ecef(lat0, lon0, alt0, ell,deg=deg)
-    dx, dy, dz = enu2ecef_int(e1, n1, u1, lat0, lon0,deg=deg)
+    dx, dy, dz = _enu2ecef(e1, n1, u1, lat0, lon0,deg=deg)
     return x0 + dx, y0 + dy, z0 + dz
 
-def enu2ecef_int(east,north,up,lat0,lon0,deg=True):
+def _enu2ecef(east,north,up,lat0,lon0,deg=True):
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -241,7 +242,7 @@ def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     dx = x1-x2
     dy = y1-y2
     dz = z1-z2
-    return ecef2enu_int(dx, dy, dz, lat0, lon0,deg=deg)
+    return _ecef2enu(dx, dy, dz, lat0, lon0,deg=deg)
 
 def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     yEast, xNorth, zUp = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell,deg=deg)
@@ -253,8 +254,8 @@ def ned2aer(xNorth, yEast, zDown,deg=True):
 def ned2ecef(xNorth, yEast, zDown, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     return enu2ecef(yEast, xNorth, -zDown, lat0, lon0, h0, ell,deg=deg)
 
-def ned2ecef_int(uNorth, vEast, wDown, lat0, lon0,deg=True):
-    return enu2ecef_int(vEast, uNorth, -wDown, lat0, lon0,deg=deg)
+def _ned2ecef(uNorth, vEast, wDown, lat0, lon0,deg=True):
+    return _enu2ecef(vEast, uNorth, -wDown, lat0, lon0,deg=deg)
 
 def ned2geodetic(xNorth, yEast, zDown, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     x, y, z = enu2ecef(yEast, xNorth, -zDown, lat0, lon0, h0, ell,deg=deg)
@@ -358,5 +359,4 @@ if __name__ == '__main__':
     assert_allclose(ecef2eci((1.429621442075752e7,1.719355266475562e7,3e7),.230).squeeze(),
                     (10e6,20e6,30e6),
                     rtol=0.01)
-
     exit(0)
