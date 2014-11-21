@@ -139,7 +139,7 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     yEast, xNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell,deg=deg)
     return xNorth, yEast, -zUp
 
-def ecef2ned_int(x, y, z, lat0, lon0,deg=True):
+def _ecef2ned(x, y, z, lat0, lon0,deg=True):
     xEast, yNorth, zUp = _ecef2enu(x, y, z, lat0, lon0,deg=deg)
     return xEast, yNorth, -zUp
 
