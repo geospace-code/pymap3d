@@ -106,6 +106,9 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
     if rng.size == 1:
         rng = tile(rng, azim.shape)
+        
+    if azim.size == 1:
+        azim = tile(azim, rng.shape)
 
     if rng.size != azim.shape[0]:
         exit('VRECKON: Range must be a scalar or a vector with the same shape as azim.')
