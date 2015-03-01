@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 from __future__ import division
-from numpy import sin, cos, degrees, radians,arcsin, arctan2,atleast_1d, nan
+from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d, nan
 import sys
-sys.path.append('../astrometry') #https://github.com/scienceopen/astrometry/
+sys.path.append('../astrometry') # git clone https://github.com/scienceopen/astrometry/
 from datetime2hourangle import datetime2sidereal
-#from pdb import set_trace
 
 def azel2radec(az_deg,el_deg,lat_deg,lon_deg,dtime):
 
