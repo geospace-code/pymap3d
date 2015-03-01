@@ -42,3 +42,5 @@ vreckon
 
 for converting right ascension and declination to azimuth and elevation, please see the function radec2azel inside
 https://github.com/scienceopen/astrometry/
+or simply use the functionality of AstroPy 1.0+ to do radec->azel conversion 
+http://astropy.readthedocs.org/en/v1.0/whatsnew/1.0.html#support-for-alt-az-coordinates
