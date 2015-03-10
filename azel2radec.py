@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+requires Astropy 1.0 or newer. Try usevallado=True if you have an old Astropy (Vallado accuracy is worse).
+Michael Hirsch
+GPLv3+
+"""
 from __future__ import division
 from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d, nan
 import sys
@@ -12,21 +17,17 @@ else: #astropy
     from astropy.time import Time
     from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
 
-"""
-Michael Hirsch
-GPLv3+
-"""
-    
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
-
     """ from D.Vallado Fundamentals of Astrodynamics and Applications p.258-259 """
     az_deg = atleast_1d(az_deg)
     el_deg = atleast_1d(el_deg)
     lat_deg = atleast_1d(lat_deg)
     lon_deg = atleast_1d(lon_deg)
 
-    if az_deg.shape != el_deg.shape: exit('az and el must be same shape')
-    if lat_deg.shape != lon_deg.shape: exit('lat and lon must be same shape')
+    if az_deg.shape != el_deg.shape: 
+        exit('*** azel2radec: az and el must be same shape ndarray')
+    if lat_deg.size != 1 or lon_deg.size !=1:
+        exit('*** azel2radec is designed for one observer and one or more points (az,el).')
 
     if usevallado:
         ra_deg, dec_deg = azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtime)
@@ -35,11 +36,8 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
         direc = AltAz(location=obs, obstime=Time(dtime), 
                       az=az_deg*u.deg, alt=el_deg*u.deg)
         sky = SkyCoord(direc.transform_to(ICRS()))
-        ra_deg = sky.ra.deg
-        dec_deg = sky.dec.deg
-            
-        
-    return ra_deg, dec_deg
+
+    return sky.ra.deg, sky.dec.deg
         
 def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
     az = radians(az_deg); el = radians(el_deg)
