@@ -7,7 +7,7 @@
 """
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
-                   atleast_2d,atleast_1d,empty_like,array)
+                   atleast_2d,atleast_1d,empty_like,array, nan)
 
 class EarthEllipsoid:
     def __init__(self):
@@ -172,7 +172,6 @@ def _enu2ecef(east,north,up,lat0,lon0,deg=True):
 def enu2geodetic(e, n, u, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell,deg=deg)
     return ecef2geodetic(x, y, z, ell,deg=deg)
-#====================================================================
 #%%
     """inputs:
 
@@ -185,7 +184,8 @@ def eci2ecef(eci,lst):
     eci = atleast_2d(eci)
     N,trip = eci.shape
     if eci.ndim > 2 or trip != 3:
-        exit('eci2ecef: eci triplets must be shape (N,3)')
+        print('*** eci2ecef: eci triplets must be shape (N,3)')
+        return None
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
@@ -199,7 +199,8 @@ def ecef2eci(ecef,lst):
     ecef = atleast_2d(ecef)
     N,trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
-        exit('ecef2eci: ecef triplets must be shape (N,3)')
+        print('*** ecef2eci: ecef triplets must be shape (N,3)')
+        return None
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
@@ -211,7 +212,8 @@ def ecef2eci(ecef,lst):
 def rottrip(ang):
     ang = ang.squeeze()
     if ang.size>1:
-        exit('rottrip: only one angle allowed at a time')
+        print('*** rottrip: only one angle allowed at a time')
+        return None
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
@@ -268,7 +270,8 @@ def get_radius_normal(lat_radians,ell):
 
 def depack(x0):
     if x0.ndim>2:
-        exit('I expect Nx3 or 3XN triplets')
+        print('*** depack: I expect Nx3 or 3XN triplets')
+        return nan, nan, nan
     m,n = x0.shape
     if m == 3: # 3xN triplets
         x = x0[0,:]
@@ -279,7 +282,8 @@ def depack(x0):
         y = x0[:,1]
         z = x0[:,2]
     else:
-        exit('I expect an Nx3 or 3xN input of x,y,z')
+        print('*** depack: I expect an Nx3 or 3xN input of x,y,z')
+        return nan, nan, nan
     return x,y,z
 
 if __name__ == '__main__':
@@ -359,4 +363,3 @@ if __name__ == '__main__':
     assert_allclose(ecef2eci((1.429621442075752e7,1.719355266475562e7,3e7),.230).squeeze(),
                     (10e6,20e6,30e6),
                     rtol=0.01)
-    exit(0)
