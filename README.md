@@ -22,6 +22,7 @@ pip install https://github.com/scienceopen/python-mapping/archive/master.zip
 ```
 
 Consider using python-geopy as well.
+For example, if you're seeking [Vicenty distance](http://geopy.readthedocs.org/en/latest/#module-geopy.distance).
 
 Popular mapping toolbox functions ported to Python include:
 ```
