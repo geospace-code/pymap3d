@@ -16,3 +16,4 @@ script:
  - python coordconv3d.py
  - python vreckon.py --selftest
  - python haversine.py --selftest
+ - python azel2radec.py --selftest
