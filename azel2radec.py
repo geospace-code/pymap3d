@@ -8,14 +8,18 @@ from __future__ import division
 from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d, nan
 import sys
 
-usevallado = False
-if usevallado:
-    sys.path.append('../astrometry') # git clone https://github.com/scienceopen/astrometry/
-    from datetime2hourangle import datetime2sidereal
-else: #astropy
+
+try:
     from astropy import units as u
     from astropy.time import Time
     from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
+    usevallado=False
+except ImportError as e:
+    print(str(e) + ' trouble importing AstroPy>1.0, falling back to Vallado')
+    sys.path.append('../astrometry') # git clone https://github.com/scienceopen/astrometry/
+    from datetime2hourangle import datetime2sidereal
+    usevallado=True
+
 
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
     """ from D.Vallado Fundamentals of Astrodynamics and Applications p.258-259 """
@@ -24,21 +28,21 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
     lat_deg = atleast_1d(lat_deg)
     lon_deg = atleast_1d(lon_deg)
 
-    if az_deg.shape != el_deg.shape: 
+    if az_deg.shape != el_deg.shape:
         exit('*** azel2radec: az and el must be same shape ndarray')
     if lat_deg.size != 1 or lon_deg.size !=1:
         exit('*** azel2radec is designed for one observer and one or more points (az,el).')
 
     if usevallado:
         ra_deg, dec_deg = azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtime)
-    else: #use astropy v1.0 + 
+    else: #use astropy v1.0 +
         obs = EarthLocation(lat=lat_deg*u.deg, lon=lon_deg*u.deg)
-        direc = AltAz(location=obs, obstime=Time(dtime), 
+        direc = AltAz(location=obs, obstime=Time(dtime),
                       az=az_deg*u.deg, alt=el_deg*u.deg)
         sky = SkyCoord(direc.transform_to(ICRS()))
 
     return sky.ra.deg, sky.dec.deg
-        
+
 def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
     az = radians(az_deg); el = radians(el_deg)
     lat = radians(lat_deg); lon = radians(lon_deg)
@@ -75,6 +79,6 @@ if __name__ == "__main__":
 
         dtime = parse(a.time)
         print(dtime)
-    
+
         ra,dec = azel2radec(a.azimuth,a.elevation,a.lat,a.lon,dtime)
         print('ra / dec =',(ra,dec) )
