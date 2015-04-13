@@ -1,6 +1,7 @@
 
 [![Build Status](https://travis-ci.org/scienceopen/python-mapping.svg)](https://travis-ci.org/scienceopen/python-mapping)
 python-mapping
+[![Coverage Status](https://coveralls.io/repos/scienceopen/python-mapping/badge.svg)](https://coveralls.io/r/scienceopen/python-mapping)
 ==============
 
 Python coordinate conversions simply ported from Matlab/Octave functions
