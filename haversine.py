@@ -26,7 +26,7 @@ def haversine(theta):
     """ http://en.wikipedia.org/wiki/Haversine and Meeus p. 111 """
     return (1-cos(theta)) / 2
 
-if __name__ == '__main__': 
+if __name__ == '__main__': #pragma: no cover
     from argparse import ArgumentParser
     p = ArgumentParser(description="computes angular distance between two points in sky")
     p.add_argument('r0',help='right ascension of first point [degrees]',type=float,nargs='?',default=nan)
