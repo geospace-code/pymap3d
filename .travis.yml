@@ -17,7 +17,7 @@ install:
  - if [[ -z $pyv ]]; then
    pip -q install coveralls;
   fi
- - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
+ - conda install --yes --file requirements.txt
 
 script:
   - if [[ -z $pyv ]]; then
