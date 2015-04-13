@@ -25,9 +25,9 @@ script:
         coverage run;
     else
         python coordconv3d.py;
-        python vreckon.py --selftest;
-        python haversine.py --selftest;
-        python azel2radec.py --selftest;
+        python vreckon.py;
+        python haversine.py;
+        python azel2radec.py;
     fi
 
 after_success:
