@@ -3,8 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/scienceopen/python-mapping/badge.svg)](https://coveralls.io/r/scienceopen/python-mapping)
 ==============
 
-Python coordinate conversions simply ported from Matlab/Octave functions
-Credit goes to original .m file authors.
+Python coordinate conversions, following convention of several popular Matlab routines. Atmospheric effects neglected in all functions not invoking AstroPy.
 
 Prereq:
 ```
