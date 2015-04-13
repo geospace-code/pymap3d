@@ -22,10 +22,7 @@ install:
 script:
   - if [[ -z $pyv ]]; then
         echo "running coverage";
-        coverage run coordconv3d.py;
-        coverage run vreckon.py --selftest;
-        coverage run haversine.py --selftest;
-        coverage run azel2radec.py --selftest;
+        coverage run;
     else
         python coordconv3d.py;
         python vreckon.py --selftest;
