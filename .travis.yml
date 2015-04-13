@@ -12,11 +12,11 @@ before_install:
  - python --version #just checking
 
 install:
- - pip -q install coveralls
+ - [[ -z $pyvstr ]] && pip -q install coveralls
  - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
 
 script: 
- - if [[ $(python --version 2>&1) == "Python 2.7"* ]] ; then
+ - if [[ -z $pyvstr ]]; then
         echo "running coverage";
         coverage run coordconv3d.py;
         coverage run vreckon.py --selftest;
@@ -30,4 +30,4 @@ script:
    fi
 
 after_success:
- - coveralls
+ - [[ -z $pyvstr ]] && coveralls
