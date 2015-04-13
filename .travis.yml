@@ -20,7 +20,6 @@ install:
  - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
 
 script:
-  - cd test
   - if [[ -z $pyv ]]; then
         echo "running coverage";
         coverage run test.py;
