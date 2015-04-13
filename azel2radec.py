@@ -57,7 +57,7 @@ def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
     """ by definition right ascension \in [0,360) degrees """
     return degrees(lst - lha) % 360, degrees(dec)
 
-if __name__ == "__main__":
+if __name__ == "__main__": #pragma: no cover
     from dateutil.parser import parse
     from argparse import ArgumentParser
 

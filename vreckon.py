@@ -185,7 +185,7 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
     return degrees(lat2), lon2, mod(a21,360)
 
-if __name__ == '__main__':
+if __name__ == '__main__': #pragma: no cover
     from argparse import ArgumentParser
 
     p = ArgumentParser(description='Python port of vreckon.m')
