@@ -3,33 +3,33 @@ python:
   - "3.4"
   - "2.7"
 before_install: 
- - if [[ $(python --version 2>&1) == "Python 3."* ]]; then
+  - if [[ $(python --version 2>&1) == "Python 3."* ]]; then
       pyvstr=3; #blank if Python2, that's how the URL works
    fi
- - url=http://repo.continuum.io/miniconda/Miniconda"$pyvstr"-latest-Linux-x86_64.sh
- - wget $url -O miniconda.sh
- - bash miniconda.sh -b -p $HOME/miniconda
- - export PATH=$HOME/miniconda/bin:$PATH
- - conda update --yes conda
- - python --version #just checking
+  - url=http://repo.continuum.io/miniconda/Miniconda"$pyvstr"-latest-Linux-x86_64.sh
+  - wget $url -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH=$HOME/miniconda/bin:$PATH
+  - conda update --yes conda
+  - python --version #just checking
 
 install:
- - [[ -z $pyvstr ]] && pip -q install coveralls
- - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
+  - [[ -z $pyvstr ]] && pip -q install coveralls
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
 
 script: 
- - if [[ -z $pyvstr ]]; then
+  - if [[ -z $pyvstr ]]; then
         echo "running coverage";
         coverage run coordconv3d.py;
         coverage run vreckon.py --selftest;
         coverage run haversine.py --selftest;
         coverage run azel2radec.py --selftest;
-   else
+    else
         python coordconv3d.py;
         python vreckon.py --selftest;
         python haversine.py --selftest;
         python azel2radec.py --selftest;
-   fi
+    fi
 
 after_success:
- - [[ -z $pyvstr ]] && coveralls
+  - [[ -z $pyvstr ]] && coveralls
