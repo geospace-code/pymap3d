@@ -3,11 +3,13 @@ python:
   - "3.4"
   - "2.7"
 before_install: 
- - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
- - chmod +x miniconda.sh
+ - [[ "$TRAVIS_PYTHON_VERSION" == "3.4" ]] && pyvstr=3 #blank if Python2, that's how the URL works
+ - url=http://repo.continuum.io/miniconda/Miniconda"$pyvstr"-latest-Linux-x86_64.sh
+ - wget $url -O miniconda.sh
  - bash miniconda.sh -b -p $HOME/miniconda
  - export PATH=$HOME/miniconda/bin:$PATH
  - conda update --yes conda
+ - python --version #just checking
 
 install:
  - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
