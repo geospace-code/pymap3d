@@ -33,12 +33,7 @@ if __name__ == '__main__':
     p.add_argument('d0',help='declination of first point [degrees]',type=float,nargs='?',default=nan)
     p.add_argument('r1',help='right ascension of second point [degrees]',type=float,nargs='?',default=nan)
     p.add_argument('d1',help='declination of second point [degrees]',type=float,nargs='?',default=nan)
-    p.add_argument('--selftest',help='self test (inputs ignored)',action='store_true')
     a = p.parse_args()
     
-    if a.selftest:
-        from numpy.testing import assert_almost_equal
-        assert_almost_equal(angledist(35,23,84,20),45.482789587392013)
-    else:
-        dist_deg = angledist(a.r0,a.d0,a.r1,a.d1)
-        print(dist_deg)
+    dist_deg = angledist(a.r0,a.d0,a.r1,a.d1)
+    print(dist_deg)

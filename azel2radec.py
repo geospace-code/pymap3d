@@ -67,18 +67,10 @@ if __name__ == "__main__":
     p.add_argument('lat',help='WGS84 latitude of observer [deg] ',nargs='?',type=float,default=nan)
     p.add_argument('lon',help='WGS84 longitude of observer [deg.]',nargs='?',type=float,default=nan)
     p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',nargs='?',type=str,default='')
-    p.add_argument('--selftest',help='integration test',action='store_true')
     a = p.parse_args()
 
-    if a.selftest:
-        from numpy.testing import assert_allclose
-        ra,dec = azel2radec(180.1, 80, 65, -148,parse('2014-04-06T08:00:00Z'))
-        assert_allclose(ra,166.5032081149338,rtol=1e-2)
-        assert_allclose(dec,55.000011165405752,rtol=1e-2)
-    else:
+    dtime = parse(a.time)
+    print(dtime)
 
-        dtime = parse(a.time)
-        print(dtime)
-
-        ra,dec = azel2radec(a.azimuth,a.elevation,a.lat,a.lon,dtime)
-        print('ra / dec =',(ra,dec) )
+    ra,dec = azel2radec(a.azimuth,a.elevation,a.lat,a.lon,dtime)
+    print('ra / dec =',(ra,dec) )
