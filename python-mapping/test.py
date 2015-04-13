@@ -3,8 +3,6 @@
 runs tests
 """
 from __future__ import absolute_import, division
-import sys
-sys.path.append('..')
 from numpy.testing import assert_allclose, assert_almost_equal
    
 #%% azel2radec
