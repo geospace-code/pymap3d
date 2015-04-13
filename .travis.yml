@@ -3,7 +3,9 @@ python:
   - "3.4"
   - "2.7"
 before_install: 
- - [[ $(python --version 2>&1) == "Python 3."* ]] && pyvstr=3 #blank if Python2, that's how the URL works
+ - if [[ $(python --version 2>&1) == "Python 3."* ]]; then
+      pyvstr=3; #blank if Python2, that's how the URL works
+   fi
  - url=http://repo.continuum.io/miniconda/Miniconda"$pyvstr"-latest-Linux-x86_64.sh
  - wget $url -O miniconda.sh
  - bash miniconda.sh -b -p $HOME/miniconda
