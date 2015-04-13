@@ -20,14 +20,12 @@ install:
  - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
 
 script:
+  - cd test
   - if [[ -z $pyv ]]; then
         echo "running coverage";
-        coverage run;
+        coverage run test.py;
     else
-        python coordconv3d.py;
-        python vreckon.py;
-        python haversine.py;
-        python azel2radec.py;
+        python test.py;
     fi
 
 after_success:
