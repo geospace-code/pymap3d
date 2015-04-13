@@ -2,11 +2,11 @@ language: python
 python:
   - "3.4"
   - "2.7"
-before_install: 
+before_install:
   - if [[ $(python --version 2>&1) == "Python 3."* ]]; then
-      pyvstr=3; #blank if Python2, that's how the URL works
-   fi
-  - url=http://repo.continuum.io/miniconda/Miniconda"$pyvstr"-latest-Linux-x86_64.sh
+     pyv=3;
+    fi
+  - url=http://repo.continuum.io/miniconda/Miniconda"$pyv"-latest-Linux-x86_64.sh
   - wget $url -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH=$HOME/miniconda/bin:$PATH
@@ -14,11 +14,13 @@ before_install:
   - python --version #just checking
 
 install:
-  - [[ -z $pyvstr ]] && pip -q install coveralls
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
+ - if [[ -z $pyv ]]; then
+   pip -q install coveralls;
+  fi
+ - conda install --yes python=$TRAVIS_PYTHON_VERSION --file requirements.txt
 
-script: 
-  - if [[ -z $pyvstr ]]; then
+script:
+  - if [[ -z $pyv ]]; then
         echo "running coverage";
         coverage run coordconv3d.py;
         coverage run vreckon.py --selftest;
@@ -32,4 +34,7 @@ script:
     fi
 
 after_success:
-  - [[ -z $pyvstr ]] && coveralls
+  - if [[ -z $pyv ]]; then
+     coveralls;
+    fi
+
