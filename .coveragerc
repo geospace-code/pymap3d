@@ -3,3 +3,4 @@ omit =
     */python?.?/*
 exclude_lines = 
     raise RuntimeError
+    if __name__ == '__main__':
