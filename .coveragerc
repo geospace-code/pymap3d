@@ -1,0 +1,5 @@
+[report]
+omit =
+    */python?.?/*
+exclude_lines = 
+    raise RuntimeError
