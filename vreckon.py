@@ -3,7 +3,7 @@
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 from __future__ import division
 from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
-                   radians, degrees, sign, mod, empty,pi,sqrt,tile,nan)
+                   radians, degrees, sign, mod, empty,pi,sqrt,tile,nan,isfinite)
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
@@ -189,21 +189,20 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     p = ArgumentParser(description='Python port of vreckon.m')
-    p.add_argument('--selftest',help='for travis ci',action='store_true')
     p.add_argument('lat',help='latitude WGS-84 [degrees]',nargs='?',type=float,default=nan)
     p.add_argument('lon',help='longitude WGS-84 [degrees]',nargs='?',type=float,default=nan)
     p.add_argument('range',help='range to traverse from start point [meters]',nargs='?',type=float,default=nan)
     p.add_argument('azimuth',help='azimuth to start [deg.]',nargs='?',type=float,default=nan)
-    args = p.parse_args()
+    p = p.parse_args()
 
-    if args.selftest:
+    if not isfinite(p.lat): #self test
         from numpy.testing import assert_almost_equal
         lat2,lon2,a21 = vreckon(10,20,3000,38)
         assert_almost_equal(lat2,10.021372672660874)
         assert_almost_equal(lon2,20.016847098929979)
         assert_almost_equal(a21,218.0029285624942)
     else:
-        lat2,lon2,a21 = vreckon(args.lat,args.lon,args.range,args.azimuth)
+        lat2,lon2,a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
         print('new lat =', lat2)
         print('new lon =', lon2)
         print('az back to start:', a21)
