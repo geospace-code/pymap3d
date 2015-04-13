@@ -195,14 +195,7 @@ if __name__ == '__main__':
     p.add_argument('azimuth',help='azimuth to start [deg.]',nargs='?',type=float,default=nan)
     p = p.parse_args()
 
-    if not isfinite(p.lat): #self test
-        from numpy.testing import assert_almost_equal
-        lat2,lon2,a21 = vreckon(10,20,3000,38)
-        assert_almost_equal(lat2,10.021372672660874)
-        assert_almost_equal(lon2,20.016847098929979)
-        assert_almost_equal(a21,218.0029285624942)
-    else:
-        lat2,lon2,a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
-        print('new lat =', lat2)
-        print('new lon =', lon2)
-        print('az back to start:', a21)
+    lat2,lon2,a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
+    print('new lat =', lat2)
+    print('new lon =', lon2)
+    print('az back to start:', a21)
