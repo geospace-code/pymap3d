@@ -189,9 +189,9 @@ if __name__ == '__main__': #pragma: no cover
     from argparse import ArgumentParser
 
     p = ArgumentParser(description='Python port of vreckon.m')
-    p.add_argument('lat',help='latitude WGS-84 [degrees]',nargs='?',type=float,default=nan)
-    p.add_argument('lon',help='longitude WGS-84 [degrees]',nargs='?',type=float,default=nan)
-    p.add_argument('range',help='range to traverse from start point [meters]',nargs='?',type=float,default=nan)
+    p.add_argument('lat',help='latitude WGS-84 [degrees]',type=float)
+    p.add_argument('lon',help='longitude WGS-84 [degrees]',type=float)
+    p.add_argument('range',help='range to traverse from start point [meters]',type=float)
     p.add_argument('azimuth',help='azimuth to start [deg.]',nargs='?',type=float,default=nan)
     p = p.parse_args()
 
