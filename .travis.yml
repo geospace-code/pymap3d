@@ -23,12 +23,12 @@ install:
  - conda install --yes --file requirements.txt
 
 script:
-  - if [[ -z $pyv ]]; then
-        echo "running coverage";
-        coverage run python-mapping/test.py;
-    else
-        python python-mapping/test.py;
-    fi
+#  - if [[ -z $pyv ]]; then
+#        echo "running coverage";
+#        coverage run python-mapping/test.py;
+#    else
+   -     python python-mapping/test.py;
+#    fi
 
 after_success:
   - if [[ -z $pyv ]]; then
