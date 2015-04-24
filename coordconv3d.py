@@ -213,8 +213,7 @@ def ecef2eci(ecef,lst):
     """
     eci = empty_like(ecef)
     for i in range(N):
-        eci[i,:] = rottrip(lst[i]).T.dot(ecef[i,:]) #this one is 
-transposed
+        eci[i,:] = rottrip(lst[i]).T.dot(ecef[i,:]) #this one is transposed
     return eci
 
 def rottrip(ang):
@@ -241,8 +240,7 @@ def geodetic2ecef(lat,lon,alt,ell=EarthEllipsoid(),deg=True):
         lon = radians(lon)
     # radius of curvature of the prime vertical section
     N = get_radius_normal(lat, ell)
-    # Compute cartesian (geocentric) coordinates given  (curvilinear) 
-geodetic coordinates.
+    # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic coordinates.
     x = (N + alt) * cos(lat)  * cos(lon)
     y = (N + alt) * cos(lat)  * sin(lon)
     z = (N * (ell.b/ell.a)**2 + alt) * sin(lat)
@@ -259,31 +257,33 @@ ell=EarthEllipsoid(),deg=True):
 
 def geodetic2ned(lat, lon, h, lat0, lon0, h0, 
 ell=EarthEllipsoid(),deg=True):
-    yEast, xNorth, zUp = geodetic2enu(lat, lon, h, lat0, lon0, h0, 
-ell,deg=deg)
+    yEast, xNorth, zUp = geodetic2enu(lat, lon, h, 
+                                      lat0, lon0, h0, 
+                                      ell,deg=deg)
     return xNorth, yEast, -zUp
 
 def ned2aer(xNorth, yEast, zDown,deg=True):
     return enu2aer(yEast, xNorth, -zDown,deg=deg)
 
 def ned2ecef(xNorth, yEast, zDown, lat0, lon0, h0, 
-ell=EarthEllipsoid(),deg=True):
+             ell=EarthEllipsoid(),deg=True):
     return enu2ecef(yEast, xNorth, -zDown, lat0, lon0, h0, ell,deg=deg)
 
 def _ned2ecef(uNorth, vEast, wDown, lat0, lon0,deg=True):
     return _enu2ecef(vEast, uNorth, -wDown, lat0, lon0,deg=deg)
 
 def ned2geodetic(xNorth, yEast, zDown, lat0, lon0, h0, 
-ell=EarthEllipsoid(),deg=True):
+                 ell=EarthEllipsoid(),deg=True):
     x, y, z = enu2ecef(yEast, xNorth, -zDown, lat0, lon0, h0, 
-ell,deg=deg)
+                       ell,deg=deg)
     return ecef2geodetic(x, y, z,ell,deg=deg)
 
 
 def get_radius_normal(lat_radians,ell):
     a = ell.a;  b = ell.b
-    return a**2 / sqrt( a**2 * (cos(lat_radians))**2 + b**2 * 
-(sin(lat_radians))**2 )
+    return a**2 / sqrt( 
+             a**2 * (cos(lat_radians))**2 + b**2 * 
+             (sin(lat_radians))**2 )
 
 def depack(x0):
     if x0.ndim>2:
