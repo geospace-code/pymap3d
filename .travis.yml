@@ -25,9 +25,9 @@ install:
 script:
 #  - if [[ -z $pyv ]]; then
 #        echo "running coverage";
-#        coverage run python-mapping/test.py;
+#        coverage run test.py;
 #    else
-   -     python python-mapping/test.py;
+   -     python test.py;
 #    fi
 
 after_success:
