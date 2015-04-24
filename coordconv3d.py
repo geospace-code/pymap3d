@@ -105,8 +105,7 @@ does
     else:
         return lat, lon, alt #radians
 
-# this is from PySatel and give virtually an identical result to EIGHT 
-decimal places!
+# this is from PySatel and gives same result to EIGHT decimal places
 #def cbrt(x):
 #	if x >= 0:
 #		return pow(x, 1.0/3.0)

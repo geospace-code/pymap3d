@@ -10,36 +10,35 @@ def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
     """
      VRECKON -  Computes points at a specified azimuth and range in an 
-ellipsoidal earth
+                ellipsoidal earth
 
                    - Using the WGS-84 Earth ellipsoid, travel a given 
-distance along
+                     distance along
                      a given azimuth starting at a given initial point, 
-and return the
+                     and return the
                      endpoint within a few millimeters of accuracy, 
-using Vincenty's algorithm.
+                     using Vincenty's algorithm.
 
      USAGE:
      lat2,lon2 = vreckon(lat1, lon1, rng, azim)
       Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth 
-argument ELLIPSOIDE
+                argument ELLIPSOID
 
      VARIABLES:
      lat1 = inital latitude (degrees)
      lon1 = initial longitude (degrees)
      rng  = distance (meters)
                    It can be a scalar or a vector. Latter case computes 
-a series of
+                    a series of
                    circles (or arc circles, see azim) centered on X,Y 
-(which are scalars)
+                    (which are scalars)
      azim = intial azimuth (degrees)
                    "azim" is a scalar or vector
      ellipsoid = two-element ellipsoid vector. Either [a b] or [a f]
                    If omitted, defaults to WGS-84
      lat2, lon2 = second point (degrees)
      a21  = reverse azimuth (degrees), at final point facing back toward 
-the
-            intial point
+            the  intial point
 
      Original algorithm source:
      T. Vincenty, "Direct and Inverse Solutions of Geodesics on the 
@@ -98,13 +97,10 @@ reduced
 
 
     if absolute(lat1) > 90:
-        exit('VRECKON: Input latitude must be between -90 and 90 
-degrees, inclusive.')
+        exit('VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
     if lat1.size != 1 and rng.size > 1:
-        exit('VRECKON: Variable ranges are only allowed for a single 
-point.')
-    if ellipsoid is not None:      # An ellipsoid vector (with a & b OR 
-a & f) was supplyied
+        exit('VRECKON: Variable ranges are only allowed for a single point.')
+    if ellipsoid is not None: # An ellipsoid vector (with a & b OR a & f) 
         a = ellipsoid[0]           # b = ellipsoid(2);
         # Second ellipsoid argument contains flattening instead of minor axis
         if ellipsoid[1] < 1:     
