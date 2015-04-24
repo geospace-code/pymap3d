@@ -6,8 +6,7 @@ Michael Hirsch
 GPLv3+
 """
 from __future__ import division
-from numpy import sin, cos, degrees, radians,arcsin, arctan2, 
-atleast_1d, nan
+from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d, nan
 import sys
 
 
@@ -67,8 +66,8 @@ if __name__ == "__main__": #pragma: no cover
     from dateutil.parser import parse
     from argparse import ArgumentParser
 
-    p = ArgumentParser(description=('convert azimuth and elevation to 
-                 right ascension and declination'))
+    p = ArgumentParser(description="convert azimuth and elevation to "
+                 "right ascension and declination")
     p.add_argument('azimuth',help='azimuth [degrees]',nargs='?',
                    type=float,default=nan)
     p.add_argument('elevation',help='elevation [degrees]',nargs='?',
