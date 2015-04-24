@@ -20,8 +20,10 @@ def angledist(r0,d0,r1,d1):
     #assumes degrees input, degrees output
     r0 = radians(r0); r1 = radians(r1)
     d0 = radians(d0); d1 = radians(d1)
-    dist_rad = 2 * arcsin( sqrt( haversine(d1-d0) + cos(d0)*cos(d1) * 
-haversine(r1-r0) ) )
+    dist_rad = 2*arcsin( 
+                 sqrt( 
+                 haversine(d1-d0) + 
+                   cos(d0)*cos(d1) * haversine(r1-r0) ) )
 
     return degrees(dist_rad)
 
@@ -31,16 +33,15 @@ def haversine(theta):
 
 if __name__ == '__main__': #pragma: no cover
     from argparse import ArgumentParser
-    p = ArgumentParser(description="computes angular distance between 
-two points in sky")
-    p.add_argument('r0',help='right ascension of first point 
-[degrees]',type=float,nargs='?',default=nan)
-    p.add_argument('d0',help='declination of first point 
-[degrees]',type=float,nargs='?',default=nan)
-    p.add_argument('r1',help='right ascension of second point 
-[degrees]',type=float,nargs='?',default=nan)
-    p.add_argument('d1',help='declination of second point 
-[degrees]',type=float,nargs='?',default=nan)
+    p = ArgumentParser(description="computes angular distance between two points in sky")
+    p.add_argument('r0',help='right ascension of first point [degrees]',
+                   type=float,nargs='?',default=nan)
+    p.add_argument('d0',help='declination of first point [degrees]',
+                   type=float,nargs='?',default=nan)
+    p.add_argument('r1',help='right ascension of second point [degrees]',
+                   type=float,nargs='?',default=nan)
+    p.add_argument('d1',help='declination of second point [degrees]',
+                   type=float,nargs='?',default=nan)
     a = p.parse_args()
     
     dist_deg = angledist(a.r0,a.d0,a.r1,a.d1)

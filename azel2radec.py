@@ -17,10 +17,8 @@ try:
     from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
     usevallado=False
 except ImportError as e:
-    print(str(e) + ' trouble importing AstroPy>1.0, falling back to 
-Vallado')
-    sys.path.append('../astrometry') # git clone 
-https://github.com/scienceopen/astrometry/
+    print(str(e) + ' trouble importing AstroPy>1.0, falling back to Vallado')
+    sys.path.append('../astrometry') # git clone https://github.com/scienceopen/astrometry/
     from datetime2hourangle import datetime2sidereal
     usevallado=True
 
@@ -36,8 +34,7 @@ p.258-259 """
     if az_deg.shape != el_deg.shape:
         exit('*** azel2radec: az and el must be same shape ndarray')
     if lat_deg.size != 1 or lon_deg.size !=1:
-        exit('*** azel2radec is designed for one observer and one or 
-more points (az,el).')
+        exit('*** azel2radec is designed for one observer and one or more points (az,el).')
 
     if usevallado:
         ra_deg, dec_deg = 
@@ -69,18 +66,17 @@ if __name__ == "__main__": #pragma: no cover
     from dateutil.parser import parse
     from argparse import ArgumentParser
 
-    p = ArgumentParser(description='convert azimuth and elevation to 
-right ascension and declination')
-    p.add_argument('azimuth',help='azimuth 
-[degrees]',nargs='?',type=float,default=nan)
-    p.add_argument('elevation',help='elevation 
-[degrees]',nargs='?',type=float,default=nan)
-    p.add_argument('lat',help='WGS84 latitude of observer [deg] 
-',nargs='?',type=float,default=nan)
-    p.add_argument('lon',help='WGS84 longitude of observer 
-[deg.]',nargs='?',type=float,default=nan)
-    p.add_argument('time',help='time of observation 
-YYYY-mm-ddTHH:MM:SSZ',nargs='?',type=str,default='')
+    p = ArgumentParser(description='convert azimuth and elevation to right ascension and declination')
+    p.add_argument('azimuth',help='azimuth [degrees]',nargs='?',
+                   type=float,default=nan)
+    p.add_argument('elevation',help='elevation [degrees]',nargs='?',
+                   type=float,default=nan)
+    p.add_argument('lat',help='WGS84 latitude of observer [deg] ',nargs='?',
+                   type=float,default=nan)
+    p.add_argument('lon',help='WGS84 longitude of observer [deg.]',nargs='?',
+                   type=float,default=nan)
+    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',nargs='?',
+                   type=str,default='')
     a = p.parse_args()
 
     dtime = parse(a.time)
