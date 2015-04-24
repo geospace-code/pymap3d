@@ -18,7 +18,8 @@ try:
     usevallado=False
 except ImportError as e:
     print(str(e) + ' trouble importing AstroPy>1.0, falling back to Vallado')
-    sys.path.append('../astrometry') # git clone https://github.com/scienceopen/astrometry/
+    # git clone https://github.com/scienceopen/astrometry/
+    sys.path.append('../astrometry') 
     from datetime2hourangle import datetime2sidereal
     usevallado=True
 
@@ -34,11 +35,11 @@ p.258-259 """
     if az_deg.shape != el_deg.shape:
         exit('*** azel2radec: az and el must be same shape ndarray')
     if lat_deg.size != 1 or lon_deg.size !=1:
-        exit('*** azel2radec is designed for one observer and one or more points (az,el).')
+        exit('*** azel2radec: need one observer and one or more  (az,el).')
 
     if usevallado:
-        ra_deg, dec_deg = 
-azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtime)
+        ra_deg, dec_deg = azel2radecvallado(
+                             az_deg,el_deg,lat_deg,lon_deg,dtime)
     else: #use astropy v1.0 +
         obs = EarthLocation(lat=lat_deg*u.deg, lon=lon_deg*u.deg)
         direc = AltAz(location=obs, obstime=Time(dtime),
@@ -66,7 +67,8 @@ if __name__ == "__main__": #pragma: no cover
     from dateutil.parser import parse
     from argparse import ArgumentParser
 
-    p = ArgumentParser(description='convert azimuth and elevation to right ascension and declination')
+    p = ArgumentParser(description=('convert azimuth and elevation to 
+                 right ascension and declination'))
     p.add_argument('azimuth',help='azimuth [degrees]',nargs='?',
                    type=float,default=nan)
     p.add_argument('elevation',help='elevation [degrees]',nargs='?',
@@ -75,8 +77,8 @@ if __name__ == "__main__": #pragma: no cover
                    type=float,default=nan)
     p.add_argument('lon',help='WGS84 longitude of observer [deg.]',nargs='?',
                    type=float,default=nan)
-    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',nargs='?',
-                   type=str,default='')
+    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',
+                   nargs='?',type=str,default='')
     a = p.parse_args()
 
     dtime = parse(a.time)
