@@ -5,10 +5,9 @@ Astropy (Vallado accuracy is worse).
 Michael Hirsch
 GPLv3+
 """
-from __future__ import division
+from __future__ import division,absolute_import
 from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d, nan
 import sys
-
 
 try:
     from astropy import units as u
@@ -17,9 +16,7 @@ try:
     usevallado=False
 except ImportError as e:
     print(str(e) + ' trouble importing AstroPy>1.0, falling back to Vallado')
-    # git clone https://github.com/scienceopen/astrometry/
-    sys.path.append('../astrometry') 
-    from datetime2hourangle import datetime2sidereal
+    from astrometry/datetime2hourangle import datetime2sidereal
     usevallado=True
 
 
