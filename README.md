@@ -1,16 +1,13 @@
 
-[![Build Status](https://travis-ci.org/scienceopen/python-mapping.svg)](https://travis-ci.org/scienceopen/python-mapping)
-[![Coverage Status](https://coveralls.io/repos/scienceopen/python-mapping/badge.svg)](https://coveralls.io/r/scienceopen/python-mapping)
+[![Build Status](https://travis-ci.org/scienceopen/pymap3d.svg)](https://travis-ci.org/scienceopen/pymap3d)
+[![Coverage Status](https://coveralls.io/repos/scienceopen/pymap3d/badge.svg)](https://coveralls.io/r/scienceopen/pymap3d)
 ==============
 
 Python coordinate conversions, following convention of several popular Matlab routines. Atmospheric effects neglected in all functions not invoking AstroPy.
 
 Prereq:
 ```
-conda install --file requirements.txt
-```
-or
-```
+git clone --recursive https://github.com/scienceopen/pymap3d
 pip install -r requirements.txt
 ```
 
