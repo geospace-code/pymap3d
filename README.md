@@ -10,7 +10,7 @@ Prereq:
 git clone --recursive https://github.com/scienceopen/pymap3d
 pip install -r requirements.txt
 ```
-
+ 
 Consider using [python-geopy](https://pypi.python.org/pypi/geopy) as well.
 For example, if you're seeking [Vicenty distance](http://geopy.readthedocs.org/en/latest/#module-geopy.distance).
 
