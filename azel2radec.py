@@ -16,7 +16,7 @@ try:
     usevallado=False
 except ImportError as e:
     print(str(e) + ' trouble importing AstroPy>1.0, falling back to Vallado')
-    from astrometry/datetime2hourangle import datetime2sidereal
+    from astrometry.datetime2hourangle import datetime2sidereal
     usevallado=True
 
 
