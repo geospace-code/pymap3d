@@ -1,0 +1,3 @@
+[submodule "astrometry"]
+	path = astrometry
+	url = https://github.com/scienceopen/astrometry
