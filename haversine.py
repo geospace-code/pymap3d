@@ -16,7 +16,7 @@ r1,d1: for second point, rightAscension,Declination [degrees]
 Note: adding decimal points to the constants made 0 difference in %timeit execution time
 GPLv3+ license
 
-The Meeus algorithm is about 9.5% faster on my PC, and gives virtually identical result
+The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC, and gives virtually identical result
 within double precision arithmetic limitations
 """
 
