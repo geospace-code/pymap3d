@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-requires Astropy 1.0 or newer. Try usevallado=True if you have an old 
+requires Astropy 1.0 or newer. Try usevallado=True if you have an old
 Astropy (Vallado accuracy is worse).
 Michael Hirsch
 GPLv3+
 """
 from __future__ import division,absolute_import
-from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d, nan
-import sys
+from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d
 
 try:
     from astropy import units as u
@@ -15,13 +14,13 @@ try:
     from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
     usevallado=False
 except ImportError as e:
-    print(str(e) + ' trouble importing AstroPy>1.0, falling back to Vallado')
+    print('trouble importing AstroPy>1.0, falling back to Vallado.  {}'.format(e))
     from astrometry.datetime2hourangle import datetime2sidereal
     usevallado=True
 
 
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
-    """ from D.Vallado Fundamentals of Astrodynamics and Applications 
+    """ from D.Vallado Fundamentals of Astrodynamics and Applications
 p.258-259 """
     az_deg = atleast_1d(az_deg)
     el_deg = atleast_1d(el_deg)
@@ -51,7 +50,7 @@ def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
     dec = arcsin( sin(el) * sin(lat) + cos(el) * cos(lat) * cos(az) )
 
     lha = arctan2( -(sin(az) * cos(el)) / cos(dec),
-                   (sin(el) - sin(lat)*sin(dec)) / (cos(dec) * cos(lat)) 
+                   (sin(el) - sin(lat)*sin(dec)) / (cos(dec) * cos(lat))
 )
 
     lst = datetime2sidereal(dtime,lon) #lon, ra in RADIANS
@@ -65,16 +64,11 @@ if __name__ == "__main__": #pragma: no cover
 
     p = ArgumentParser(description="convert azimuth and elevation to "
                  "right ascension and declination")
-    p.add_argument('azimuth',help='azimuth [degrees]',nargs='?',
-                   type=float,default=nan)
-    p.add_argument('elevation',help='elevation [degrees]',nargs='?',
-                   type=float,default=nan)
-    p.add_argument('lat',help='WGS84 latitude of observer [deg] ',nargs='?',
-                   type=float,default=nan)
-    p.add_argument('lon',help='WGS84 longitude of observer [deg.]',nargs='?',
-                   type=float,default=nan)
-    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ',
-                   nargs='?',type=str,default='')
+    p.add_argument('azimuth',help='azimuth [degrees]', type=float)
+    p.add_argument('elevation',help='elevation [degrees]', type=float)
+    p.add_argument('lat',help='WGS84 latitude of observer [deg] ', type=float)
+    p.add_argument('lon',help='WGS84 longitude of observer [deg.]', type=float)
+    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ', type=float)
     a = p.parse_args()
 
     dtime = parse(a.time)
