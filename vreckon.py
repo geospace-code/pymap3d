@@ -3,81 +3,80 @@
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 from __future__ import division
 from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
-                   radians, degrees, sign, mod, 
-empty,pi,sqrt,tile,nan,isfinite)
+                   radians, degrees, sign, mod, empty,pi,sqrt,tile,nan)
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
 
     """
-     VRECKON -  Computes points at a specified azimuth and range in an 
+     VRECKON -  Computes points at a specified azimuth and range in an
                 ellipsoidal earth
 
-                   - Using the WGS-84 Earth ellipsoid, travel a given 
+                   - Using the WGS-84 Earth ellipsoid, travel a given
                      distance along
-                     a given azimuth starting at a given initial point, 
+                     a given azimuth starting at a given initial point,
                      and return the
-                     endpoint within a few millimeters of accuracy, 
+                     endpoint within a few millimeters of accuracy,
                      using Vincenty's algorithm.
 
      USAGE:
      lat2,lon2 = vreckon(lat1, lon1, rng, azim)
-      Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth 
+      Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth
                 argument ELLIPSOID
 
      VARIABLES:
      lat1 = inital latitude (degrees)
      lon1 = initial longitude (degrees)
      rng  = distance (meters)
-                   It can be a scalar or a vector. Latter case computes 
+                   It can be a scalar or a vector. Latter case computes
                     a series of
-                   circles (or arc circles, see azim) centered on X,Y 
+                   circles (or arc circles, see azim) centered on X,Y
                     (which are scalars)
      azim = intial azimuth (degrees)
                    "azim" is a scalar or vector
      ellipsoid = two-element ellipsoid vector. Either [a b] or [a f]
                    If omitted, defaults to WGS-84
      lat2, lon2 = second point (degrees)
-     a21  = reverse azimuth (degrees), at final point facing back toward 
+     a21  = reverse azimuth (degrees), at final point facing back toward
             the  intial point
 
      Original algorithm source:
-     T. Vincenty, "Direct and Inverse Solutions of Geodesics on the 
+     T. Vincenty, "Direct and Inverse Solutions of Geodesics on the
 Ellipsoid
-     with Application of Nested Equations", Survey Review, vol. 23, no. 
+     with Application of Nested Equations", Survey Review, vol. 23, no.
 176,
      April 1975, pp 88-93.
      Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
 
      Notes:
      (1) The Vincenty reckoning algorithm was transcribed verbatim into
-         JavaScript by Chris Veness. It was modified and translated to 
+         JavaScript by Chris Veness. It was modified and translated to
 Matlab
          by Michael Kleder. Mr. Veness's website is:
-         
+
 http://www.movable-type.co.uk/scripts/latlong-vincenty-direct.html
      (2) Error correcting code, polar error corrections, WGS84 ellipsoid
          parameters, testing, and comments by Michael Kleder.
-     (3) By convention, when starting at a pole, the longitude of the 
+     (3) By convention, when starting at a pole, the longitude of the
 initial
-         point (otherwise meaningless) determines the longitude line 
+         point (otherwise meaningless) determines the longitude line
 along
          which to traverse, and hence the longitude of the final point.
-     (4) The convention noted in (3) above creates a discrepancy with 
+     (4) The convention noted in (3) above creates a discrepancy with
 VDIST
          when the the intial or final point is at a pole. In the VDIST
          function, when traversing from a pole, the azimuth is  0 when
-         heading away from the south pole and 180 when heading away from 
+         heading away from the south pole and 180 when heading away from
 the
-         north pole. In contrast, this VRECKON function uses the azimuth 
+         north pole. In contrast, this VRECKON function uses the azimuth
 as
         noted in (3) above when traversing away form a pole.
-     (5) In testing, where the traversal subtends no more than 178 
+     (5) In testing, where the traversal subtends no more than 178
 degrees,
-         this function correctly inverts the VDIST function to within 
+         this function correctly inverts the VDIST function to within
 0.2
          millimeters of distance, 5e-10 degrees of forward azimuth,
          and 5e-10 degrees of reverse azimuth. Precision reduces as test
-         points approach antipodal because the precision of VDIST is 
+         points approach antipodal because the precision of VDIST is
 reduced
          for nearly antipodal points. (A warning is given by VDIST.)
      (6) Tested but no warranty. Use at your own risk.
@@ -100,10 +99,10 @@ reduced
         exit('VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
     if lat1.size != 1 and rng.size > 1:
         exit('VRECKON: Variable ranges are only allowed for a single point.')
-    if ellipsoid is not None: # An ellipsoid vector (with a & b OR a & f) 
+    if ellipsoid is not None: # An ellipsoid vector (with a & b OR a & f)
         a = ellipsoid[0]           # b = ellipsoid(2);
         # Second ellipsoid argument contains flattening instead of minor axis
-        if ellipsoid[1] < 1:     
+        if ellipsoid[1] < 1:
             f = ellipsoid[1]
             b = a * (1 - f)
         else:               # Second ellipsoid argument contains minor axis
@@ -127,7 +126,7 @@ reduced
 
     if rng.size == 1:
         rng = tile(rng, azim.shape)
-        
+
     if azim.size == 1:
         azim = tile(azim, rng.shape)
 
@@ -174,11 +173,11 @@ reduced
                 sinSigma[k]   = sin(sigma[k])
                 cosSigma[k]   = cos(sigma[k])
                 tmp = 2*cos2SigmaM[k] * cos2SigmaM[k]
-                deltaSigma = (B[k] * sinSigma[k] * 
+                deltaSigma = (B[k] * sinSigma[k] *
                              (cos2SigmaM[k] + B[k]/4 *
                                 (cosSigma[k] * (-1 + tmp) -
                                   B[k]/6 * cos2SigmaM[k] *
-                                  (-3+4*sinSigma[k] * sinSigma[k]) * 
+                                  (-3+4*sinSigma[k] * sinSigma[k]) *
                                   (-3 + 2*tmp))) )
                 sigmaP = sigma[k]
                 sigma[k] = rng[k] / (b*A[k]) + deltaSigma
@@ -216,8 +215,7 @@ if __name__ == '__main__': #pragma: no cover
     p.add_argument('lon',help='longitude WGS-84 [degrees]',type=float)
     p.add_argument('range',help='range to traverse from start point [meters]',
                    type=float)
-    p.add_argument('azimuth',help='azimuth to start [deg.]',nargs='?',
-                   type=float,default=nan)
+    p.add_argument('azimuth',help='azimuth to start [deg.]',type=float)
     p = p.parse_args()
 
     lat2,lon2,a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
