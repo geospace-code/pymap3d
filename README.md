@@ -1,4 +1,4 @@
-
+[![Code Climate](https://codeclimate.com/github/scienceopen/pymap3d/badges/gpa.svg)](https://codeclimate.com/github/scienceopen/pymap3d)
 [![Build Status](https://travis-ci.org/scienceopen/pymap3d.svg)](https://travis-ci.org/scienceopen/pymap3d)
 [![Coverage Status](https://coveralls.io/repos/scienceopen/pymap3d/badge.svg)](https://coveralls.io/r/scienceopen/pymap3d)
 ==============
