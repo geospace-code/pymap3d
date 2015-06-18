@@ -64,16 +64,28 @@ if __name__ == "__main__": #pragma: no cover
 
     p = ArgumentParser(description="convert azimuth and elevation to "
                  "right ascension and declination")
-    p.add_argument('azimuth',help='azimuth [degrees]', type=float)
-    p.add_argument('elevation',help='elevation [degrees]', type=float)
-    p.add_argument('lat',help='WGS84 latitude of observer [deg] ', type=float)
-    p.add_argument('lon',help='WGS84 longitude of observer [deg.]', type=float)
-    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ', type=float)
+    p.add_argument('azimuth',help='azimuth [degrees]', nargs='?', type=float)
+    p.add_argument('elevation',help='elevation [degrees]', nargs='?', type=float)
+    p.add_argument('lat',help='WGS84 latitude of observer [deg] ',nargs='?', type=float)
+    p.add_argument('lon',help='WGS84 longitude of observer [deg.]', nargs='?',type=float)
+    p.add_argument('time',help='time of observation YYYY-mm-ddTHH:MM:SSZ', nargs='?')
+    p.add_argument('--idl',help='run Kitts Peak example from IDL Astrolib',action='store_true')
     a = p.parse_args()
 
-    dtime = parse(a.time)
-    print(dtime)
+    
 
-    ra,dec = azel2radec(a.azimuth,a.elevation,a.lat,a.lon,dtime)
+    if a.idl or a.time is None:
+        el=37+54/60+41/3600; az=264+55/60+6/3600
+        lat=31.9583; lon=-111.5967
+        dtime=parse('2014-12-25T22:00:00MST')
+
+        print('demo mode: Kitt Peak.  az {}  el {}  {}'.format(az,el,dtime))
+    else:
+        dtime = parse(a.time)
+        print('using time {}'.format(dtime))
+
+        az=a.azimuth; el=a.elevation; lat=a.lat; lon=a.lon
+
+    ra,dec = azel2radec(az,el,lat,lon,dtime)
     print('ra / dec =',(ra,dec) )
 
