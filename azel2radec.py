@@ -72,7 +72,7 @@ if __name__ == "__main__": #pragma: no cover
     p.add_argument('--idl',help='run Kitts Peak example from IDL Astrolib',action='store_true')
     a = p.parse_args()
 
-    
+
 
     if a.idl or a.time is None:
         el=37+54/60+41/3600; az=264+55/60+6/3600
@@ -87,5 +87,5 @@ if __name__ == "__main__": #pragma: no cover
         az=a.azimuth; el=a.elevation; lat=a.lat; lon=a.lon
 
     ra,dec = azel2radec(az,el,lat,lon,dtime)
-    print('ra / dec =',(ra,dec) )
+    print('ra [deg] {} , dec [deg] = {}'.format(ra,dec) )
 
