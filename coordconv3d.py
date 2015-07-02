@@ -231,8 +231,7 @@ def _rottrip(ang):
                  [0,         0,        1]])
 #==========================================================
 #%%
-def geodetic2aer(lat, lon, h, lat0, lon0, h0,
-ell=EarthEllipsoid(),deg=True):
+def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell,deg=deg)
     return enu2aer(e, n, u,deg=deg)
 
@@ -248,8 +247,7 @@ def geodetic2ecef(lat,lon,alt,ell=EarthEllipsoid(),deg=True):
     z = (N * (ell.b/ell.a)**2 + alt) * sin(lat)
     return x,y,z
 
-def geodetic2enu(lat, lon, h, lat0, lon0, h0,
-ell=EarthEllipsoid(),deg=True):
+def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     x1,y1,z1 = geodetic2ecef(lat,lon,h,ell,deg=deg)
     x2,y2,z2 = geodetic2ecef(lat0,lon0,h0,ell,deg=deg)
     dx = x1-x2
