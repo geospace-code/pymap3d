@@ -29,7 +29,7 @@ def aer2ecef(az,el,srange,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
     # Convert Local Spherical AER to ENU
     e1, n1, u1 = aer2enu(az, el, srange, deg=deg)
     # Rotating ENU to ECEF
-    dx, dy, dz = _enu2ecef(e1, n1, u1, lat0, lon0,deg=deg)
+    dx, dy, dz = _enu2uvw(e1, n1, u1, lat0, lon0,deg=deg)
     # Origin + offset from origin equals position in ECEF
     return x0 + dx, y0 + dy, z0 + dz
 
@@ -55,9 +55,9 @@ def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
 
 def ecef2enu(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     x0,y0,z0 = geodetic2ecef(lat0, lon0, h0,ell,deg=deg)
-    return _ecef2enu(x - x0, y - y0, z - z0,lat0,lon0,deg=deg)
+    return _uvw2enu(x - x0, y - y0, z - z0,lat0,lon0,deg=deg)
 
-def _ecef2enu(u, v, w,lat0,lon0,deg):
+def _uvw2enu(u, v, w,lat0,lon0,deg):
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -149,10 +149,6 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell,deg=deg)
     return n, e, -u
 
-def _ecef2ned(x, y, z, lat0, lon0,deg=True):
-    e, n, u = _ecef2enu(x, y, z, lat0, lon0,deg=deg)
-    return n, e, -u
-
 def enu2aer(e, n, u,deg=True):
     r = hypot(e, n)
     slantRange = hypot(r, u)
@@ -165,10 +161,10 @@ def enu2aer(e, n, u,deg=True):
 
 def enu2ecef(e1,n1,u1,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
     x0, y0, z0 = geodetic2ecef(lat0, lon0, alt0, ell,deg=deg)
-    dx, dy, dz = _enu2ecef(e1, n1, u1, lat0, lon0,deg=deg)
+    dx, dy, dz = _enu2uvw(e1, n1, u1, lat0, lon0,deg=deg)
     return x0 + dx, y0 + dy, z0 + dz
 
-def _enu2ecef(east,north,up,lat0,lon0,deg=True):
+def _enu2uvw(east,north,up,lat0,lon0,deg=True):
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -259,7 +255,7 @@ ell=EarthEllipsoid(),deg=True):
     dx = x1-x2
     dy = y1-y2
     dz = z1-z2
-    return _ecef2enu(dx, dy, dz, lat0, lon0,deg=deg)
+    return _uvw2enu(dx, dy, dz, lat0, lon0,deg=deg)
 
 def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell,deg=deg)
@@ -270,9 +266,6 @@ def ned2aer(n, e, d,deg=True):
 
 def ned2ecef(n, e, d, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell,deg=deg)
-
-def _ned2ecef(n, e, d, lat0, lon0,deg=True):
-    return _enu2ecef(e, n, -d, lat0, lon0,deg=deg)
 
 def ned2geodetic(n, e, d, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0,  ell,deg=deg)
