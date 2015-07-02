@@ -4,12 +4,12 @@ Michael Hirsch ported and adaptation from
   Copyright (c) 2013, Sandeep V. Mahanthi
  Copyright (c) 2013, Felipe G. Nievinski
 
- Input/output: units are METERS and DEGREES. 
+ Input/output: units are METERS and DEGREES.
  boolean deg=True means degrees
- 
- For most functions you can input Numpy arrays of any shape, 
+
+ For most functions you can input Numpy arrays of any shape,
  except as noted in the functions (they'll tell you if they expect a certain shape)
- 
+
  see test.py for example uses.
 """
 from __future__ import division
@@ -46,8 +46,8 @@ def aer2geodetic(az,el,srange,lat0,lon0,alt0,deg=True):
     return ecef2geodetic(x,y,z,deg=deg)
 
 def aer2ned(az,elev,slantRange,deg=True):
-    xNorth,yEast,zUp = aer2enu(az,elev,slantRange,deg=deg)
-    return xNorth,yEast,-zUp
+    e,n,u = aer2enu(az,elev,slantRange,deg=deg)
+    return n,e,-u
 
 def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell,deg=deg)
@@ -73,10 +73,10 @@ def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid(),deg=True):
         x,y,z = _depack(x)
     """Algorithm is based on
     http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
-    This algorithm provides a converging solution to the latitude 
+    This algorithm provides a converging solution to the latitude
 equation
     in terms of the parametric or reduced latitude form (v)
-    This algorithm provides a uniform solution over all latitudes as it 
+    This algorithm provides a uniform solution over all latitudes as it
 does
     not involve division by cos(phi) or sin(phi)
     """
@@ -146,12 +146,12 @@ does
 #        return lat, lon, alt #radians
 
 def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
-    yEast, xNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell,deg=deg)
-    return xNorth, yEast, -zUp
+    e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell,deg=deg)
+    return n, e, -u
 
 def _ecef2ned(x, y, z, lat0, lon0,deg=True):
-    xEast, yNorth, zUp = _ecef2enu(x, y, z, lat0, lon0,deg=deg)
-    return xEast, yNorth, -zUp
+    e, n, u = _ecef2enu(x, y, z, lat0, lon0,deg=deg)
+    return n, e, -u
 
 def enu2aer(e, n, u,deg=True):
     r = hypot(e, n)
@@ -179,16 +179,16 @@ def _enu2ecef(east,north,up,lat0,lon0,deg=True):
     v = sin(lon0) * t + cos(lon0) * east
     return u,v,w
 
-def enu2geodetic(e, n, u, lat0, lon0, h0, 
+def enu2geodetic(e, n, u, lat0, lon0, h0,
 ell=EarthEllipsoid(),deg=True):
     x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell,deg=deg)
     return ecef2geodetic(x, y, z, ell,deg=deg)
 #%%
     """inputs:
 
-    ece/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system 
+    ece/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system
 [meters]
-    lst: length N vector of sidereal time angle [radians]. The function 
+    lst: length N vector of sidereal time angle [radians]. The function
 datetime2hourangle.py in
     https://github.com/scienceopen/astrometry can provide this for you.
     """
@@ -235,7 +235,7 @@ def _rottrip(ang):
                  [0,         0,        1]])
 #==========================================================
 #%%
-def geodetic2aer(lat, lon, h, lat0, lon0, h0, 
+def geodetic2aer(lat, lon, h, lat0, lon0, h0,
 ell=EarthEllipsoid(),deg=True):
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell,deg=deg)
     return enu2aer(e, n, u,deg=deg)
@@ -252,7 +252,7 @@ def geodetic2ecef(lat,lon,alt,ell=EarthEllipsoid(),deg=True):
     z = (N * (ell.b/ell.a)**2 + alt) * sin(lat)
     return x,y,z
 
-def geodetic2enu(lat, lon, h, lat0, lon0, h0, 
+def geodetic2enu(lat, lon, h, lat0, lon0, h0,
 ell=EarthEllipsoid(),deg=True):
     x1,y1,z1 = geodetic2ecef(lat,lon,h,ell,deg=deg)
     x2,y2,z2 = geodetic2ecef(lat0,lon0,h0,ell,deg=deg)
@@ -261,34 +261,28 @@ ell=EarthEllipsoid(),deg=True):
     dz = z1-z2
     return _ecef2enu(dx, dy, dz, lat0, lon0,deg=deg)
 
-def geodetic2ned(lat, lon, h, lat0, lon0, h0, 
-ell=EarthEllipsoid(),deg=True):
-    yEast, xNorth, zUp = geodetic2enu(lat, lon, h, 
-                                      lat0, lon0, h0, 
-                                      ell,deg=deg)
-    return xNorth, yEast, -zUp
+def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
+    e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell,deg=deg)
+    return n, e, -u
 
-def ned2aer(xNorth, yEast, zDown,deg=True):
-    return enu2aer(yEast, xNorth, -zDown,deg=deg)
+def ned2aer(n, e, d,deg=True):
+    return enu2aer(e, n, -d, deg=deg)
 
-def ned2ecef(xNorth, yEast, zDown, lat0, lon0, h0, 
-             ell=EarthEllipsoid(),deg=True):
-    return enu2ecef(yEast, xNorth, -zDown, lat0, lon0, h0, ell,deg=deg)
+def ned2ecef(n, e, d, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
+    return enu2ecef(e, n, -d, lat0, lon0, h0, ell,deg=deg)
 
-def _ned2ecef(uNorth, vEast, wDown, lat0, lon0,deg=True):
-    return _enu2ecef(vEast, uNorth, -wDown, lat0, lon0,deg=deg)
+def _ned2ecef(n, e, d, lat0, lon0,deg=True):
+    return _enu2ecef(e, n, -d, lat0, lon0,deg=deg)
 
-def ned2geodetic(xNorth, yEast, zDown, lat0, lon0, h0, 
-                 ell=EarthEllipsoid(),deg=True):
-    x, y, z = enu2ecef(yEast, xNorth, -zDown, lat0, lon0, h0, 
-                       ell,deg=deg)
+def ned2geodetic(n, e, d, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
+    x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0,  ell,deg=deg)
     return ecef2geodetic(x, y, z,ell,deg=deg)
 
 
 def get_radius_normal(lat_radians,ell):
     a = ell.a;  b = ell.b
-    return a**2 / sqrt( 
-             a**2 * (cos(lat_radians))**2 + b**2 * 
+    return a**2 / sqrt(
+             a**2 * (cos(lat_radians))**2 + b**2 *
              (sin(lat_radians))**2 )
 
 def _depack(x0):
