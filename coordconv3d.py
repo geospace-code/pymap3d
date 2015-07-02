@@ -1,14 +1,21 @@
-"""Michael Hirsch ported and adaptation from
+"""
+Michael Hirsch ported and adaptation from
  GNU Octave Mapping Toolbox by
   Copyright (c) 2013, Sandeep V. Mahanthi
  Copyright (c) 2013, Felipe G. Nievinski
 
- Input/output: units are METERS and DEGREES. boolean deg=True means 
-degrees
+ Input/output: units are METERS and DEGREES. 
+ boolean deg=True means degrees
+ 
+ For most functions you can input Numpy arrays of any shape, 
+ except as noted in the functions (they'll tell you if they expect a certain shape)
+ 
+ see test.py for example uses.
 """
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
                    atleast_2d,atleast_1d,empty_like,array, nan)
+from warnings import warn
 
 class EarthEllipsoid:
     def __init__(self):
@@ -63,7 +70,7 @@ def _ecef2enu(u, v, w,lat0,lon0,deg):
 
 def ecef2geodetic(x,y=None,z=None,ell=EarthEllipsoid(),deg=True):
     if y is None:
-        x,y,z = depack(x)
+        x,y,z = _depack(x)
     """Algorithm is based on
     http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
     This algorithm provides a converging solution to the latitude 
@@ -190,14 +197,14 @@ def eci2ecef(eci,lst):
     eci = atleast_2d(eci)
     N,trip = eci.shape
     if eci.ndim > 2 or trip != 3:
-        print('*** eci2ecef: eci triplets must be shape (N,3)')
+        warn('*** eci2ecef: eci triplets must be shape (N,3)')
         return None
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
     ecef = empty_like(eci)
     for i in range(N):
-        ecef[i,:] = rottrip(lst[i]).dot(eci[i,:])
+        ecef[i,:] = _rottrip(lst[i]).dot(eci[i,:])
     return ecef
 
 def ecef2eci(ecef,lst):
@@ -205,20 +212,20 @@ def ecef2eci(ecef,lst):
     ecef = atleast_2d(ecef)
     N,trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
-        print('*** ecef2eci: ecef triplets must be shape (N,3)')
+        warn('*** ecef2eci: ecef triplets must be shape (N,3)')
         return None
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
     eci = empty_like(ecef)
     for i in range(N):
-        eci[i,:] = rottrip(lst[i]).T.dot(ecef[i,:]) #this one is transposed
+        eci[i,:] = _rottrip(lst[i]).T.dot(ecef[i,:]) #this one is transposed
     return eci
 
-def rottrip(ang):
+def _rottrip(ang):
     ang = ang.squeeze()
     if ang.size>1:
-        print('*** rottrip: only one angle allowed at a time')
+        warn('only one angle allowed at a time')
         return None
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
@@ -284,9 +291,9 @@ def get_radius_normal(lat_radians,ell):
              a**2 * (cos(lat_radians))**2 + b**2 * 
              (sin(lat_radians))**2 )
 
-def depack(x0):
+def _depack(x0):
     if x0.ndim>2:
-        print('*** depack: I expect Nx3 or 3XN triplets')
+        warn('I expect Nx3 or 3XN triplets')
         return nan, nan, nan
     m,n = x0.shape
     if m == 3: # 3xN triplets
@@ -298,7 +305,7 @@ def depack(x0):
         y = x0[:,1]
         z = x0[:,2]
     else:
-        print('*** depack: I expect an Nx3 or 3xN input of x,y,z')
+        warn('I expect an Nx3 or 3xN input of x,y,z')
         return nan, nan, nan
     return x,y,z
 
