@@ -8,8 +8,8 @@ gives angular distance in degrees between two rightAscension,Declination
 points in the sky.  Neglecting atmospheric effects, of course.
 
 inputs:
-r0,d0: for first point, rightAscension,Declination [degrees]
-r1,d1: for second point, rightAscension,Declination [degrees]
+r0,d0: for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
+r1,d1: for second point, rightAscension,Declination [degrees] or (azimuth,elevation)
 
 (or, azimuth/elevation respectively)
 
@@ -69,9 +69,6 @@ def angular_separation(lon1, lat1, lon2, lat2):
 
     return degrees(arctan2(sqrt(num1 ** 2 + num2 ** 2), denominator))
 
-
-
-
 def haversine(theta):
     """
     http://en.wikipedia.org/wiki/Haversine
@@ -89,12 +86,4 @@ if __name__ == '__main__': #pragma: no cover
 
     dist_deg = angledist(a.r0,a.d0,a.r1,a.d1)
 
-
     print(dist_deg)
-#%% compare with astropy
-    from numpy.testing import assert_almost_equal
-    dist_astropy = angular_separation(radians(a.r0),radians(a.d0),
-                                      radians(a.r1),radians(a.d1))
-    assert_almost_equal(dist_deg,dist_astropy)
-
-
