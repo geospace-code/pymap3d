@@ -213,8 +213,7 @@ if __name__ == '__main__': #pragma: no cover
     p = ArgumentParser(description='Python port of vreckon.m')
     p.add_argument('lat',help='latitude WGS-84 [degrees]',type=float)
     p.add_argument('lon',help='longitude WGS-84 [degrees]',type=float)
-    p.add_argument('range',help='range to traverse from start point [meters]',
-                   type=float)
+    p.add_argument('range',help='range to traverse from start point [meters]',  type=float)
     p.add_argument('azimuth',help='azimuth to start [deg.]',type=float)
     p = p.parse_args()
 

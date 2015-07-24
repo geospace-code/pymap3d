@@ -7,6 +7,7 @@ GPLv3+
 """
 from __future__ import division,absolute_import
 from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d
+from warnings import warn
 
 try:
     from astropy import units as u
@@ -14,8 +15,10 @@ try:
     from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
     usevallado=False
 except ImportError as e:
-    print('trouble importing AstroPy>1.0, falling back to Vallado.  {}'.format(e))
-    from astrometry.datetime2hourangle import datetime2sidereal
+    import sys
+    warn('trouble importing AstroPy>1.0, falling back to Vallado.  {}'.format(e))
+    sys.path.append('../astrometry')
+    from datetime2hourangle import datetime2sidereal
     usevallado=True
 
 
