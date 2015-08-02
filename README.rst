@@ -15,10 +15,11 @@ Atmospheric effects neglected in all functions not invoking AstroPy.
 
 Installation
 ============
-Execute these commands from Terminal::
+from Terminal::
 
- git clone --recursive https://github.com/scienceopen/pymap3d
-  pip install -r requirements.txt
+  git clone --depth 1 https://github.com/scienceopen/pymap3d
+  conda install --file requirements.txt
+  python setup.py develop
 
 
 Functions
