@@ -25,9 +25,9 @@ install:
 script:
   - if [[ -z $pyv ]]; then
         echo "running coverage";
-        coverage run test.py;
+        coverage run test/test.py;
     else
-        nosetests -v test.py;
+        nosetests -v test/test.py;
     fi
 
 after_success:
