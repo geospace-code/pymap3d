@@ -6,8 +6,9 @@ Michael Hirsch
 GPLv3+
 """
 from __future__ import division,absolute_import
+import logging
+from dateutil.parser import parse
 from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d
-from warnings import warn
 
 try:
     from astropy import units as u
@@ -15,10 +16,8 @@ try:
     from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
     usevallado=False
 except ImportError as e:
-    import sys
-    warn('trouble importing AstroPy>1.0, falling back to Vallado.  {}'.format(e))
-    sys.path.append('../astrometry')
-    from datetime2hourangle import datetime2sidereal
+    logging.error('trouble importing AstroPy>1.0, falling back to Vallado.  {}'.format(e))
+    from astrometry_azel.datetime2hourangle import datetime2sidereal
     usevallado=True
 
 
@@ -31,9 +30,9 @@ p.258-259 """
     lon_deg = atleast_1d(lon_deg)
 
     if az_deg.shape != el_deg.shape:
-        exit('*** azel2radec: az and el must be same shape ndarray')
+        raise TypeError('az and el must be same shape ndarray')
     if lat_deg.size != 1 or lon_deg.size !=1:
-        exit('*** azel2radec: need one observer and one or more  (az,el).')
+        raise TypeError('need one observer and one or more  (az,el).')
 
     if usevallado:
         ra_deg, dec_deg = azel2radecvallado(
@@ -62,7 +61,6 @@ def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
     return degrees(lst - lha) % 360, degrees(dec)
 
 if __name__ == "__main__": #pragma: no cover
-    from dateutil.parser import parse
     from argparse import ArgumentParser
 
     p = ArgumentParser(description="convert azimuth and elevation to "

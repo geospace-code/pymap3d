@@ -1,4 +1,7 @@
-astropy>=1.0
-numpy
+setuptools
+six
 python-dateutil
+pytz
 nose
+numpy
+astropy

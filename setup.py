@@ -11,7 +11,6 @@ setup(name='pymap3d',
 	  long_description=long_description,
 	  author='Michael Hirsch',
 	  url='https://github.com/scienceopen/pymap3d',
-	  install_requires=['astropy','numpy'],
           packages=['pymap3d'],
 	  )
 	  	  
