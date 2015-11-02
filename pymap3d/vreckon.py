@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Ported by Michael Hirsch to Python.
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
-from __future__ import division
+from __future__ import division,absolute_import
 from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
                    radians, degrees, sign, mod, empty,pi,sqrt,tile,nan)
 
@@ -95,10 +95,9 @@ reduced
     azim = atleast_1d(azim)
 
 
-    if absolute(lat1) > 90:
-        exit('VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
+    assert absolute(lat1) <= 90, 'VRECKON: Input lat. must be between -90 and 90 deg., inclusive.'
     if lat1.size != 1 and rng.size > 1:
-        exit('VRECKON: Variable ranges are only allowed for a single point.')
+        raise ValueError('VRECKON: Variable ranges are only allowed for a single point.')
     if ellipsoid is not None: # An ellipsoid vector (with a & b OR a & f)
         a = ellipsoid[0]           # b = ellipsoid(2);
         # Second ellipsoid argument contains flattening instead of minor axis
@@ -130,8 +129,7 @@ reduced
     if azim.size == 1:
         azim = tile(azim, rng.shape)
 
-    if rng.size != azim.shape[0]:
-        exit('VRECKON: Range must be a scalar or a vector with the same shape as azim.')
+    assert rng.size == azim.shape[0], 'VRECKON: Range must be a scalar or a vector with the same shape as azim.'
 
     alpha1 = radians(azim) # inital azimuth in radians
     sinAlpha1 = sin(alpha1)

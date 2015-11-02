@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from __future__ import division
+from __future__ import division,absolute_import
 from numpy import cos,sin,arctan2,arcsin,sqrt,radians,degrees
 """
 Michael Hirsch
