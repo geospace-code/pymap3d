@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import division,absolute_import
-from numpy import cos,sin,arctan2,arcsin,sqrt,radians,degrees
+from numpy import cos,arcsin,sqrt,radians,degrees
+from numpy.testing import assert_allclose
+from astropy.coordinates.angle_utilities import angular_separation
 """
 Michael Hirsch
 from "Astronomical Algorithms" by Jean Meeus Ch. 16 p. 111 (16.5)
@@ -23,6 +25,8 @@ within double precision arithmetic limitations
 def angledist(r0,d0,r1,d1):
     """ Meeus
     assumes degrees input, degrees output
+
+    either the arrays must be the same size, or one of them must be a scalar
     """
 
     r0 = radians(r0); r1 = radians(r1)
@@ -34,40 +38,14 @@ def angledist(r0,d0,r1,d1):
 
     return degrees(dist_rad)
 
-def angular_separation(lon1, lat1, lon2, lat2):
+def angledist_astropy(lon1, lat1, lon2, lat2):
     """
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
     Angular separation between two points on a sphere.
-    Parameters
-    ----------
-    lon1, lat1, lon2, lat2 : `Angle`, `~astropy.units.Quantity` or float
-        Longitude and latitude of the two points. Quantities should be in
-        angular units; floats in radians.
-    Returns
-    -------
-    angular separation : `~astropy.units.Quantity` or float
-        Type depends on input; `Quantity` in angular units, or float in
-        radians.
-    Notes
-    -----
-    The angular separation is calculated using the Vincenty formula [1]_,
-    which is slightly more complex and computationally expensive than
-    some alternatives, but is stable at at all distances, including the
-    poles and antipodes.
-    .. [1] http://en.wikipedia.org/wiki/Great-circle_distance
     """
-    sdlon = sin(lon2 - lon1)
-    cdlon = cos(lon2 - lon1)
-    slat1 = sin(lat1)
-    slat2 = sin(lat2)
-    clat1 = cos(lat1)
-    clat2 = cos(lat2)
-
-    num1 = clat2 * sdlon
-    num2 = clat1 * slat2 - slat1 * clat2 * cdlon
-    denominator = slat1 * slat2 + clat1 * clat2 * cdlon
-
-    return degrees(arctan2(sqrt(num1 ** 2 + num2 ** 2), denominator))
+    return degrees(angular_separation(radians(lon1),
+                                      radians(lat1), radians(lon2),
+                                      radians(lat2)))
 
 def haversine(theta):
     """
@@ -85,5 +63,8 @@ if __name__ == '__main__': #pragma: no cover
     a = p.parse_args()
 
     dist_deg = angledist(a.r0,a.d0,a.r1,a.d1)
+    dist_deg_astropy = angledist_astropy(a.r0,a.d0,a.r1,a.d1)
 
-    print(dist_deg)
+    print('vallado: {:.6f} deg sep'.format(dist_deg))
+
+    assert_allclose(dist_deg,dist_deg_astropy)
