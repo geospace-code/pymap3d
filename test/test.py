@@ -7,7 +7,7 @@ from numpy.testing import assert_allclose, assert_almost_equal
 #
 from pymap3d.coordconv3d import *
 from pymap3d.azel2radec import azel2radec
-from pymap3d.haversine import angledist,angular_separation
+from pymap3d.haversine import angledist,angledist_astropy
 from pymap3d.vreckon import vreckon
 
 
@@ -18,10 +18,8 @@ def test_azel2radec():
 
 def test_haversine():
     assert_almost_equal(angledist(35,23,84,20),45.482789587392013)
-        #%% compare with astropy
-    dist_astropy = angular_separation(radians(35),radians(23),
-                                      radians(84),radians(20))
-    assert_almost_equal(45.482789587392013, dist_astropy)
+    #%% compare with astropy
+    assert_almost_equal(45.482789587392013,angledist_astropy(35,23, 84,20))
 
 def test_vreckon():
     lat2,lon2,a21 = vreckon(10,20,3000,38)
