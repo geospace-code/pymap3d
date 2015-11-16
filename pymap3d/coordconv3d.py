@@ -12,19 +12,21 @@ Michael Hirsch ported and adaptation from
 
  see test.py for example uses.
 """
-from __future__ import division,absolute_import
-import logging
+from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
-                   atleast_2d,atleast_1d,empty_like,array, nan)
+                   atleast_2d,atleast_1d,empty_like,array)
 
 
 class EarthEllipsoid:
     def __init__(self):
-        self.a = 6378137.0  # semi-major axis [m]
-        self.f = 1.0 / 298.2572235630  # flattening
+        self.a = 6378137. # semi-major axis [m]
+        self.f = 1 / 298.2572235630  # flattening
         self.b = self.a * (1 - self.f)  # semi-minor axis
 
 def aer2ecef(az,el,srange,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
+    """
+     Input/output: units are METERS and DEGREES.
+    """
     # Origin of the local system in geocentric coordinates.
     x0,y0,z0 = geodetic2ecef(lat0,lon0,alt0,ell,deg=deg)
     # Convert Local Spherical AER to ENU
