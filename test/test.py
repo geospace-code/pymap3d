@@ -3,7 +3,9 @@
 runs tests
 """
 from __future__ import absolute_import, division
+from numpy import asarray
 from numpy.testing import assert_allclose, assert_almost_equal
+from pytz import UTC
 #
 from pymap3d.coordconv3d import *
 from pymap3d.azel2radec import azel2radec
@@ -109,7 +111,7 @@ def test_ecefenu():
                     rtol=0.01,
                     err_msg='ecef2aer {}'.format(ecef2aer(a2x, a2y, a2z, tlat,
                     tlon, talt)))
-
+#%%
     assert_allclose(enu2aer(te,tn,tu), (e2az,e2el,e2rn),
                     rtol=0.01,
                     err_msg='enu2aer: ' + str(enu2aer(te,tn,tu)))
@@ -137,15 +139,20 @@ def test_ecefenu():
                     rtol=0.01,
                     err_msg='ned2ecef: '+
                     str(ned2ecef(tn,te,-tu,tlat,tlon,talt)))
+#%%
+def test_eci():
+    tlla = (42,-82,200)
+    teci = (-3.977913815668146e6,-2.582332196263046e6,4.250818828152067e6)
+    t = datetime(2013,1,15,12,0,5,tzinfo=UTC)
+    lla = asarray(eci2geodetic(teci,t)).squeeze()
+    assert_allclose(lla,tlla,rtol=0.2)
 
-    assert_allclose(eci2ecef((10e6,20e6,30e6),.230).squeeze(),
-                (1.429621442075752e7,1.719355266475562e7,3e7),
-                rtol=0.01)
+    assert_allclose(eci2ecef(teci,t).squeeze(),
+                [649012.04640917,-4697980.55129606,4250818.82815207])
 
-    assert_allclose(ecef2eci((1.429621442075752e7,1.719355266475562e7,3e7),.230).squeeze(),
-                (10e6,20e6,30e6),
-                rtol=0.01)
-
+    assert_allclose(ecef2eci([649012.04640917,-4697980.55129606,4250818.82815207],t).squeeze(),
+                    teci)
+#%%
 if __name__ == '__main__':
     test_azel2radec()
     test_haversine()
@@ -153,3 +160,4 @@ if __name__ == '__main__':
 
     test_geodetic()
     test_ecefenu()
+    test_eci()
