@@ -152,6 +152,9 @@ def test_eci():
 
     assert_allclose(ecef2eci([649012.04640917,-4697980.55129606,4250818.82815207],t).squeeze(),
                     teci)
+
+    assert_allclose(asarray(eci2aer(teci,42,-100,0,t)).squeeze(),
+                    [83.73050,-6.614478,1.473510e6])
 #%%
 if __name__ == '__main__':
     test_azel2radec()
