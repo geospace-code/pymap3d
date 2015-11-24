@@ -15,7 +15,6 @@ Michael Hirsch ported and adaptation from
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
                    atleast_2d,atleast_1d,empty_like,array)
-from astropy.coordinates.angles import Longitude
 from astropy.time import Time
 from datetime import datetime
 
@@ -225,8 +224,14 @@ def eci2ecef(eci,t):
         ecef[i,:] = _rottrip(gst[i]).dot(eci[i,:])
     return ecef
 
-def ecef2eci(ecef,lst):
-    lst = atleast_1d(lst)
+def ecef2eci(ecef,t):
+    t = atleast_1d(t)
+    if isinstance(t[0],datetime):
+        gst = Time(t).sidereal_time('apparent','greenwich').radian
+    else:
+        gst = t
+    assert isinstance(gst[0],float) # must be in radians!
+
     ecef = atleast_2d(ecef)
     N,trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
@@ -236,7 +241,7 @@ def ecef2eci(ecef,lst):
     """
     eci = empty_like(ecef)
     for i in range(N):
-        eci[i,:] = _rottrip(lst[i]).T.dot(ecef[i,:]) #this one is transposed
+        eci[i,:] = _rottrip(gst[i]).T.dot(ecef[i,:]) #this one is transposed
     return eci
 
 def _rottrip(ang):
