@@ -22,18 +22,6 @@ except ImportError as e:
 
 
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
-    """ from D.Vallado Fundamentals of Astrodynamics and Applications
-p.258-259 """
-    az_deg = atleast_1d(az_deg)
-    el_deg = atleast_1d(el_deg)
-    lat_deg = atleast_1d(lat_deg)
-    lon_deg = atleast_1d(lon_deg)
-
-    if az_deg.shape != el_deg.shape:
-        raise TypeError('az and el must be same shape ndarray')
-    if lat_deg.size != 1 or lon_deg.size !=1:
-        raise TypeError('need one observer and one or more  (az,el).')
-
     if usevallado:
         ra_deg, dec_deg = azel2radecvallado(
                              az_deg,el_deg,lat_deg,lon_deg,dtime)
@@ -46,6 +34,18 @@ p.258-259 """
     return sky.ra.deg, sky.dec.deg
 
 def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
+    """ from D.Vallado Fundamentals of Astrodynamics and Applications
+    p.258-259 """
+    az_deg = atleast_1d(az_deg)
+    el_deg = atleast_1d(el_deg)
+    lat_deg = atleast_1d(lat_deg)
+    lon_deg = atleast_1d(lon_deg)
+
+    if az_deg.shape != el_deg.shape:
+        raise TypeError('az and el must be same shape ndarray')
+    if lat_deg.size != 1 or lon_deg.size !=1:
+        raise TypeError('need one observer and one or more  (az,el).')
+
     az = radians(az_deg); el = radians(el_deg)
     lat = radians(lat_deg); lon = radians(lon_deg)
      #Vallado "algorithm 28" p 268
