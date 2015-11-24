@@ -15,7 +15,9 @@ Michael Hirsch ported and adaptation from
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
                    atleast_2d,atleast_1d,empty_like,array)
-
+from astropy.coordinates.angles import Longitude
+from astropy.time import Time
+from datetime import datetime
 
 class EarthEllipsoid:
     def __init__(self):
@@ -182,17 +184,34 @@ def enu2geodetic(e, n, u, lat0, lon0, h0,
 ell=EarthEllipsoid(),deg=True):
     x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell,deg=deg)
     return ecef2geodetic(x, y, z, ell,deg=deg)
-#%%
-    """inputs:
-
-    ece/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system
-[meters]
-    lst: length N vector of sidereal time angle [radians]. The function
-datetime2hourangle.py in
-    https://github.com/scienceopen/astrometry can provide this for you.
+#%% ECI functions
     """
-def eci2ecef(eci,lst):
-    lst = atleast_1d(lst)
+    inputs:
+    -------
+    ece/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
+    : length N vector of datetime OR greenwich sidereal time angle [radians].
+
+    Note: This conversion is idealized and doesn't consider nutations, perterbations,
+    etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions from ECI to ECEF
+    """
+def eci2geodetic(eci,t):
+    """ a.k.a. eci2lla() """
+    ecef = eci2ecef(eci,t)
+    return ecef2geodetic(ecef)
+
+def eci2ecef(eci,t):
+    """
+    input t is either an Astropy Longitude or float, both in radians
+
+    """
+    t = atleast_1d(t)
+    if isinstance(t[0],datetime):
+        gst = Time(t).sidereal_time('apparent','greenwich').radian
+    else:
+        gst = t
+    assert isinstance(gst[0],float) # must be in radians!
+
+
     eci = atleast_2d(eci)
     N,trip = eci.shape
     if eci.ndim > 2 or trip != 3:
@@ -201,8 +220,9 @@ def eci2ecef(eci,lst):
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
     ecef = empty_like(eci)
+
     for i in range(N):
-        ecef[i,:] = _rottrip(lst[i]).dot(eci[i,:])
+        ecef[i,:] = _rottrip(gst[i]).dot(eci[i,:])
     return ecef
 
 def ecef2eci(ecef,lst):
