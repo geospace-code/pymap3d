@@ -11,14 +11,15 @@ Python 3-D coordinate conversions
 ==================================
 
 Python coordinate conversions, following convention of several popular Matlab routines.
-Atmospheric effects neglected in all functions not invoking AstroPy.
 
-Installation
-============
-::
+Usage
+=====
+a few quick examples::
 
-  python setup.py develop
-
+   from pymap3d.coordconv3d import *
+   
+   lat,lon,alt = eci2geodetic(eci,t)
+   az,el,range = geodetic2aer(lat,lon,alt,42,-82,0)
 
 Functions
 ==========
@@ -35,6 +36,18 @@ Popular mapping toolbox functions ported to Python include::
 for converting right ascension and declination to azimuth and elevation, `please see the function radec2azel <https://github.com/scienceopen/astrometry/>`_
 
 or simply use the functionality of `AstroPy 1.0+ to do radec->azel conversion <http://astropy.readthedocs.org/en/v1.0/whatsnew/1.0.html#support-for-alt-az-coordinates>`_
+
+Installation
+============
+::
+
+  python setup.py develop
+
+
+Caveats
+=======
+Atmospheric effects neglected in all functions not invoking AstroPy.
+Planetary perturbations and nutation etc. not fully considered.
 
 Alternatives
 ============
