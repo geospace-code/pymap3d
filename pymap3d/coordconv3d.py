@@ -196,7 +196,12 @@ ell=EarthEllipsoid(),deg=True):
 def eci2geodetic(eci,t):
     """ a.k.a. eci2lla() """
     ecef = eci2ecef(eci,t)
-    return ecef2geodetic(ecef)
+    return ecef2geodetic(ecef[:,0],ecef[:,1],ecef[:,2])
+
+def eci2aer(eci,lat0,lon0,h0,t):
+    ecef= eci2ecef(eci,t)
+    return ecef2aer(ecef[:,0],ecef[:,1],ecef[:,2],lat0,lon0,h0)
+
 
 def eci2ecef(eci,t):
     """
