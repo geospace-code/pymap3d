@@ -200,7 +200,7 @@ def eci2geodetic(eci,t):
 
 def eci2ecef(eci,t):
     """
-    input t is either an Astropy Longitude or float, both in radians
+    input t is either a datetime or float in radians
 
     """
     t = atleast_1d(t)
@@ -225,6 +225,10 @@ def eci2ecef(eci,t):
     return ecef
 
 def ecef2eci(ecef,t):
+    """
+    input t is either a datetime or float in radians
+
+    """
     t = atleast_1d(t)
     if isinstance(t[0],datetime):
         gst = Time(t).sidereal_time('apparent','greenwich').radian
