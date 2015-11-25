@@ -14,7 +14,7 @@ Michael Hirsch ported and adaptation from
 """
 from __future__ import division
 from numpy import (sin,cos,tan,sqrt,radians,arctan2,hypot,degrees,mod,
-                   atleast_2d,atleast_1d,empty_like,array)
+                   atleast_2d,atleast_1d,empty_like,array,column_stack)
 from astropy.time import Time
 from datetime import datetime
 
@@ -197,6 +197,10 @@ def eci2geodetic(eci,t):
     """ a.k.a. eci2lla() """
     ecef = eci2ecef(eci,t)
     return ecef2geodetic(ecef[:,0],ecef[:,1],ecef[:,2])
+
+def aer2eci(az,el,srange,lat0,lon0,h0,t,ell=EarthEllipsoid(),deg=True):
+    x,y,z = aer2ecef(az,el,srange,lat0,lon0,h0,ell,deg)
+    return ecef2eci(column_stack((x,y,z)),t)
 
 def eci2aer(eci,lat0,lon0,h0,t):
     ecef= eci2ecef(eci,t)
