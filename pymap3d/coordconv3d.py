@@ -27,6 +27,7 @@ class EarthEllipsoid:
 def aer2ecef(az,el,srange,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
     """
      Input/output: units are METERS and DEGREES.
+     if you specify NaN for srange, return value z will be NaN
     """
     # Origin of the local system in geocentric coordinates.
     x0,y0,z0 = geodetic2ecef(lat0,lon0,alt0,ell,deg=deg)
