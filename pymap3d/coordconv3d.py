@@ -39,6 +39,11 @@ def aer2ecef(az,el,srange,lat0,lon0,alt0,ell=EarthEllipsoid(),deg=True):
     return x0 + dx, y0 + dy, z0 + dz
 
 def aer2enu(az,el,srange,deg=True):
+    """
+    input: azimuth, elevation [deg], slant range [m]
+    output: East, North, Up [m]
+
+    """
     if deg:
         el = radians(el)
         az = radians(az)
@@ -155,6 +160,9 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(),deg=True):
     return n, e, -u
 
 def enu2aer(e, n, u,deg=True):
+    """
+    input: east, north, up [m]
+    """
     r = hypot(e, n)
     slantRange = hypot(r, u)
     elev = arctan2(u,r)
