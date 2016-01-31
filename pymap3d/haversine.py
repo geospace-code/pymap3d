@@ -16,7 +16,6 @@ r1,d1: for second point, rightAscension,Declination [degrees] or (azimuth,elevat
 (or, azimuth/elevation respectively)
 
 Note: adding decimal points to the constants made 0 difference in %timeit execution time
-GPLv3+ license
 
 The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC, and gives virtually identical result
 within double precision arithmetic limitations
