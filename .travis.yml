@@ -1,7 +1,6 @@
 language: python
 
 python:
-    - 2.7
     - 3.5
 
 sudo: false
@@ -21,19 +20,11 @@ before_install:
 install:
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
-    - if [[ ${TRAVIS_PYTHON_VERSION::1} -eq 2 ]]; then
-         pip -q install coveralls;
-      fi
+    - pip -q install coveralls
     - python setup.py develop
 
 script:
-    - if [[ ${TRAVIS_PYTHON_VERSION::1} -eq 2 ]]; then
-        coverage run test/test.py;
-      else
-        nosetests -v test/test.py;
-      fi
+    - coverage run test/test.py
 
 after_success:
-    - if [[ ${TRAVIS_PYTHON_VERSION::1} -eq 2 ]]; then
-        coveralls;
-      fi
+    - coveralls
