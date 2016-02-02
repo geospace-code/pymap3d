@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import division,absolute_import
 from numpy import cos,arcsin,sqrt,radians,degrees
 from numpy.testing import assert_allclose
 from astropy.coordinates.angle_utilities import angular_separation
@@ -50,7 +49,7 @@ def haversine(theta):
     """
     http://en.wikipedia.org/wiki/Haversine
     Meeus p. 111 """
-    return (1-cos(theta)) / 2
+    return (1-cos(theta)) / 2.
 
 if __name__ == '__main__': #pragma: no cover
     from argparse import ArgumentParser
