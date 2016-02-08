@@ -9,27 +9,18 @@ from __future__ import division,absolute_import
 import logging
 from dateutil.parser import parse
 from numpy import sin, cos, degrees, radians,arcsin, arctan2, atleast_1d
+from astropy import units as u
+from astropy.time import Time
+from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
 
-try:
-    from astropy import units as u
-    from astropy.time import Time
-    from astropy.coordinates import SkyCoord, EarthLocation, AltAz, ICRS
-    usevallado=False
-except ImportError as e:
-    logging.error('trouble importing AstroPy>1.0, falling back to Vallado.  {}'.format(e))
-    from astrometry_azel.datetime2hourangle import datetime2sidereal
-    usevallado=True
+#from astrometry_azel.datetime2hourangle import datetime2sidereal
 
 
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, dtime):
-    if usevallado:
-        ra_deg, dec_deg = azel2radecvallado(
-                             az_deg,el_deg,lat_deg,lon_deg,dtime)
-    else: #use astropy v1.0 +
-        obs = EarthLocation(lat=lat_deg*u.deg, lon=lon_deg*u.deg)
-        direc = AltAz(location=obs, obstime=Time(dtime),
-                      az=az_deg*u.deg, alt=el_deg*u.deg)
-        sky = SkyCoord(direc.transform_to(ICRS()))
+    obs = EarthLocation(lat=lat_deg*u.deg, lon=lon_deg*u.deg)
+    direc = AltAz(location=obs, obstime=Time(dtime),
+                  az=az_deg*u.deg, alt=el_deg*u.deg)
+    sky = SkyCoord(direc.transform_to(ICRS()))
 
     return sky.ra.deg, sky.dec.deg
 
@@ -52,8 +43,7 @@ def azel2radecvallado(az_deg,el_deg,lat_deg,lon_deg,dtimen):
     dec = arcsin( sin(el) * sin(lat) + cos(el) * cos(lat) * cos(az) )
 
     lha = arctan2( -(sin(az) * cos(el)) / cos(dec),
-                   (sin(el) - sin(lat)*sin(dec)) / (cos(dec) * cos(lat))
-)
+                   (sin(el) - sin(lat)*sin(dec)) / (cos(dec) * cos(lat)) )
 
     lst = datetime2sidereal(dtime,lon) #lon, ra in RADIANS
 
