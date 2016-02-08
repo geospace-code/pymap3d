@@ -31,7 +31,7 @@ Popular mapping toolbox functions ported to Python include::
   enu2aer  enu2ecef  enu2ecefv  enu2geodetic
   geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
   ned2aer  ned2ecef  ned2ecefv  ned2geodetic
-  vreckon
+  vreckon vdist
 
 for converting right ascension and declination to azimuth and elevation, `please see the function radec2azel <https://github.com/scienceopen/astrometry/>`_
 
@@ -48,8 +48,3 @@ Caveats
 =======
 Atmospheric effects neglected in all functions not invoking AstroPy.
 Planetary perturbations and nutation etc. not fully considered.
-
-Alternatives
-============
-Consider using `python-geopy <https://pypi.python.org/pypi/geopy>`_ as well.
-For example, if you're seeking `Vicenty distance <http://geopy.readthedocs.org/en/latest/#module-geopy.distance>`_.
