@@ -4,13 +4,14 @@ runs tests
 """
 from __future__ import absolute_import, division
 from numpy import asarray
-from numpy.testing import assert_allclose, assert_almost_equal
+from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
 from pytz import UTC
 #
 from pymap3d.coordconv3d import *
 from pymap3d.azel2radec import azel2radec
 from pymap3d.haversine import angledist,angledist_astropy
 from pymap3d.vreckon import vreckon
+from pymap3d.vdist import vdist
 
 
 def test_azel2radec():
@@ -155,12 +156,10 @@ def test_eci():
 
     assert_allclose(asarray(eci2aer(teci,42,-100,0,t)).squeeze(),
                     [83.73050,-6.614478,1.473510e6])
+
+def test_vdist():
+    dist_m = vdist(10,20,10.021372672660874,20.016847098929979)
+    assert_almost_equal(dist_m,2999.9999971763464)
 #%%
 if __name__ == '__main__':
-    test_azel2radec()
-    test_haversine()
-    test_vreckon()
-
-    test_geodetic()
-    test_ecefenu()
-    test_eci()
+    run_module_suite()
