@@ -20,7 +20,7 @@ The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC, and give
 within double precision arithmetic limitations
 """
 
-def angledist(r0,d0,r1,d1):
+def angledist_meeus(r0,d0,r1,d1):
     """ Meeus
     assumes degrees input, degrees output
 
@@ -36,7 +36,7 @@ def angledist(r0,d0,r1,d1):
 
     return degrees(dist_rad)
 
-def angledist_astropy(lon1, lat1, lon2, lat2):
+def angledist(lon1, lat1, lon2, lat2):
     """
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
     Angular separation between two points on a sphere.
