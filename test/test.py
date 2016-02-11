@@ -11,7 +11,7 @@ from dateutil.parser import parse
 from pymap3d.coordconv3d import *
 from pymap3d.azel2radec import azel2radec
 from pymap3d.radec2azel import radec2azel
-from pymap3d.haversine import angledist,angledist_astropy
+from pymap3d.haversine import angledist,angledist_meeus
 from pymap3d.vreckon import vreckon
 from pymap3d.vdist import vdist
 
@@ -30,7 +30,7 @@ def test_radec2azel():
 def test_haversine():
     assert_almost_equal(angledist(35,23,84,20),45.482789587392013)
     #%% compare with astropy
-    assert_almost_equal(45.482789587392013,angledist_astropy(35,23, 84,20))
+    assert_almost_equal(45.482789587392013, angledist_meeus(35,23, 84,20))
 
 def test_vreckon():
     lat2,lon2,a21 = vreckon(10,20,3000,38)
