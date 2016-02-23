@@ -2,7 +2,6 @@
 """
 runs tests
 """
-from __future__ import absolute_import, division
 from numpy import asarray
 from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
 from pytz import UTC
