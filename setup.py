@@ -20,3 +20,5 @@ try:
     subprocess.run(['conda','install','--yes','--quiet','--file','requirements.txt'])
 except Exception as e:
     print('you will need to install packages in requirements.txt  {}'.format(e))
+    with open('requirements.txt','r') as f:
+        print(f.read())
