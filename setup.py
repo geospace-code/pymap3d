@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from setuptools import setup
 import subprocess
 
@@ -13,6 +12,7 @@ with open('README.rst','r') as f:
 	long_description = f.read()
 
 setup(name='pymap3d',
+      package=['pymap3d'],
 	  description='3-D coordinate conversion utilities',
 	  long_description=long_description,
 	  author='Michael Hirsch',
