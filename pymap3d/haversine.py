@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from numpy import cos,arcsin,sqrt,radians,degrees
+from numpy import cos, arcsin, sqrt, radians, degrees
 from numpy.testing import assert_allclose
 from astropy.coordinates.angle_utilities import angular_separation
 """
@@ -16,25 +16,30 @@ r1,d1: for second point, rightAscension,Declination [degrees] or (azimuth,elevat
 
 Note: adding decimal points to the constants made 0 difference in %timeit execution time
 
-The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC, and gives virtually identical result
+The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC,
+and gives virtually identical result
 within double precision arithmetic limitations
 """
 
-def angledist_meeus(r0,d0,r1,d1):
+
+def angledist_meeus(r0, d0, r1, d1):
     """ Meeus
     assumes degrees input, degrees output
 
     either the arrays must be the same size, or one of them must be a scalar
     """
 
-    r0 = radians(r0); r1 = radians(r1)
-    d0 = radians(d0); d1 = radians(d1)
-    dist_rad = 2*arcsin(
-                 sqrt(
-                 haversine(d1-d0) +
-                   cos(d0)*cos(d1) * haversine(r1-r0) ) )
+    r0 = radians(r0)
+    r1 = radians(r1)
+    d0 = radians(d0)
+    d1 = radians(d1)
+    dist_rad = 2 * arcsin(
+        sqrt(
+            haversine(d1 - d0) +
+            cos(d0) * cos(d1) * haversine(r1 - r0)))
 
     return degrees(dist_rad)
+
 
 def angledist(lon1, lat1, lon2, lat2):
     """
@@ -45,24 +50,25 @@ def angledist(lon1, lat1, lon2, lat2):
                                       radians(lat1), radians(lon2),
                                       radians(lat2)))
 
+
 def haversine(theta):
     """
     http://en.wikipedia.org/wiki/Haversine
     Meeus p. 111 """
-    return (1-cos(theta)) / 2.
+    return (1 - cos(theta)) / 2.
 
-if __name__ == '__main__': #pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     from argparse import ArgumentParser
     p = ArgumentParser(description="computes angular distance between two points in sky")
-    p.add_argument('r0',help='right ascension of first point [degrees]',type=float)
-    p.add_argument('d0',help='declination of first point [degrees]',type=float)
-    p.add_argument('r1',help='right ascension of second point [degrees]',type=float)
-    p.add_argument('d1',help='declination of second point [degrees]', type=float)
+    p.add_argument('r0', help='right ascension: first point [deg]', type=float)
+    p.add_argument('d0', help='declination: first point [deg]', type=float)
+    p.add_argument('r1', help='right ascension: 2nd point [deg]', type=float)
+    p.add_argument('d1', help='declination: 2nd point [degrees]', type=float)
     a = p.parse_args()
 
-    dist_deg = angledist(a.r0,a.d0,a.r1,a.d1)
-    dist_deg_astropy = angledist_astropy(a.r0,a.d0,a.r1,a.d1)
+    dist_deg = angledist(a.r0, a.d0, a.r1, a.d1)
+    dist_deg_astropy = angledist(a.r0, a.d0, a.r1, a.d1)
 
     print('vallado: {:.6f} deg sep'.format(dist_deg))
 
-    assert_allclose(dist_deg,dist_deg_astropy)
+    assert_allclose(dist_deg, dist_deg_astropy)
