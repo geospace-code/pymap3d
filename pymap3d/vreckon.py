@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Ported by Michael Hirsch to Python.
 # Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
-from __future__ import division,absolute_import
-from numpy import (absolute, sin, cos, tan,arctan2, atleast_1d,
-                   radians, degrees, sign, mod, empty,pi,sqrt,tile,nan)
+from __future__ import division, absolute_import
+from numpy import (absolute, sin, cos, tan, arctan2, atleast_1d,
+                   radians, degrees, sign, mod, empty, pi, sqrt, tile, nan)
+
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
-
     """
      VRECKON -  Computes points at a specified azimuth and range in an
                 ellipsoidal earth
@@ -94,11 +94,12 @@ reduced
     rng = atleast_1d(rng)
     azim = atleast_1d(azim)
 
-
-    assert absolute(lat1) <= 90, 'VRECKON: Input lat. must be between -90 and 90 deg., inclusive.'
+    assert absolute(lat1) <= 90, (
+        'VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
     if lat1.size != 1 and rng.size > 1:
-        raise ValueError('VRECKON: Variable ranges are only allowed for a single point.')
-    if ellipsoid is not None: # An ellipsoid vector (with a & b OR a & f)
+        raise ValueError(
+            'VRECKON: Variable ranges are only allowed for a single point.')
+    if ellipsoid is not None:  # An ellipsoid vector (with a & b OR a & f)
         a = ellipsoid[0]           # b = ellipsoid(2);
         # Second ellipsoid argument contains flattening instead of minor axis
         if ellipsoid[1] < 1:
@@ -108,20 +109,20 @@ reduced
             f = (a - ellipsoid[1]) / a
     else:   # Supply WGS84 earth ellipsoid axis lengths in meters:
         a = 6378137                 # semimajor axis
-        b = 6356752.31424518   # computed from WGS84 earth flattening coefficient definition
-        f = (a-b)/a
+        b = 6356752.31424518   # WGS84 earth flattening coefficient definition
+        f = (a - b) / a
 
     lat1 = radians(lat1)            # intial latitude in radians
     lon1 = radians(lon1)            # intial longitude in radians
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
-    kidx = absolute(pi/2-absolute(lat1)) < 1e-10
-    lat1[kidx] = sign(lat1[kidx])*(pi/2-(1e-10))
+    kidx = absolute(pi / 2 - absolute(lat1)) < 1e-10
+    lat1[kidx] = sign(lat1[kidx]) * (pi / 2 - (1e-10))
 
     #  Allow for multiple circles starting from the same point
     if lat1.size == 1 and lon1.size == 1 and rng.size > 1:
-        lat1 = tile(lat1,rng.shape)
-        lon1 = tile(lon1,rng.shape)
+        lat1 = tile(lat1, rng.shape)
+        lon1 = tile(lon1, rng.shape)
 
     if rng.size == 1:
         rng = tile(rng, azim.shape)
@@ -129,36 +130,41 @@ reduced
     if azim.size == 1:
         azim = tile(azim, rng.shape)
 
-    assert rng.size == azim.shape[0], 'VRECKON: Range must be a scalar or a vector with the same shape as azim.'
+    assert rng.size == azim.shape[0], (
+        'Range must be a scalar or vector with the same shape as azim.')
 
-    alpha1 = radians(azim) # inital azimuth in radians
+    alpha1 = radians(azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
     cosAlpha1 = cos(alpha1)
 
-    tanU1 = (1-f) * tan(lat1)
+    tanU1 = (1 - f) * tan(lat1)
     cosU1 = 1 / sqrt(1 + tanU1 ** 2)
     sinU1 = tanU1 * cosU1
     sigma1 = arctan2(tanU1, cosAlpha1)
     sinAlpha = cosU1 * sinAlpha1
     cosSqAlpha = 1 - sinAlpha * sinAlpha
     uSq = cosSqAlpha * (a**2 - b**2) / b**2
-    A = 1 + uSq/16384 * (4096+uSq * (-768+uSq * (320-175 * uSq)))
-    B = uSq/1024 * (256+uSq * (-128+uSq * (74-47 * uSq)))
-    sigma = rng / (b*A)
-    sigmaP = 2*pi
+    A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
+    B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
+    sigma = rng / (b * A)
+    sigmaP = 2 * pi
 
     if sigma.size == 1:
-        sinSigma = nan; cosSigma = nan; cos2SigmaM = nan
-        while absolute(sigma-sigmaP) > 1e-12:
-            cos2SigmaM = cos(2*sigma1 + sigma)
+        sinSigma = nan
+        cosSigma = nan
+        cos2SigmaM = nan
+        while absolute(sigma - sigmaP) > 1e-12:
+            cos2SigmaM = cos(2 * sigma1 + sigma)
             sinSigma = sin(sigma)
             cosSigma = cos(sigma)
-            deltaSigma = B * sinSigma*(cos2SigmaM + B/4 * (cosSigma *
-                                   (-1 + 2*cos2SigmaM * cos2SigmaM) -
-                     B/6 * cos2SigmaM * (-3+4*sinSigma * sinSigma) *
-                                     (-3 + 4*cos2SigmaM * cos2SigmaM)))
+            deltaSigma = (B * sinSigma *
+                          (cos2SigmaM + B / 4 *
+                           (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) -
+                            B / 6 * cos2SigmaM *
+                            (-3 + 4 * sinSigma * sinSigma) *
+                            (-3 + 4 * cos2SigmaM * cos2SigmaM))))
             sigmaP = sigma
-            sigma = rng / (b*A) + deltaSigma
+            sigma = rng / (b * A) + deltaSigma
     else:
         # This part is not vectorized
         cos2SigmaM = empty(sigma.shape)
@@ -166,57 +172,60 @@ reduced
         cosSigma = empty(sigma.shape)
 
         for k in range(sigma.size):
-            while (absolute(sigma[k]-sigmaP) > 1e-12).any():
-                cos2SigmaM[k] = cos(2*sigma1[k] + sigma[k])
-                sinSigma[k]   = sin(sigma[k])
-                cosSigma[k]   = cos(sigma[k])
-                tmp = 2*cos2SigmaM[k] * cos2SigmaM[k]
+            while (absolute(sigma[k] - sigmaP) > 1e-12).any():
+                cos2SigmaM[k] = cos(2 * sigma1[k] + sigma[k])
+                sinSigma[k] = sin(sigma[k])
+                cosSigma[k] = cos(sigma[k])
+                tmp = 2 * cos2SigmaM[k] * cos2SigmaM[k]
                 deltaSigma = (B[k] * sinSigma[k] *
-                             (cos2SigmaM[k] + B[k]/4 *
-                                (cosSigma[k] * (-1 + tmp) -
-                                  B[k]/6 * cos2SigmaM[k] *
-                                  (-3+4*sinSigma[k] * sinSigma[k]) *
-                                  (-3 + 2*tmp))) )
+                              (cos2SigmaM[k] + B[k] / 4 *
+                               (cosSigma[k] * (-1 + tmp) -
+                                B[k] / 6 * cos2SigmaM[k] *
+                                (-3 + 4 * sinSigma[k] * sinSigma[k]) *
+                                  (-3 + 2 * tmp))))
                 sigmaP = sigma[k]
-                sigma[k] = rng[k] / (b*A[k]) + deltaSigma
+                sigma[k] = rng[k] / (b * A[k]) + deltaSigma
 
-    tmp = sinU1  * sinSigma - cosU1 * cosSigma * cosAlpha1
+    tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1
     lat2 = arctan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1,
-                   (1-f)*sqrt(sinAlpha * sinAlpha + tmp**2))
+                   (1 - f) * sqrt(sinAlpha * sinAlpha + tmp**2))
 
     lamb = arctan2(sinSigma * sinAlpha1,
                    cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1)
 
-    C = f/16*cosSqAlpha * (4+f*(4-3*cosSqAlpha))
-    L = lamb - f * (1-C) * sinAlpha * (sigma + C * sinSigma *
-             (cos2SigmaM + C * cosSigma * (-1+2*cos2SigmaM * cos2SigmaM)))
+    C = f / 16 * cosSqAlpha * (4 + f * (4 - 3 * cosSqAlpha))
+    L = lamb - (f * (1 - C) *
+                sinAlpha * (sigma + C * sinSigma *
+                            (cos2SigmaM + C * cosSigma *
+                             (-1 + 2 * cos2SigmaM * cos2SigmaM))))
 
     lon2 = degrees(lon1 + L)
 
     # Truncates angles into the [-pi pi] range
-    #if (lon2 > pi).any():
-    #    lon2 = pi*((absolute(lon2)/pi) - 2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
+    # if (lon2 > pi).any():
+    #    lon2 = pi*((absolute(lon2)/pi) -
+    #       2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
     # lon2 = mod(lon2,360); % follow [0,360] convention
-    lon2 = (lon2 + 180) % 360 - 180 #no parenthesis on RHS
+    lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
 
     a21 = arctan2(sinAlpha, -tmp)
-    a21  = 180 + degrees(a21) # note direction reversal
+    a21 = 180 + degrees(a21)  # note direction reversal
 
-    return degrees(lat2), lon2, mod(a21,360)
+    return degrees(lat2), lon2, mod(a21, 360)
 
-if __name__ == '__main__': #pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     from argparse import ArgumentParser
 
     p = ArgumentParser(description='Python port of vreckon.m')
-    p.add_argument('lat',help='latitude WGS-84 [degrees]',type=float)
-    p.add_argument('lon',help='longitude WGS-84 [degrees]',type=float)
-    p.add_argument('range',help='range to traverse from start point [meters]',  type=float)
-    p.add_argument('azimuth',help='azimuth to start [deg.]',type=float)
+    p.add_argument('lat', help='latitude WGS-84 [degrees]', type=float)
+    p.add_argument('lon', help='longitude WGS-84 [degrees]', type=float)
+    p.add_argument(
+        'range', help='range traversed from start point [meters]', type=float)
+    p.add_argument('azimuth', help='azimuth to start [deg.]', type=float)
     p = p.parse_args()
 
-    lat2,lon2,a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
+    lat2, lon2, a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
     print('new lat =', lat2)
     print('new lon =', lon2)
     print('az back to start:', a21)
-
