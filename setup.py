@@ -4,7 +4,7 @@ from setuptools import setup
 import subprocess
 
 try:
-    subprocess.cal(['conda','install','--yes','--file','requirements.txt'])
+    subprocess.call(['conda','install','--yes','--file','requirements.txt'])
 except Exception as e:
     print('you will need to install packages in requirements.txt  {}'.format(e))
 
