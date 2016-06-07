@@ -2,18 +2,23 @@
 """
 runs tests
 """
-from numpy import asarray
+from datetime import datetime
+from numpy import asarray,radians
 from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
 from pytz import UTC
 from dateutil.parser import parse
 #
-from pymap3d.coordconv3d import *
+import pymap3d.coordconv3d as pm
 from pymap3d.azel2radec import azel2radec
 from pymap3d.radec2azel import radec2azel
 from pymap3d.haversine import angledist,angledist_meeus
 from pymap3d.vreckon import vreckon
 from pymap3d.vdist import vdist
+from pymap3d.datetime2hourangle import datetime2sidereal
 
+def test_datetime2sidereal():
+    sdrtest = datetime2sidereal(datetime(2014,4,6,8), radians(-148), False)
+    assert_allclose(sdrtest,2.9065780550600806,rtol=1e-5)
 
 def test_azel2radec():
     ra,dec = azel2radec(180.1, 80, 65, -148, '2014-04-06T08:00:00Z')
@@ -69,99 +74,99 @@ e2az, e2el, e2rn = (36.664402767128749, 4.477194667550686, 1.389837889201037e+04
 
 
 def test_geodetic():
-    assert_allclose(ecef2geodetic(tx,ty,tz),(ec2la,ec2lo,ec2a),
+    assert_allclose(pm.ecef2geodetic(tx,ty,tz),(ec2la,ec2lo,ec2a),
                 rtol=0.01,
-                err_msg='ecef2geodetic: ' + str(ecef2geodetic(tx,ty,tz))
+                err_msg='ecef2geodetic: ' + str(pm.ecef2geodetic(tx,ty,tz))
                 )
 
-    assert_allclose(geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt),
+    assert_allclose(pm.geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt),
                     (g2az,g2el,g2rn),
                     rtol=0.05,
                     err_msg= 'geodetic2aer: {}'.format(
-                    geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt)))
+                    pm.geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt)))
 
-    assert_allclose(geodetic2ecef(tlat,tlon,talt),(g2x,g2y,g2z),
+    assert_allclose(pm.geodetic2ecef(tlat,tlon,talt),(g2x,g2y,g2z),
                     rtol=0.01,
                     err_msg='geodetic2ecef: {}'.format(
-                    geodetic2ecef(tlat,tlon,talt)))
+                    pm.geodetic2ecef(tlat,tlon,talt)))
 
 def test_ecefenu():
-    assert_allclose(aer2ecef(taz,tel,tsrange,tlat,tlon,talt), (a2x,a2y,a2z),
+    assert_allclose(pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt), (a2x,a2y,a2z),
                     rtol=0.01,
                     err_msg='aer2ecef: {}'.format(
-                    aer2ecef(taz,tel,tsrange,tlat,tlon,talt)))
+                    pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt)))
 
-    assert_allclose(aer2enu(taz,tel,tsrange),(a2e,a2n,a2u),
+    assert_allclose(pm.aer2enu(taz,tel,tsrange),(a2e,a2n,a2u),
                     rtol=0.01,
-                    err_msg='aer2enu: ' + str(aer2enu(taz,tel,tsrange)))
+                    err_msg='aer2enu: ' + str(pm.aer2enu(taz,tel,tsrange)))
 
-    assert_allclose(aer2ned(taz,tel,tsrange),(a2n,a2e,-a2u),
+    assert_allclose(pm.aer2ned(taz,tel,tsrange),(a2n,a2e,-a2u),
                     rtol=0.01,
-                    err_msg='aer2ned: ' + str(aer2ned(taz,tel,tsrange)))
+                    err_msg='aer2ned: ' + str(pm.aer2ned(taz,tel,tsrange)))
 
 
-    assert_allclose(ecef2enu(tx,ty,tz, tlat, tlon, talt),(e2e,e2n,e2u),
+    assert_allclose(pm.ecef2enu(tx,ty,tz, tlat, tlon, talt),(e2e,e2n,e2u),
                     rtol=0.01,
-                    err_msg='ecef2enu: {}'.format(ecef2enu(tx,ty,tz, tlat,
+                    err_msg='ecef2enu: {}'.format(pm.ecef2enu(tx,ty,tz, tlat,
                     tlon, talt)))
 
-    assert_allclose(ecef2ned(tx,ty,tz, tlat, tlon, talt),(e2n,e2e,-e2u),
+    assert_allclose(pm.ecef2ned(tx,ty,tz, tlat, tlon, talt),(e2n,e2e,-e2u),
                     rtol=0.01,
-                    err_msg='ecef2ned: {}'.format(ecef2enu(tx,ty,tz, tlat,
+                    err_msg='ecef2ned: {}'.format(pm.ecef2enu(tx,ty,tz, tlat,
                     tlon, talt)))
 
-    assert_allclose(aer2geodetic(taz,tel,tsrange,tlat,tlon,talt),(a2la,a2lo,a2a),
+    assert_allclose(pm.aer2geodetic(taz,tel,tsrange,tlat,tlon,talt),(a2la,a2lo,a2a),
                 rtol=0.01,err_msg='aer2geodetic {}'.format(
-                  aer2geodetic(taz,tel,tsrange,tlat,tlon,talt)))
+                  pm.aer2geodetic(taz,tel,tsrange,tlat,tlon,talt)))
 
-    assert_allclose(ecef2aer(tx, ty, tz, tlat, tlon,talt),
+    assert_allclose(pm.ecef2aer(tx, ty, tz, tlat, tlon,talt),
                     (ec2az,ec2el,ec2rn),
                     rtol=0.01,
-                    err_msg='ecef2aer {}'.format(ecef2aer(a2x, a2y, a2z, tlat,
+                    err_msg='ecef2aer {}'.format(pm.ecef2aer(a2x, a2y, a2z, tlat,
                     tlon, talt)))
 #%%
-    assert_allclose(enu2aer(te,tn,tu), (e2az,e2el,e2rn),
+    assert_allclose(pm.enu2aer(te,tn,tu), (e2az,e2el,e2rn),
                     rtol=0.01,
-                    err_msg='enu2aer: ' + str(enu2aer(te,tn,tu)))
+                    err_msg='enu2aer: ' + str(pm.enu2aer(te,tn,tu)))
 
-    assert_allclose(ned2aer(tn,te,-tu), (e2az,e2el,e2rn),
+    assert_allclose(pm.ned2aer(tn,te,-tu), (e2az,e2el,e2rn),
                     rtol=0.01,
-                    err_msg='enu2aer: ' + str(enu2aer(te,tn,tu)))
+                    err_msg='enu2aer: ' + str(pm.enu2aer(te,tn,tu)))
 
-    assert_allclose(enu2geodetic(te,tn,tu,tlat,tlon,talt),(lat2,lon2,alt2),
+    assert_allclose(pm.enu2geodetic(te,tn,tu,tlat,tlon,talt),(lat2,lon2,alt2),
                     rtol=0.01,
-                    err_msg='enu2geodetic: '+str(enu2geodetic(te,tn,tu,tlat,
+                    err_msg='enu2geodetic: '+str(pm.enu2geodetic(te,tn,tu,tlat,
                                                               tlon,talt)))
 
-    assert_allclose(ned2geodetic(tn,te,-tu,tlat,tlon,talt),(lat2,lon2,alt2),
+    assert_allclose(pm.ned2geodetic(tn,te,-tu,tlat,tlon,talt),(lat2,lon2,alt2),
                     rtol=0.01,
-                    err_msg='enu2geodetic: '+str(enu2geodetic(te,tn,tu,tlat,
+                    err_msg='enu2geodetic: '+str(pm.enu2geodetic(te,tn,tu,tlat,
                                                               tlon,talt)))
 
-    assert_allclose(enu2ecef(te,tn,tu,tlat,tlon,talt),(e2x, e2y, e2z),
+    assert_allclose(pm.enu2ecef(te,tn,tu,tlat,tlon,talt),(e2x, e2y, e2z),
                     rtol=0.01,
                     err_msg='enu2ecef: '+
-                    str(enu2ecef(te,tn,tu,tlat,tlon,talt)))
+                    str(pm.enu2ecef(te,tn,tu,tlat,tlon,talt)))
 
-    assert_allclose(ned2ecef(tn,te,-tu,tlat,tlon,talt),(e2x,e2y,e2z),
+    assert_allclose(pm.ned2ecef(tn,te,-tu,tlat,tlon,talt),(e2x,e2y,e2z),
                     rtol=0.01,
                     err_msg='ned2ecef: '+
-                    str(ned2ecef(tn,te,-tu,tlat,tlon,talt)))
+                    str(pm.ned2ecef(tn,te,-tu,tlat,tlon,talt)))
 #%%
 def test_eci():
     tlla = (42,-82,200)
     teci = (-3.977913815668146e6,-2.582332196263046e6,4.250818828152067e6)
     t = datetime(2013,1,15,12,0,5,tzinfo=UTC)
-    lla = asarray(eci2geodetic(teci,t)).squeeze()
+    lla = asarray(pm.eci2geodetic(teci,t)).squeeze()
     assert_allclose(lla,tlla,rtol=0.2)
 
-    assert_allclose(eci2ecef(teci,t).squeeze(),
+    assert_allclose(pm.eci2ecef(teci,t).squeeze(),
                 [649012.04640917,-4697980.55129606,4250818.82815207])
 
-    assert_allclose(ecef2eci([649012.04640917,-4697980.55129606,4250818.82815207],t).squeeze(),
+    assert_allclose(pm.ecef2eci([649012.04640917,-4697980.55129606,4250818.82815207],t).squeeze(),
                     teci)
 
-    assert_allclose(asarray(eci2aer(teci,42,-100,0,t)).squeeze(),
+    assert_allclose(asarray(pm.eci2aer(teci,42,-100,0,t)).squeeze(),
                     [83.73050,-6.614478,1.473510e6])
 
 def test_vdist():
