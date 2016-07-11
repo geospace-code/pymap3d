@@ -1,42 +1,43 @@
+language: generic
+
 notifications:
-  email: false
+    email: false
 
 git:
-  depth: 3
+    depth: 3
 
 matrix:
   include:
     - os: osx
-      env: 
-        - osv=MacOSX
-        - pyv=3.5
+      env: pyv=2.7
+
+    - os: linux
+      env: pyv=2.7
+      
     - os: osx
-      env: 
-        - osv=MacOSX
-        - pyv=2.7
+      env: pyv=3.5
 
     - os: linux
-      env: 
-        - osv=Linux
-        - pyv=3.5
-    - os: linux
-      env: 
-        - osv=Linux
-        - pyv=2.7
-
+      env: pyv=3.5
 
 install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-$osv-x86_64.sh -O miniconda.sh
+    - if [[ $TRAVIS_OS_NAME == osx ]]; then
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh;
+      else 
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
+      fi
+      
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
-    - conda update --yes --quiet conda
-    - conda create --yes --quiet -n test python=$pyv
+    - hash -r
+    
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda create -n test python=$pyv
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
 
-script:
-    - coverage run tests/test.py -v
+script: coverage run tests/test.py
 
-after_success:
-    - coveralls
+after_success: coveralls
