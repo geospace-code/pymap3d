@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 requires Astropy 1.0 or newer. Try usevallado=True if you have an old
 Astropy (Vallado accuracy is worse).
