@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 converts right ascension, declination to azimuth, elevation
 
@@ -19,16 +19,15 @@ New feature with Astropy v1.0-- more accurate calculation, but it's 21 times slo
 We're only talking milliseconds here, so I use the more accurate Astropy via usevallado=False
 """
 from __future__ import division
-from datetime import datetime
-from dateutil.parser import parse
-from numpy import radians, sin, cos, degrees, arcsin, arctan2, atleast_1d, nan
+from numpy import radians, sin, cos, degrees, arcsin, arctan2, atleast_1d
 from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import Angle,SkyCoord, EarthLocation, AltAz
 #
-#from .datetime2hourangle import datetime2sidereal
+from .datetime2hourangle import datetime2sidereal
+from .common import str2dt
 
-def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg,dtime):
+def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg, t):
     """
      for azel2radec please see:
      https://github.com/scienceopen/python-mapping/
@@ -37,7 +36,7 @@ def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg,dtime):
           4th Edition Ch. 4.4 pg. 266-268
     """
 #%% input trapping
-    assert isinstance(dtime,datetime)
+    t = str2dt(t)
     lat_deg = atleast_1d(lat_deg); lon_deg = atleast_1d(lon_deg)
     ra_deg = atleast_1d(ra_deg); dec_deg = atleast_1d(dec_deg)
 
@@ -46,7 +45,7 @@ def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg,dtime):
 
     obs = EarthLocation(lat=lat_deg*u.deg, lon=lon_deg*u.deg)
     points = SkyCoord(Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox='J2000.0')
-    altaz = points.transform_to(AltAz(location=obs, obstime=Time(dtime)))
+    altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
 
     return altaz.az.degree, altaz.alt.degree
 
@@ -66,19 +65,3 @@ def radec2azelvallado(dtime,ra_deg,dec_deg,lat_deg,lon_deg):
 
 
     return degrees(az) % 360.0, degrees(el)
-
-if __name__ == '__main__': #selftest
-    from argparse import ArgumentParser
-    p = ArgumentParser(description="convert RightAscension,Declination to Azimuth,Elevation")
-    p.add_argument('ra',help='right ascension [degrees]',type=float)
-    p.add_argument('dec',help='declination [degrees]',type=float)
-    p.add_argument('lat',help='WGS84 latitude of observer [degrees]',type=float)
-    p.add_argument('lon',help='WGS84 latitude of observer [degrees]',type=float)
-    p.add_argument('time',help='UTC time of observation YYYY-mm-ddTHH:MM:SSZ')
-    a = p.parse_args()
-
-    t = parse(a.time)
-    print(t)
-    az_deg, el_deg = radec2azel(a.ra, a.dec,a.lat,a.lon,t)
-    print(az_deg)
-    print(el_deg)
