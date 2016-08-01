@@ -15,33 +15,30 @@ IndexError: (some) times are outside of range covered by IERS table.
 
 
 def datetime2sidereal(t, lon_radians, usevallado=True):
-    t = atleast_1d(t)
-    assert isinstance(t[0], datetime)
-    # lon: longitude in RADIANS
-
+    """
+     lon: longitude in RADIANS
+    """
     if usevallado:
         jd = datetime2julian(t)
         gst = julian2sidereal(jd)  # Greenwich Sidereal time RADIANS
         return gst + lon_radians  # radians # Algorithm 15 p. 188 rotate to LOCAL SIDEREAL TIME
     else:  # astropy
-        try:
-            return Time(t).sidereal_time(kind='apparent',
-                                         longitude=Longitude(lon_radians, unit=u.radian)).radian
-        except IndexError as e:
-            print('possible IERS table Astropy issue, falling back to Vallado  {}'.format(e))
-            return datetime2sidereal(t, lon_radians, True)
+        return Time(t).sidereal_time(kind='apparent',
+                                     longitude=Longitude(lon_radians, unit=u.radian)).radian
 
 
-def datetime2julian(dtm):
+def datetime2julian(t):
     """
     from D.Vallado Fundamentals of Astrodynamics and Applications p.187
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
     """
-    dtm = atleast_1d(dtm)
+    t= atleast_1d(t)
 
-    jDate = empty_like(dtm, dtype=float)  # yes we need the dtype!
+    assert isinstance(t[0],datetime)
 
-    for i, d in enumerate(dtm):
+    jDate = empty_like(t, dtype=float)  # yes we need the dtype!
+
+    for i, d in enumerate(t):
         if d is None:
             jDate[i] = nan
             continue
@@ -74,18 +71,3 @@ def julian2sidereal(juliandate):
 
     # 1/86400 and %(2*pi) implied by units of radians
     return gmst_sec * (2 * pi) / 86400. % (2 * pi)
-
-if __name__ == '__main__':
-    from dateutil.parser import parse
-    from argparse import ArgumentParser
-    p = ArgumentParser(
-        description="convert datetime to sidereal time (astropy converts datetime to julian")
-    p.add_argument('time', help='time of observation YYYY-mm-ddTHH:MM:SS')
-    p.add_argument('lon_radians', help='obs location in radians', type=float)
-    a = p.parse_args()
-
-    try:
-        sidereal = datetime2sidereal(parse(a.time),  a.lon_radians)
-        print(sidereal)
-    except TypeError:
-        raise TypeError('input a datetime  YYYY-dd-mmTHH:MM:SS and longitude in RADIANS')

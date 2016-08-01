@@ -13,10 +13,13 @@ except as noted in the functions
 see test.py for example uses.
 """
 from __future__ import division
+from six import string_types
 from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
                    atleast_2d, atleast_1d, empty_like, array, column_stack)
 from astropy.time import Time
 from datetime import datetime
+#
+from .common import str2dt
 
 
 class EarthEllipsoid:
@@ -242,10 +245,16 @@ def eci2ecef(eci, t):
 
     """
     t = atleast_1d(t)
+    if isinstance(t[0],string_types): #don't just ram in in case it's float
+        t = str2dt(t)
+
     if isinstance(t[0], datetime):
         gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    else:
+    elif isinstance(t[0],float):
         gst = t
+    else:
+        raise TypeError('eci2ecef: time must be datetime or radian float')
+
     assert isinstance(gst[0], float)  # must be in radians!
 
     eci = atleast_2d(eci)
@@ -268,10 +277,16 @@ def ecef2eci(ecef, t):
 
     """
     t = atleast_1d(t)
+    if isinstance(t[0],string_types): #don't just ram in in case it's float
+        t = str2dt(t)
+
     if isinstance(t[0], datetime):
         gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    else:
+    elif isinstance(t[0],float):
         gst = t
+    else:
+        raise TypeError('eci2ecef: time must be datetime or radian float')
+
     assert isinstance(gst[0], float)  # must be in radians!
 
     ecef = atleast_2d(ecef)
@@ -357,9 +372,10 @@ def get_radius_normal(lat_radians, ell):
 
 
 def _depack(x0):
-    if x0.ndim > 2:
-        raise TypeError('I expect Nx3 or 3XN triplets')
     m, n = x0.shape
+
+    assert x0.ndim == 2 and (m==3 or n==3),'I expect Nx3 or 3XN triplets'
+
     if m == 3:  # 3xN triplets
         x = x0[0, :]
         y = x0[1, :]

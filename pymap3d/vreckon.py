@@ -1,7 +1,9 @@
-#!/usr/bin/env python3
-# Ported by Michael Hirsch to Python.
-# Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
-from __future__ import division, absolute_import
+#!/usr/bin/env python
+"""
+ Ported by Michael Hirsch to Python.
+Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
+"""
+from __future__ import division
 from numpy import (absolute, sin, cos, tan, arctan2, atleast_1d,
                    radians, degrees, sign, mod, empty, pi, sqrt, tile, nan)
 
@@ -210,22 +212,6 @@ reduced
     lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
 
     a21 = arctan2(sinAlpha, -tmp)
-    a21 = 180 + degrees(a21)  # note direction reversal
+    a21 = 180. + degrees(a21)  # note direction reversal
 
-    return degrees(lat2), lon2, mod(a21, 360)
-
-if __name__ == '__main__':  # pragma: no cover
-    from argparse import ArgumentParser
-
-    p = ArgumentParser(description='Python port of vreckon.m')
-    p.add_argument('lat', help='latitude WGS-84 [degrees]', type=float)
-    p.add_argument('lon', help='longitude WGS-84 [degrees]', type=float)
-    p.add_argument(
-        'range', help='range traversed from start point [meters]', type=float)
-    p.add_argument('azimuth', help='azimuth to start [deg.]', type=float)
-    p = p.parse_args()
-
-    lat2, lon2, a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
-    print('new lat =', lat2)
-    print('new lon =', lon2)
-    print('az back to start:', a21)
+    return degrees(lat2), lon2, mod(a21, 360.)
