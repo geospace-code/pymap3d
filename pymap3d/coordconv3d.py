@@ -32,8 +32,11 @@ class EarthEllipsoid:
 
 def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=EarthEllipsoid(), deg=True):
     """
-     Input/output: units are METERS and DEGREES.
-     if you specify NaN for srange, return value z will be NaN
+     Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]
+    
+     output: ECEF x,y,z  [meters]
+     
+    if you specify NaN for srange, return value z will be NaN
     """
     # Origin of the local system in geocentric coordinates.
     x0, y0, z0 = geodetic2ecef(lat0, lon0, alt0, ell, deg=deg)
@@ -47,9 +50,8 @@ def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=EarthEllipsoid(), deg=True):
 
 def aer2enu(az, el, srange, deg=True):
     """
-    input: azimuth, elevation [deg], slant range [m]
+    input: azimuth, elevation [deg]    slant range [m]
     output: East, North, Up [m]
-
     """
     if deg:
         el = radians(el)
@@ -60,6 +62,11 @@ def aer2enu(az, el, srange, deg=True):
 
 
 def aer2geodetic(az, el, srange, lat0, lon0, alt0, deg=True):
+    """
+    Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]
+    
+    output: WGS84 lat,lon [degrees]  altitude above spheroid  [meters] 
+    """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, alt0, deg=deg)
     return ecef2geodetic(x, y, z, deg=deg)
 
