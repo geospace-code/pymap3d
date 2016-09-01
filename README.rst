@@ -1,9 +1,6 @@
 .. image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
     :target: http://www.astropy.org/
 
-.. image:: https://codeclimate.com/github/scienceopen/pymap3d/badges/gpa.svg
-   :target: https://codeclimate.com/github/scienceopen/pymap3d
-   :alt: Code Climate
 .. image:: https://travis-ci.org/scienceopen/pymap3d.svg?branch=master
     :target: https://travis-ci.org/scienceopen/pymap3d
 .. image:: https://coveralls.io/repos/scienceopen/pymap3d/badge.svg
