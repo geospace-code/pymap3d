@@ -16,8 +16,8 @@ Usage
 =====
 a few quick examples::
 
-   from pymap3d.coordconv3d import *
-   
+   from pymap3d import *
+
    lat,lon,alt = eci2geodetic(eci,t)
    az,el,range = geodetic2aer(lat,lon,alt,42,-82,0)
 
