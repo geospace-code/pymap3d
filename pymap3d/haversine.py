@@ -4,9 +4,7 @@ from numpy.testing import assert_allclose
 from astropy.coordinates.angle_utilities import angular_separation
 """
 Michael Hirsch
-from "Astronomical Algorithms" by Jean Meeus Ch. 16 p. 111 (16.5)
-gives angular distance in degrees between two rightAscension,Declination
-points in the sky.  Neglecting atmospheric effects, of course.
+
 
 inputs:
 r0,d0: for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
@@ -23,7 +21,14 @@ within double precision arithmetic limitations
 
 
 def angledist_meeus(r0, d0, r1, d1):
-    """ Meeus
+    """
+    Meeus
+    from "Astronomical Algorithms" by Jean Meeus Ch. 16 p. 111 (16.5)
+    gives angular distance in degrees between two rightAscension,Declination
+    points in the sky.  Neglecting atmospheric effects, of course.
+
+    Advantage of Meeus haversine method is stability all the way to exactly 0 deg.
+
     assumes degrees input, degrees output
 
     either the arrays must be the same size, or one of them must be a scalar
