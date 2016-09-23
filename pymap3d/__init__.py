@@ -339,11 +339,15 @@ def get_radius_normal(lat_radians, ell):
 
 
 def str2dt(t):
+    """
+    output: datetime
+    """
+
     t = atleast_1d(t)
     if isinstance(t[0],string_types):
         t = [parse(T) for T in t]
 
-    assert isinstance(t[0],datetime)
+    assert isinstance(t[0],datetime), 'did not convert {} to datetime'.format(type(t[0]))
 
     return t
 #%% internal use
