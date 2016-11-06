@@ -8,9 +8,7 @@ from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
 from pytz import UTC
 from dateutil.parser import parse
 #
-import pymap3d.coordconv3d as pm
-from pymap3d.azel2radec import azel2radec
-from pymap3d.radec2azel import radec2azel
+import pymap3d as pm
 from pymap3d.haversine import angledist,angledist_meeus
 from pymap3d.vreckon import vreckon
 from pymap3d.vdist import vdist
@@ -21,12 +19,12 @@ def test_datetime2sidereal():
     assert_allclose(sdrtest,2.9065780550600806,rtol=1e-5)
 
 def test_azel2radec():
-    ra,dec = azel2radec(180.1, 80, 65, -148, '2014-04-06T08:00:00Z')
+    ra,dec = pm.azel2radec(180.1, 80, 65, -148, '2014-04-06T08:00:00Z')
     assert_allclose(ra,166.5032081149338,rtol=1e-2)
     assert_allclose(dec,55.000011165405752,rtol=1e-2)
 
 def test_radec2azel():
-    aztest, eltest = radec2azel(166.5032081149338,55.000011165405752, 65, -148,
+    aztest, eltest = pm.radec2azel(166.5032081149338,55.000011165405752, 65, -148,
                             parse('2014-04-06T08:00:00'))
     assert_allclose(aztest, 179.40287898,rtol=1e-2) #180.1 from vallado, but his is less precise
     assert_allclose(eltest, 79.92186504,rtol=1e-2)    #80.0 from vallado, but  his is less precise
