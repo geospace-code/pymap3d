@@ -4,7 +4,7 @@ Example Kitt Peak
 
 ./demo_radec2azel.py 257.96295344 15.43785495 31.9583 -111.5967 2014-12-25T22:00:00MST
 """
-from pymap3d.radec2azel import radec2azel
+from pymap3d import radec2azel
 
 if __name__ == '__main__': #selftest
     from argparse import ArgumentParser
