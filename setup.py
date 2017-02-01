@@ -3,15 +3,13 @@ from setuptools import setup
 import subprocess
 
 try:
-    subprocess.call(['conda','install','--file','requirements.txt'])
+    import conda.cli
+    conda.cli.main('install','--file','requirements.txt')
 except Exception as e:
-    pass
+    print(e)
 
 setup(name='pymap3d',
       packages=['pymap3d'],
-      description='3-D coordinate conversion utilities',
-      author='Michael Hirsch',
       install_requires=['geopy'],
-      url='https://github.com/scienceopen/pymap3d',
 	  )
 
