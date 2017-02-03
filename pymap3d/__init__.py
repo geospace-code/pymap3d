@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from __future__ import division
-from six import string_types
 from dateutil.parser import parse
 from datetime import datetime
 from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
@@ -88,7 +87,7 @@ def eci2ecef(eci, t):
 
     """
     t = atleast_1d(t)
-    if isinstance(t[0],string_types): #don't just ram in in case it's float
+    if isinstance(t[0],str): #don't just ram in in case it's float
         t = str2dt(t)
 
     if isinstance(t[0], datetime):
@@ -148,7 +147,7 @@ def ecef2eci(ecef, t):
 
     """
     t = atleast_1d(t)
-    if isinstance(t[0],string_types): #don't just ram in in case it's float
+    if isinstance(t[0],str): #don't just ram in in case it's float
         t = str2dt(t)
 
     if isinstance(t[0], datetime):
@@ -344,7 +343,7 @@ def str2dt(t):
     """
 
     t = atleast_1d(t)
-    if isinstance(t[0],string_types):
+    if isinstance(t[0],str):
         t = [parse(T) for T in t]
 
     assert isinstance(t[0],datetime), 'did not convert {} to datetime'.format(type(t[0]))
