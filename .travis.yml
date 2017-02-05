@@ -9,16 +9,10 @@ git:
 matrix:
   include:
     - os: osx
-      env: pyv=2.7
+      env: pyv=3.6
 
     - os: linux
-      env: pyv=2.7
-      
-    - os: osx
-      env: pyv=3.5
-
-    - os: linux
-      env: pyv=3.5
+      env: pyv=3.6
 
 install:
     - if [[ $TRAVIS_OS_NAME == osx ]]; then
@@ -38,6 +32,6 @@ install:
     - pip -q install coveralls
     - python setup.py develop
 
-script: coverage run tests/test.py
+script: coverage run tests/test.py -v
 
 after_success: coveralls
