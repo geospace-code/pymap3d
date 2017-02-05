@@ -1,0 +1,5 @@
+python-dateutil
+pytz
+nose
+numpy
+astropy
