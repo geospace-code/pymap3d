@@ -6,6 +6,7 @@
 
 .. image:: https://travis-ci.org/scienceopen/pymap3d.svg?branch=master
     :target: https://travis-ci.org/scienceopen/pymap3d
+    
 .. image:: https://coveralls.io/repos/scienceopen/pymap3d/badge.svg
     :target: https://coveralls.io/r/scienceopen/pymap3d
 
@@ -28,7 +29,7 @@ Functions
 ==========
 Popular mapping toolbox functions ported to Python include::
 
- aer2ecef  aer2enu  aer2geodetic  aer2ned
+  aer2ecef  aer2enu  aer2geodetic  aer2ned
   ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv  ecef2eci
   eci2ecef
   enu2aer  enu2ecef  enu2ecefv  enu2geodetic
@@ -42,7 +43,7 @@ Installation
 ============
 ::
 
-  python setup.py develop
+  pip install pymap3d
 
 
 Caveats

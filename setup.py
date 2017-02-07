@@ -11,6 +11,19 @@ except Exception as e:
 
 setup(name='pymap3d',
       packages=['pymap3d'],
+      version = '1.0.1',
+      author = 'Michael Hirsch, Ph.D.',
+      url = 'https://github.com/scienceopen/pymap3d',
+      classifiers=[
+      'Intended Audience :: Science/Research',
+      'Development Status :: 5 - Production/Stable',
+      'License :: OSI Approved :: BSD License',
+      'Topic :: Scientific/Engineering :: GIS',
+      'Programming Language :: Python :: 2.7',
+      'Programming Language :: Python :: 3.4',
+      'Programming Language :: Python :: 3.5',
+      'Programming Language :: Python :: 3.6',
+      ],
       install_requires=['geopy'],
 	  )
 
