@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-try:
-    import conda.cli
-    conda.cli.main('install','--file','requirements.txt')
-except Exception as e:
-    print(e)
-    import pip
-    pip.main(['install','-r','requirements.txt'])
+req = ['geopy',
+       'python-dateutil','pytz','nose','numpy','astropy']
 
 setup(name='pymap3d',
       packages=['pymap3d'],
-      version = '1.0.1',
+      version = '1.0.2',
       description='Python coordinate conversions, following convention of several popular Matlab routines.',
       author = 'Michael Hirsch, Ph.D.',
       url = 'https://github.com/scienceopen/pymap3d',
@@ -25,6 +20,6 @@ setup(name='pymap3d',
       'Programming Language :: Python :: 3.5',
       'Programming Language :: Python :: 3.6',
       ],
-      install_requires=['geopy'],
+      install_requires=req,
 	  )
 
