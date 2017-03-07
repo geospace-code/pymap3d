@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-req = ['geopy',
-       'python-dateutil','pytz','nose','numpy','astropy']
+req = ['python-dateutil','pytz','nose','numpy','astropy']
 
 setup(name='pymap3d',
       packages=['pymap3d'],
-      version = '1.0.2',
+      version = '1.1',
       description='Python coordinate conversions, following convention of several popular Matlab routines.',
       author = 'Michael Hirsch, Ph.D.',
       url = 'https://github.com/scienceopen/pymap3d',
