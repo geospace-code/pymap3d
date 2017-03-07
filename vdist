@@ -11,4 +11,4 @@ if __name__ == '__main__': #pragma: no cover
     p = p.parse_args()
 
     dist_m = vdist(p.lat1, p.lon1, p.lat2, p.lon2)
-    print('distance between WGS-84 points = {} m'.format(dist_m))
+    print(f'distance between WGS-84 points = {dist_m} m')
