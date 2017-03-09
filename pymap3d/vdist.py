@@ -77,7 +77,6 @@ def vdist(lat1,lon1,lat2,lon2):
     lon1 = atleast_1d(lon1)
     lon2 = atleast_1d(lon2)
     keepsize = lat1.shape
-
 #%% Input check:
     if ((abs(lat1)>90) | (abs(lat2)>90)).any():
         raise ValueError('Input latitudes must be between -90 and 90 degrees, inclusive.')
@@ -85,8 +84,8 @@ def vdist(lat1,lon1,lat2,lon2):
     a = 6378137 # definitionally
     b = 6356752.31424518 # computed from WGS84 earth flattening coefficient
 #%% preserve true input latitudes:
-    lat1tr = lat1
-    lat2tr = lat2
+    lat1tr = lat1.copy()
+    lat2tr = lat2.copy()
 #%% convert inputs in degrees to radians:
     lat1 = radians(lat1)
     lon1 = radians(lon1)
@@ -127,7 +126,7 @@ def vdist(lat1,lon1,lat2,lon2):
         #print(f'lambda[21752] = {lamb[21752],20}')
         itercount += 1
         if itercount > 50:
-            if ~warninggiven:
+            if not warninggiven:
                 print('Essentially antipodal points encountered. Precision may be reduced slightly.',file=stderr)
 
             lamb[notdone] = pi
@@ -169,16 +168,6 @@ def vdist(lat1,lon1,lat2,lon2):
 
         notdone = abs(lamb-lambdaold) > 1e-12
 
-#        print(lambdaold)
-#        print(sinsigma)
-#        print(cossigma)
-#        print(sigma)
-#        print(alpha)
-#        print(cos2sigmam)
-#        print(C)
-#        print(lamb)
-#        print(lamb-lambdaold)
-
     u2 = cos(alpha)**2*(a**2-b**2)/b**2
     A = 1+u2/16384*(4096+u2*(-768+u2*(320-175*u2)))
     B = u2/1024*(256+u2*(-128+u2*(74-47*u2)))
@@ -215,6 +204,6 @@ def vdist(lat1,lon1,lat2,lon2):
     #%% backwards from poles:
     a21[lat2tr >= 90] = pi
     a21[lat2tr <= -90] = 0
-    backdist = (a21 * 57.2957795130823).reshape(keepsize) # to degrees
+    backaz = (a21 * 57.2957795130823).reshape(keepsize) # to degrees
 
-    return dist_m,az,backdist
+    return dist_m.squeeze()[()], az.squeeze()[()], backaz.squeeze()[()]
