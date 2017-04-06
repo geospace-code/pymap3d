@@ -1,15 +1,4 @@
 #!/usr/bin/env python
-from __future__ import division
-from dateutil.parser import parse
-from datetime import datetime
-from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
-                   atleast_2d, atleast_1d, empty_like, array, column_stack)
-try:
-    from astropy.time import Time
-    from astropy import units as u
-    from astropy.coordinates import Angle,SkyCoord, EarthLocation, AltAz, ICRS
-except ImportError:
-    Time = None
 """
 Michael Hirsch ported and adaptation from
  GNU Octave Mapping Toolbox by
@@ -24,6 +13,18 @@ except as noted in the functions
 
 see test.py for example uses.
 """
+
+from dateutil.parser import parse
+from datetime import datetime
+from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
+                   atleast_2d, atleast_1d, empty_like, array, column_stack)
+try:
+    from astropy.time import Time
+    from astropy import units as u
+    from astropy.coordinates import Angle,SkyCoord, EarthLocation, AltAz, ICRS
+except ImportError:
+    Time = None
+
 class EarthEllipsoid:
 
     def __init__(self):
