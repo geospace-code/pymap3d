@@ -17,7 +17,6 @@ el_deg: numpy ndarray of elevation to point [degrees]
 
 Michael Hirsch implementation of algorithms from D. Vallado
 """
-from __future__ import division
 from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
 
 #
