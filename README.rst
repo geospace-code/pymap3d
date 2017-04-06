@@ -7,8 +7,8 @@
 .. image:: https://travis-ci.org/scivision/pymap3d.svg?branch=master
     :target: https://travis-ci.org/scivision/pymap3d
     
-.. image:: https://coveralls.io/repos/scivision/pymap3d/badge.svg
-    :target: https://coveralls.io/r/scivision/pymap3d
+.. image:: https://coveralls.io/repos/github/scivision/pymap3d/badge.svg?branch=master
+    :target: https://coveralls.io/github/scivision/pymap3d?branch=master
 
 ==================================
 Python 3-D coordinate conversions
