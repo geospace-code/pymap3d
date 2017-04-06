@@ -4,11 +4,11 @@
 .. image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
     :target: http://www.astropy.org/
 
-.. image:: https://travis-ci.org/scienceopen/pymap3d.svg?branch=master
-    :target: https://travis-ci.org/scienceopen/pymap3d
+.. image:: https://travis-ci.org/scivision/pymap3d.svg?branch=master
+    :target: https://travis-ci.org/scivision/pymap3d
     
-.. image:: https://coveralls.io/repos/scienceopen/pymap3d/badge.svg
-    :target: https://coveralls.io/r/scienceopen/pymap3d
+.. image:: https://coveralls.io/repos/scivision/pymap3d/badge.svg
+    :target: https://coveralls.io/r/scivision/pymap3d
 
 ==================================
 Python 3-D coordinate conversions

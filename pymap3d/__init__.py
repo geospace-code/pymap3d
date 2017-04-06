@@ -9,7 +9,7 @@ try:
     from astropy import units as u
     from astropy.coordinates import Angle,SkyCoord, EarthLocation, AltAz, ICRS
 except ImportError:
-    pass
+    Time = None
 """
 Michael Hirsch ported and adaptation from
  GNU Octave Mapping Toolbox by
@@ -86,6 +86,9 @@ def eci2ecef(eci, t):
     input t is either a datetime or float in radians
 
     """
+    if Time is None:
+        raise ImportError('You need to install AstroPy')
+
     t = atleast_1d(t)
     if isinstance(t[0],str): #don't just ram in in case it's float
         t = str2dt(t)
@@ -146,6 +149,9 @@ def ecef2eci(ecef, t):
     input t is either a datetime or float in radians
 
     """
+    if Time is None:
+        raise ImportError('You need to install AstroPy')
+
     t = atleast_1d(t)
     if isinstance(t[0],str): #don't just ram in in case it's float
         t = str2dt(t)
@@ -168,8 +174,7 @@ def ecef2eci(ecef, t):
     """
     eci = empty_like(ecef)
     for i in range(N):
-        eci[i, :] = _rottrip(gst[i]).T.dot(
-            ecef[i, :])  # this one is transposed
+        eci[i, :] = _rottrip(gst[i]).T.dot(ecef[i, :]) # this one is transposed
     return eci
 #%% to ENU
 def aer2enu(az, el, srange, deg=True):
@@ -404,6 +409,9 @@ def _uvw2enu(u, v, w, lat0, lon0, deg):
 
 #%% azel radec
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
+    if Time is None:
+        raise ImportError('You need to install AstroPy')
+
 
     t = str2dt(t)
 
@@ -415,6 +423,8 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     return sky.ra.deg, sky.dec.deg
 
 def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg, t):
+    if Time is None:
+        raise ImportError('You need to install AstroPy')
 #%% input trapping
     t = str2dt(t)
     lat_deg = atleast_1d(lat_deg); lon_deg = atleast_1d(lon_deg)

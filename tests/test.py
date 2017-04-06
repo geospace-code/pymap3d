@@ -10,8 +10,7 @@ from dateutil.parser import parse
 #
 import pymap3d as pm
 from pymap3d.haversine import angledist,angledist_meeus
-from pymap3d.vreckon import vreckon
-from pymap3d.vdist import vdist
+from pymap3d.vincenty import vreckon,vdist
 from pymap3d.datetime2hourangle import datetime2sidereal
 
 def test_datetime2sidereal():
