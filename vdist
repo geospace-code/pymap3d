@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from pymap3d.vdist import vdist
+from pymap3d.vincenty import vdist
 
 if __name__ == '__main__': #pragma: no cover
     from argparse import ArgumentParser
@@ -11,4 +11,4 @@ if __name__ == '__main__': #pragma: no cover
     p = p.parse_args()
 
     dist_m = vdist(p.lat1, p.lon1, p.lat2, p.lon2)
-    print(f'distance between WGS-84 points = {dist_m} m')
+    print('distance between WGS-84 points = {} m'.format(dist_m))
