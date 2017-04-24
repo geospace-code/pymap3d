@@ -1,7 +1,14 @@
 #!/usr/bin/env python
-from setuptools import setup
-
 req = ['python-dateutil','pytz','nose','numpy','astropy']
+# %%
+import pip
+try:
+    import conda.cli
+    conda.cli.main('install',*req)
+except Exception as e:    
+    pip.main(['install',*req])
+# %%
+from setuptools import setup
 
 setup(name='pymap3d',
       packages=['pymap3d'],
@@ -14,7 +21,6 @@ setup(name='pymap3d',
       'Development Status :: 5 - Production/Stable',
       'License :: OSI Approved :: BSD License',
       'Topic :: Scientific/Engineering :: GIS',
-      'Programming Language :: Python :: 3.4',
       'Programming Language :: Python :: 3.5',
       'Programming Language :: Python :: 3.6',
       ],
