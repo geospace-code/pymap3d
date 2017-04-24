@@ -5,7 +5,7 @@ Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 from sys import stderr
 from numpy import (atleast_1d,arctan,sqrt,tan,sign,sin,cos,arctan2,arcsin,
                    ones,empty,zeros,radians,degrees,tile)
-from math import tau,pi,nan
+from math import pi,nan
 
 def vdist(lat1,lon1,lat2,lon2):
     """
@@ -82,7 +82,7 @@ def vdist(lat1,lon1,lat2,lon2):
     lon2 = atleast_1d(lon2)
     keepsize = lat1.shape
 #%% Input check:
-    if ((abs(lat1)>90) | (abs(lat2)>90)).any():
+    if ((abs(lat1) > 90) | (abs(lat2) > 90)).any():
         raise ValueError('Input latitudes must be between -90 and 90 degrees, inclusive.')
 #%%% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = 6378137 # definitionally
@@ -107,12 +107,12 @@ def vdist(lat1,lon1,lat2,lon2):
     f = (a-b)/a
     U1 = arctan((1-f)*tan(lat1))
     U2 = arctan((1-f)*tan(lat2))
-    lon1 = lon1 % tau
-    lon2 = lon2 % tau
+    lon1 = lon1 % (2*pi)
+    lon2 = lon2 % (2*pi)
     L = abs(lon2-lon1)
     kidx = L > pi
     if kidx.any():
-        L[kidx] = tau - L[kidx]
+        L[kidx] = 2*pi - L[kidx]
 
     lamb = L.copy()  # NOTE: program will fail without copy!
     lambdaold = zeros(lat1.shape)
@@ -188,12 +188,12 @@ def vdist(lat1,lon1,lat2,lon2):
     numer = cos(U2)*sin(lamb)
     denom = cos(U1)*sin(U2)-sin(U1)*cos(U2)*cos(lamb)
     a12 = arctan2(numer,denom)
-    kidx = a12<0
-    a12[kidx]=a12[kidx] + tau
+    kidx = a12 < 0
+    a12[kidx]=a12[kidx] + 2*pi
     #%% from poles
     a12[lat1tr <= -90] = 0
     a12[lat1tr >=  90] = pi
-    az = (a12 * 57.2957795130823).reshape(keepsize) # to degrees
+    az = degrees(a12).reshape(keepsize)
 
 #%% From point #2 to point #1
     # correct sign of lambda for azimuth calcs:
@@ -204,11 +204,11 @@ def vdist(lat1,lon1,lat2,lon2):
     denom = sin(U1)*cos(U2)-cos(U1)*sin(U2)*cos(lamb)
     a21 = arctan2(numer,denom)
     kidx=a21<0;
-    a21[kidx] = a21[kidx] + tau
+    a21[kidx] = a21[kidx] + 2*pi
     #%% backwards from poles:
     a21[lat2tr >= 90] = pi
     a21[lat2tr <= -90] = 0.
-    backaz = (a21 * 57.2957795130823).reshape(keepsize) # to degrees
+    backaz = degrees(a21).reshape(keepsize)
 
     return dist_m.squeeze()[()], az.squeeze()[()], backaz.squeeze()[()]
 
@@ -353,7 +353,7 @@ reduced
     A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
     B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
     sigma = rng / (b * A)
-    sigmaP = 2 * pi
+    sigmaP = 2*pi
 
     if sigma.size == 1:
         sinSigma = nan
