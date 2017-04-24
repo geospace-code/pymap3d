@@ -12,7 +12,7 @@ from setuptools import setup
 
 setup(name='pymap3d',
       packages=['pymap3d'],
-      version = '1.2.1',
+      version = '1.2.2',
       description='Python coordinate conversions, following convention of several popular Matlab routines.',
       author = 'Michael Hirsch, Ph.D.',
       url = 'https://github.com/scivision/pymap3d',
