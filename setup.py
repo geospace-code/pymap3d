@@ -6,7 +6,7 @@ try:
     import conda.cli
     conda.cli.main('install',*req)
 except Exception as e:    
-    pip.main(['install',*req])
+    pip.main(['install'] + req)
 # %%
 from setuptools import setup
 
@@ -21,8 +21,8 @@ setup(name='pymap3d',
       'Development Status :: 5 - Production/Stable',
       'License :: OSI Approved :: BSD License',
       'Topic :: Scientific/Engineering :: GIS',
-      'Programming Language :: Python :: 3.5',
-      'Programming Language :: Python :: 3.6',
+      'Programming Language :: Python :: 3',
+      'Programming Language :: Python',
       ],
       install_requires=req,
 	  )
