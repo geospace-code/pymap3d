@@ -14,6 +14,7 @@ except as noted in the functions
 see test.py for example uses.
 """
 
+from __future__ import division
 from dateutil.parser import parse
 from datetime import datetime
 from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
@@ -195,6 +196,16 @@ def ecef2enu(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
     return _uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
+def ecef2enuv(u, v, w, lat0, lon0, deg=True):
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t      =  cos(lon0) * u + sin(lon0) * v
+    uEast  = -sin(lon0) * u + cos(lon0) * v
+    wUp    =  cos(lat0) * t + sin(lat0) * w
+    vNorth = -sin(lat0) * t + cos(lat0) * w
+    return uEast, vNorth, wUp
 
 def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)
@@ -326,6 +337,10 @@ def aer2ned(az, elev, slantRange, deg=True):
 
 def ecef2ned(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
+    return n, e, -u
+
+def ecef2nedv(u, v, w, lat0, lon0, deg=True):
+    e, n, u = ecef2enuv(u, v, w, lat0, lon0, deg=deg)
     return n, e, -u
 
 def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
