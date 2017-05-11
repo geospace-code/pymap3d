@@ -14,6 +14,7 @@ except as noted in the functions
 see test.py for example uses.
 """
 
+from __future__ import division
 from dateutil.parser import parse
 from datetime import datetime
 from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
