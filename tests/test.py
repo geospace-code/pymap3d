@@ -64,10 +64,14 @@ e2e, e2n, e2u = 8272.476048, 11112.773942, 84.941624 #ecef2enu
 
 ec2la, ec2lo, ec2a = 42.100000, -81.900000, 300.000000 #ecef2geodetic
 
-#enu2ccef
+#enu2ecef
 e2x, e2y, e2z = (6.679456743004259e+05, -4.693230928738789e+06, 4.254723326333052e+06)
 
 e2az, e2el, e2rn = (36.664402767128749, 4.477194667550686, 1.389837889201037e+04)
+
+# vector
+vx,vy,vz = (5,3,2)
+ve,vn,vu =(5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
 def test_geodetic():
@@ -107,10 +111,14 @@ def test_ecefenu():
                     err_msg='ecef2enu: {}'.format(pm.ecef2enu(tx,ty,tz, tlat,
                     tlon, talt)))
 
+    assert_allclose(pm.ecef2enuv(vx,vy,vz,tlat,tlon), (ve,vn,vu))
+
     assert_allclose(pm.ecef2ned(tx,ty,tz, tlat, tlon, talt),(e2n,e2e,-e2u),
                     rtol=0.01,
                     err_msg='ecef2ned: {}'.format(pm.ecef2enu(tx,ty,tz, tlat,
                     tlon, talt)))
+
+    assert_allclose(pm.ecef2nedv(vx,vy,vz,tlat,tlon), (vn,ve,-vu))
 
     assert_allclose(pm.aer2geodetic(taz,tel,tsrange,tlat,tlon,talt),(a2la,a2lo,a2a),
                 rtol=0.01,err_msg='aer2geodetic {}'.format(
