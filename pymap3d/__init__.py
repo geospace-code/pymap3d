@@ -452,7 +452,7 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
 
     return sky.ra.deg, sky.dec.deg
 
-def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg, t):
+def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
     if Time is None:
         raise ImportError('You need to install AstroPy')
 #%% input trapping
@@ -460,11 +460,16 @@ def radec2azel(ra_deg,dec_deg,lat_deg,lon_deg, t):
     lat_deg = atleast_1d(lat_deg); lon_deg = atleast_1d(lon_deg)
     ra_deg = atleast_1d(ra_deg); dec_deg = atleast_1d(dec_deg)
 
-    assert lat_deg.size == 1 & lon_deg.size ==1, 'radec2azel is designed for one observer and one or more points (ra,dec).'
+    assert lat_deg.size == 1 & lon_deg.size == 1, 'radec2azel is designed for one observer and one or more points (ra,dec).'
     assert ra_deg.shape == dec_deg.shape, 'ra and dec must be the same shape ndarray'
 
-    obs = EarthLocation(lat=lat_deg*u.deg, lon=lon_deg*u.deg)
-    points = SkyCoord(Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox='J2000.0')
+    obs = EarthLocation(lat=lat_deg * u.deg, 
+                        lon=lon_deg * u.deg)
+    
+    points = SkyCoord(Angle(ra_deg,  unit=u.deg), 
+                      Angle(dec_deg, unit=u.deg), 
+                      equinox='J2000.0')
+    
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
 
     return altaz.az.degree, altaz.alt.degree
