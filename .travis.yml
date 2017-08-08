@@ -2,7 +2,6 @@ language: python
 
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
 
@@ -18,11 +17,6 @@ notifications:
 git:
     depth: 3
 
-
-
-
-
-
 before_install:
     - if [[ $TRAVIS_OS_NAME == osx ]]; then
         wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh;
@@ -30,7 +24,6 @@ before_install:
         wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
       fi
 
-install:
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - hash -r
@@ -41,7 +34,7 @@ install:
     - source activate test
     - pip -q install coveralls
 
-    - python setup.py develop
+install: python setup.py develop
 
 script: coverage run tests/test.py -v
 

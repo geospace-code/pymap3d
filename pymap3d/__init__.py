@@ -114,7 +114,7 @@ def eci2ecef(eci, t):
     ecef = empty_like(eci)
 
     for i in range(N):
-        ecef[i, :] = _rottrip(gst[i]).dot(eci[i, :])
+        ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
     return ecef
 
 
@@ -176,7 +176,8 @@ def ecef2eci(ecef, t):
     """
     eci = empty_like(ecef)
     for i in range(N):
-        eci[i, :] = _rottrip(gst[i]).T.dot(ecef[i, :]) # this one is transposed
+        eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
+
     return eci
 #%% to ENU
 def aer2enu(az, el, srange, deg=True):
@@ -189,6 +190,7 @@ def aer2enu(az, el, srange, deg=True):
         az = radians(az)
 
     r = srange * cos(el)
+
     return r * sin(az), r * cos(az), srange * sin(el)
 
 
@@ -197,6 +199,7 @@ def ecef2enu(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     for coordinates POSITION
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+
     return _uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
 def ecef2enuv(u, v, w, lat0, lon0, deg=True):
@@ -221,6 +224,7 @@ def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     dx = x1 - x2
     dy = y1 - y2
     dz = z1 - z2
+
     return _uvw2enu(dx, dy, dz, lat0, lon0, deg=deg)
 #%% to geodetic
 def aer2geodetic(az, el, srange, lat0, lon0, alt0, deg=True):
@@ -230,6 +234,7 @@ def aer2geodetic(az, el, srange, lat0, lon0, alt0, deg=True):
     output: WGS84 lat,lon [degrees]  altitude above spheroid  [meters]
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, alt0, deg=deg)
+
     return ecef2geodetic(x, y, z, deg=deg)
 
 
@@ -399,14 +404,15 @@ def _depack(x0):
         y = x0[:, 1]
         z = x0[:, 2]
     else:
-        raise TypeError('I expect an Nx3 or 3xN input of x,y,z')
+        raise ValueError('I expect an Nx3 or 3xN input of x,y,z')
+
     return x, y, z
 
 
 def _rottrip(ang):
     ang = ang.squeeze()
     if ang.size > 1:
-        raise TypeError('only one angle allowed at a time')
+        raise ValueError('only one angle allowed at a time')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
@@ -424,6 +430,7 @@ def _enu2uvw(east, north, up, lat0, lon0, deg=True):
 
     u = cos(lon0) * t - sin(lon0) * east
     v = sin(lon0) * t + cos(lon0) * east
+
     return u, v, w
 
 
@@ -435,6 +442,7 @@ def _uvw2enu(u, v, w, lat0, lon0, deg):
     East = -sin(lon0) * u + cos(lon0) * v
     Up = cos(lat0) * t + sin(lat0) * w
     North = -sin(lat0) * t + cos(lat0) * w
+
     return East, North, Up
 
 #%% azel radec
@@ -463,13 +471,13 @@ def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
     assert lat_deg.size == 1 & lon_deg.size == 1, 'radec2azel is designed for one observer and one or more points (ra,dec).'
     assert ra_deg.shape == dec_deg.shape, 'ra and dec must be the same shape ndarray'
 
-    obs = EarthLocation(lat=lat_deg * u.deg, 
+    obs = EarthLocation(lat=lat_deg * u.deg,
                         lon=lon_deg * u.deg)
-    
-    points = SkyCoord(Angle(ra_deg,  unit=u.deg), 
-                      Angle(dec_deg, unit=u.deg), 
+
+    points = SkyCoord(Angle(ra_deg,  unit=u.deg),
+                      Angle(dec_deg, unit=u.deg),
                       equinox='J2000.0')
-    
+
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
 
     return altaz.az.degree, altaz.alt.degree
