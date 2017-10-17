@@ -152,7 +152,7 @@ def ecef2eci(ecef, t):
 
     """
     if Time is None:
-        raise ImportError('You need to install AstroPy')
+        raise ImportError('Please install AstroPy')
 
     t = atleast_1d(t)
     if isinstance(t[0],str): #don't just ram in in case it's float

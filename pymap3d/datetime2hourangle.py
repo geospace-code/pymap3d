@@ -53,8 +53,8 @@ def datetime2julian(t):
         A = int(year / 100.0)
         B = 2 - A + int(A / 4.)
         C = ((d.second / 60. + d.minute) / 60. + d.hour) / 24.
-        jDate[i] = int(365.25 * (year + 4716)) + \
-            int(30.6001 * (month + 1)) + d.day + B - 1524.5 + C
+        jDate[i] = (int(365.25 * (year + 4716)) + 
+                    int(30.6001 * (month + 1)) + d.day + B - 1524.5 + C)
 
     return jDate
 
@@ -63,11 +63,12 @@ def julian2sidereal(juliandate):
     # D. Vallado Ed. 4
     # TODO needs unit testing
     # Julian centuries from J2000.0
-    tUT1 = (juliandate - 2451545.0) / \
-        36525.  # Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+    
+     # Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+    tUT1 = (juliandate - 2451545.0) / 36525. 
 
-    gmst_sec = 67310.54841 + (876600 * 3600 + 8640184.812866) * \
-        tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3  # Eqn. 3-47 p. 188
+    gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) * 
+        tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3) # Eqn. 3-47 p. 188
 
     # 1/86400 and %(2*pi) implied by units of radians
     return gmst_sec * (2 * pi) / 86400. % (2 * pi)

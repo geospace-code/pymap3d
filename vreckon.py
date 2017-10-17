@@ -12,5 +12,5 @@ if __name__ == '__main__':  # pragma: no cover
     p = p.parse_args()
 
     lat2, lon2, a21 = vreckon(p.lat, p.lon, p.range, p.azimuth)
-    print('new lat / lon {} / {} '.format(lat2,lon2))
+    print('new (lat, lon)  ({}, {}) '.format(lat2,lon2))
     print('az back to start:', a21)

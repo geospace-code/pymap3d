@@ -6,7 +6,7 @@ Example Kitt Peak
 """
 from pymap3d import radec2azel
 
-if __name__ == '__main__': #selftest
+if __name__ == '__main__': 
     from argparse import ArgumentParser
     p = ArgumentParser(description="convert RightAscension,Declination to Azimuth,Elevation")
     p.add_argument('ra',help='right ascension [degrees]',type=float)
@@ -17,5 +17,5 @@ if __name__ == '__main__': #selftest
     p = p.parse_args()
 
     az_deg, el_deg = radec2azel(p.ra, p.dec, p.lat, p.lon, p.time)
-    print(az_deg)
-    print(el_deg)
+    print('azimuth: [deg]',az_deg)
+    print('elevation [deg]:',el_deg)
