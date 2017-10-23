@@ -2,11 +2,9 @@
  Ported by Michael Hirsch to Python.
 Original work by Joaquim Luis (LGPL), Michael Kleder, et al.
 """
-from __future__ import print_function
-from sys import stderr
+import logging
 from numpy import (atleast_1d,arctan,sqrt,tan,sign,sin,cos,arctan2,arcsin,
-                   ones,empty,zeros,radians,degrees,tile,nan)
-from math import pi
+                   ones,empty,zeros,radians,degrees,tile,nan,pi)
 
 def vdist(lat1,lon1,lat2,lon2):
     """
@@ -132,7 +130,7 @@ def vdist(lat1,lon1,lat2,lon2):
         itercount += 1
         if itercount > 50:
             if not warninggiven:
-                print('Essentially antipodal points encountered. Precision may be reduced slightly.',file=stderr)
+                logging.warning('Essentially antipodal points encountered. Precision may be reduced slightly.')
 
             lamb[notdone] = pi
             break
@@ -166,7 +164,7 @@ def vdist(lat1,lon1,lat2,lon2):
         #print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure in the case of essentially antipodal points
         if (lamb[notdone] > pi).any():
-            print('Essentially antipodal points encountered. Precision may be reduced slightly.',file=stderr)
+            logging.warning('Essentially antipodal points encountered. Precision may be reduced slightly.')
             warninggiven = True
             lambdaold[lamb>pi] = pi
             lamb[lamb>pi] = pi
