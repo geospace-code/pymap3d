@@ -1,4 +1,5 @@
 language: generic
+fast_finish: true
 
 os:
   - linux
