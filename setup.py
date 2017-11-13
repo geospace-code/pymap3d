@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 req = ['python-dateutil','pytz','nose','numpy','astropy']
 # %%
-import pip
 try:
     import conda.cli
     conda.cli.main('install',*req)
 except Exception as e: 
-    pip.main(['install'] + req)
+    pass
 # %%
 from setuptools import setup
 
@@ -25,5 +24,6 @@ setup(name='pymap3d',
       'Programming Language :: Python',
       ],
       install_requires=req,
+      python_requires='>=3.5',
 	  )
 
