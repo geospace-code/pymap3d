@@ -20,6 +20,15 @@ Python 3-D coordinate conversions
 
 Python coordinate conversions, following convention of several popular Matlab routines.
 
+.. contents::
+
+Install
+=======
+::
+
+    pip install -e .
+    
+
 Usage
 =====
 a few quick examples::
