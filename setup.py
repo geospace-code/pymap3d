@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-req = ['python-dateutil','pytz','nose','numpy','astropy']
+req = ['nose','python-dateutil','pytz','numpy','astropy']
 # %%
 from setuptools import setup
 
@@ -18,6 +18,6 @@ setup(name='pymap3d',
       'Programming Language :: Python',
       ],
       install_requires=req,
-      python_requires='>=3.5',
+      python_requires='>=2.7',
 	  )
 
