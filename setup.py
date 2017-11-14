@@ -18,6 +18,6 @@ setup(name='pymap3d',
       'Programming Language :: Python',
       ],
       install_requires=req,
-      python_requires='>=2.7',
+      python_requires='>=3.5',  # due to @ matrix mult
 	  )
 
