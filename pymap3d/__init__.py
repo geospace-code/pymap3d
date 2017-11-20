@@ -17,8 +17,8 @@ see test.py for example uses.
 from __future__ import division
 from dateutil.parser import parse
 from datetime import datetime
-from numpy import (sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod,
-                   atleast_2d, atleast_1d, empty_like, array, column_stack)
+import numpy as np
+from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod
 try:
     from astropy.time import Time
     from astropy import units as u
@@ -91,7 +91,7 @@ def eci2ecef(eci, t):
     if Time is None:
         raise ImportError('You need to install AstroPy')
 
-    t = atleast_1d(t)
+    t = np.atleast_1d(t)
     if isinstance(t[0],str): #don't just ram in in case it's float
         t = str2dt(t)
 
@@ -104,14 +104,14 @@ def eci2ecef(eci, t):
 
     assert isinstance(gst[0], float)  # must be in radians!
 
-    eci = atleast_2d(eci)
+    eci = np.atleast_2d(eci)
     N, trip = eci.shape
     if eci.ndim > 2 or trip != 3:
         raise TypeError('eci triplets must be shape (N,3)')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
-    ecef = empty_like(eci)
+    ecef = np.empty_like(eci)
 
     for i in range(N):
         ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
@@ -143,7 +143,7 @@ def ned2ecef(n, e, d, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
 #%% to ECI
 def aer2eci(az, el, srange, lat0, lon0, h0, t, ell=EarthEllipsoid(), deg=True):
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
-    return ecef2eci(column_stack((x, y, z)), t)
+    return ecef2eci(np.column_stack((x, y, z)), t)
 
 
 def ecef2eci(ecef, t):
@@ -154,7 +154,7 @@ def ecef2eci(ecef, t):
     if Time is None:
         raise ImportError('Please install AstroPy')
 
-    t = atleast_1d(t)
+    t = np.atleast_1d(t)
     if isinstance(t[0],str): #don't just ram in in case it's float
         t = str2dt(t)
 
@@ -167,14 +167,14 @@ def ecef2eci(ecef, t):
 
     assert isinstance(gst[0], float)  # must be in radians!
 
-    ecef = atleast_2d(ecef)
+    ecef = np.atleast_2d(ecef)
     N, trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
         raise TypeError('ecef triplets must be shape (N,3)')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
-    eci = empty_like(ecef)
+    eci = np.empty_like(ecef)
     for i in range(N):
         eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
 
@@ -382,7 +382,7 @@ def str2dt(t):
     output: datetime
     """
 
-    t = atleast_1d(t)
+    t = np.atleast_1d(t)
     if isinstance(t[0],str):
         t = [parse(T) for T in t]
 
@@ -416,9 +416,9 @@ def _rottrip(ang):
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
-    return array([[cos(ang),  sin(ang), 0],
-                  [-sin(ang), cos(ang), 0],
-                  [0,         0,        1]])
+    return np.array([[cos(ang),  sin(ang), 0],
+                     [-sin(ang), cos(ang), 0],
+                     [0,         0,        1]])
 
 
 def _enu2uvw(east, north, up, lat0, lon0, deg=True):
@@ -465,8 +465,10 @@ def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
         raise ImportError('You need to install AstroPy')
 #%% input trapping
     t = str2dt(t)
-    lat_deg = atleast_1d(lat_deg); lon_deg = atleast_1d(lon_deg)
-    ra_deg = atleast_1d(ra_deg); dec_deg = atleast_1d(dec_deg)
+    lat_deg = np.atleast_1d(lat_deg)
+    lon_deg = np.atleast_1d(lon_deg)
+    ra_deg = np.atleast_1d(ra_deg)
+    dec_deg = np.atleast_1d(dec_deg)
 
     assert lat_deg.size == 1 & lon_deg.size == 1, 'radec2azel is designed for one observer and one or more points (ra,dec).'
     assert ra_deg.shape == dec_deg.shape, 'ra and dec must be the same shape ndarray'
