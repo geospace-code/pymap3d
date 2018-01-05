@@ -18,7 +18,7 @@ from __future__ import division
 from dateutil.parser import parse
 from datetime import datetime
 import numpy as np
-from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, mod
+from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees
 try:
     from astropy.time import Time
     from astropy import units as u
@@ -34,12 +34,20 @@ class EarthEllipsoid:
         self.b = self.a * (1 - self.f)  # semi-minor axis
 #%% to AER (azimuth, elevation, range)
 def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
+    """
+
+    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    """
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
     return enu2aer(xEast, yNorth, zUp, deg=deg)
 
 
 def eci2aer(eci, lat0, lon0, h0, t):
+    """
+
+    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    """
     ecef = eci2ecef(eci, t)
 
     return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
@@ -48,11 +56,13 @@ def eci2aer(eci, lat0, lon0, h0, t):
 def enu2aer(e, n, u, deg=True):
     """
     input: east, north, up [m]
+
+    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
     """
     r = hypot(e, n)
     slantRange = hypot(r, u)
     elev = arctan2(u, r)
-    az = mod(arctan2(e, n), 2 * arctan2(0, -1))
+    az =  arctan2(e, n) % (2 * arctan2(0, -1))
     if deg:
         return degrees(az), degrees(elev), slantRange
     else:
@@ -60,13 +70,24 @@ def enu2aer(e, n, u, deg=True):
 
 
 def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
+    """
+    gives az,el,range from observer looking to point.
+
+    input: Point(s): lat, lon, h (altitude, meters)
+           Observer: lat0, lon0, h0 (altitude, meters)
+
+    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
 
     return enu2aer(e, n, u, deg=deg)
 
 
 def ned2aer(n, e, d, deg=True):
+    """
 
+    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    """
     return enu2aer(e, n, -d, deg=deg)
 
 #%% to ECEF
