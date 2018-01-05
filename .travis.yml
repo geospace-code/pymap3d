@@ -3,7 +3,6 @@ fast_finish: true
 
 python:
   - 3.5
-  - 3.6
 
 os:
   - linux
@@ -15,12 +14,8 @@ git:
   depth: 3
 
 
-before_install:
-  - pip -q install coveralls
-
-install: pip -q install -e .
+install: pip -q install -e .[tests]
 
 script: coverage run tests/test.py -v
 
 after_success: coveralls
-

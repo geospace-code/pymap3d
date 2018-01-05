@@ -6,10 +6,10 @@
 
 .. image:: https://travis-ci.org/scivision/pymap3d.svg?branch=master
     :target: https://travis-ci.org/scivision/pymap3d
-    
+
 .. image:: https://coveralls.io/repos/github/scivision/pymap3d/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/pymap3d?branch=master
-    
+
 .. image:: https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability
    :target: https://codeclimate.com/github/scivision/pymap3d/maintainability
    :alt: Maintainability
@@ -24,10 +24,15 @@ Python coordinate conversions, following convention of several popular Matlab ro
 
 Install
 =======
-::
+Development::
 
-    pip install -e .
-    
+    python -m pip install -e .
+
+
+simple::
+
+    python -m pip install pymap3d
+
 
 Usage
 =====
@@ -51,12 +56,6 @@ Popular mapping toolbox functions ported to Python include::
   vreckon vdist
   azel2radec radec2azel
 
-
-Installation
-============
-::
-
-  pip install pymap3d
 
 
 Caveats
