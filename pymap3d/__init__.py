@@ -13,10 +13,8 @@ except as noted in the functions
 
 see test.py for example uses.
 """
-
 from __future__ import division
 from six import string_types,PY2
-from dateutil.parser import parse
 from datetime import datetime
 import numpy as np
 from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees
@@ -26,6 +24,10 @@ try:
     from astropy.coordinates import Angle,SkyCoord, EarthLocation, AltAz, ICRS
 except ImportError:
     Time = None
+#
+from .vallado import vazel2radec, vradec2azel
+from .timeconv import str2dt
+
 
 class EarthEllipsoid:
 
@@ -418,20 +420,6 @@ def get_radius_normal(lat_radians, ell):
     return a**2 / sqrt(
         a**2 * (cos(lat_radians))**2 + b**2 *
         (sin(lat_radians))**2)
-
-
-def str2dt(t):
-    """
-    output: datetime
-    """
-
-    t = np.atleast_1d(t)
-    if isinstance(t[0], string_types):
-        t = [parse(T) for T in t]
-
-    assert isinstance(t[0], datetime), 'did not convert {} to datetime'.format(type(t[0]))
-
-    return t
 #%% internal use
 def _depack(x0):
     m, n = x0.shape
@@ -490,12 +478,9 @@ def _uvw2enu(u, v, w, lat0, lon0, deg):
 
 #%% azel radec
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
-    if PY2:
-        raise RuntimeError('Python 2 is not supported for this AstroPy operation. It is time to upgrade to Python 3 (released 2008)')
 
-    if Time is None:
-        raise ImportError('You need to install AstroPy')
-
+    if PY2 or Time is None: # non-AstroPy method, less accurate
+        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t)
 
     t = str2dt(t)
 
@@ -511,7 +496,7 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
 
 def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
     if Time is None:
-        raise ImportError('You need to install AstroPy')
+        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t)
 #%% input trapping
     t = str2dt(t)
     lat_deg = np.atleast_1d(lat_deg)

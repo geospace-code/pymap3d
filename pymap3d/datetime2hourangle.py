@@ -1,30 +1,42 @@
 #!/usr/bin/env python
+from __future__ import division
 from numpy import atleast_1d, empty_like, pi, nan
 from datetime import datetime
-from astropy.time import Time
-import astropy.units as u
-from astropy.coordinates import Longitude
-"""
-input longitude and output are in RADIANS!
+try:
+    from astropy.time import Time
+    import astropy.units as u
+    from astropy.coordinates import Longitude
+except ImportError:
+    Time = None
 
-Note: The "usevallado" datetime to julian runs 4 times faster than astropy.
-AstroPy is more accurate, but version 1.0.0 doesn't auto-download new IERS data
-for current/future times, giving an
-IndexError: (some) times are outside of range covered by IERS table.
+#
+from .timeconv import str2dt
+"""
+The "usevallado" datetime to julian runs 4 times faster than astropy.
+However, AstroPy is more accurate.
+
 """
 
 
 def datetime2sidereal(t, lon_radians, usevallado=True):
     """
+    algorithm by D. Vallado Fundamentals of Astrodynamics and Applications
      lon: longitude in RADIANS
     """
     if usevallado:
         jd = datetime2julian(t)
-        gst = julian2sidereal(jd)  # Greenwich Sidereal time RADIANS
-        return gst + lon_radians  # radians # Algorithm 15 p. 188 rotate to LOCAL SIDEREAL TIME
+# %% Greenwich Sidereal time RADIANS
+        gst = julian2sidereal(jd)
+# %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
+        tsr = gst + lon_radians  # radians
     else:  # astropy
-        return Time(t).sidereal_time(kind='apparent',
-                                     longitude=Longitude(lon_radians, unit=u.radian)).radian
+        if Time is not None:
+            tsr = Time(t).sidereal_time(kind='apparent',
+                                    longitude=Longitude(lon_radians, unit=u.radian)).radian
+        else:
+            raise ImportError('AstroPy required, or use "usevallado=True"')
+
+    return tsr
 
 
 def datetime2julian(t):
@@ -32,9 +44,11 @@ def datetime2julian(t):
     from D.Vallado Fundamentals of Astrodynamics and Applications p.187
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
     """
-    t= atleast_1d(t)
 
-    assert isinstance(t[0],datetime)
+    t = str2dt(t)
+    t = atleast_1d(t)
+
+    assert isinstance(t[0], datetime)
 
     jDate = empty_like(t, dtype=float)  # yes we need the dtype!
 
@@ -53,21 +67,25 @@ def datetime2julian(t):
         A = int(year / 100.0)
         B = 2 - A + int(A / 4.)
         C = ((d.second / 60. + d.minute) / 60. + d.hour) / 24.
-        jDate[i] = (int(365.25 * (year + 4716)) + 
+        jDate[i] = (int(365.25 * (year + 4716)) +
                     int(30.6001 * (month + 1)) + d.day + B - 1524.5 + C)
 
     return jDate
 
 
 def julian2sidereal(juliandate):
-    # D. Vallado Ed. 4
-    # TODO needs unit testing
-    # Julian centuries from J2000.0
-    
-     # Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
-    tUT1 = (juliandate - 2451545.0) / 36525. 
+    """
+    D. Vallado Ed. 4
+    TODO needs unit testing
 
-    gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) * 
+    input:
+    juliandate: Julian centuries from J2000.0
+    """
+
+# %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+    tUT1 = (juliandate - 2451545.0) / 36525.
+
+    gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
         tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3) # Eqn. 3-47 p. 188
 
     # 1/86400 and %(2*pi) implied by units of radians

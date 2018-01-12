@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-install_requires = ['python-dateutil','pytz','numpy','astropy']
+install_requires = ['six','python-dateutil','pytz','numpy','astropy']
 tests_require = ['nose','coveralls']
 # %%
 from setuptools import setup,find_packages
 
 setup(name='pymap3d',
       packages=find_packages(),
-      version = '1.2.6',
+      version = '1.3.0',
       description='Python coordinate conversions, following convention of several popular Matlab routines.',
       long_description=open('README.rst').read(),
       author = 'Michael Hirsch, Ph.D.',

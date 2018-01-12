@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
-converts right ascension, declination to azimuth, elevation and vice versa
-
-
+converts right ascension, declination to azimuth, elevation and vice versa.
+Normally do this via AstroPy.
+These functions are fallbacks for those who don't wish to use AstroPy (perhaps Python 2.7 users).
 
 inputs:
 ra_deg: numpy ndarray of right ascension values [degrees]
@@ -17,13 +17,13 @@ el_deg: numpy ndarray of elevation to point [degrees]
 
 Michael Hirsch implementation of algorithms from D. Vallado
 """
+from __future__ import division
 from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
-
 #
 from .datetime2hourangle import datetime2sidereal
 
 
-def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
+def vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     """
     from D.Vallado Fundamentals of Astrodynamics and Applications
     p.258-259
@@ -40,7 +40,7 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     el = radians(el_deg)
     lat = radians(lat_deg)
     lon = radians(lon_deg)
-    # Vallado "algorithm 28" p 268
+# %% Vallado "algorithm 28" p 268
     dec = arcsin(sin(el) * sin(lat) + cos(el) * cos(lat) * cos(az))
 
     lha = arctan2(-(sin(az) * cos(el)) / cos(dec),
@@ -52,7 +52,7 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     return degrees(lst - lha) % 360, degrees(dec)
 
 
-def radec2azel(dtime,ra_deg,dec_deg,lat_deg,lon_deg):
+def vradec2azel(ra_deg,dec_deg,lat_deg,lon_deg,t):
     """
     from D. Vallado "Fundamentals of Astrodynamics and Applications "
        4th Edition Ch. 4.4 pg. 266-268
@@ -62,11 +62,12 @@ def radec2azel(dtime,ra_deg,dec_deg,lat_deg,lon_deg):
     lat = radians(lat_deg)
     lon = radians(lon_deg)
 
-    lst = datetime2sidereal(dtime,lon) #RADIANS
-    lha = lst - ra #Eq. 4-11 p. 267 LOCAL HOUR ANGLE
-
-    el = arcsin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(lha) ) #Eq. 4-12 p. 267
-    #combine Eq. 4-13 and 4-14 p. 268
+    lst = datetime2sidereal(t, lon) #RADIANS
+# %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
+    lha = lst - ra
+# %% #Eq. 4-12 p. 267
+    el = arcsin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(lha) )
+# %% combine Eq. 4-13 and 4-14 p. 268
     az = arctan2( -sin(lha) * cos(dec) / cos(el),
                    ( sin(dec) - sin(el) * sin(lat) ) / (cos(el)*cos(lat))  )
 

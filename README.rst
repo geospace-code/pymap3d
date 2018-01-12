@@ -19,13 +19,19 @@ Python 3-D coordinate conversions
 ==================================
 
 Python coordinate conversions, following convention of several popular Matlab routines.
+Tested from Python 2.7 through Python 3.7+
+
+For those not having AstroPy, lower accuracy fallback functions are included for some functions.
 
 .. contents::
+
+
+:prereqs: AstroPy, Numpy, Python 3 or Python 2.7
 
 Install
 =======
 Development::
-
+    
     python -m pip install -e .
 
 
@@ -36,12 +42,16 @@ simple::
 
 Usage
 =====
-a few quick examples::
+a few quick examples
 
-   from pymap3d import *
+.. code:: python
 
-   lat,lon,alt = eci2geodetic(eci,t)
-   az,el,range = geodetic2aer(lat,lon,alt,42,-82,0)
+   import pymap3d as pm
+
+   lat,lon,alt = pm.eci2geodetic(eci, t)
+   
+   az,el,range = pm.geodetic2aer(lat, lon, alt, 42, -82, 0)
+   
 
 Functions
 ==========
@@ -60,5 +70,6 @@ Popular mapping toolbox functions ported to Python include::
 
 Caveats
 =======
-Atmospheric effects neglected in all functions not invoking AstroPy.
-Planetary perturbations and nutation etc. not fully considered.
+
+* Atmospheric effects neglected in all functions not invoking AstroPy. Need to update code to add these input parameters (just start a GitHub Issue to request).
+* Planetary perturbations and nutation etc. not fully considered.

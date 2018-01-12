@@ -3,43 +3,64 @@
 runs tests
 """
 from datetime import datetime
-import six
-import logging
 from numpy import asarray,radians
 from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
 from pytz import UTC
-from dateutil.parser import parse
 #
 import pymap3d as pm
 from pymap3d.haversine import angledist,angledist_meeus
 from pymap3d.vincenty import vreckon,vdist
 from pymap3d.datetime2hourangle import datetime2sidereal
+from pymap3d.vallado import vazel2radec, vradec2azel
+from pymap3d.timeconv import str2dt
+
+def test_str2dt():
+
+    assert str2dt('2014-04-06T08:00:00Z') == datetime(2014,4,6,8, tzinfo=UTC)
+    ti = [str2dt('2014-04-06T08:00:00Z'), str2dt('2014-04-06T08:01:02Z')]
+    to = [datetime(2014,4,6,8, tzinfo=UTC),  datetime(2014,4,6,8,1,2, tzinfo=UTC)]
+    assert  ti == to   # even though ti is numpy array of datetime and to is list of datetime
+
+# %%
+t = '2014-04-06T08:00:00Z'
+rdlat, rdlon = (65, -148)
+ra, dec = (166.5032081149338,55.000011165405752)
+ha = 45.482789587392013
+azi, eli = (180.1,80)
 
 def test_datetime2sidereal():
-    sdrtest = datetime2sidereal(datetime(2014,4,6,8), radians(-148), False)
-    assert_allclose(sdrtest,2.9065780550600806,rtol=1e-5)
+    sdrapy = datetime2sidereal(t, radians(rdlon), False)
+    assert_allclose(sdrapy, 2.9065780550600806, rtol=1e-5)
+
+    sdrvallado = datetime2sidereal(t, radians(rdlon), True)
+    assert_allclose(sdrvallado, 2.9065780550600806, rtol=1e-5)
+
 
 def test_azel2radec():
-    if six.PY2:
-        logging.error('AstroPy does not support Python 2 for this function. Python 3 was released in 2008.')
-        return
+    R,D = pm.azel2radec(azi, eli, rdlat, rdlon, t)
+    assert_allclose(R, ra, rtol=1e-2)
+    assert_allclose(D, dec, rtol=1e-2)
 
-    ra,dec = pm.azel2radec(180.1, 80,
-                           65, -148,
-                           '2014-04-06T08:00:00Z')
-    assert_allclose(ra,166.5032081149338,rtol=1e-2)
-    assert_allclose(dec,55.000011165405752,rtol=1e-2)
+    Rv, Dv = vazel2radec(azi, eli, rdlat, rdlon, t)
+    assert_allclose(Rv, ra)
+    assert_allclose(Dv, dec)
+
 
 def test_radec2azel():
-    aztest, eltest = pm.radec2azel(166.5032081149338,55.000011165405752, 65, -148,
-                            parse('2014-04-06T08:00:00'))
-    assert_allclose(aztest, 179.40287898,rtol=1e-2) #180.1 from vallado, but his is less precise
-    assert_allclose(eltest, 79.92186504,rtol=1e-2)    #80.0 from vallado, but  his is less precise
+    azapy, elapy = pm.radec2azel(ra,dec,  rdlat, rdlon, t)
+    assert_allclose(azapy, azi, rtol=1e-2)
+    assert_allclose(elapy, eli, rtol=1e-2)
+
+    azvallado, elvallado = vradec2azel(ra, dec, rdlat, rdlon, t)
+    assert_allclose(azvallado, azi, rtol=1e-2)
+    assert_allclose(elvallado, eli, rtol=1e-2)
+
 
 def test_haversine():
-    assert_almost_equal(angledist(35,23,84,20),45.482789587392013)
+    assert_almost_equal(angledist(35,23, 84,20), ha)
     #%% compare with astropy
-    assert_almost_equal(45.482789587392013, angledist_meeus(35,23, 84,20))
+    assert_almost_equal(ha, angledist_meeus(35,23, 84,20))
+
 
 def test_vreckon():
     lat2,lon2,a21 = vreckon(10,20,3000,38)
