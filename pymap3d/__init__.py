@@ -15,6 +15,7 @@ see test.py for example uses.
 """
 
 from __future__ import division
+from six import string_types,PY2
 from dateutil.parser import parse
 from datetime import datetime
 import numpy as np
@@ -118,7 +119,7 @@ def eci2ecef(eci, t):
         raise ImportError('You need to install AstroPy')
 
     t = np.atleast_1d(t)
-    if isinstance(t[0],str): #don't just ram in in case it's float
+    if isinstance(t[0], string_types): #don't just ram in in case it's float
         t = str2dt(t)
 
     if isinstance(t[0], datetime):
@@ -140,7 +141,8 @@ def eci2ecef(eci, t):
     ecef = np.empty_like(eci)
 
     for i in range(N):
-        ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
+        #ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
+        ecef[i, :] = _rottrip(gst[i]).dot(eci[i, :])
 
     return ecef
 
@@ -187,7 +189,7 @@ def ecef2eci(ecef, t):
         raise ImportError('Please install AstroPy')
 
     t = np.atleast_1d(t)
-    if isinstance(t[0],str): #don't just ram in in case it's float
+    if isinstance(t[0], string_types): #don't just ram in in case it's float
         t = str2dt(t)
 
     if isinstance(t[0], datetime):
@@ -208,7 +210,8 @@ def ecef2eci(ecef, t):
     """
     eci = np.empty_like(ecef)
     for i in range(N):
-        eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
+        #eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
+        eci[i, :] = _rottrip(gst[i]).T.dot(ecef[i, :]) # this one is transposed
 
     return eci
 #%% to ENU
@@ -423,10 +426,10 @@ def str2dt(t):
     """
 
     t = np.atleast_1d(t)
-    if isinstance(t[0],str):
+    if isinstance(t[0], string_types):
         t = [parse(T) for T in t]
 
-    assert isinstance(t[0],datetime), 'did not convert {} to datetime'.format(type(t[0]))
+    assert isinstance(t[0], datetime), 'did not convert {} to datetime'.format(type(t[0]))
 
     return t
 #%% internal use
@@ -487,6 +490,9 @@ def _uvw2enu(u, v, w, lat0, lon0, deg):
 
 #%% azel radec
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
+    if PY2:
+        raise RuntimeError('Python 2 is not supported for this AstroPy operation. It is time to upgrade to Python 3 (released 2008)')
+
     if Time is None:
         raise ImportError('You need to install AstroPy')
 
@@ -494,8 +500,10 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     t = str2dt(t)
 
     obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
+
     direc = AltAz(location=obs, obstime=Time(t),
                   az=az_deg * u.deg, alt=el_deg * u.deg)
+
     sky = SkyCoord(direc.transform_to(ICRS()))
 
     return sky.ra.deg, sky.dec.deg

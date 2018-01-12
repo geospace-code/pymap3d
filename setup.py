@@ -6,7 +6,7 @@ from setuptools import setup,find_packages
 
 setup(name='pymap3d',
       packages=find_packages(),
-      version = '1.2.5',
+      version = '1.2.6',
       description='Python coordinate conversions, following convention of several popular Matlab routines.',
       long_description=open('README.rst').read(),
       author = 'Michael Hirsch, Ph.D.',
@@ -22,6 +22,6 @@ setup(name='pymap3d',
       install_requires=install_requires,
       tests_require=tests_require,
       extras_require={'tests':tests_require},
-      python_requires='>=3.5',  # due to @ matrix mult
+      python_requires='>=2.7',  # by request
 	  )
 

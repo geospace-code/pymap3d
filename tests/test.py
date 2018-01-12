@@ -3,6 +3,8 @@
 runs tests
 """
 from datetime import datetime
+import six
+import logging
 from numpy import asarray,radians
 from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
 from pytz import UTC
@@ -18,7 +20,13 @@ def test_datetime2sidereal():
     assert_allclose(sdrtest,2.9065780550600806,rtol=1e-5)
 
 def test_azel2radec():
-    ra,dec = pm.azel2radec(180.1, 80, 65, -148, '2014-04-06T08:00:00Z')
+    if six.PY2:
+        logging.error('AstroPy does not support Python 2 for this function. Python 3 was released in 2008.')
+        return
+
+    ra,dec = pm.azel2radec(180.1, 80,
+                           65, -148,
+                           '2014-04-06T08:00:00Z')
     assert_allclose(ra,166.5032081149338,rtol=1e-2)
     assert_allclose(dec,55.000011165405752,rtol=1e-2)
 
