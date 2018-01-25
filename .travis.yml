@@ -9,15 +9,18 @@ python:
 os:
   - linux
 
-notifications:
-  email: false
-
 git:
   depth: 3
+  
+  
+addons:
+  apt:
+    packages:
+      - octave
 
 
 install: pip -q install -e .[tests]
 
-script: coverage run tests/test.py -v
+script: coverage run tests/Test.py -v
 
 after_success: coveralls

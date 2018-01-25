@@ -9,10 +9,10 @@ function [x,y,z] = geodetic2ecef(phi, lambda, h, ell, angleut)
   % given geodetic curvilinear coordinates.
   coord_geod = [phi,lambda, h];
   if nargin < 4 || isempty(ell) 
-    ell = get_ellipsoid('wgs84');
+    ell = get_ellipsoid();
   elseif ~isstruct(ell)
     ell = get_ellipsoid(ell);
-  endif
+  end
 
   if nargin<5
     angleut='degree';
@@ -21,7 +21,7 @@ function [x,y,z] = geodetic2ecef(phi, lambda, h, ell, angleut)
   % Radius of curvature of the prime vertical section
   N = get_radius_normal(coord_geod(:, 1), ell);
 
-  ## Some shortnames for variables used often.
+  % Some shortnames for variables used often.
   a = ell.a;  
   b = ell.b;
   lat = coord_geod(:, 1);
@@ -30,7 +30,7 @@ function [x,y,z] = geodetic2ecef(phi, lambda, h, ell, angleut)
 
   % Compute cartesian (geocentric) coordinates given 
   % (curvilinear) geodetic coordinates.
-  if angleut ~= 'degree'
+  if ~strcmpi(angleut(1),'d')
     lat = rad2deg(lat);
     lon = rad2deg(lon);
   end

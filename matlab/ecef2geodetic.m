@@ -1,7 +1,7 @@
 function [lat,lon,h] = ecef2geodetic(x, y, z, ell)
 
   if nargin < 4 || isempty(ell) 
-    ell = get_ellipsoid('wgs84');
+    ell = get_ellipsoid();
   elseif ~isstruct(ell)
     ell = get_ellipsoid(ell);
   end

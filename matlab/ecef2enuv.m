@@ -1,9 +1,9 @@
 function [uEast, vNorth, wUp] = ecef2enuv (u, v, w, lat0, lon0, angleut)
   if nargin<6
-    angleut='degree';
+    angleut='d';
   end
 
-  if angleut ~= 'degree'
+  if ~strcmpi(angleut(1), 'd')
     lat0 = rad2deg(lat0);
     lon0 = rad2deg(lon0);
   end

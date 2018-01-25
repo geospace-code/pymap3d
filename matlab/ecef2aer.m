@@ -3,18 +3,17 @@
 % Copyright (C) 2013 Felipe G. Nievinski
 % Copyright (C) 2013 Sandeep V. Manthi
 
-function [az, elev, slantRange] = ecef2aer (x, y, z, lat0, lon0, h0, ell, angleut)
+function [az, el, slantRange] = ecef2aer (x, y, z, lat0, lon0, h0, ell, angleut)
   if nargin < 7 || isempty (ell)
-    ell = get_ellipsoid('wgs84');
-    angleut='degree';
+    ell = get_ellipsoid();
   elseif ~isstruct (ell)
-    ell = get_ellipsoid (ell);
+    ell = get_ellipsoid(ell);
   end
   
   if nargin<8
-    angleut='degree';
+    angleut='d';
   end
 
-  [xEast, yNorth, zUp] = ecef2enu (x, y, z, lat0, lon0, h0, ell, angleut);
-  [az,elev,slantRange] = enu2aer (xEast, yNorth, zUp, angleut);
+  [e, n, u] = ecef2enu(x, y, z, lat0, lon0, h0, ell, angleut);
+  [az,el,slantRange] = enu2aer(e, n, u, angleut);
 end

@@ -5,15 +5,15 @@
 
 function [xEast,yNorth,zUp] = ecef2enu (x, y, z, lat0, lon0, h0, ell, angleut)
   if nargin < 7 || isempty (ell)
-    ell = get_ellipsoid('wgs84');
+    ell = get_ellipsoid();
   elseif ~isstruct (ell)
     ell = get_ellipsoid (ell);
-  endif
-
-  if nargin<8
-    angleut='degree';
   end
 
-  [x0, y0, z0] = geodetic2ecef (lat0, lon0, h0, ell, angleut);
-  [xEast, yNorth, zUp] = ecef2enuv (x - x0, y - y0, z - z0, lat0, lon0, angleut);
+  if nargin<8
+    angleut='d';
+  end
+
+  [x0, y0, z0] = geodetic2ecef(lat0, lon0, h0, ell, angleut);
+  [xEast, yNorth, zUp] = ecef2enuv(x - x0, y - y0, z - z0, lat0, lon0, angleut);
 end
