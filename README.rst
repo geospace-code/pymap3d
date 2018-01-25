@@ -54,7 +54,7 @@ a few quick examples
    
 
 Functions
-==========
+---------
 Popular mapping toolbox functions ported to Python include::
 
   aer2ecef  aer2enu  aer2geodetic  aer2ned
@@ -69,7 +69,13 @@ Popular mapping toolbox functions ported to Python include::
 
 
 Caveats
-=======
+-------
 
 * Atmospheric effects neglected in all functions not invoking AstroPy. Need to update code to add these input parameters (just start a GitHub Issue to request).
 * Planetary perturbations and nutation etc. not fully considered.
+
+
+Matlab / Octave
+===============
+Many functions of ``pymap3d`` originated as Matlab / Octave functions.
+Some of the original ``.m`` code is in ``matlab/``.

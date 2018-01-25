@@ -197,5 +197,5 @@ if nargout > 2
     a21(lat2tr <= -90) = 0;
     varargout{3} = reshape(a21 * 57.2957795130823,keepsize); % to degrees
 end
-return
 
+end % function

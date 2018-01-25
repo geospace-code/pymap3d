@@ -104,4 +104,5 @@ if nargout > 2
     a21  = 180 + a21  * 57.295779513082322865; % note direction reversal
     a21=mod(a21,360);
 end
-return
+
+end % function
