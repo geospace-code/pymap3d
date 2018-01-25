@@ -8,7 +8,7 @@ function [xEast,yNorth,zUp] = ecef2enu (x, y, z, lat0, lon0, h0, ell, angleut)
     ell = get_ellipsoid('wgs84');
   elseif ~isstruct (ell)
     ell = get_ellipsoid (ell);
-  endif
+  end
 
   if nargin<8
     angleut='degree';
