@@ -31,10 +31,19 @@ from .timeconv import str2dt
 
 class EarthEllipsoid:
 
-    def __init__(self):
-        self.a = 6378137.  # semi-major axis [m]
-        self.f = 1 / 298.2572235630  # flattening
-        self.b = self.a * (1 - self.f)  # semi-minor axis
+    def __init__(self,model='wgs84'):
+        if model == 'wgs84':
+            """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
+            self.a = 6378137.  # semi-major axis [m]
+            self.f = 1 / 298.2572235630  # flattening
+            self.b = self.a * (1 - self.f)  # semi-minor axis
+        elif model=='grs80':
+            """https://en.wikipedia.org/wiki/GRS_80"""
+            self.a = 6378137.  # semi-major axis [m]
+            self.f = 1 / 298.257222100882711243  # flattening
+            self.b = self.a * (1 - self.f)  # semi-minor axis
+        
+        
 #%% to AER (azimuth, elevation, range)
 def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     """
