@@ -12,7 +12,7 @@ function [x,y,z] = geodetic2ecef (phi, lambda, h, ell, angleut)
     ell = get_ellipsoid('wgs84');
   elseif ~isstruct (ell)
     ell = get_ellipsoid (ell);
-  endif
+  end
 
   if nargin<5
     angleut='degree';
@@ -21,7 +21,7 @@ function [x,y,z] = geodetic2ecef (phi, lambda, h, ell, angleut)
   % Radius of curvature of the prime vertical section
   N = get_radius_normal (coord_geod(:, 1), ell);
 
-  ## Some shortnames for variables used often.
+  % Some shortnames for variables used often.
   a = ell.a;  
   b = ell.b;
   lat = coord_geod(:, 1);
