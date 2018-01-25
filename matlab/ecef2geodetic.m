@@ -4,7 +4,7 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell)
     ell = get_ellipsoid('wgs84');
   elseif ~isstruct(ell)
     ell = get_ellipsoid(ell);
-  endif
+  end
 
  
   % Algorithm is based on 
@@ -43,4 +43,4 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell)
   h = ((r - (a * cos (vnew))) .* cos (lat)) +  ...
       ((z - (b * sin (vnew))) .* sin (lat));
 
- end
+ end % function
