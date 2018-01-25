@@ -7,22 +7,14 @@ if ~matlabmap
 else
   ell = referenceEllipsoid('wgs84');
 end
+%% reference inputs
+taz = 33; tel=70; tsrange = 1000; % aer2enu
 
-lat = 42; lon = -82; alt = 200;
-
-lat2 = 42.1; lon2 = -81.9; alt2 = 1300;
-e =  8.273771039503677e+03;
-n =  1.111452002615149e+04;
-u =  1.084939260985176e+03;
-
-az = 33; el = 70; srange = 1000;
- x = 6.678411289903646e+05;  
- y =  -4.692496355102768e+06; 
- z = 4.254052899714093e+06;
-
+%% reference outputs
+a2e = 186.277521; a2n = 286.842228; a2u = 939.692621; % aer2enu
 %%
-[et,nt,ut] = aer2enu(az,el,srange);
-fprintf('aer2enu %f %f %f \n',et,nt,ut)
+assert_allclose(aer2enu(taz, tel, tsrange), [a2e,a2n,a2u], 0.001)
+
 
 [xt,yt,zt] = aer2ecef(az,el,srange,lat,lon,alt,ell);
 fprintf('aer2ecef %f %f %f \n',xt,yt,zt)
