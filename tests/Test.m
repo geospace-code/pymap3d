@@ -19,31 +19,34 @@ ve=5.368859646588048; vn= 3.008520763668120; vu= -0.352347711524077; % ecef2enuv
 [x1,y1,z1] = geodetic2ecef(lat,lon,alt);
 assert_allclose([x1,y1,z1],[g2x,g2y,g2z])
 
-[e,n,u] = aer2enu(az, el, srange);
-assert_allclose([e,n,u], [a2e,a2n,a2u])
+[e1,n1,u1] = aer2enu(az, el, srange);
+assert_allclose([e1,n1,u1], [a2e,a2n,a2u])
 
 [ev,nv,uv] = ecef2enuv(vx,vy,vz,lat,lon);
 assert_allclose([ev,nv,uv],[ve,vn,vu])
 
-[x,y,z] = aer2ecef(az,el,srange,lat,lon,alt);
-assert_allclose([x,y,z], [a2x,a2y,a2z])
+[x2,y2,z2] = aer2ecef(az,el,srange,lat,lon,alt);
+assert_allclose([x2,y2,z2], [a2x,a2y,a2z])
 
 %% ecef2geodetic is self-contained, iterative algorithm.
-[lat2, lon2, alt2] = ecef2geodetic(x1, y1, z1);
+[lat2, lon2, alt2] = ecef2geodetic(x1, y1, z1); % round-trip
 %[lat2, lon2, alt2] = ecef2geodetic(g2x, g2y, g2z);
 assert_allclose([lat2, lon2, alt2], [lat, lon, alt])
 
+[az2, el2, rng2] = enu2aer(e1,n1,u1); % round-trip
+assert_allclose([az2,el2,rng2],[az,el,srange])
+
+[az3, el3, rng3] = ecef2aer(x2,y2,z2, lat,lon,alt); % round-trip 
+assert_allclose([az3,el3,rng3], [az,el,srange])
+
+
 [lat3,lon3,alt3] = aer2geodetic(az,el,srange,lat,lon,alt);
-assert_allclose([lat3,lon3,alt3], [a2la, a2lo, a2a], [], 0.01)
-return
-[azt, elt, rngt] = ecef2aer(x,y,z,lat,lon,alt,ell,'degrees');
-fprintf('\necef2aer %f %f %f',azt,elt,rngt)
+assert_allclose([lat3,lon3,alt3], [a2la, a2lo, a2a])
+
+[az4, el4, rng4] = geodetic2aer(lat3,lon3,alt3,lat,lon,alt); % round-trip
+assert_allclose([az4,el4,rng4], [az,el,srange])
 
 
-
-
-[g2az, g2el,g2r] = geodetic2aer(lat2,lon2,alt2,lat,lon,alt,ell,'degrees');
-fprintf('geodetic2aer %f %f %f\n',g2az,g2el,g2r)
 
 [ee,en,eu] = ecef2enu(x,y,z,lat,lon,alt,ell);
 fprintf('ecef2enu %f %f %f\n',ee,en,eu)

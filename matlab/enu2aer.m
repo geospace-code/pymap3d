@@ -1,12 +1,17 @@
-function [az, elev, slantRange] = enu2aer (xEast, yNorth, zUp, angleut)
+function [az, elev, slantRange] = enu2aer(e, n, u, angleut)
 
-  r = hypot(xEast, yNorth);
-  slantRange = hypot(r,zUp);
-  elev = atan2d(zUp,r);
-  az = mod (atan2d (xEast, yNorth), 2 * atan2d (0,-1));
+  
+  
 
-  if (nargin < 4 || strcmpi(angleut, "radian" ))
-    elev=deg2rad(elev);
-    az = deg2rad(az);
+  r = hypot(e, n);
+  slantRange = hypot(r,u);
+  % radians
+  elev = atan2(u,r);
+  az = mod(atan2(e, n), 2 * atan2(0,-1));
+
+  if nargin < 4 || strcmpi(angleut(1),'d')
+    elev = rad2deg(elev);
+    az = rad2deg(az);
   end
+  
 end
