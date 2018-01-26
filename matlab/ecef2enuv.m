@@ -1,15 +1,12 @@
 function [uEast, vNorth, wUp] = ecef2enuv (u, v, w, lat0, lon0, angleut)
-  if nargin<6
-    angleut='d';
+
+  if nargin<6 || strcmpi(angleut(1), 'd')
+    lat0 = deg2rad(lat0);
+    lon0 = deg2rad(lon0);
   end
 
-  if ~strcmpi(angleut(1), 'd')
-    lat0 = rad2deg(lat0);
-    lon0 = rad2deg(lon0);
-  end
-
-  t      =  cosd(lon0) .* u + sind(lon0) .* v;
-  uEast  = -sind(lon0) .* u + cosd(lon0) .* v;
-  wUp    =  cosd(lat0) .* t + sind(lat0) .* w;
-  vNorth = -sind(lat0) .* t + cosd(lat0) .* w;
+  t      =  cos(lon0) .* u + sin(lon0) .* v;
+  uEast  = -sin(lon0) .* u + cos(lon0) .* v;
+  wUp    =  cos(lat0) .* t + sin(lat0) .* w;
+  vNorth = -sin(lat0) .* t + cos(lat0) .* w;
 end

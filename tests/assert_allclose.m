@@ -10,9 +10,13 @@ function ok = assert_allclose(actual, desired, atol, rtol)
 if nargin < 4, rtol=1e-5; end
 if nargin < 3 || isempty(atol), atol=1e-8; end
   
-maxerrmag = max(abs(actual-desired));
+[maxerrmag,i] = max(abs(actual-desired));
 if maxerrmag > atol + rtol * abs(desired)
-  error(['AssertionError: maximum error magnitude ',num2str(maxerrmag),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
+  disp(['Actual: ',num2str(actual)])
+  disp([' desired: ',num2str(desired)])
+  error(['AssertionError: maximum error magnitude ',num2str(maxerrmag),' on ',int2str(i),'th value: ',num2str(actual(i)),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
 end
+
+
 
 end

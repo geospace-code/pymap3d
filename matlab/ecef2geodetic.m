@@ -1,4 +1,6 @@
 function [lat,lon,h] = ecef2geodetic(x, y, z, ell, angleut)
+% also see: http://www.oc.nps.edu/oc2902w/coord/coordcvt.pdf
+% Fortran reference at bottom of: http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
 
   if nargin < 4 || isempty(ell) 
     ell = get_ellipsoid();
@@ -28,6 +30,7 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell, angleut)
 % Initializing the parametric latitude
    v = 0;
   while v ~= vnew && count < 5
+ %   disp([v,vnew])
      v = vnew;
     % Derivative of latitude equation
     w = 2 * (cos (v - rho) - c .* cos(2 * v)); 
@@ -41,8 +44,8 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell, angleut)
   % Computing longitude
   lon = atan2(y, x); 
  % Computing h from latitude obtained 
-  h = ((r - (a * cos (vnew))) .* cos (lat)) +  ...
-      ((z - (b * sin (vnew))) .* sin (lat));
+  h = ((r - a * cos (vnew)) .* cos (lat)) +  ...
+      ((z - b * sin (vnew)) .* sin (lat));
       
   if strcmpi(angleut(1),'d')
     lat = rad2deg(lat);
