@@ -1,10 +1,12 @@
-function [lat,lon,h] = ecef2geodetic(x, y, z, ell)
+function [lat,lon,h] = ecef2geodetic(x, y, z, ell, angleut)
 
   if nargin < 4 || isempty(ell) 
     ell = get_ellipsoid();
   elseif ~isstruct(ell)
     ell = get_ellipsoid(ell);
   end
+  
+  if nargin < 5, angleut='d'; end
 
  
   % Algorithm is based on 
@@ -25,14 +27,13 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell)
   vnew = atan2(a * z, b * r);  
 % Initializing the parametric latitude
    v = 0;
-  while v == vnew && count < 5
+  while v ~= vnew && count < 5
      v = vnew;
     % Derivative of latitude equation
     w = 2 * (cos (v - rho) - c .* cos(2 * v)); 
     % Newtons Method for computing iterations  
     vnew = v - ((2 * sin (v - rho) - c .* sin(2 * v)) ./ w);  
     count = count+1;
-    disp(count)
   end %while
 
 %% Computing latitude from the root of the latitude equation
@@ -42,5 +43,10 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell)
  % Computing h from latitude obtained 
   h = ((r - (a * cos (vnew))) .* cos (lat)) +  ...
       ((z - (b * sin (vnew))) .* sin (lat));
+      
+  if strcmpi(angleut(1),'d')
+    lat = rad2deg(lat);
+    lon = rad2deg(lon);
+  end
 
  end % function

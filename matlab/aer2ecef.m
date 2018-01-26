@@ -1,7 +1,7 @@
 function [x,y,z] = aer2ecef(az, el, slantRange, lat0, lon0, h0, ell, ...
                              angleut)
                              
-  if nargin < 7, ell=get_ellipsoid(); end
+  if nargin < 7 || isempty(ell), ell=get_ellipsoid(); end
   if nargin < 8, angleut = 'd'; end
 
   %% Origin of the local system in geocentric coordinates.

@@ -111,6 +111,14 @@ vx,vy,vz = (5,3,2)
 ve,vn,vu =(5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
+def test_roundtrip():
+
+    x,y,z = pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt)
+    lat,lon,alt = pm.ecef2geodetic(x,y,z)
+    
+    assert_allclose((tlat,tlon,talt),(lat,lon,alt))
+
+
 def test_geodetic():
     assert_allclose(pm.ecef2geodetic(tx,ty,tz),(ec2la,ec2lo,ec2a),
                 rtol=0.01,
