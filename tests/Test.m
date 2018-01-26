@@ -18,7 +18,7 @@ a2x = 660930.192761; a2y= -4701424.222957; a2z= 4246579.604633; % aer2ecef
 assert_allclose([e,n,u], [a2e,a2n,a2u], [], 0.01)
 
 [x,y,z] = aer2ecef(az,el,srange,lat,lon,alt,ell);
-assert_allclose([x,y,z], [a2x,a2y,a2z])
+assert_allclose([x,y,z], [a2x,a2y,a2z], [], 0.01)
 
 [latt,lont,altt] = aer2geodetic(az,el,srange,lat,lon,alt,ell,'degrees');
 fprintf('aer2geodetic %f %f %f \n',latt,lont,altt)
