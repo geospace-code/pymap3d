@@ -55,10 +55,5 @@ assert_allclose([x3,y3,z3],[x2,y2,z2])
 [lat4, lon4, alt4] = enu2geodetic(e2,n2,u2,lat,lon,alt); % round-trip
 assert_allclose([lat4, lon4, alt4],[lat3, lon3, alt3])
 
-return
-
-[ee,en,eu] = ecef2enu(x,y,z,lat,lon,alt,ell);
-fprintf('ecef2enu %f %f %f\n',ee,en,eu)
-
-
-
+[e3,n3,u3] = ecef2enu(x3,y3,z3,lat,lon,alt); % round-trip
+assert_allclose([e3,n3,u3],[e1,n1,u1])
