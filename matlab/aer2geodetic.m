@@ -5,7 +5,7 @@ function [lat1, lon1, h1] = aer2geodetic (az, el, slantRange, lat0, lon0, ...
   if nargin<8, angleut='d';  end
 
   [x, y, z] = aer2ecef(az, el, slantRange, lat0, lon0, h0, ell, angleut);
-  disp([x,y,z])
+ 
   [lat1, lon1, h1] = ecef2geodetic(x, y, z, ell, angleut);
 
 end

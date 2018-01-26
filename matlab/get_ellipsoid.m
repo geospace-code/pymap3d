@@ -12,14 +12,14 @@ case 'wgs84'
  ell.a = 6378137.0;                                % semi-major axis
  ell.f = 1.0 / 298.2572235630;                     % flattening
  ell.b = ell.a * (1 - ell.f);                      % semi-minor axis
- ell.e = sqrt ( (ell.a^2 - ell.b^2) / (ell.a^2));  % first eccentricity
+ %ell.e = sqrt ( (ell.a^2 - ell.b^2) / (ell.a^2));  % first eccentricity
 case 'grs80'
 % GRS-80 ellipsoid parameters
 % <http://itrf.ensg.ign.fr/faq.php?type=answer> (accessed 2018-01-22)
  ell.a = 6378137.0;                                % semi-major axis
  ell.f = 1/298.257222100882711243;                 % flattening
  ell.b = ell.a * (1 - ell.f);                      % semi-minor axis
- ell.e = sqrt ( (ell.a^2 - ell.b^2) / (ell.a^2));  % first eccentricity 
+ %ell.e = sqrt ( (ell.a^2 - ell.b^2) / (ell.a^2));  % first eccentricity 
 otherwise, error([name,' not yet implemented'])
 end
 end

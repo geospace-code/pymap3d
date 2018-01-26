@@ -9,7 +9,7 @@ function [x,y,z] = aer2ecef(az, el, slantRange, lat0, lon0, h0, ell, ...
   %% Convert Local Spherical AER to ENU
   [e, n, u] = aer2enu(az, el, slantRange, angleut);
   %% Rotating ENU to ECEF
-  [dx, dy, dz] = enu2ecefv(e, n, u, lat0, lon0, angleut);
+  [dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleut);
   %% Origin + offset from origin equals position in ECEF
   x = x0 + dx;
   y = y0 + dy;
