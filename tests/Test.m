@@ -1,4 +1,5 @@
-clear
+function Test()
+
 fpath = fileparts(mfilename('fullpath'));
 addpath([fpath,filesep,'../matlab'])
 ell = get_ellipsoid();
@@ -57,3 +58,12 @@ assert_allclose([lat4, lon4, alt4],[lat3, lon3, alt3])
 
 [e3,n3,u3] = ecef2enu(x3,y3,z3,lat,lon,alt); % round-trip
 assert_allclose([e3,n3,u3],[e1,n1,u1])
+
+end % function
+
+
+function rad = deg2rad(deg)
+% for Octave < 4.0
+  rad = deg * (pi / 180);
+
+end
