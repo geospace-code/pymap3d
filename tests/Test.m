@@ -43,16 +43,17 @@ assert_allclose([az3,el3,rng3], [az,el,srange])
 [lat3,lon3,alt3] = aer2geodetic(az,el,srange,lat,lon,alt);
 assert_allclose([lat3,lon3,alt3], [a2la, a2lo, a2a])
 
+[e2, n2, u2] = geodetic2enu(lat3, lon3, alt3, lat, lon, alt);
+assert_allclose([e2,n2,u2],[e1,n1,u1])
+
 [az4, el4, rng4] = geodetic2aer(lat3,lon3,alt3,lat,lon,alt); % round-trip
 assert_allclose([az4,el4,rng4], [az,el,srange])
 
-
+return
 
 [ee,en,eu] = ecef2enu(x,y,z,lat,lon,alt,ell);
 fprintf('ecef2enu %f %f %f\n',ee,en,eu)
 
-[e2az, e2el, e2rn] = enu2aer(e,n,u,'degrees');
-fprintf('enu2aer %f %f %f\n',e2az,e2el,e2rn)
 
 [e2la, e2lo, e2al] = enu2geodetic(e,n,u,lat,lon,alt,ell);
 fprintf('enu2geodetic %f %f %f\n',e2la,e2lo,e2al)
