@@ -4,7 +4,7 @@ addpath([fpath,filesep,'../matlab'])
 ell = get_ellipsoid();
 
 %% reference inputs
-az = 33; el=70; srange = 1000;
+az = 33; el=70; srange = 1e3;
 lat = 42; lon= -82; alt = 200;
 vx = 5; vy=3; vz=2;
 %% reference outputs
@@ -48,6 +48,12 @@ assert_allclose([e2,n2,u2],[e1,n1,u1])
 
 [az4, el4, rng4] = geodetic2aer(lat3,lon3,alt3,lat,lon,alt); % round-trip
 assert_allclose([az4,el4,rng4], [az,el,srange])
+%% 
+[x3, y3, z3] = enu2ecef(e1,n1,u1,lat,lon,alt);
+assert_allclose([x3,y3,z3],[x2,y2,z2])
+
+[lat4, lon4, alt4] = enu2geodetic(e2,n2,u2,lat,lon,alt); % round-trip
+assert_allclose([lat4, lon4, alt4],[lat3, lon3, alt3])
 
 return
 
@@ -55,9 +61,4 @@ return
 fprintf('ecef2enu %f %f %f\n',ee,en,eu)
 
 
-[e2la, e2lo, e2al] = enu2geodetic(e,n,u,lat,lon,alt,ell);
-fprintf('enu2geodetic %f %f %f\n',e2la,e2lo,e2al)
 
-[e2x, e2y, e2z ] = enu2ecef(x,y,z,lat,lon,alt,ell,'degrees')
-
-fprintf('\n')
