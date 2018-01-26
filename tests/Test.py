@@ -3,7 +3,6 @@
 runs tests
 """
 import subprocess
-from pathlib import Path
 from datetime import datetime
 from numpy import asarray,radians
 from numpy.testing import assert_allclose, assert_almost_equal,run_module_suite
@@ -15,11 +14,15 @@ from pymap3d.vincenty import vreckon,vdist
 from pymap3d.datetime2hourangle import datetime2sidereal
 from pymap3d.vallado import vazel2radec, vradec2azel
 from pymap3d.timeconv import str2dt
-#
-path = Path(__file__).parents[1]
+
 
 def test_bsr():
-    subprocess.check_call(['octave-cli','-q','Test.m'], cwd=path/'tests')
+    try:
+        from pathlib import Path
+        path = Path(__file__).parents[1]
+        subprocess.check_call(['octave-cli','-q','Test.m'], cwd=path/'tests')
+    except ImportError:
+        pass
 
 
 def test_str2dt():
