@@ -6,7 +6,7 @@
 function [x,y,z] = geodetic2ecef(lat, lon, alt, ell, angleut)
 
   if nargin < 4 || isempty(ell), ell = get_ellipsoid(); end
-  if nargin<5, angleut='d'; end
+  if nargin < 5, angleut='d'; end
  
   if strcmpi(angleut(1),'d')
     lat = deg2rad(lat);

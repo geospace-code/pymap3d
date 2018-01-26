@@ -1,4 +1,4 @@
-
+clear
 fpath = fileparts(mfilename('fullpath'));
 addpath([fpath,filesep,'../matlab'])
 ell = get_ellipsoid();
@@ -16,21 +16,22 @@ ve=5.368859646588048; vn= 3.008520763668120; vu= -0.352347711524077; % ecef2enuv
 %% tests
 
 %% aer2ecef contains:
-[x,y,z] = geodetic2ecef(lat,lon,alt);
-assert_allclose([x,y,z],[g2x,g2y,g2z])
+[x1,y1,z1] = geodetic2ecef(lat,lon,alt);
+assert_allclose([x1,y1,z1],[g2x,g2y,g2z])
 
 [e,n,u] = aer2enu(az, el, srange);
 assert_allclose([e,n,u], [a2e,a2n,a2u])
 
-[ev,nv,uv] = ecef2enuv(vx,vy,vz,lat,lon)
+[ev,nv,uv] = ecef2enuv(vx,vy,vz,lat,lon);
 assert_allclose([ev,nv,uv],[ve,vn,vu])
 
 [x,y,z] = aer2ecef(az,el,srange,lat,lon,alt);
 assert_allclose([x,y,z], [a2x,a2y,a2z])
 
 %% ecef2geodetic is self-contained, iterative algorithm.
-[lat2, lon2, alt2] = ecef2geodetic(g2x, g2y, g2z);
-assert_allclose([lat2, lon2, alt2], [lat, lon, alt],[],0.01)
+[lat2, lon2, alt2] = ecef2geodetic(x1, y1, z1);
+%[lat2, lon2, alt2] = ecef2geodetic(g2x, g2y, g2z);
+assert_allclose([lat2, lon2, alt2], [lat, lon, alt])
 
 [lat3,lon3,alt3] = aer2geodetic(az,el,srange,lat,lon,alt);
 assert_allclose([lat3,lon3,alt3], [a2la, a2lo, a2a], [], 0.01)
