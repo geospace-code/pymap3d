@@ -1,4 +1,6 @@
 function ok = assert_allclose(actual, desired, atol, rtol)
+% atol: absolute tolerance
+% rtol: relative tolerance
 % based on numpy.testing.assert_allclose
 % https://github.com/numpy/numpy/blob/v1.13.0/numpy/core/numeric.py#L2522
 % for Matlab and GNU Octave

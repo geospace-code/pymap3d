@@ -1,8 +1,6 @@
 function [e, n, u] = aer2enu (az, el, slantRange, angleut)
 
-  if nargin==4 && strcmpi(angleut(1),'r')
-    
-  else % assume degrees
+  if nargin==3 || strcmpi(angleut(1),'d') 
     az = deg2rad(az);
     el = deg2rad(el);
   end    

@@ -8,16 +8,17 @@ else
   ell = referenceEllipsoid('wgs84');
 end
 %% reference inputs
-taz = 33; tel=70; tsrange = 1000; % aer2enu
-
+az = 33; el=70; srange = 1000; % aer2enu
+lat = 42; lon= -82; alt= 200;
 %% reference outputs
 a2e = 186.277521; a2n = 286.842228; a2u = 939.692621; % aer2enu
-%%
-assert_allclose(aer2enu(taz, tel, tsrange), [a2e,a2n,a2u], 0.001)
+a2x = 660930.192761; a2y= -4701424.222957; a2z= 4246579.604633; % aer2ecef
+%% tests
+[e,n,u] = aer2enu(az, el, srange);
+assert_allclose([e,n,u], [a2e,a2n,a2u], [], 0.01)
 
-
-[xt,yt,zt] = aer2ecef(az,el,srange,lat,lon,alt,ell);
-fprintf('aer2ecef %f %f %f \n',xt,yt,zt)
+[x,y,z] = aer2ecef(az,el,srange,lat,lon,alt,ell);
+assert_allclose([x,y,z], [a2x,a2y,a2z])
 
 [latt,lont,altt] = aer2geodetic(az,el,srange,lat,lon,alt,ell,'degrees');
 fprintf('aer2geodetic %f %f %f \n',latt,lont,altt)
