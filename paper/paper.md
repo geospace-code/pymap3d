@@ -46,7 +46,7 @@ Other Python geodesy programs include:
 * [PyProj](https://github.com/jswhit/pyproj) ISC license
 
 These programs are targeted for geodesy experts, and require additional packages beyond Python that may not be readily accessible to users.
-Further, these programs do not include all the functions of PyMap3D, and do not have the straighforward function-based API of PyMap3D.
+Further, these programs do not include all the functions of PyMap3D, and do not have the straightforward function-based API of PyMap3D.
 
 
 
