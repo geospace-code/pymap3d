@@ -82,7 +82,6 @@ def test_vincenty():
     assert_allclose(vdist(10,20,lat2,lon2),(sr,az,a21))
 #%% coordconv3d
 tlat,tlon,talt = 42, -82, 200
-lat2, lon2, alt2 = 42.1, -81.9, 1300
 taz,tel,tsrange = 33, 70, 1000
 # %% outcomes from matlab
 x0, y0, z0 = 660.6753e3, -4700.9487e3, 4245.738e3 # geodetic2ecef
@@ -166,7 +165,7 @@ def test_geodetic():
                     err_msg='ned2geodetic')
 #%%
 def test_eci():
-    tlla = (42,-82,200)
+    tlla = (tlat, tlon, talt)
     teci = (-3.977913815668146e6,-2.582332196263046e6,4.250818828152067e6)
     t = datetime(2013,1,15,12,0,5,tzinfo=UTC)
     lla = asarray(pm.eci2geodetic(teci,t)).squeeze()

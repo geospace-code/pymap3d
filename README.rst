@@ -30,14 +30,9 @@ For those not having AstroPy, lower accuracy fallback functions are included for
 
 Install
 =======
-Development::
+::
     
     python -m pip install -e .
-
-
-simple::
-
-    python -m pip install pymap3d
 
 
 Usage
@@ -67,7 +62,6 @@ Popular mapping toolbox functions ported to Python include::
   azel2radec radec2azel
 
 
-
 Caveats
 -------
 
@@ -77,5 +71,9 @@ Caveats
 
 Matlab / Octave
 ===============
-Many functions of ``pymap3d`` originated as Matlab / Octave functions.
-Some of the original ``.m`` code is in ``matlab/``.
+The ``matlab/`` directory contains a subset of the Python conversion functions. 
+The full set of Python conversions can be access from Matlab >= R2014b by commands like::
+
+    lla = py.pymap3d.geodetic2ecef(x,y,z)
+    
+
