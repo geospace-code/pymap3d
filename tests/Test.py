@@ -96,14 +96,6 @@ lat1, lon1, alt1 = 42.002582, -81.997752, 1.1397018e3 #aer2geodetic
 a2x, a2y, a2z = 660930.2, -4701424, 4246579.6 #aer2ecef
 e0, n0, u0 = 186.277521, 286.842228, 939.692621 #aer2enu
 
-ec2az, ec2el, ec2rn =  36.664419, 0.351293, 13854.054270 #ecef2aer
-e2e, e2n, e2u = 8272.476048, 11112.773942, 84.941624 #ecef2enu
-
-#enu2ecef
-e2x, e2y, e2z = (6.679456743004259e+05, -4.693230928738789e+06, 4.254723326333052e+06)
-
-e2az, e2el, e2rn = (36.664402767128749, 4.477194667550686, 1.389837889201037e+04)
-
 # vector
 vx,vy,vz = (5,3,2)
 ve,vn,vu =(5.368859646588048, 3.008520763668120, -0.352347711524077)
@@ -155,41 +147,30 @@ def test_ecefenu():
                     err_msg='ned2aer')
 
 
-    assert_allclose(pm.ecef2enu(tx,ty,tz, tlat, tlon, talt),(e2e,e2n,e2u),
-                    rtol=0.01,
-                    err_msg='ecef2enu: {}'.format(pm.ecef2enu(tx,ty,tz, tlat,
-                    tlon, talt)))
+    assert_allclose(pm.enu2ecef(e1,n1,u1,tlat,tlon,talt),(x, y, z),
+                    err_msg='enu2ecef')
 
+    assert_allclose(pm.ecef2enu(x,y,z, tlat, tlon, talt),(e1,n1,u1),
+                    err_msg='ecef2enu')
+
+    assert_allclose(pm.ecef2ned(x,y,z, tlat, tlon, talt),(n1,e1,-u1),
+                    err_msg='ecef2ned')
+
+    assert_allclose(pm.ned2ecef(n1,e1,-u1,tlat,tlon,talt),(x,y,z),
+                    err_msg='ned2ecef')
+# %%
     assert_allclose(pm.ecef2enuv(vx,vy,vz,tlat,tlon), (ve,vn,vu))
 
-    assert_allclose(pm.ecef2ned(tx,ty,tz, tlat, tlon, talt),(e2n,e2e,-e2u),
-                    rtol=0.01,
-                    err_msg='ecef2ned: {}'.format(pm.ecef2enu(tx,ty,tz, tlat,
-                    tlon, talt)))
 
     assert_allclose(pm.ecef2nedv(vx,vy,vz,tlat,tlon), (vn,ve,-vu))
 
 #%%
 
     assert_allclose(pm.enu2geodetic(te,tn,tu,tlat,tlon,talt),(lat2,lon2,alt2),
-                    rtol=0.01,
-                    err_msg='enu2geodetic: '+str(pm.enu2geodetic(te,tn,tu,tlat,
-                                                              tlon,talt)))
+                    err_msg='enu2geodetic')
 
     assert_allclose(pm.ned2geodetic(tn,te,-tu,tlat,tlon,talt),(lat2,lon2,alt2),
-                    rtol=0.01,
-                    err_msg='enu2geodetic: '+str(pm.enu2geodetic(te,tn,tu,tlat,
-                                                              tlon,talt)))
-
-    assert_allclose(pm.enu2ecef(te,tn,tu,tlat,tlon,talt),(e2x, e2y, e2z),
-                    rtol=0.01,
-                    err_msg='enu2ecef: '+
-                    str(pm.enu2ecef(te,tn,tu,tlat,tlon,talt)))
-
-    assert_allclose(pm.ned2ecef(tn,te,-tu,tlat,tlon,talt),(e2x,e2y,e2z),
-                    rtol=0.01,
-                    err_msg='ned2ecef: '+
-                    str(pm.ned2ecef(tn,te,-tu,tlat,tlon,talt)))
+                    err_msg='ned2geodetic')
 #%%
 def test_eci():
     tlla = (42,-82,200)
