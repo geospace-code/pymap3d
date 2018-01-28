@@ -211,6 +211,7 @@ def vdist(lat1,lon1,lat2,lon2):
 
     return dist_m.squeeze()[()], az.squeeze()[()], backaz.squeeze()[()]
 
+
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     """
      VRECKON -  Computes points at a specified azimuth and range in an

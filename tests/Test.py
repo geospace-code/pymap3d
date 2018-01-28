@@ -73,25 +73,19 @@ def test_haversine():
     assert_almost_equal(ha, angledist_meeus(35,23, 84,20))
 
 
-def test_vreckon():
-    lat2,lon2,a21 = vreckon(10,20,3000,38)
-    assert_almost_equal(lat2,10.021372672660874)
-    assert_almost_equal(lon2,20.016847098929979)
-    assert_almost_equal(a21,218.0029285624942)
-    #assert vreckon(91,0,0,0) is None
+def test_vincenty():
+    az = 38; sr = 3e3
+    lat2,lon2,a21 = vreckon(10,20,sr,az)
+    assert_almost_equal((lat2,lon2,a21),
+                        (10.02137267,20.016847,218.0029286))
 
+    assert_allclose(vdist(10,20,lat2,lon2),(sr,az,a21))
 #%% coordconv3d
 tlat,tlon,talt = 42, -82, 200
 lat2, lon2, alt2 = 42.1, -81.9, 1300
 taz,tel,tsrange = 33, 70, 1000
-tx, ty, tz  =  (6.678411289903646e+05,
-             -4.692496355102768e+06,
-             4.254052899714093e+06)
-te, tn, tu = (8.273771039503677e+03,
-             1.111452002615149e+04,
-             1.084939260985176e+03)
 # %% outcomes from matlab
-x0, y0, z0 = 660.6753e3, -4700.9487e3, 4245.738e3 # geodeteic2ecef
+x0, y0, z0 = 660.6753e3, -4700.9487e3, 4245.738e3 # geodetic2ecef
 lat1, lon1, alt1 = 42.002582, -81.997752, 1.1397018e3 #aer2geodetic
 a2x, a2y, a2z = 660930.2, -4701424, 4246579.6 #aer2ecef
 e0, n0, u0 = 186.277521, 286.842228, 939.692621 #aer2enu
@@ -102,12 +96,12 @@ ve,vn,vu =(5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
 def test_geodetic():
-    x,y,z = pm.geodetic2ecef(tlat,tlon,talt)
+    x1,y1,z1 = pm.geodetic2ecef(tlat,tlon,talt)
 
-    assert_allclose((x,y,z), (x0,y0,z0),
+    assert_allclose((x1,y1,z1), (x0,y0,z0),
                     err_msg='geodetic2ecef:')
 
-    assert_allclose(pm.ecef2geodetic(x,y,z), (tlat,tlon,talt),
+    assert_allclose(pm.ecef2geodetic(x1,y1,z1), (tlat,tlon,talt),
                 err_msg='ecef2geodetic:')
 
 
@@ -121,14 +115,12 @@ def test_geodetic():
                      err_msg= 'geodetic2aer')
 
 
-def test_ecefenu():
+    x2,y2,z2 = pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt)
 
-    x,y,z = pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt)
-
-    assert_allclose((x,y,z), (a2x,a2y,a2z),
+    assert_allclose((x2,y2,z2), (a2x,a2y,a2z),
                      err_msg='aer2ecef')
 
-    assert_allclose(pm.ecef2aer(x, y, z, tlat, tlon,talt), (taz,tel,tsrange),
+    assert_allclose(pm.ecef2aer(x2, y2, z2, tlat, tlon,talt), (taz,tel,tsrange),
                     err_msg='ecef2aer')
 
 
@@ -147,16 +139,16 @@ def test_ecefenu():
                     err_msg='ned2aer')
 
 
-    assert_allclose(pm.enu2ecef(e1,n1,u1,tlat,tlon,talt),(x, y, z),
+    assert_allclose(pm.enu2ecef(e1,n1,u1,tlat,tlon,talt),(x2, y2, z2),
                     err_msg='enu2ecef')
 
-    assert_allclose(pm.ecef2enu(x,y,z, tlat, tlon, talt),(e1,n1,u1),
+    assert_allclose(pm.ecef2enu(x2,y2,z2, tlat, tlon, talt),(e1,n1,u1),
                     err_msg='ecef2enu')
 
-    assert_allclose(pm.ecef2ned(x,y,z, tlat, tlon, talt),(n1,e1,-u1),
+    assert_allclose(pm.ecef2ned(x2,y2,z2, tlat, tlon, talt),(n1,e1,-u1),
                     err_msg='ecef2ned')
 
-    assert_allclose(pm.ned2ecef(n1,e1,-u1,tlat,tlon,talt),(x,y,z),
+    assert_allclose(pm.ned2ecef(n1,e1,-u1,tlat,tlon,talt),(x2,y2,z2),
                     err_msg='ned2ecef')
 # %%
     assert_allclose(pm.ecef2enuv(vx,vy,vz,tlat,tlon), (ve,vn,vu))
@@ -165,11 +157,12 @@ def test_ecefenu():
     assert_allclose(pm.ecef2nedv(vx,vy,vz,tlat,tlon), (vn,ve,-vu))
 
 #%%
+    e3,n3,u3 = pm.geodetic2enu(lat2,lon2,alt2,tlat,tlon,talt)
 
-    assert_allclose(pm.enu2geodetic(te,tn,tu,tlat,tlon,talt),(lat2,lon2,alt2),
+    assert_allclose(pm.enu2geodetic(e3,n3,u3,tlat,tlon,talt),(lat2,lon2,alt2),
                     err_msg='enu2geodetic')
 
-    assert_allclose(pm.ned2geodetic(tn,te,-tu,tlat,tlon,talt),(lat2,lon2,alt2),
+    assert_allclose(pm.ned2geodetic(n3,e3,-u3,tlat,tlon,talt),(lat2,lon2,alt2),
                     err_msg='ned2geodetic')
 #%%
 def test_eci():
@@ -188,9 +181,6 @@ def test_eci():
     assert_allclose(asarray(pm.eci2aer(teci,42,-100,0,t)).squeeze(),
                     [83.73050,-6.614478,1.473510e6])
 
-def test_vdist():
-    dist_m = vdist(10,20,10.021372672660874,20.016847098929979)[0]
-    assert_almost_equal(dist_m,2999.9999971763464)
 #%%
 if __name__ == '__main__':
     run_module_suite()
