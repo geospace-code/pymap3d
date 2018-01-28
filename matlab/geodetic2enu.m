@@ -7,14 +7,14 @@
 % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, ell, angleut)
-% function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, ell, angleut)
+function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, angleut)
+% function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, angleut)
 %
 % Inputs
 % ------
 % lat,lon, alt:  ellipsoid geodeteic coordinates of point under test (degrees, degrees, meters)
 % lat0, lon0, alt0: ellipsoid geodeteic coordinates of observer/reference (degrees, degrees, meters)
-% ell: ellipsoid paraemter struct from get_ellipsoid
+% spheroid: referenceEllipsoid paraemter struct
 % angleut: string for angluar units. Default 'd': degrees, otherwise Radians
 %
 % outputs
@@ -22,11 +22,11 @@ function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, ell, angleut)
 % e,n,u:  East, North, Up coordinates of test points (meters)
 %
 
-  if nargin < 7, ell = get_ellipsoid(); end
+  if nargin < 7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
   if nargin < 8, angleut = 'd'; end
   
-  [x1,y1,z1] = geodetic2ecef(lat,lon,alt,ell,angleut);
-  [x2,y2,z2] = geodetic2ecef(lat0,lon0,alt0,ell,angleut);
+  [x1,y1,z1] = geodetic2ecef(lat,lon,alt,spheroid,angleut);
+  [x2,y2,z2] = geodetic2ecef(lat0,lon0,alt0,spheroid,angleut);
   
   dx = x1-x2;
   dy = y1-y2;

@@ -8,16 +8,11 @@
 
 
 
-function [lat,lon,h] = ecef2geodetic(x, y, z, ell, angleut)
+function [lat,lon,h] = ecef2geodetic(x, y, z, spheroid, angleut)
 % also see: http://www.oc.nps.edu/oc2902w/coord/coordcvt.pdf
 % Fortran reference at bottom of: http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
 
-  if nargin < 4 || isempty(ell) 
-    ell = get_ellipsoid();
-  elseif ~isstruct(ell)
-    ell = get_ellipsoid(ell);
-  end
-  
+  if nargin < 4 || isempty(spheroid), spheroid = wgs84Ellipsoid();
   if nargin < 5, angleut='d'; end
 
  
@@ -27,8 +22,8 @@ function [lat,lon,h] = ecef2geodetic(x, y, z, ell, angleut)
   % in terms of the parametric or reduced latitude form (v)
   % This algorithm provides a uniform solution over all latitudes as it does
   % not involve division by cos(phi) or sin(phi)
-   a = ell.a; 
-   b = ell.b;
+   a = spheroid.SemimajorAxis; 
+   b = spheroid.SemiminorAxis;
   r = hypot(x, y);
   % Constant required for Latitude equation
   rho = atan2(b * z, a * r);  

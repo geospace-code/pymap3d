@@ -6,21 +6,49 @@
 % 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-function N = get_radius_normal (lat, ell)
-% function N = get_radius_normal (lat, ell)
-% 
+function E = referenceEllipsoid(name) 
+% function E = referenceEllipsoid(name) 
 %
-% Inputs
+% inputs
 % ------
-% lat: geodetic latitude in Radians
-% ell: struct representing ellipsoid, from get_ellipsoid()
-% 
-% Outputs
+% name: string of model name e.g. 'wgs84'
+%
+%
+% outputs
 % -------
-% N: normal along the prime vertical section ellipsoidal radius of curvature, at a given geodetic latitude.
-
-
-    a = ell.a;
-    b = ell.b;
-    N = a^2 ./ sqrt( a^2 .* cos(lat).^2 + b^2 .* sin(lat).^2 );
+% ell: struct containing ellipsoid parameters
+%
+%
+if ~nargin
+  name='wgs84';
 end
+
+switch name
+case 'wgs84'
+ % WGS-84 ellipsoid parameters.
+ %   http://earth-info.nga.mil/GandG/tr8350_2.html
+ %   ftp://164.214.2.65/pub/gig/tr8350.2/wgs84fin.pdf
+ E.SemimajorAxis = 6378137.0;                             
+ E.InverseFlattening = 298.2572235630;              
+ E.SemiminorAxis = E.SemimajorAxis * (1 - 1/E.InverseFlattening);                     
+ E.Eccentricity = get_eccentricity(E);
+case 'grs80'
+% GRS-80 ellipsoid parameters
+% <http://itrf.ensg.ign.fr/faq.php?type=answer> (accessed 2018-01-22)
+ E.SemimajorAxis = 6378137.0;                               
+ E.InverseFlattening = 298.257222100882711243;                 
+ E.SemiminorAxis = E.SemimajorAxis * (1 - 1/E.InverseFlattening);                      
+ E.Eccentricity  = get_eccentricity(E); 
+otherwise
+  error([name,' not yet implemented'])
+end
+
+end % function
+
+function ecc = get_eccentricity(E)
+
+ecc = sqrt ( (E.SemimajorAxis^2 - E.SemiminorAxis^2) / (E.SemimajorAxis^2)); 
+
+end % function
+
+
