@@ -1,5 +1,5 @@
 ---
-title: 'PyMap3D: 3-D coordinate conversions for geospace environment'
+title: 'PyMap3D: 3-D coordinate conversions for terrestrial and geospace environments'
 authors:
   - name: Michael Hirsch
     orcid: 0000-0002-1637-6526
@@ -15,8 +15,11 @@ bibliography: paper.bib
 
 # Summary
 
-[PyMap3D](https://github.com/scivision/pymap3d) is a pure Python coordinate transformation program that converts between geospace coordinate systems.
+PyMap3D [@pymap3d] is a Python coordinate transformation program that converts between geospace coordinate systems.
 A subset of the Python functionality is provided for Matlab and GNU Octave users as well in the ``matlab/`` directory.
+Increased performance and accuracy is optionally available for certain functions for those using AstroPy, but it is not required.
+Since Numpy is used throughout PyMap3D, many of the functions operate with speed comparable to compiled languages.
+Other functions that are iterative could possibly be sped up with modules such as Cython or Numba.
 
 PyMap3D is targeted for users needing conversions between coordinate systems for observation platforms near Earth's surface, whether underwater, ground-based or space-based platforms.
 This includes rocket launches, orbiting spacecrafts, UAVs, cameras, radars and many more. 
@@ -30,13 +33,15 @@ The coordinate systems included are:
 * Horizontal Celestial (Alt-Az or Az-El)
 * Equatorial Celestial (Right Ascension, Declination)
 
+Additionally, Vincenty [@vincenty, @veness] geodesic distances and direction are computed.
+
 PyMap3D has already seen usage in projects including
 * [EU ECSEL project 662107 SWARMs](http://swarms.eu/)
 * Rafael Defense Systems DataHack 2017
 * HERA radiotelescope
 * Mahali (NSF Grant: AGS-1343967)
 * Solar Eclipse network (NSF Grant: AGS-1743832)
-* High Speed Auroral Tomography (NSF Grant: AGS-1237376)
+* High Speed Auroral Tomography (NSF Grant: AGS-1237376) [@7368896]
 
 ## Other Programs
 
