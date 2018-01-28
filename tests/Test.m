@@ -30,7 +30,7 @@ assert_allclose([lat2, lon2, alt2], [lat, lon, alt])
 [az2, el2, rng2] = enu2aer(e1,n1,u1); % round-trip
 assert_allclose([az2,el2,rng2],[az,el,srange])
 
-[az3, el3, rng3] = ecef2aer(x2,y2,z2, lat,lon,alt); % round-trip 
+[az3, el3, rng3] = ecef2aer(x2,y2,z2, lat,lon,alt); % round-trip
 assert_allclose([az3,el3,rng3], [az,el,srange])
 
 
@@ -42,7 +42,7 @@ assert_allclose([e2,n2,u2],[e1,n1,u1])
 
 [az4, el4, rng4] = geodetic2aer(lat3,lon3,alt3,lat,lon,alt); % round-trip
 assert_allclose([az4,el4,rng4], [az,el,srange])
-%% 
+%%
 [x3, y3, z3] = enu2ecef(e1,n1,u1,lat,lon,alt);
 assert_allclose([x3,y3,z3],[x2,y2,z2])
 
