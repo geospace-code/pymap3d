@@ -145,7 +145,7 @@ def eci2ecef(eci, t):
     eci = np.atleast_2d(eci)
     N, trip = eci.shape
     if eci.ndim > 2 or trip != 3:
-        raise TypeError('eci triplets must be shape (N,3)')
+        raise ValueError('eci triplets must be shape (N,3)')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """

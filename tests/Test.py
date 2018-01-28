@@ -40,11 +40,13 @@ ha = 45.482789587392013
 azi, eli = (180.1,80)
 
 def test_datetime2sidereal():
+    sra = 2.90658
+    # http://www.jgiesen.de/astro/astroJS/siderealClock/
     sdrapy = datetime2sidereal(t, radians(lon), False)
-    assert_allclose(sdrapy, 2.9065780550600806, rtol=1e-5)
+    assert_allclose(sdrapy, sra, rtol=1e-5)
 
     sdrvallado = datetime2sidereal(t, radians(lon), True)
-    assert_allclose(sdrvallado, 2.9065780550600806, rtol=1e-5)
+    assert_allclose(sdrvallado, sra, rtol=1e-5)
 
 
 def test_azel2radec():
@@ -97,6 +99,9 @@ ve,vn,vu =(5.368859646588048, 3.008520763668120, -0.352347711524077)
 def test_geodetic():
     x1,y1,z1 = pm.geodetic2ecef(tlat,tlon,talt)
 
+    assert_allclose(pm.geodetic2ecef(radians(tlat),radians(tlon),talt,deg=False),
+                    (x1,y1,z1))
+
     assert_allclose((x1,y1,z1), (x0,y0,z0),
                     err_msg='geodetic2ecef:')
 
@@ -115,6 +120,9 @@ def test_geodetic():
 
 
     x2,y2,z2 = pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt)
+
+    assert_allclose(pm.aer2ecef(radians(taz),radians(tel),tsrange,radians(tlat),radians(tlon),talt,deg=False),
+                    (a2x,a2y,a2z))
 
     assert_allclose((x2,y2,z2), (a2x,a2y,a2z),
                      err_msg='aer2ecef')
