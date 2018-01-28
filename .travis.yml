@@ -1,10 +1,11 @@
 language: python
 fast_finish: true
-sudo: false
 
 python:
   - 2.7
   - "3.7-dev"
+  
+dist: xenial
 
 os:
   - linux
