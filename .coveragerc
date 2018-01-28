@@ -2,7 +2,7 @@
 omit =
     */python?.?/*
 exclude_lines = 
-    raise RuntimeError
-    raise ImportError
-    raise ValueError
-    raise TypeError
+    RuntimeError
+    ImportError
+    ValueError
+    TypeError

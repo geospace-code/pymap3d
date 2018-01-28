@@ -42,8 +42,8 @@ class EarthEllipsoid:
             self.a = 6378137.  # semi-major axis [m]
             self.f = 1 / 298.257222100882711243  # flattening
             self.b = self.a * (1 - self.f)  # semi-minor axis
-        
-        
+
+
 #%% to AER (azimuth, elevation, range)
 def ecef2aer(x, y, z, lat0, lon0, h0, ell=EarthEllipsoid(), deg=True):
     """
@@ -285,9 +285,7 @@ def aer2geodetic(az, el, srange, lat0, lon0, alt0, deg=True):
     return ecef2geodetic(x, y, z, deg=deg)
 
 
-def ecef2geodetic(x, y=None, z=None, ell=EarthEllipsoid(), deg=True):
-    if y is None:
-        x, y, z = _depack(x)
+def ecef2geodetic(x, y, z, ell=EarthEllipsoid(), deg=True):
     """Algorithm is based on
     http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
     This algorithm provides a converging solution to the latitude
@@ -430,25 +428,6 @@ def get_radius_normal(lat_radians, ell):
         a**2 * (cos(lat_radians))**2 + b**2 *
         (sin(lat_radians))**2)
 #%% internal use
-def _depack(x0):
-    m, n = x0.shape
-
-    assert x0.ndim == 2 and (m==3 or n==3),'I expect Nx3 or 3XN triplets'
-
-    if m == 3:  # 3xN triplets
-        x = x0[0, :]
-        y = x0[1, :]
-        z = x0[2, :]
-    elif n == 3:  # Nx3 triplets
-        x = x0[:, 0]
-        y = x0[:, 1]
-        z = x0[:, 2]
-    else:
-        raise ValueError('I expect an Nx3 or 3xN input of x,y,z')
-
-    return x, y, z
-
-
 def _rottrip(ang):
     ang = ang.squeeze()
     if ang.size > 1:

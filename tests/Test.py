@@ -166,6 +166,8 @@ def test_geodetic():
 #%%
     e3,n3,u3 = pm.geodetic2enu(lat2,lon2,alt2,tlat,tlon,talt)
 
+    assert_allclose(pm.geodetic2ned(lat2,lon2,alt2,tlat,tlon,talt),(n3,e3,-u3))
+
     assert_allclose(pm.enu2geodetic(e3,n3,u3,tlat,tlon,talt),(lat2,lon2,alt2),
                     err_msg='enu2geodetic')
 
