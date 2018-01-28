@@ -6,13 +6,6 @@
       "@id": "",
       "@type": "Person",
       "email": "",
-      "name": "scivision",
-      "affiliation": ""
-    },
-    {
-      "@id": "",
-      "@type": "Person",
-      "email": "",
       "name": "Michael Hirsch, Ph.D",
       "affiliation": ""
     }
@@ -26,5 +19,5 @@
   "keywords": "geospace,coordinates",
   "license": "BSD",
   "title": "pymap3d",
-  "version": "1.3.0"
+  "version": "1.4.0"
 }
