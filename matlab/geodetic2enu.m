@@ -12,4 +12,4 @@ function [e, n, u] = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, angleut)
   
   [e, n, u] = ecef2enuv(dx, dy, dz, lat0, lon0, angleut);
 
-endfunction
+end % function

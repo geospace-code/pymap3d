@@ -58,7 +58,7 @@ lat1   = lat1 * .1745329251994329577e-1; % intial latitude in radians
 lon1   = lon1 * .1745329251994329577e-1; % intial longitude in radians
 % correct for errors at exact poles by adjusting 0.6 millimeters:
 kidx = abs(pi/2-abs(lat1)) < 1e-10;
-if any(kidx);
+if any(kidx)
     lat1(kidx) = sign(lat1(kidx))*(pi/2-(1e-10));
 end
 alpha1 = a12 * .1745329251994329577e-1; % inital azimuth in radians
@@ -96,12 +96,12 @@ L = lambda - (1-C) * f * sinAlpha * (sigma + C*sinSigma*(cos2SigmaM+...
     C*cosSigma*(-1+2*cos2SigmaM*cos2SigmaM)));
 lon2 = lon1 + L;
 % output degrees
-lat2 = lat2 * 57.295779513082322865;
-lon2 = lon2 * 57.295779513082322865;
+lat2 = rad2deg(lat2);
+lon2 = rad2deg(lon2);
 lon2 = mod(lon2,360); % follow [0,360] convention
 if nargout > 2
     a21 = atan2(sinAlpha, -tmp); 
-    a21  = 180 + a21  * 57.295779513082322865; % note direction reversal
+    a21  = 180 + rad2deg(a21); % note direction reversal
     a21=mod(a21,360);
 end
 

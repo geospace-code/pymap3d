@@ -88,7 +88,7 @@ lat2 = lat2 * 0.0174532925199433;
 lon2 = lon2 * 0.0174532925199433;
 % correct for errors at exact poles by adjusting 0.6 millimeters:
 kidx = abs(pi/2-abs(lat1)) < 1e-10;
-if any(kidx);
+if any(kidx)
     lat1(kidx) = sign(lat1(kidx))*(pi/2-(1e-10));
 end
 kidx = abs(pi/2-abs(lat2)) < 1e-10;
@@ -113,7 +113,7 @@ alpha = 0*lat1;
 sigma = 0*lat1;
 cos2sigmam = 0*lat1;
 C = 0*lat1;
-warninggiven = logical(0);
+warninggiven = false;
 while any(notdone)  % force at least one execution
     %disp(['lambda(21752) = ' num2str(lambda(21752),20)]);
     itercount = itercount+1;
@@ -151,7 +151,7 @@ while any(notdone)  % force at least one execution
     if any(lambda(notdone) > pi)
         warning(['Essentially antipodal points encountered. ' ...
             'Precision may be reduced slightly.']);
-        warninggiven = logical(1);
+        warninggiven = true;
         lambdaold(lambda>pi) = pi;
         lambda(lambda>pi) = pi;
     end
@@ -178,7 +178,7 @@ if nargout > 1
     % from poles:
     a12(lat1tr <= -90) = 0;
     a12(lat1tr >= 90 ) = pi;
-    varargout{2} = reshape(a12 * 57.2957795130823,keepsize); % to degrees
+    varargout{2} = reshape(rad2deg(a12),keepsize); % to degrees
 end
 if nargout > 2
     a21=NaN*lat1;
@@ -195,7 +195,7 @@ if nargout > 2
     % backwards from poles:
     a21(lat2tr >= 90) = pi;
     a21(lat2tr <= -90) = 0;
-    varargout{3} = reshape(a21 * 57.2957795130823,keepsize); % to degrees
+    varargout{3} = reshape(rad2deg(a21),keepsize); % to degrees
 end
 
 end % function
