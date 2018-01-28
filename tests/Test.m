@@ -55,8 +55,3 @@ assert_allclose([e3,n3,u3],[e1,n1,u1])
 end % function
 
 
-function rad = deg2rad(deg) %#ok<DEFNU>
-% for Octave < 4.0
-  rad = deg * (pi / 180);
-
-end
