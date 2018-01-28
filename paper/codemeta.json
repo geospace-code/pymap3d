@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "",
+      "@type": "Person",
+      "email": "",
+      "name": "scivision",
+      "affiliation": ""
+    },
+    {
+      "@id": "",
+      "@type": "Person",
+      "email": "",
+      "name": "Michael Hirsch, Ph.D",
+      "affiliation": ""
+    }
+  ],
+  "identifier": "http://doi.org/10.5281/zenodo.213676",
+  "codeRepository": "https://github.com/scivision/pymap3d",
+  "datePublished": "2018-01-28",
+  "dateModified": "2018-01-28",
+  "dateCreated": "2018-01-28",
+  "description": "3-D coordinate conversions in pure Python",
+  "keywords": "geospace,coordinates",
+  "license": "BSD",
+  "title": "pymap3d",
+  "version": "1.3.0"
+}
