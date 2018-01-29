@@ -7,22 +7,10 @@
 # 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
 converts right ascension, declination to azimuth, elevation and vice versa.
 Normally do this via AstroPy.
 These functions are fallbacks for those who don't wish to use AstroPy (perhaps Python 2.7 users).
-
-inputs:
-ra_deg: numpy ndarray of right ascension values [degrees]
-dec_deg: numpy ndarray of declination values [degrees]
-lat_deg: scalar observer WGS84 latitude [degrees]
-lon_deg: scalar observer WGS84 longitude [degrees]
-dtime: UTC time of observation YYYY-mm-ddTHH:MM:SS
-
-outputs:
-az_deg: numpy ndarray of azimuth to point [degrees]
-el_deg: numpy ndarray of elevation to point [degrees]
 
 Michael Hirsch implementation of algorithms from D. Vallado
 """
@@ -34,6 +22,33 @@ from .datetime2hourangle import datetime2sidereal
 
 def vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     """
+    convert azimuth, elevation to right ascension, declination
+
+    Inputs
+
+    az_deg
+        Numpy ndarray of azimuth to point [degrees]
+
+    el_deg
+        Numpy ndarray of elevation to point [degrees]
+
+    lat_deg
+        scalar observer WGS84 latitude [degrees]
+
+    lon_deg
+        scalar observer WGS84 longitude [degrees]
+
+    t
+        time of observation
+
+    Outputs
+
+    ra_deg
+        Numpy ndarray of right ascension values [degrees]
+
+    dec_deg
+        Numpy ndarray of declination values [degrees]
+
     from D.Vallado Fundamentals of Astrodynamics and Applications
     p.258-259
     """
@@ -63,6 +78,34 @@ def vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
 
 def vradec2azel(ra_deg,dec_deg,lat_deg,lon_deg,t):
     """
+    convert right ascension, declination to azimuth, elevation
+
+    Inputs
+
+    ra_deg
+        Numpy ndarray of right ascension values [degrees]
+
+    dec_deg
+        Numpy ndarray of declination values [degrees]
+
+    lat_deg
+        scalar observer WGS84 latitude [degrees]
+
+    lon_deg
+        scalar observer WGS84 longitude [degrees]
+
+    t
+        time of observation
+
+    Outputs
+
+    az_deg
+        Numpy ndarray of azimuth to point [degrees]
+
+    el_deg
+        Numpy ndarray of elevation to point [degrees]
+
+
     from D. Vallado "Fundamentals of Astrodynamics and Applications "
        4th Edition Ch. 4.4 pg. 266-268
     """

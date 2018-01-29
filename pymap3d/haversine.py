@@ -11,13 +11,6 @@ from astropy.coordinates.angle_utilities import angular_separation
 """
 Michael Hirsch
 
-
-inputs:
-r0,d0: for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
-r1,d1: for second point, rightAscension,Declination [degrees] or (azimuth,elevation)
-
-(or, azimuth/elevation respectively)
-
 Note: adding decimal points to the constants made 0 difference in %timeit execution time
 
 The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC,
@@ -28,7 +21,18 @@ within double precision arithmetic limitations
 
 def angledist_meeus(r0, d0, r1, d1):
     """
-    Meeus
+    inputs:
+
+    r0,d0
+        for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
+
+    r1,d1
+        for second point, rightAscension,Declination [degrees] or (azimuth,elevation)
+
+
+    (or, azimuth/elevation respectively)
+
+
     from "Astronomical Algorithms" by Jean Meeus Ch. 16 p. 111 (16.5)
     gives angular distance in degrees between two rightAscension,Declination
     points in the sky.  Neglecting atmospheric effects, of course.
@@ -54,6 +58,17 @@ def angledist_meeus(r0, d0, r1, d1):
 
 def angledist(lon1, lat1, lon2, lat2):
     """
+    inputs:
+
+    r0,d0
+        for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
+
+    r1,d1
+        for second point, rightAscension,Declination [degrees] or (azimuth,elevation)
+
+
+    (or, azimuth/elevation respectively)
+
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
     Angular separation between two points on a sphere.
     """
@@ -64,6 +79,9 @@ def angledist(lon1, lat1, lon2, lat2):
 
 def haversine(theta):
     """
+    Compute haversine of angle theta (radians)
+
     http://en.wikipedia.org/wiki/Haversine
-    Meeus p. 111 """
+    Meeus p. 111
+    """
     return (1 - cos(theta)) / 2.

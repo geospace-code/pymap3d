@@ -5,7 +5,6 @@
 # 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
  Ported by Michael Hirsch to Python.
 """
@@ -15,71 +14,63 @@ from numpy import (atleast_1d,arctan,sqrt,tan,sign,sin,cos,arctan2,arcsin,
 
 def vdist(lat1,lon1,lat2,lon2):
     """
-    VDIST - Using the WGS-84 Earth ellipsoid, compute the distance between
-         two points within a few millimeters of accuracy, compute forward
-         azimuth, and compute backward azimuth, all using a vectorized
-         version of Vincenty's algorithm.
+    Using the WGS-84 Earth ellipsoid, compute the distance between two points within a few millimeters of accuracy, compute forward azimuth, and compute backward azimuth, all using a vectorized version of Vincenty's algorithm::
 
- s = vdist(lat1,lon1,lat2,lon2)
- s,a12 = vdist(lat1,lon1,lat2,lon2)
- s,a12,a21 = vdist(lat1,lon1,lat2,lon2)
+        s = vdist(lat1,lon1,lat2,lon2)
+        s,a12 = vdist(lat1,lon1,lat2,lon2)
+        s,a12,a21 = vdist(lat1,lon1,lat2,lon2)
 
- s = distance in meters (inputs may be scalars, vectors, or matrices)
- a12 = azimuth in degrees from first point to second point (forward)
- a21 = azimuth in degrees from second point to first point (backward)
-       (Azimuths are in degrees clockwise from north.)
- lat1 = GEODETIC latitude of first point (degrees)
- lon1 = longitude of first point (degrees)
- lat2, lon2 = second point (degrees)
 
-  Original algorithm source:
-  T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid
-  with Application of Nested Equations", Survey Review, vol. 23, no. 176,
-  April 1975, pp 88-93.
-  Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+    s
+         distance in meters (inputs may be scalars, vectors, or matrices)
 
- Notes: (1) lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs
-           will have the same size and shape.
-        (2) Error correcting code, convergence failure traps, antipodal
-            corrections, polar error corrections, WGS84 ellipsoid
-            parameters, testing, and comments: Michael Kleder, 2004.
-        (3) Azimuth implementation (including quadrant abiguity
-            resolution) and code vectorization, Michael Kleder, Sep 2005.
-        (4) Vectorization is convergence sensitive; that is, quantities
-            which have already converged to within tolerance are not
-            recomputed during subsequent iterations (while other
-            quantities are still converging).
-        (5) Vincenty describes his distance algorithm as precise to within
-            0.01 millimeters, subject to the ellipsoidal model.
-        (6) For distance calculations, essentially antipodal points are
-            treated as exactly antipodal, potentially reducing accuracy
-            slightly.
-        (7) Distance failures for points exactly at the poles are
-            eliminated by moving the points by 0.6 millimeters.
-        (8) The Vincenty distance algorithm was transcribed verbatim by
-            Peter Cederholm, August 12, 2003. It was modified and
-            translated to English by Michael Kleder.
-            Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
-        (9) Distances agree with the Mapping Toolbox, version 2.2 (R14SP3)
-            with a max relative difference of about 5e-9, except when the
-            two points are nearly antipodal, and except when one point is
-            near the equator and the two longitudes are nearly 180 degrees
-            apart. This function (vdist) is more accurate in such cases.
-            For example, note this difference (as of this writing):
-            >>vdist(0.2,305,15,125)
-            18322827.0131551
-            >>distance(0.2,305,15,125,[6378137 0.08181919])
-            0
-       (10) Azimuths FROM the north pole (either forward starting at the
-            north pole or backward when ending at the north pole) are set
-            to 180 degrees by convention. Azimuths FROM the south pole are
-            set to 0 degrees by convention.
-       (11) Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3)
-            to within about a hundred-thousandth of a degree, except when
-            traversing to or from a pole, where the convention for this
-            function is described in (10), and except in the cases noted
-            above in (9).
-       (12) No warranties; use at your own risk.
+    a12
+         azimuth in degrees from first point to second point (forward)
+
+    a21
+         azimuth in degrees from second point to first point (backward)
+
+    (Azimuths are in degrees clockwise from north.)
+
+    lat1
+        GEODETIC latitude of first point (degrees)
+
+    lon1
+        longitude of first point (degrees)
+
+    lat2, lon2
+        second point (degrees)
+
+    Original algorithm source:
+    T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations", Survey Review, vol. 23, no. 176,
+    April 1975, pp 88-93. Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+
+    Notes:
+     1. lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs  will have the same size and shape.
+     2. Error correcting code, convergence failure traps, antipodal corrections, polar error corrections, WGS84 ellipsoid parameters, testing, and comments: Michael Kleder, 2004.
+     3. Azimuth implementation (including quadrant abiguity resolution) and code vectorization, Michael Kleder, Sep 2005.
+     4. Vectorization is convergence sensitive; that is, quantities which have already converged to within tolerance are not recomputed during subsequent iterations (while other quantities are still converging).
+     5. Vincenty describes his distance algorithm as precise to within 0.01 millimeters, subject to the ellipsoidal model.
+     6. For distance calculations, essentially antipodal points are treated as exactly antipodal, potentially reducing accuracy slightly.
+     7. Distance failures for points exactly at the poles are eliminated by moving the points by 0.6 millimeters.
+     8. The Vincenty distance algorithm was transcribed verbatim by Peter Cederholm, August 12, 2003. It was modified and translated to English by Michael Kleder. Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
+     9. Distances agree with the Mapping Toolbox, version 2.2 (R14SP3) with a max relative difference of about 5e-9, except when the two points are nearly antipodal, and except when one point is near the equator and the two longitudes are nearly 180 degrees apart. This function (vdist) is more accurate in such cases.
+        For example, note this difference (as of this writing)::
+
+           vdist(0.2,305,15,125)
+
+        > 18322827.0131551
+
+        ::
+
+            distance(0.2,305,15,125,[6378137 0.08181919])
+
+        > 0
+     10. Azimuths FROM the north pole (either forward starting at the north pole or backward when ending at the north pole) are set to 180 degrees by convention.
+         Azimuths FROM the south pole are set to 0 degrees by convention.
+     11. Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3) to within about a hundred-thousandth of a degree, except when traversing to or from a pole, where the convention for this function is described in (10), and except in the cases noted above in (9).
+     12. No warranties; use at your own risk.
+
     """
 #%% reshape inputs
     lat1 = atleast_1d(lat1)
@@ -221,85 +212,62 @@ def vdist(lat1,lon1,lat2,lon2):
 
 def vreckon(lat1, lon1, rng, azim, ellipsoid=None):
     """
-     VRECKON -  Computes points at a specified azimuth and range in an
-                ellipsoidal earth
+    Computes points at a specified azimuth and range in an ellipsoidal earth.
+    Using the WGS-84 Earth ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
+    and return the endpoint within a few millimeters of accuracy, using Vincenty's algorithm.
 
-                   - Using the WGS-84 Earth ellipsoid, travel a given
-                     distance along
-                     a given azimuth starting at a given initial point,
-                     and return the
-                     endpoint within a few millimeters of accuracy,
-                     using Vincenty's algorithm.
+    USAGE::
 
-     USAGE:
-     lat2,lon2 = vreckon(lat1, lon1, rng, azim)
-      Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth
-                argument ELLIPSOID
+        lat2,lon2 = vreckon(lat1, lon1, rng, azim)
 
-     VARIABLES:
-     lat1 = inital latitude (degrees)
-     lon1 = initial longitude (degrees)
-     rng  = distance (meters)
-                   It can be a scalar or a vector. Latter case computes
-                    a series of
-                   circles (or arc circles, see azim) centered on X,Y
-                    (which are scalars)
-     azim = intial azimuth (degrees)
-                   "azim" is a scalar or vector
-     ellipsoid = two-element ellipsoid vector. Either [a b] or [a f]
-                   If omitted, defaults to WGS-84
-     lat2, lon2 = second point (degrees)
-     a21  = reverse azimuth (degrees), at final point facing back toward
-            the  intial point
+    Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth argument ELLIPSOID
 
-     Original algorithm source:
-     T. Vincenty, "Direct and Inverse Solutions of Geodesics on the
-Ellipsoid
-     with Application of Nested Equations", Survey Review, vol. 23, no.
-176,
-     April 1975, pp 88-93.
-     Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
 
-     Notes:
-     (1) The Vincenty reckoning algorithm was transcribed verbatim into
-         JavaScript by Chris Veness. It was modified and translated to
-Matlab
-         by Michael Kleder. Mr. Veness's website is:
+    VARIABLES
 
-http://www.movable-type.co.uk/scripts/latlong-vincenty-direct.html
-     (2) Error correcting code, polar error corrections, WGS84 ellipsoid
-         parameters, testing, and comments by Michael Kleder.
-     (3) By convention, when starting at a pole, the longitude of the
-initial
-         point (otherwise meaningless) determines the longitude line
-along
-         which to traverse, and hence the longitude of the final point.
-     (4) The convention noted in (3) above creates a discrepancy with
-VDIST
-         when the the intial or final point is at a pole. In the VDIST
+    lat1
+        inital latitude (degrees)
+
+    lon1
+        initial longitude (degrees)
+
+    rng
+        distance (meters). Scalar or a vector. Latter case computes a series of circles (or arc circles, see azim) centered on X,Y (which are scalars)
+
+    azim
+        intial azimuth (degrees). "azim" is a scalar or vector
+
+    ellipsoid
+        two-element ellipsoid vector. Either [a b] or [a f] If omitted, defaults to WGS-84
+
+    lat2, lon2
+        second point (degrees)
+
+    a21
+        reverse azimuth (degrees), at final point facing back toward the intial point
+
+    :Original algorithm: T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations", Survey Review, vol. 23, no. 176, April 1975, pp 88-93. http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+
+    Notes:
+
+      1. The Vincenty reckoning algorithm was transcribed verbatim into JavaScript by Chris Veness.
+         It was modified and translated to Matlab by Michael Kleder.
+         Mr. Veness's website is: http://www.movable-type.co.uk/scripts/latlong-vincenty-direct.html
+      2. Error correcting code, polar error corrections, WGS84 ellipsoid parameters, testing, and comments by Michael Kleder.
+      3. By convention, when starting at a pole, the longitude of the initial point (otherwise meaningless) determines the longitude line along which to traverse, and hence the longitude of the final point.
+      4. The convention noted in (3) above creates a discrepancy with VDIST when the the intial or final point is at a pole. In the VDIST
          function, when traversing from a pole, the azimuth is  0 when
-         heading away from the south pole and 180 when heading away from
-the
-         north pole. In contrast, this VRECKON function uses the azimuth
-as
-        noted in (3) above when traversing away form a pole.
-     (5) In testing, where the traversal subtends no more than 178
-degrees,
-         this function correctly inverts the VDIST function to within
-0.2
-         millimeters of distance, 5e-10 degrees of forward azimuth,
+         heading away from the south pole and 180 when heading away from the north pole. In contrast, this VRECKON function uses the azimuth as noted in (3) above when traversing away form a pole.
+      5. In testing, where the traversal subtends no more than 178 degrees, this function correctly inverts the VDIST function to within 0.2 millimeters of distance, 5e-10 degrees of forward azimuth,
          and 5e-10 degrees of reverse azimuth. Precision reduces as test
-         points approach antipodal because the precision of VDIST is
-reduced
+         points approach antipodal because the precision of VDIST is reduced
          for nearly antipodal points. (A warning is given by VDIST.)
-     (6) Tested but no warranty. Use at your own risk.
-     (7) Ver 1.0, Michael Kleder, November 2007
-     (8) Ver 2.0, Joaquim Luis, September 2008
+      6. Tested but no warranty. Use at your own risk.
+      7. Ver 1.0, Michael Kleder, November 2007. Ver 2.0, Joaquim Luis, September 2008
 
-     Added ellipsoid and vectorized whenever possible.
-     Also, lon2 is always converted to the [-180 180] interval
-     Joaquim Luis
-     $Id: $
+    Added ellipsoid and vectorized whenever possible. Also, lon2 is always converted to the [-180 180] interval.
+    Joaquim Luis
+
     """
 
     lat1 = atleast_1d(lat1)

@@ -13,7 +13,10 @@ from datetime import datetime
 
 def str2dt(t):
     """
+    Converts times in string or list of strings to datetime(s)
+
     output: datetime
+
     """
 
     t = np.atleast_1d(t)

@@ -28,8 +28,16 @@ However, AstroPy is more accurate.
 
 def datetime2sidereal(t, lon_radians, usevallado=True):
     """
-    algorithm by D. Vallado Fundamentals of Astrodynamics and Applications
-     lon: longitude in RADIANS
+    Convert ``datetime`` to sidereal time
+
+    :algorithm: D. Vallado Fundamentals of Astrodynamics and Applications
+
+
+    t
+        Python datetime
+
+    lon
+        longitude in RADIANS
     """
     if usevallado:
         jd = datetime2julian(t)
@@ -49,6 +57,8 @@ def datetime2sidereal(t, lon_radians, usevallado=True):
 
 def datetime2julian(t):
     """
+    Python datetime to Julian time
+
     from D.Vallado Fundamentals of Astrodynamics and Applications p.187
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
     """
@@ -83,11 +93,15 @@ def datetime2julian(t):
 
 def julian2sidereal(juliandate):
     """
+    Convert Julian time to sidereal time
+
     D. Vallado Ed. 4
-    TODO needs unit testing
 
     input:
-    juliandate: Julian centuries from J2000.0
+
+    juliandate
+        Julian centuries from J2000.0
+
     """
 
 # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1

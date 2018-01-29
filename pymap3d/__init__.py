@@ -7,15 +7,13 @@
 # 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 """
-Input/output: units are METERS and DEGREES.
+Input/output: default units are METERS and DEGREES.
 boolean deg=True means degrees
 
-For most functions you can input Numpy arrays of any shape,
-except as noted in the functions
+For most functions you can input Numpy arrays of any shape, except as noted in the functions
 
-see test.py for example uses.
+see tests/Test.py for example uses.
 """
 from __future__ import division
 from six import string_types,PY2
@@ -176,7 +174,9 @@ def enu2ecef(e1, n1, u1, lat0, lon0, alt0, ell=None, deg=True):
     inputs:
         ENU e1, n1, u1 (meters)
         observer lat0, lon0, alt0 (degrees,degrees,meters)
+
     output: ECEF x,y,z (meters)
+
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, alt0, ell, deg=deg)
     dx, dy, dz = _enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
@@ -188,6 +188,7 @@ def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
     """convert geodetic latitude, longitude, altiude (meters) to ECEF
 
     output: ECEF x,y,z (meters)
+
     """
     if ell is None:
         ell = EarthEllipsoid()
@@ -260,6 +261,7 @@ def aer2enu(az, el, srange, deg=True):
     """
     input: azimuth, elevation [deg]    slant range [m]
     output: East, North, Up [m]
+
     """
     if deg:
         el = radians(el)
@@ -273,6 +275,7 @@ def aer2enu(az, el, srange, deg=True):
 def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
     convert target ECEF (meters) to ENU (meters) from observer at lat0,lon0,h0 (degrees,degrees,meters)
+
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
 
@@ -310,6 +313,7 @@ def aer2geodetic(az, el, srange, lat0, lon0, alt0, deg=True):
     Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]
 
     output: WGS84 lat,lon [degrees]  altitude above spheroid  [meters]
+
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, alt0, deg=deg)
 
@@ -322,11 +326,9 @@ def ecef2geodetic(x, y, z, ell=None, deg=True):
 
     Algorithm is based on
     http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
-    This algorithm provides a converging solution to the latitude
-equation
+    This algorithm provides a converging solution to the latitude equation
     in terms of the parametric or reduced latitude form (v)
-    This algorithm provides a uniform solution over all latitudes as it
-does
+    This algorithm provides a uniform solution over all latitudes as it does
     not involve division by cos(phi) or sin(phi)
     """
 
@@ -404,7 +406,7 @@ def eci2geodetic(eci, t):
     convert ECI to geodetic coordinates
 
     inputs:
-    -------
+
     eci/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
     t : length N vector of datetime OR greenwich sidereal time angle [radians].
 
@@ -432,7 +434,7 @@ def ned2geodetic(n, e, d, lat0, lon0, h0, ell=None, deg=True):
     x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0,  ell, deg=deg)
 
     return ecef2geodetic(x, y, z, ell, deg=deg)
-#%% to NED
+# %% to NED
 
 def aer2ned(az, elev, slantRange, deg=True):
     """convert target azimuth, elevation, range to NED coordinates (meters)"""
@@ -515,7 +517,7 @@ def _uvw2enu(u, v, w, lat0, lon0, deg):
 
     return East, North, Up
 
-#%% azel radec
+# %% azel radec
 def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     """convert astronomical target horizontal azimuth, elevation to ecliptic right ascension, declination (degrees)"""
 

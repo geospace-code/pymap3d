@@ -1,0 +1,594 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to PyMap3D’s documentation! &#8212; PyMap3D 1.5.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.5.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-pymap3d-s-documentation">
+<h1>Welcome to PyMap3D’s documentation!<a class="headerlink" href="#welcome-to-pymap3d-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-pymap3d"></span><p>Input/output: default units are METERS and DEGREES.
+boolean deg=True means degrees</p>
+<p>For most functions you can input Numpy arrays of any shape, except as noted in the functions</p>
+<p>see tests/Test.py for example uses.</p>
+<dl class="function">
+<dt id="pymap3d.aer2ecef">
+<code class="descclassname">pymap3d.</code><code class="descname">aer2ecef</code><span class="sig-paren">(</span><em>az</em>, <em>el</em>, <em>srange</em>, <em>lat0</em>, <em>lon0</em>, <em>alt0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#aer2ecef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.aer2ecef" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</p>
+<blockquote>
+<div><p>Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]</p>
+<p>output: ECEF x,y,z  [meters]</p>
+</div></blockquote>
+<p>if you specify NaN for srange, return value z will be NaN</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.aer2eci">
+<code class="descclassname">pymap3d.</code><code class="descname">aer2eci</code><span class="sig-paren">(</span><em>az</em>, <em>el</em>, <em>srange</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>t</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#aer2eci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.aer2eci" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target azimuth, elevation, range to ECI</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.aer2enu">
+<code class="descclassname">pymap3d.</code><code class="descname">aer2enu</code><span class="sig-paren">(</span><em>az</em>, <em>el</em>, <em>srange</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#aer2enu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.aer2enu" title="Permalink to this definition">¶</a></dt>
+<dd><p>input: azimuth, elevation [deg]    slant range [m]
+output: East, North, Up [m]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.aer2geodetic">
+<code class="descclassname">pymap3d.</code><code class="descname">aer2geodetic</code><span class="sig-paren">(</span><em>az</em>, <em>el</em>, <em>srange</em>, <em>lat0</em>, <em>lon0</em>, <em>alt0</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#aer2geodetic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.aer2geodetic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]</p>
+<p>output: WGS84 lat,lon [degrees]  altitude above spheroid  [meters]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.aer2ned">
+<code class="descclassname">pymap3d.</code><code class="descname">aer2ned</code><span class="sig-paren">(</span><em>az</em>, <em>elev</em>, <em>slantRange</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#aer2ned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.aer2ned" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target azimuth, elevation, range to NED coordinates (meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.azel2radec">
+<code class="descclassname">pymap3d.</code><code class="descname">azel2radec</code><span class="sig-paren">(</span><em>az_deg</em>, <em>el_deg</em>, <em>lat_deg</em>, <em>lon_deg</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#azel2radec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.azel2radec" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert astronomical target horizontal azimuth, elevation to ecliptic right ascension, declination (degrees)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2aer">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2aer</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2aer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2aer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ECEF of target to azimuth, elevation, range (meters) from observer at lat0,lon0,h0 (meters)
+output: azimuth (deg), elevation (deg), slant range (m) for Obs-&gt;Point</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2eci">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2eci</code><span class="sig-paren">(</span><em>ecef</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2eci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2eci" title="Permalink to this definition">¶</a></dt>
+<dd><p>input t is either a datetime or float in radians</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2enu">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2enu</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2enu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2enu" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target ECEF (meters) to ENU (meters) from observer at lat0,lon0,h0 (degrees,degrees,meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2enuv">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2enuv</code><span class="sig-paren">(</span><em>u</em>, <em>v</em>, <em>w</em>, <em>lat0</em>, <em>lon0</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2enuv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2enuv" title="Permalink to this definition">¶</a></dt>
+<dd><p>for VECTOR i.e. between two points</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2geodetic">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2geodetic</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2geodetic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2geodetic" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert ECEF (meters) to geodetic coordintes</p>
+<p>Algorithm is based on
+<a class="reference external" href="http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm">http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm</a>
+This algorithm provides a converging solution to the latitude equation
+in terms of the parametric or reduced latitude form (v)
+This algorithm provides a uniform solution over all latitudes as it does
+not involve division by cos(phi) or sin(phi)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2ned">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2ned</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2ned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2ned" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target ECEF (meters) to NED (meters) from observer at lat0,lon0,h0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ecef2nedv">
+<code class="descclassname">pymap3d.</code><code class="descname">ecef2nedv</code><span class="sig-paren">(</span><em>u</em>, <em>v</em>, <em>w</em>, <em>lat0</em>, <em>lon0</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ecef2nedv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ecef2nedv" title="Permalink to this definition">¶</a></dt>
+<dd><p>for VECTOR between two points</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.eci2aer">
+<code class="descclassname">pymap3d.</code><code class="descname">eci2aer</code><span class="sig-paren">(</span><em>eci</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#eci2aer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.eci2aer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ECI of target to azimuth, elevation, range (meters) from observer at lat0,lon0,h0 (meters)
+output: azimuth (deg), elevation (deg), slant range (m) for Obs-&gt;Point</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.eci2ecef">
+<code class="descclassname">pymap3d.</code><code class="descname">eci2ecef</code><span class="sig-paren">(</span><em>eci</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#eci2ecef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.eci2ecef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ECI to ECEF coordinates</p>
+<p>inputs: t is either a datetime or float in radians</p>
+<p>output: ECEF x,y,z (meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.eci2geodetic">
+<code class="descclassname">pymap3d.</code><code class="descname">eci2geodetic</code><span class="sig-paren">(</span><em>eci</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#eci2geodetic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.eci2geodetic" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert ECI to geodetic coordinates</p>
+<p>inputs:</p>
+<p>eci/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
+t : length N vector of datetime OR greenwich sidereal time angle [radians].</p>
+<p>Note: Conversion is idealized: doesn’t consider nutations, perterbations,
+etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
+from ECI to ECEF</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.enu2aer">
+<code class="descclassname">pymap3d.</code><code class="descname">enu2aer</code><span class="sig-paren">(</span><em>e</em>, <em>n</em>, <em>u</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#enu2aer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.enu2aer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ENU (meters) to azimuth, elevation, range (meters)</p>
+<p>input: east, north, up [m]</p>
+<p>output: azimuth (deg), elevation (deg), slant range (m) for Obs-&gt;Point</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.enu2ecef">
+<code class="descclassname">pymap3d.</code><code class="descname">enu2ecef</code><span class="sig-paren">(</span><em>e1</em>, <em>n1</em>, <em>u1</em>, <em>lat0</em>, <em>lon0</em>, <em>alt0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#enu2ecef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.enu2ecef" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert ENU to ECEF coordinates</p>
+<dl class="docutils">
+<dt>inputs:</dt>
+<dd>ENU e1, n1, u1 (meters)
+observer lat0, lon0, alt0 (degrees,degrees,meters)</dd>
+</dl>
+<p>output: ECEF x,y,z (meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.enu2geodetic">
+<code class="descclassname">pymap3d.</code><code class="descname">enu2geodetic</code><span class="sig-paren">(</span><em>e</em>, <em>n</em>, <em>u</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#enu2geodetic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.enu2geodetic" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target ENU from observer at lat0,lon0,h0 to geodetic coordinates</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.geodetic2aer">
+<code class="descclassname">pymap3d.</code><code class="descname">geodetic2aer</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>h</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#geodetic2aer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.geodetic2aer" title="Permalink to this definition">¶</a></dt>
+<dd><p>gives az,el,range from observer looking to target geodetic coordinates.</p>
+<dl class="docutils">
+<dt>input: Point(s): lat, lon, h (altitude, meters)</dt>
+<dd>Observer: lat0, lon0, h0 (altitude, meters)</dd>
+</dl>
+<p>output: azimuth (deg), elevation (deg), slant range (m) for Obs-&gt;Point</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.geodetic2ecef">
+<code class="descclassname">pymap3d.</code><code class="descname">geodetic2ecef</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>alt</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#geodetic2ecef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.geodetic2ecef" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert geodetic latitude, longitude, altiude (meters) to ECEF</p>
+<p>output: ECEF x,y,z (meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.geodetic2enu">
+<code class="descclassname">pymap3d.</code><code class="descname">geodetic2enu</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>h</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#geodetic2enu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.geodetic2enu" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target geodetic coordinates to ENU (meters) from observer at lat0,lon0,h0 (degrees,degrees,meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.geodetic2ned">
+<code class="descclassname">pymap3d.</code><code class="descname">geodetic2ned</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>h</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#geodetic2ned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.geodetic2ned" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target geodetic coordinates to NED (meters) from observer at lat0,lon0,h0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ned2aer">
+<code class="descclassname">pymap3d.</code><code class="descname">ned2aer</code><span class="sig-paren">(</span><em>n</em>, <em>e</em>, <em>d</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ned2aer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ned2aer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert target NED to azimuth, elevation, range (meters)</p>
+<p>output: azimuth (deg), elevation (deg), slant range (m) for Obs-&gt;Point</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ned2ecef">
+<code class="descclassname">pymap3d.</code><code class="descname">ned2ecef</code><span class="sig-paren">(</span><em>n</em>, <em>e</em>, <em>d</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ned2ecef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ned2ecef" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert NED to ECEF coordinates, from observer at lat0,lon0,h0 (meters)</p>
+<p>output: NED (meters)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.ned2geodetic">
+<code class="descclassname">pymap3d.</code><code class="descname">ned2geodetic</code><span class="sig-paren">(</span><em>n</em>, <em>e</em>, <em>d</em>, <em>lat0</em>, <em>lon0</em>, <em>h0</em>, <em>ell=None</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#ned2geodetic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.ned2geodetic" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert target NED from observer at lat0,lon0,h0 to geodetic coordinates</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.radec2azel">
+<code class="descclassname">pymap3d.</code><code class="descname">radec2azel</code><span class="sig-paren">(</span><em>ra_deg</em>, <em>dec_deg</em>, <em>lat_deg</em>, <em>lon_deg</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d.html#radec2azel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.radec2azel" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert astronomical target ecliptic right ascension, declination to horizontal azimuth, eelvation (degrees)</p>
+</dd></dl>
+
+<span class="target" id="module-pymap3d.vincenty"></span><p>Ported by Michael Hirsch to Python.</p>
+<dl class="function">
+<dt id="pymap3d.vincenty.vdist">
+<code class="descclassname">pymap3d.vincenty.</code><code class="descname">vdist</code><span class="sig-paren">(</span><em>lat1</em>, <em>lon1</em>, <em>lat2</em>, <em>lon2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/vincenty.html#vdist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.vincenty.vdist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using the WGS-84 Earth ellipsoid, compute the distance between two points within a few millimeters of accuracy, compute forward azimuth, and compute backward azimuth, all using a vectorized version of Vincenty’s algorithm:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">vdist</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span><span class="n">a12</span> <span class="o">=</span> <span class="n">vdist</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span><span class="p">)</span>
+<span class="n">s</span><span class="p">,</span><span class="n">a12</span><span class="p">,</span><span class="n">a21</span> <span class="o">=</span> <span class="n">vdist</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>s</dt>
+<dd>distance in meters (inputs may be scalars, vectors, or matrices)</dd>
+<dt>a12</dt>
+<dd>azimuth in degrees from first point to second point (forward)</dd>
+<dt>a21</dt>
+<dd>azimuth in degrees from second point to first point (backward)</dd>
+</dl>
+<p>(Azimuths are in degrees clockwise from north.)</p>
+<dl class="docutils">
+<dt>lat1</dt>
+<dd>GEODETIC latitude of first point (degrees)</dd>
+<dt>lon1</dt>
+<dd>longitude of first point (degrees)</dd>
+<dt>lat2, lon2</dt>
+<dd>second point (degrees)</dd>
+</dl>
+<p>Original algorithm source:
+T. Vincenty, “Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations”, Survey Review, vol. 23, no. 176,
+April 1975, pp 88-93. Available at: <a class="reference external" href="http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf">http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf</a></p>
+<dl class="docutils">
+<dt>Notes:</dt>
+<dd><ol class="first last arabic">
+<li><p class="first">lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs  will have the same size and shape.</p>
+</li>
+<li><p class="first">Error correcting code, convergence failure traps, antipodal corrections, polar error corrections, WGS84 ellipsoid parameters, testing, and comments: Michael Kleder, 2004.</p>
+</li>
+<li><p class="first">Azimuth implementation (including quadrant abiguity resolution) and code vectorization, Michael Kleder, Sep 2005.</p>
+</li>
+<li><p class="first">Vectorization is convergence sensitive; that is, quantities which have already converged to within tolerance are not recomputed during subsequent iterations (while other quantities are still converging).</p>
+</li>
+<li><p class="first">Vincenty describes his distance algorithm as precise to within 0.01 millimeters, subject to the ellipsoidal model.</p>
+</li>
+<li><p class="first">For distance calculations, essentially antipodal points are treated as exactly antipodal, potentially reducing accuracy slightly.</p>
+</li>
+<li><p class="first">Distance failures for points exactly at the poles are eliminated by moving the points by 0.6 millimeters.</p>
+</li>
+<li><p class="first">The Vincenty distance algorithm was transcribed verbatim by Peter Cederholm, August 12, 2003. It was modified and translated to English by Michael Kleder. Mr. Cederholm’s website is <a class="reference external" href="http://www.plan.aau.dk/~pce/">http://www.plan.aau.dk/~pce/</a></p>
+</li>
+<li><p class="first">Distances agree with the Mapping Toolbox, version 2.2 (R14SP3) with a max relative difference of about 5e-9, except when the two points are nearly antipodal, and except when one point is near the equator and the two longitudes are nearly 180 degrees apart. This function (vdist) is more accurate in such cases.
+For example, note this difference (as of this writing):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">vdist</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">305</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">125</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>&gt; 18322827.0131551</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">distance</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mi">305</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">125</span><span class="p">,[</span><span class="mi">6378137</span> <span class="mf">0.08181919</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>&gt; 0</p>
+</li>
+<li><p class="first">Azimuths FROM the north pole (either forward starting at the north pole or backward when ending at the north pole) are set to 180 degrees by convention.
+Azimuths FROM the south pole are set to 0 degrees by convention.</p>
+</li>
+<li><p class="first">Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3) to within about a hundred-thousandth of a degree, except when traversing to or from a pole, where the convention for this function is described in (10), and except in the cases noted above in (9).</p>
+</li>
+<li><p class="first">No warranties; use at your own risk.</p>
+</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.vincenty.vreckon">
+<code class="descclassname">pymap3d.vincenty.</code><code class="descname">vreckon</code><span class="sig-paren">(</span><em>lat1</em>, <em>lon1</em>, <em>rng</em>, <em>azim</em>, <em>ellipsoid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/vincenty.html#vreckon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.vincenty.vreckon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes points at a specified azimuth and range in an ellipsoidal earth.
+Using the WGS-84 Earth ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
+and return the endpoint within a few millimeters of accuracy, using Vincenty’s algorithm.</p>
+<p>USAGE:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span> <span class="o">=</span> <span class="n">vreckon</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">azim</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth argument ELLIPSOID</p>
+<p>VARIABLES</p>
+<dl class="docutils">
+<dt>lat1</dt>
+<dd>inital latitude (degrees)</dd>
+<dt>lon1</dt>
+<dd>initial longitude (degrees)</dd>
+<dt>rng</dt>
+<dd>distance (meters). Scalar or a vector. Latter case computes a series of circles (or arc circles, see azim) centered on X,Y (which are scalars)</dd>
+<dt>azim</dt>
+<dd>intial azimuth (degrees). “azim” is a scalar or vector</dd>
+<dt>ellipsoid</dt>
+<dd>two-element ellipsoid vector. Either [a b] or [a f] If omitted, defaults to WGS-84</dd>
+<dt>lat2, lon2</dt>
+<dd>second point (degrees)</dd>
+<dt>a21</dt>
+<dd>reverse azimuth (degrees), at final point facing back toward the intial point</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Original algorithm:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ol class="first last upperalpha simple" start="20">
+<li>Vincenty, “Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations”, Survey Review, vol. 23, no. 176, April 1975, pp 88-93. <a class="reference external" href="http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf">http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf</a></li>
+</ol>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The Vincenty reckoning algorithm was transcribed verbatim into JavaScript by Chris Veness.
+It was modified and translated to Matlab by Michael Kleder.
+Mr. Veness’s website is: <a class="reference external" href="http://www.movable-type.co.uk/scripts/latlong-vincenty-direct.html">http://www.movable-type.co.uk/scripts/latlong-vincenty-direct.html</a></li>
+<li>Error correcting code, polar error corrections, WGS84 ellipsoid parameters, testing, and comments by Michael Kleder.</li>
+<li>By convention, when starting at a pole, the longitude of the initial point (otherwise meaningless) determines the longitude line along which to traverse, and hence the longitude of the final point.</li>
+<li>The convention noted in (3) above creates a discrepancy with VDIST when the the intial or final point is at a pole. In the VDIST
+function, when traversing from a pole, the azimuth is  0 when
+heading away from the south pole and 180 when heading away from the north pole. In contrast, this VRECKON function uses the azimuth as noted in (3) above when traversing away form a pole.</li>
+<li>In testing, where the traversal subtends no more than 178 degrees, this function correctly inverts the VDIST function to within 0.2 millimeters of distance, 5e-10 degrees of forward azimuth,
+and 5e-10 degrees of reverse azimuth. Precision reduces as test
+points approach antipodal because the precision of VDIST is reduced
+for nearly antipodal points. (A warning is given by VDIST.)</li>
+<li>Tested but no warranty. Use at your own risk.</li>
+<li>Ver 1.0, Michael Kleder, November 2007. Ver 2.0, Joaquim Luis, September 2008</li>
+</ol>
+</div></blockquote>
+<p>Added ellipsoid and vectorized whenever possible. Also, lon2 is always converted to the [-180 180] interval.
+Joaquim Luis</p>
+</dd></dl>
+
+<span class="target" id="module-pymap3d.timeconv"></span><dl class="function">
+<dt id="pymap3d.timeconv.str2dt">
+<code class="descclassname">pymap3d.timeconv.</code><code class="descname">str2dt</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/timeconv.html#str2dt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.timeconv.str2dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts times in string or list of strings to datetime(s)</p>
+<p>output: datetime</p>
+</dd></dl>
+
+<span class="target" id="module-pymap3d.datetime2hourangle"></span><dl class="function">
+<dt id="pymap3d.datetime2hourangle.datetime2julian">
+<code class="descclassname">pymap3d.datetime2hourangle.</code><code class="descname">datetime2julian</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/datetime2hourangle.html#datetime2julian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.datetime2hourangle.datetime2julian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python datetime to Julian time</p>
+<dl class="docutils">
+<dt>from D.Vallado Fundamentals of Astrodynamics and Applications p.187</dt>
+<dd>and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.datetime2hourangle.datetime2sidereal">
+<code class="descclassname">pymap3d.datetime2hourangle.</code><code class="descname">datetime2sidereal</code><span class="sig-paren">(</span><em>t</em>, <em>lon_radians</em>, <em>usevallado=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/datetime2hourangle.html#datetime2sidereal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.datetime2hourangle.datetime2sidereal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert <code class="docutils literal"><span class="pre">datetime</span></code> to sidereal time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Algorithm:</th><td class="field-body"><ol class="first last upperalpha simple" start="4">
+<li>Vallado Fundamentals of Astrodynamics and Applications</li>
+</ol>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>t</dt>
+<dd>Python datetime</dd>
+<dt>lon</dt>
+<dd>longitude in RADIANS</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.datetime2hourangle.julian2sidereal">
+<code class="descclassname">pymap3d.datetime2hourangle.</code><code class="descname">julian2sidereal</code><span class="sig-paren">(</span><em>juliandate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/datetime2hourangle.html#julian2sidereal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.datetime2hourangle.julian2sidereal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Julian time to sidereal time</p>
+<ol class="upperalpha simple" start="4">
+<li>Vallado Ed. 4</li>
+</ol>
+<p>input:</p>
+<dl class="docutils">
+<dt>juliandate</dt>
+<dd>Julian centuries from J2000.0</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-pymap3d.haversine"></span><dl class="function">
+<dt id="pymap3d.haversine.angledist">
+<code class="descclassname">pymap3d.haversine.</code><code class="descname">angledist</code><span class="sig-paren">(</span><em>lon1</em>, <em>lat1</em>, <em>lon2</em>, <em>lat2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/haversine.html#angledist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.haversine.angledist" title="Permalink to this definition">¶</a></dt>
+<dd><p>inputs:</p>
+<dl class="docutils">
+<dt>r0,d0</dt>
+<dd>for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)</dd>
+<dt>r1,d1</dt>
+<dd>for second point, rightAscension,Declination [degrees] or (azimuth,elevation)</dd>
+</dl>
+<p>(or, azimuth/elevation respectively)</p>
+<p>For reference, this is from astropy astropy/coordinates/angle_utilities.py
+Angular separation between two points on a sphere.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.haversine.angledist_meeus">
+<code class="descclassname">pymap3d.haversine.</code><code class="descname">angledist_meeus</code><span class="sig-paren">(</span><em>r0</em>, <em>d0</em>, <em>r1</em>, <em>d1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/haversine.html#angledist_meeus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.haversine.angledist_meeus" title="Permalink to this definition">¶</a></dt>
+<dd><p>inputs:</p>
+<dl class="docutils">
+<dt>r0,d0</dt>
+<dd>for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)</dd>
+<dt>r1,d1</dt>
+<dd>for second point, rightAscension,Declination [degrees] or (azimuth,elevation)</dd>
+</dl>
+<p>(or, azimuth/elevation respectively)</p>
+<p>from “Astronomical Algorithms” by Jean Meeus Ch. 16 p. 111 (16.5)
+gives angular distance in degrees between two rightAscension,Declination
+points in the sky.  Neglecting atmospheric effects, of course.</p>
+<p>Advantage of Meeus haversine method is stability all the way to exactly 0 deg.</p>
+<p>assumes degrees input, degrees output</p>
+<p>either the arrays must be the same size, or one of them must be a scalar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.haversine.haversine">
+<code class="descclassname">pymap3d.haversine.</code><code class="descname">haversine</code><span class="sig-paren">(</span><em>theta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/haversine.html#haversine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.haversine.haversine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute haversine of angle theta (radians)</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Haversine">http://en.wikipedia.org/wiki/Haversine</a>
+Meeus p. 111</p>
+</dd></dl>
+
+<span class="target" id="module-pymap3d.vallado"></span><p>converts right ascension, declination to azimuth, elevation and vice versa.
+Normally do this via AstroPy.
+These functions are fallbacks for those who don’t wish to use AstroPy (perhaps Python 2.7 users).</p>
+<p>Michael Hirsch implementation of algorithms from D. Vallado</p>
+<dl class="function">
+<dt id="pymap3d.vallado.vazel2radec">
+<code class="descclassname">pymap3d.vallado.</code><code class="descname">vazel2radec</code><span class="sig-paren">(</span><em>az_deg</em>, <em>el_deg</em>, <em>lat_deg</em>, <em>lon_deg</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/vallado.html#vazel2radec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.vallado.vazel2radec" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert azimuth, elevation to right ascension, declination</p>
+<p>Inputs</p>
+<dl class="docutils">
+<dt>az_deg</dt>
+<dd>Numpy ndarray of azimuth to point [degrees]</dd>
+<dt>el_deg</dt>
+<dd>Numpy ndarray of elevation to point [degrees]</dd>
+<dt>lat_deg</dt>
+<dd>scalar observer WGS84 latitude [degrees]</dd>
+<dt>lon_deg</dt>
+<dd>scalar observer WGS84 longitude [degrees]</dd>
+<dt>t</dt>
+<dd>time of observation</dd>
+</dl>
+<p>Outputs</p>
+<dl class="docutils">
+<dt>ra_deg</dt>
+<dd>Numpy ndarray of right ascension values [degrees]</dd>
+<dt>dec_deg</dt>
+<dd>Numpy ndarray of declination values [degrees]</dd>
+</dl>
+<p>from D.Vallado Fundamentals of Astrodynamics and Applications
+p.258-259</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymap3d.vallado.vradec2azel">
+<code class="descclassname">pymap3d.vallado.</code><code class="descname">vradec2azel</code><span class="sig-paren">(</span><em>ra_deg</em>, <em>dec_deg</em>, <em>lat_deg</em>, <em>lon_deg</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap3d/vallado.html#vradec2azel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymap3d.vallado.vradec2azel" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert right ascension, declination to azimuth, elevation</p>
+<p>Inputs</p>
+<dl class="docutils">
+<dt>ra_deg</dt>
+<dd>Numpy ndarray of right ascension values [degrees]</dd>
+<dt>dec_deg</dt>
+<dd>Numpy ndarray of declination values [degrees]</dd>
+<dt>lat_deg</dt>
+<dd>scalar observer WGS84 latitude [degrees]</dd>
+<dt>lon_deg</dt>
+<dd>scalar observer WGS84 longitude [degrees]</dd>
+<dt>t</dt>
+<dd>time of observation</dd>
+</dl>
+<p>Outputs</p>
+<dl class="docutils">
+<dt>az_deg</dt>
+<dd>Numpy ndarray of azimuth to point [degrees]</dd>
+<dt>el_deg</dt>
+<dd>Numpy ndarray of elevation to point [degrees]</dd>
+<dt>from D. Vallado “Fundamentals of Astrodynamics and Applications “</dt>
+<dd>4th Edition Ch. 4.4 pg. 266-268</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Hirsch, Ph.D..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
