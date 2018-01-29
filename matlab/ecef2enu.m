@@ -1,5 +1,5 @@
 function [e,n,u] = ecef2enu (x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
-% [e,n,u] = ecef2enu (x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
+%ecef2enu  convert ECEF to ENU
 %
 % Inputs
 % ------

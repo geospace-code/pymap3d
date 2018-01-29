@@ -1,5 +1,5 @@
-function [az, el, slantRange] = ecef2aer (x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
-% function [az, el, slantRange] = ecef2aer (x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
+function [az, el, slantRange] = ecef2aer(x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
+%ecef2aer  convert ECEF of target to azimuth, elevation, slant range from observer
 %
 % Inputs
 % ------

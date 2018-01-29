@@ -1,5 +1,5 @@
 function [lat, lon, alt] = enu2geodetic(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
-% function [lat, lon, alt] = enu2geodetic(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
+%enu2geodetic   convert from ENU to geodetic coordinates
 %
 % Inputs
 % ------

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aer2enu</title>
+  <meta name="keywords" content="aer2enu">
+  <meta name="description" content="aer2enu  convert azimuth, elevation, range to ENU coordinates">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">matlab</a> &gt; aer2enu.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>aer2enu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>aer2enu  convert azimuth, elevation, range to ENU coordinates</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [e, n, u] = aer2enu (az, el, slantRange, angleUnit) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">aer2enu  convert azimuth, elevation, range to ENU coordinates
+
+ Inputs
+ ------
+ az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)
+ az: azimuth clockwise from local north
+ el: elevation angle above local horizon
+ angleUnit: string for angular units. Default 'd': degrees
+
+ Outputs
+ -------
+ e,n,u:  East, North, Up coordinates of test points (meters)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="aer2ecef.html" class="code" title="function [x,y,z] = aer2ecef(az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit)">aer2ecef</a>	aer2ecef  convert azimuth, elevation, range to target from observer to ECEF coordinates</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [e, n, u] = aer2enu (az, el, slantRange, angleUnit)</a>
+0002 <span class="comment">%aer2enu  convert azimuth, elevation, range to ENU coordinates</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Inputs</span>
+0005 <span class="comment">% ------</span>
+0006 <span class="comment">% az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)</span>
+0007 <span class="comment">% az: azimuth clockwise from local north</span>
+0008 <span class="comment">% el: elevation angle above local horizon</span>
+0009 <span class="comment">% angleUnit: string for angular units. Default 'd': degrees</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Outputs</span>
+0012 <span class="comment">% -------</span>
+0013 <span class="comment">% e,n,u:  East, North, Up coordinates of test points (meters)</span>
+0014 
+0015   <span class="keyword">if</span> nargin==3 || isempty(angleUnit) || strcmpi(angleUnit(1),<span class="string">'d'</span>) 
+0016     az = deg2rad(az);
+0017     el = deg2rad(el);
+0018   <span class="keyword">end</span>    
+0019 
+0020 <span class="comment">%% Calculation of AER2ENU</span>
+0021    u = slantRange .* sin(el);
+0022    r = slantRange .* cos(el);
+0023    e = r .* sin(az);
+0024    n = r .* cos(az);
+0025 
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="comment">% Copyright (c) 2014-2018 Michael Hirsch, Ph.D.</span>
+0029 <span class="comment">% Copyright (c) 2013, Felipe Geremia Nievinski</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+0032 <span class="comment">% 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span>
+0033 <span class="comment">% 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</span>
+0034 <span class="comment">% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span></pre></div>
+<hr><address>Generated on Sun 28-Jan-2018 22:54:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

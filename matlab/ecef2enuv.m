@@ -1,5 +1,5 @@
 function [e, n, Up] = ecef2enuv (u, v, w, lat0, lon0, angleUnit)
-% function [e, n, Up] = ecef2enuv (u, v, w, lat0, lon0, angleUnit)
+%ecef2enuv convert *vector projection* UVW to ENU
 %
 % Inputs
 % ------

@@ -1,4 +1,5 @@
 function Test()
+% Test   run a scalarself-test of the PyMap3D Matlab/ Octave  functions
 
 fpath = fileparts(mfilename('fullpath'));
 addpath([fpath,filesep,'../matlab']) % comment this line to test Matlab Mapping Toolbox

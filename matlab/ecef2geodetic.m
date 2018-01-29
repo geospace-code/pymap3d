@@ -1,5 +1,5 @@
 function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit)
-% function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z, angleUnit)
+%ecef2geodetic   convert ECEF to geodetic coordinates
 %
 % Inputs
 % ------

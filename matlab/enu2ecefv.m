@@ -1,5 +1,5 @@
 function [u, v, w] = enu2ecefv(e, n, u, lat0, lon0, angleUnit)
-% function [u,v,w] = enu2ecef(e,n,u,lat0,lon0,angleUnit)
+%enu2ecef  convert from ENU to ECEF coordinates
 %
 % Inputs
 % ------

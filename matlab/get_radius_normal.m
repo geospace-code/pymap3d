@@ -1,5 +1,5 @@
 function N = get_radius_normal(lat, E)
-% function N = get_radius_normal(lat, E)
+%get_radius_normal    normal along the prime vertical section ellipsoidal radius of curvature
 % 
 %
 % Inputs

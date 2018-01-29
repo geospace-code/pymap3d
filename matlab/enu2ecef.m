@@ -1,5 +1,5 @@
 function [x, y, z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
-% function [x,y,z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
+%enu2ecef  convert from ENU to ECEF coordiantes
 %
 % Inputs
 % ------

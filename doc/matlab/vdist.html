@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of vdist</title>
+  <meta name="keywords" content="vdist">
+  <meta name="description" content="VDIST - Using the WGS-84 Earth ellipsoid, compute the distance between">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">matlab</a> &gt; vdist.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for matlab&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>vdist
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>VDIST - Using the WGS-84 Earth ellipsoid, compute the distance between</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = vdist(lat1,lon1,lat2,lon2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> VDIST - Using the WGS-84 Earth ellipsoid, compute the distance between
+         two points within a few millimeters of accuracy, compute forward
+         azimuth, and compute backward azimuth, all using a vectorized
+         version of Vincenty's algorithm.
+
+ s = vdist(lat1,lon1,lat2,lon2)
+ [s,a12] = vdist(lat1,lon1,lat2,lon2)
+ [s,a12,a21] = vdist(lat1,lon1,lat2,lon2)
+
+ s = distance in meters (inputs may be scalars, vectors, or matrices)
+ a12 = azimuth in degrees from first point to second point (forward)
+ a21 = azimuth in degrees from second point to first point (backward)
+       (Azimuths are in degrees clockwise from north.)
+ lat1 = GEODETIC latitude of first point (degrees)
+ lon1 = longitude of first point (degrees)
+ lat2, lon2 = second point (degrees)
+
+  Original algorithm source:
+  T. Vincenty, &quot;Direct and Inverse Solutions of Geodesics on the Ellipsoid
+  with Application of Nested Equations&quot;, Survey Review, vol. 23, no. 176,
+  April 1975, pp 88-93.
+  Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+
+ Notes: (1) lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs
+            will have the same size and shape.
+        (2) Error correcting code, convergence failure traps, antipodal
+            corrections, polar error corrections, WGS84 ellipsoid
+            parameters, testing, and comments: Michael Kleder, 2004.
+        (3) Azimuth implementation (including quadrant abiguity
+            resolution) and code vectorization, Michael Kleder, Sep 2005.
+        (4) Vectorization is convergence sensitive; that is, quantities
+            which have already converged to within tolerance are not
+            recomputed during subsequent iterations (while other
+            quantities are still converging).
+        (5) Vincenty describes his distance algorithm as precise to within
+            0.01 millimeters, subject to the ellipsoidal model.
+        (6) For distance calculations, essentially antipodal points are
+            treated as exactly antipodal, potentially reducing accuracy
+            slightly.
+        (7) Distance failures for points exactly at the poles are
+            eliminated by moving the points by 0.6 millimeters.
+        (8) The Vincenty distance algorithm was transcribed verbatim by
+            Peter Cederholm, August 12, 2003. It was modified and
+            translated to English by Michael Kleder.
+            Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
+        (9) Distances agree with the Mapping Toolbox, version 2.2 (R14SP3)
+            with a max relative difference of about 5e-9, except when the
+            two points are nearly antipodal, and except when one point is
+            near the equator and the two longitudes are nearly 180 degrees
+            apart. This function (vdist) is more accurate in such cases.
+            For example, note this difference (as of this writing):
+            &gt;&gt;vdist(0.2,305,15,125)
+            18322827.0131551
+            &gt;&gt;distance(0.2,305,15,125,[6378137 0.08181919])
+            0
+       (10) Azimuths FROM the north pole (either forward starting at the
+            north pole or backward when ending at the north pole) are set
+            to 180 degrees by convention. Azimuths FROM the south pole are
+            set to 0 degrees by convention.
+       (11) Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3)
+            to within about a hundred-thousandth of a degree, except when
+            traversing to or from a pole, where the convention for this
+            function is described in (10), and except in the cases noted
+            above in (9).
+       (12) No warranties; use at your own risk.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = vdist(lat1,lon1,lat2,lon2)</a>
+0002 <span class="comment">% VDIST - Using the WGS-84 Earth ellipsoid, compute the distance between</span>
+0003 <span class="comment">%         two points within a few millimeters of accuracy, compute forward</span>
+0004 <span class="comment">%         azimuth, and compute backward azimuth, all using a vectorized</span>
+0005 <span class="comment">%         version of Vincenty's algorithm.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% s = vdist(lat1,lon1,lat2,lon2)</span>
+0008 <span class="comment">% [s,a12] = vdist(lat1,lon1,lat2,lon2)</span>
+0009 <span class="comment">% [s,a12,a21] = vdist(lat1,lon1,lat2,lon2)</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% s = distance in meters (inputs may be scalars, vectors, or matrices)</span>
+0012 <span class="comment">% a12 = azimuth in degrees from first point to second point (forward)</span>
+0013 <span class="comment">% a21 = azimuth in degrees from second point to first point (backward)</span>
+0014 <span class="comment">%       (Azimuths are in degrees clockwise from north.)</span>
+0015 <span class="comment">% lat1 = GEODETIC latitude of first point (degrees)</span>
+0016 <span class="comment">% lon1 = longitude of first point (degrees)</span>
+0017 <span class="comment">% lat2, lon2 = second point (degrees)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%  Original algorithm source:</span>
+0020 <span class="comment">%  T. Vincenty, &quot;Direct and Inverse Solutions of Geodesics on the Ellipsoid</span>
+0021 <span class="comment">%  with Application of Nested Equations&quot;, Survey Review, vol. 23, no. 176,</span>
+0022 <span class="comment">%  April 1975, pp 88-93.</span>
+0023 <span class="comment">%  Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Notes: (1) lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs</span>
+0026 <span class="comment">%            will have the same size and shape.</span>
+0027 <span class="comment">%        (2) Error correcting code, convergence failure traps, antipodal</span>
+0028 <span class="comment">%            corrections, polar error corrections, WGS84 ellipsoid</span>
+0029 <span class="comment">%            parameters, testing, and comments: Michael Kleder, 2004.</span>
+0030 <span class="comment">%        (3) Azimuth implementation (including quadrant abiguity</span>
+0031 <span class="comment">%            resolution) and code vectorization, Michael Kleder, Sep 2005.</span>
+0032 <span class="comment">%        (4) Vectorization is convergence sensitive; that is, quantities</span>
+0033 <span class="comment">%            which have already converged to within tolerance are not</span>
+0034 <span class="comment">%            recomputed during subsequent iterations (while other</span>
+0035 <span class="comment">%            quantities are still converging).</span>
+0036 <span class="comment">%        (5) Vincenty describes his distance algorithm as precise to within</span>
+0037 <span class="comment">%            0.01 millimeters, subject to the ellipsoidal model.</span>
+0038 <span class="comment">%        (6) For distance calculations, essentially antipodal points are</span>
+0039 <span class="comment">%            treated as exactly antipodal, potentially reducing accuracy</span>
+0040 <span class="comment">%            slightly.</span>
+0041 <span class="comment">%        (7) Distance failures for points exactly at the poles are</span>
+0042 <span class="comment">%            eliminated by moving the points by 0.6 millimeters.</span>
+0043 <span class="comment">%        (8) The Vincenty distance algorithm was transcribed verbatim by</span>
+0044 <span class="comment">%            Peter Cederholm, August 12, 2003. It was modified and</span>
+0045 <span class="comment">%            translated to English by Michael Kleder.</span>
+0046 <span class="comment">%            Mr. Cederholm's website is http://www.plan.aau.dk/~pce/</span>
+0047 <span class="comment">%        (9) Distances agree with the Mapping Toolbox, version 2.2 (R14SP3)</span>
+0048 <span class="comment">%            with a max relative difference of about 5e-9, except when the</span>
+0049 <span class="comment">%            two points are nearly antipodal, and except when one point is</span>
+0050 <span class="comment">%            near the equator and the two longitudes are nearly 180 degrees</span>
+0051 <span class="comment">%            apart. This function (vdist) is more accurate in such cases.</span>
+0052 <span class="comment">%            For example, note this difference (as of this writing):</span>
+0053 <span class="comment">%            &gt;&gt;vdist(0.2,305,15,125)</span>
+0054 <span class="comment">%            18322827.0131551</span>
+0055 <span class="comment">%            &gt;&gt;distance(0.2,305,15,125,[6378137 0.08181919])</span>
+0056 <span class="comment">%            0</span>
+0057 <span class="comment">%       (10) Azimuths FROM the north pole (either forward starting at the</span>
+0058 <span class="comment">%            north pole or backward when ending at the north pole) are set</span>
+0059 <span class="comment">%            to 180 degrees by convention. Azimuths FROM the south pole are</span>
+0060 <span class="comment">%            set to 0 degrees by convention.</span>
+0061 <span class="comment">%       (11) Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3)</span>
+0062 <span class="comment">%            to within about a hundred-thousandth of a degree, except when</span>
+0063 <span class="comment">%            traversing to or from a pole, where the convention for this</span>
+0064 <span class="comment">%            function is described in (10), and except in the cases noted</span>
+0065 <span class="comment">%            above in (9).</span>
+0066 <span class="comment">%       (12) No warranties; use at your own risk.</span>
+0067 
+0068 <span class="comment">% reshape inputs</span>
+0069 keepsize = size(lat1);
+0070 lat1=lat1(:);
+0071 lon1=lon1(:);
+0072 lat2=lat2(:);
+0073 lon2=lon2(:);
+0074 <span class="comment">% Input check:</span>
+0075 <span class="keyword">if</span> any(abs(lat1)&gt;90 | abs(lat2)&gt;90)
+0076     error(<span class="string">'Input latitudes must be between -90 and 90 degrees, inclusive.'</span>)
+0077 <span class="keyword">end</span>
+0078 <span class="comment">% Supply WGS84 earth ellipsoid axis lengths in meters:</span>
+0079 a = 6378137; <span class="comment">% definitionally</span>
+0080 b = 6356752.31424518; <span class="comment">% computed from WGS84 earth flattening coefficient</span>
+0081 <span class="comment">% preserve true input latitudes:</span>
+0082 lat1tr = lat1;
+0083 lat2tr = lat2;
+0084 <span class="comment">% convert inputs in degrees to radians:</span>
+0085 lat1 = lat1 * 0.0174532925199433;
+0086 lon1 = lon1 * 0.0174532925199433;
+0087 lat2 = lat2 * 0.0174532925199433;
+0088 lon2 = lon2 * 0.0174532925199433;
+0089 <span class="comment">% correct for errors at exact poles by adjusting 0.6 millimeters:</span>
+0090 kidx = abs(pi/2-abs(lat1)) &lt; 1e-10;
+0091 <span class="keyword">if</span> any(kidx)
+0092     lat1(kidx) = sign(lat1(kidx))*(pi/2-(1e-10));
+0093 <span class="keyword">end</span>
+0094 kidx = abs(pi/2-abs(lat2)) &lt; 1e-10;
+0095 <span class="keyword">if</span> any(kidx)
+0096     lat2(kidx) = sign(lat2(kidx))*(pi/2-(1e-10));
+0097 <span class="keyword">end</span>
+0098 f = (a-b)/a;
+0099 U1 = atan((1-f)*tan(lat1));
+0100 U2 = atan((1-f)*tan(lat2));
+0101 lon1 = mod(lon1,2*pi);
+0102 lon2 = mod(lon2,2*pi);
+0103 L = abs(lon2-lon1);
+0104 kidx = L &gt; pi;
+0105 <span class="keyword">if</span> any(kidx)
+0106     L(kidx) = 2*pi - L(kidx);
+0107 <span class="keyword">end</span>
+0108 lambda = L;
+0109 lambdaold = 0*lat1;
+0110 itercount = 0;
+0111 notdone = logical(1+0*lat1);
+0112 alpha = 0*lat1;
+0113 sigma = 0*lat1;
+0114 cos2sigmam = 0*lat1;
+0115 C = 0*lat1;
+0116 warninggiven = false;
+0117 <span class="keyword">while</span> any(notdone)  <span class="comment">% force at least one execution</span>
+0118     <span class="comment">%disp(['lambda(21752) = ' num2str(lambda(21752),20)]);</span>
+0119     itercount = itercount+1;
+0120     <span class="keyword">if</span> itercount &gt; 50
+0121         <span class="keyword">if</span> ~warninggiven
+0122             warning([<span class="string">'Essentially antipodal points encountered. '</span> <span class="keyword">...</span>
+0123                 <span class="string">'Precision may be reduced slightly.'</span>]);
+0124         <span class="keyword">end</span>
+0125         lambda(notdone) = pi;
+0126         <span class="keyword">break</span>
+0127     <span class="keyword">end</span>
+0128     lambdaold(notdone) = lambda(notdone);
+0129     sinsigma(notdone) = sqrt((cos(U2(notdone)).*sin(lambda(notdone)))<span class="keyword">...</span>
+0130         .^2+(cos(U1(notdone)).*sin(U2(notdone))-sin(U1(notdone)).*<span class="keyword">...</span>
+0131         cos(U2(notdone)).*cos(lambda(notdone))).^2);
+0132     cossigma(notdone) = sin(U1(notdone)).*sin(U2(notdone))+<span class="keyword">...</span>
+0133         cos(U1(notdone)).*cos(U2(notdone)).*cos(lambda(notdone));
+0134     <span class="comment">% eliminate rare imaginary portions at limit of numerical precision:</span>
+0135     sinsigma(notdone)=real(sinsigma(notdone));
+0136     cossigma(notdone)=real(cossigma(notdone));
+0137     sigma(notdone) = atan2(sinsigma(notdone),cossigma(notdone));
+0138     alpha(notdone) = asin(cos(U1(notdone)).*cos(U2(notdone)).*<span class="keyword">...</span>
+0139         sin(lambda(notdone))./sin(sigma(notdone)));
+0140     cos2sigmam(notdone) = cos(sigma(notdone))-2*sin(U1(notdone)).*<span class="keyword">...</span>
+0141         sin(U2(notdone))./cos(alpha(notdone)).^2;
+0142     C(notdone) = f/16*cos(alpha(notdone)).^2.*(4+f*(4-3*<span class="keyword">...</span>
+0143         cos(alpha(notdone)).^2));
+0144     lambda(notdone) = L(notdone)+(1-C(notdone)).*f.*sin(alpha(notdone))<span class="keyword">...</span>
+0145         .*(sigma(notdone)+C(notdone).*sin(sigma(notdone)).*<span class="keyword">...</span>
+0146         (cos2sigmam(notdone)+C(notdone).*cos(sigma(notdone)).*<span class="keyword">...</span>
+0147         (-1+2.*cos2sigmam(notdone).^2)));
+0148     <span class="comment">%disp(['then, lambda(21752) = ' num2str(lambda(21752),20)]);</span>
+0149     <span class="comment">% correct for convergence failure in the case of essentially antipodal</span>
+0150     <span class="comment">% points</span>
+0151     <span class="keyword">if</span> any(lambda(notdone) &gt; pi)
+0152         warning([<span class="string">'Essentially antipodal points encountered. '</span> <span class="keyword">...</span>
+0153             <span class="string">'Precision may be reduced slightly.'</span>]);
+0154         warninggiven = true;
+0155         lambdaold(lambda&gt;pi) = pi;
+0156         lambda(lambda&gt;pi) = pi;
+0157     <span class="keyword">end</span>
+0158     notdone = abs(lambda-lambdaold) &gt; 1e-12;
+0159 <span class="keyword">end</span>
+0160 u2 = cos(alpha).^2.*(a^2-b^2)/b^2;
+0161 A = 1+u2./16384.*(4096+u2.*(-768+u2.*(320-175.*u2)));
+0162 B = u2./1024.*(256+u2.*(-128+u2.*(74-47.*u2)));
+0163 deltasigma = B.*sin(sigma).*(cos2sigmam+B./4.*(cos(sigma).*(-1+2.*<span class="keyword">...</span>
+0164     cos2sigmam.^2)-B./6.*cos2sigmam.*(-3+4.*sin(sigma).^2).*(-3+4*<span class="keyword">...</span>
+0165     cos2sigmam.^2)));
+0166 varargout{1} = reshape(b.*A.*(sigma-deltasigma),keepsize);
+0167 <span class="keyword">if</span> nargout &gt; 1
+0168     <span class="comment">% From point #1 to point #2</span>
+0169     <span class="comment">% correct sign of lambda for azimuth calcs:</span>
+0170     lambda = abs(lambda);
+0171     kidx=sign(sin(lon2-lon1)) .* sign(sin(lambda)) &lt; 0;
+0172     lambda(kidx) = -lambda(kidx);
+0173     numer = cos(U2).*sin(lambda);
+0174     denom = cos(U1).*sin(U2)-sin(U1).*cos(U2).*cos(lambda);
+0175     a12 = atan2(numer,denom);
+0176     kidx = a12&lt;0;
+0177     a12(kidx)=a12(kidx)+2*pi;
+0178     <span class="comment">% from poles:</span>
+0179     a12(lat1tr &lt;= -90) = 0;
+0180     a12(lat1tr &gt;= 90 ) = pi;
+0181     varargout{2} = reshape(rad2deg(a12),keepsize); <span class="comment">% to degrees</span>
+0182 <span class="keyword">end</span>
+0183 <span class="keyword">if</span> nargout &gt; 2
+0184     a21=NaN*lat1;
+0185     <span class="comment">% From point #2 to point #1</span>
+0186     <span class="comment">% correct sign of lambda for azimuth calcs:</span>
+0187     lambda = abs(lambda);
+0188     kidx=sign(sin(lon1-lon2)) .* sign(sin(lambda)) &lt; 0;
+0189     lambda(kidx)=-lambda(kidx);
+0190     numer = cos(U1).*sin(lambda);
+0191     denom = sin(U1).*cos(U2)-cos(U1).*sin(U2).*cos(lambda);
+0192     a21 = atan2(numer,denom);
+0193     kidx=a21&lt;0;
+0194     a21(kidx)= a21(kidx)+2*pi;
+0195     <span class="comment">% backwards from poles:</span>
+0196     a21(lat2tr &gt;= 90) = pi;
+0197     a21(lat2tr &lt;= -90) = 0;
+0198     varargout{3} = reshape(rad2deg(a21),keepsize); <span class="comment">% to degrees</span>
+0199 <span class="keyword">end</span>
+0200 
+0201 <span class="keyword">end</span> <span class="comment">% function</span></pre></div>
+<hr><address>Generated on Sun 28-Jan-2018 22:54:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,5 +1,7 @@
 function E = getreferenceEllipsoid(name) 
-% function E = getreferenceEllipsoid(name) 
+%getreferenceEllipsoid   Select available ellipsoid 
+%
+% (named so as not to collide with Matlab Mapping Toolbox)
 %
 % inputs
 % ------

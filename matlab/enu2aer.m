@@ -1,5 +1,5 @@
 function [az, elev, slantRange] = enu2aer(e, n, u, angleUnit)
-% function [az, elev, slantRange] = enu2aer(e, n, u, angleUnit)
+%enu2aer   convert ENU to azimuth, elevation, slant range
 %
 % Inputs
 % ------

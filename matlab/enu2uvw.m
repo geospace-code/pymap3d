@@ -1,5 +1,5 @@
 function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
-% function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
+%enu2uvw   convert from ENU to UVW coordinates
 %
 % Inputs
 % ------

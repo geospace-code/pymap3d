@@ -1,5 +1,5 @@
 function [lat1, lon1, alt1] = aer2geodetic (az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit)
-% function [lat1, lon1, alt1] = aer2geodetic (az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit)
+%aer2geodetic  convert azimuth, elevation, range of target from observer to geodetic coordiantes
 %
 % Inputs
 % ------
