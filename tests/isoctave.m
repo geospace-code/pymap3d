@@ -1,31 +1,22 @@
-function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
-% function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
+function isoct = isoctave()
+% function isoct = isoctave()
 %
-% Inputs
-% ------
-% e,n,u:  East, North, Up coordinates of point(s) (meters)
-% lat0,lon0: geodetic coordinates of observer/reference point (degrees)
-% angleUnit: string for angular units. Default 'd': degrees
-%
-% outputs
-% -------
-% u,v,w:   coordinates of test point(s) (meters)
-  
-    if nargin<6 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
-        lat0 = deg2rad(lat0);
-        lon0 = deg2rad(lon0);
-    end
-    
-    t = cos(lat0) * u - sin(lat0) * n;
-    w = sin(lat0) * u + cos(lat0) * n;
+% TRUE if function is executed on GNU Octave
+% FALSE otherwise
+% 
+% tested with Octave 3.6-4.2 and Matlab
 
-    u = cos(lon0) * t - sin(lon0) * e;
-    v = sin(lon0) * t + cos(lon0) * e;
-  
-end % function
+persistent oct;
+
+if isempty(oct)
+    oct = exist('OCTAVE_VERSION', 'builtin') == 5;
+end
+
+isoct=oct; % has to be a separate line/variable for matlab
+
+end
 
 % Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
-% Copyright (c) 2013, Felipe Geremia Nievinski
 %
 % Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 % 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.

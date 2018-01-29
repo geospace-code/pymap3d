@@ -1,5 +1,5 @@
-function E = referenceEllipsoid(name) 
-% function E = referenceEllipsoid(name) 
+function E = getreferenceEllipsoid(name) 
+% function E = getreferenceEllipsoid(name) 
 %
 % inputs
 % ------
