@@ -1,7 +1,5 @@
+.buildinfo
 
-docs/doctrees/
-
-*.json
 *~
 
 # Byte-compiled / optimized / DLL files
