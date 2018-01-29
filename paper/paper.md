@@ -1,5 +1,6 @@
 ---
 title: 'PyMap3D: 3-D coordinate conversions for terrestrial and geospace environments'
+tags:
 authors:
   - name: Michael Hirsch
     orcid: 0000-0002-1637-6526
@@ -16,7 +17,7 @@ bibliography: paper.bib
 # Summary
 
 PyMap3D [@pymap3d] is a Python coordinate transformation program that converts between geospace coordinate systems.
-A subset of the Python functionality is provided for Matlab and GNU Octave users as well in the ``matlab/`` directory.
+A subset of the Python functionality using syntax compatible with the $1000 Matlab Mapping Toolbox is provided for Matlab and GNU Octave users in the ``matlab/`` directory.
 Increased performance and accuracy is optionally available for certain functions for those using AstroPy, but it is not required.
 Since Numpy is used throughout PyMap3D, many of the functions operate with speed comparable to compiled languages.
 Other functions that are iterative could possibly be sped up with modules such as Cython or Numba.
