@@ -28,22 +28,48 @@ case 'wgs84'
  % WGS-84 ellipsoid parameters.
  %   http://earth-info.nga.mil/GandG/tr8350_2.html
  %   ftp://164.214.2.65/pub/gig/tr8350.2/wgs84fin.pdf
+ E.Code = 7030;
+ E.Name = 'World Geodetic System 1984';
+ E.LengthUnit = 'meter';
  E.SemimajorAxis = 6378137.0;                             
- E.InverseFlattening = 298.2572235630;              
- E.SemiminorAxis = E.SemimajorAxis * (1 - 1/E.InverseFlattening);                     
+ E.Flattening = 1/298.2572235630;              
+ E.SemiminorAxis = E.SemimajorAxis * (1 - E.Flattening);                     
  E.Eccentricity = get_eccentricity(E);
+ %E.MeanRadius = meanradius(E);
+ %E.Volume = spheroidvolume(E);
 case 'grs80'
 % GRS-80 ellipsoid parameters
 % <http://itrf.ensg.ign.fr/faq.php?type=answer> (accessed 2018-01-22)
- E.SemimajorAxis = 6378137.0;                               
- E.InverseFlattening = 298.257222100882711243;                 
- E.SemiminorAxis = E.SemimajorAxis * (1 - 1/E.InverseFlattening);                      
+ E.Code = 7019;
+ E.Name = 'Geodetic Reference System 1980';
+ E.LengthUnit = 'kilometer';
+ E.SemimajorAxis = 6378.137;                               
+ E.Flattening = 1/298.257222100882711243;                 
+ E.SemiminorAxis = E.SemimajorAxis * (1 - E.Flattening);                      
  E.Eccentricity  = get_eccentricity(E); 
+ %E.MeanRadius = meanradius(E);
+ %E.Volume = spheroidvolume(E);
 otherwise
   error([name,' not yet implemented'])
 end
 
 end % function
+
+function v = spheroidvolume(E)
+
+  v = 4*pi/3 * E.SemimajorAxis^2 * E.SemiminorAxis;
+  
+  assert(v>=0)
+
+end
+
+function r = meanradius(E)
+
+  r = (2*E.SemimajorAxis + E.SemiminorAxis) / 3;
+
+  assert(r>=0)
+
+end
 
 function ecc = get_eccentricity(E)
 
