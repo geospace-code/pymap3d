@@ -7,20 +7,20 @@
 % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleut)
-% function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleut)
+function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
+% function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
 %
 % Inputs
 % ------
 % e,n,u:  East, North, Up coordinates of point(s) (meters)
 % lat0,lon0: geodetic coordinates of observer/reference point (degrees)
-% angleut: string for angluar units. Default 'd': degrees, otherwise Radians
+% angleUnit: string for angular units. Default 'd': degrees
 %
 % outputs
 % -------
 % u,v,w:   coordinates of test point(s) (meters)
   
-    if nargin<6 || strcmpi(angleut(1),'d')
+    if nargin<6 || strcmpi(angleUnit(1),'d')
         lat0 = deg2rad(lat0);
         lon0 = deg2rad(lon0);
     end

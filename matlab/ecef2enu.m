@@ -7,10 +7,24 @@
 % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-function [xEast,yNorth,zUp] = ecef2enu (x, y, z, lat0, lon0, alt0, spheroid, angleut)
-  if nargin < 7 || isempty (spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin<8, angleut='d'; end
+function [e,n,u] = ecef2enu (x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
+% function [xEast,yNorth,zUp] = ecef2enu (x, y, z, lat0, lon0, alt0, spheroid, angleUnit)
+%
+% Inputs
+% ------
+% x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
 
-  [x0, y0, z0] = geodetic2ecef(lat0, lon0, alt0, spheroid, angleut);
-  [xEast, yNorth, zUp] = ecef2enuv(x - x0, y - y0, z - z0, lat0, lon0, angleut);
+% lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
+% spheroid: referenceEllipsoid parameter struct
+% angleUnit: string for angular units. Default 'd': degrees
+%
+% outputs
+% -------
+% e,n,u:  East, North, Up coordinates of test points (meters)
+
+  if nargin < 7 || isempty (spheroid), spheroid = wgs84Ellipsoid(); end
+  if nargin<8, angleUnit='d'; end
+
+  [x0, y0, z0] = geodetic2ecef(lat0, lon0, alt0, spheroid, angleUnit);
+  [e, n, u]    = ecef2enuv(x - x0, y - y0, z - z0, lat0, lon0, angleUnit);
 end

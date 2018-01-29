@@ -11,14 +11,14 @@ function E = referenceEllipsoid(name)
 %
 % inputs
 % ------
-% name: string of model name e.g. 'wgs84'
+% name: string of model name. Default: 'wgs84'
 %
 %
 % outputs
 % -------
 % ell: struct containing ellipsoid parameters
 %
-%
+
 if ~nargin
   name='wgs84';
 end
@@ -42,8 +42,8 @@ case 'grs80'
 % <http://itrf.ensg.ign.fr/faq.php?type=answer> (accessed 2018-01-22)
  E.Code = 7019;
  E.Name = 'Geodetic Reference System 1980';
- E.LengthUnit = 'kilometer';
- E.SemimajorAxis = 6378.137;                               
+ E.LengthUnit = 'meter';
+ E.SemimajorAxis = 6378137.0;                               
  E.Flattening = 1/298.257222100882711243;                 
  E.SemiminorAxis = E.SemimajorAxis * (1 - E.Flattening);                      
  E.Eccentricity  = get_eccentricity(E); 

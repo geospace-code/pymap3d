@@ -7,15 +7,15 @@
 % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, angleut)
-% function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, angleut)
+function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, angleUnit)
+% function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, angleUnit)
 %
 % Inputs
 % ------
-% lat,lon, alt:  ellipsoid geodeteic coordinates of point under test (degrees, degrees, meters)
-% lat0, lon0, alt0: ellipsoid geodeteic coordinates of observer/reference (degrees, degrees, meters)
-% spheroid: referenceEllipsoid paraemter struct
-% angleut: string for angluar units. Default 'd': degrees, otherwise Radians
+% lat,lon, alt:  ellipsoid geodetic coordinates of point under test (degrees, degrees, meters)
+% lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
+% spheroid: referenceEllipsoid parameter struct
+% angleUnit: string for angular units. Default 'd': degrees
 %
 % outputs
 % -------
@@ -23,15 +23,16 @@ function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, ang
 %
 
   if nargin < 7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin < 8, angleut = 'd'; end
+  if nargin < 8, angleUnit = 'd'; end
   
-  [x1,y1,z1] = geodetic2ecef(lat,lon,alt,spheroid,angleut);
-  [x2,y2,z2] = geodetic2ecef(lat0,lon0,alt0,spheroid,angleut);
+  [x1,y1,z1] = geodetic2ecef(lat,lon,alt,spheroid,angleUnit);
+  [x2,y2,z2] = geodetic2ecef(lat0,lon0,alt0,spheroid,angleUnit);
   
   dx = x1-x2;
   dy = y1-y2;
   dz = z1-z2;
   
-  [e, n, u] = ecef2enuv(dx, dy, dz, lat0, lon0, angleut);
+  [e, n, u] = ecef2enuv(dx, dy, dz, lat0, lon0, angleUnit);
+  
 
 end % function
