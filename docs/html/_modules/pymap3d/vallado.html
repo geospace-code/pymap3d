@@ -1,0 +1,214 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pymap3d.vallado &#8212; PyMap3D 1.5.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.5.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap3d.vallado</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="c1"># Copyright (c) 2014-2018 Michael Hirsch, Ph.D.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">converts right ascension, declination to azimuth, elevation and vice versa.</span>
+<span class="sd">Normally do this via AstroPy.</span>
+<span class="sd">These functions are fallbacks for those who don&#39;t wish to use AstroPy (perhaps Python 2.7 users).</span>
+
+<span class="sd">Michael Hirsch implementation of algorithms from D. Vallado</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">radians</span><span class="p">,</span> <span class="n">arcsin</span><span class="p">,</span> <span class="n">arctan2</span><span class="p">,</span> <span class="n">atleast_1d</span>
+<span class="c1">#</span>
+<span class="kn">from</span> <span class="nn">.datetime2hourangle</span> <span class="k">import</span> <span class="n">datetime2sidereal</span>
+
+
+<div class="viewcode-block" id="vazel2radec"><a class="viewcode-back" href="../../index.html#pymap3d.vallado.vazel2radec">[docs]</a><span class="k">def</span> <span class="nf">vazel2radec</span><span class="p">(</span><span class="n">az_deg</span><span class="p">,</span> <span class="n">el_deg</span><span class="p">,</span> <span class="n">lat_deg</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert azimuth, elevation to right ascension, declination</span>
+
+<span class="sd">    Inputs</span>
+
+<span class="sd">    az_deg</span>
+<span class="sd">        Numpy ndarray of azimuth to point [degrees]</span>
+
+<span class="sd">    el_deg</span>
+<span class="sd">        Numpy ndarray of elevation to point [degrees]</span>
+
+<span class="sd">    lat_deg</span>
+<span class="sd">        scalar observer WGS84 latitude [degrees]</span>
+
+<span class="sd">    lon_deg</span>
+<span class="sd">        scalar observer WGS84 longitude [degrees]</span>
+
+<span class="sd">    t</span>
+<span class="sd">        time of observation</span>
+
+<span class="sd">    Outputs</span>
+
+<span class="sd">    ra_deg</span>
+<span class="sd">        Numpy ndarray of right ascension values [degrees]</span>
+
+<span class="sd">    dec_deg</span>
+<span class="sd">        Numpy ndarray of declination values [degrees]</span>
+
+<span class="sd">    from D.Vallado Fundamentals of Astrodynamics and Applications</span>
+<span class="sd">    p.258-259</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">az_deg</span> <span class="o">=</span> <span class="n">atleast_1d</span><span class="p">(</span><span class="n">az_deg</span><span class="p">)</span>
+    <span class="n">el_deg</span> <span class="o">=</span> <span class="n">atleast_1d</span><span class="p">(</span><span class="n">el_deg</span><span class="p">)</span>
+    <span class="n">lat_deg</span> <span class="o">=</span> <span class="n">atleast_1d</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
+    <span class="n">lon_deg</span> <span class="o">=</span> <span class="n">atleast_1d</span><span class="p">(</span><span class="n">lon_deg</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">az_deg</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">el_deg</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;az and el must be same shape ndarray&#39;</span>
+    <span class="k">assert</span> <span class="n">lat_deg</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">lon_deg</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;need one observer and one or more  (az,el).&#39;</span>
+
+    <span class="n">az</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">az_deg</span><span class="p">)</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">el_deg</span><span class="p">)</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">lon_deg</span><span class="p">)</span>
+<span class="c1"># %% Vallado &quot;algorithm 28&quot; p 268</span>
+    <span class="n">dec</span> <span class="o">=</span> <span class="n">arcsin</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">az</span><span class="p">))</span>
+
+    <span class="n">lha</span> <span class="o">=</span> <span class="n">arctan2</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">az</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">el</span><span class="p">))</span> <span class="o">/</span> <span class="n">cos</span><span class="p">(</span><span class="n">dec</span><span class="p">),</span>
+                  <span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">dec</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)))</span>
+
+    <span class="n">lst</span> <span class="o">=</span> <span class="n">datetime2sidereal</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span>  <span class="c1"># lon, ra in RADIANS</span>
+
+    <span class="sd">&quot;&quot;&quot; by definition right ascension \in [0,360) degrees &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">degrees</span><span class="p">(</span><span class="n">lst</span> <span class="o">-</span> <span class="n">lha</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span><span class="p">,</span> <span class="n">degrees</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="vradec2azel"><a class="viewcode-back" href="../../index.html#pymap3d.vallado.vradec2azel">[docs]</a><span class="k">def</span> <span class="nf">vradec2azel</span><span class="p">(</span><span class="n">ra_deg</span><span class="p">,</span><span class="n">dec_deg</span><span class="p">,</span><span class="n">lat_deg</span><span class="p">,</span><span class="n">lon_deg</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    convert right ascension, declination to azimuth, elevation</span>
+
+<span class="sd">    Inputs</span>
+
+<span class="sd">    ra_deg</span>
+<span class="sd">        Numpy ndarray of right ascension values [degrees]</span>
+
+<span class="sd">    dec_deg</span>
+<span class="sd">        Numpy ndarray of declination values [degrees]</span>
+
+<span class="sd">    lat_deg</span>
+<span class="sd">        scalar observer WGS84 latitude [degrees]</span>
+
+<span class="sd">    lon_deg</span>
+<span class="sd">        scalar observer WGS84 longitude [degrees]</span>
+
+<span class="sd">    t</span>
+<span class="sd">        time of observation</span>
+
+<span class="sd">    Outputs</span>
+
+<span class="sd">    az_deg</span>
+<span class="sd">        Numpy ndarray of azimuth to point [degrees]</span>
+
+<span class="sd">    el_deg</span>
+<span class="sd">        Numpy ndarray of elevation to point [degrees]</span>
+
+
+<span class="sd">    from D. Vallado &quot;Fundamentals of Astrodynamics and Applications &quot;</span>
+<span class="sd">       4th Edition Ch. 4.4 pg. 266-268</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ra</span> <span class="o">=</span>  <span class="n">radians</span><span class="p">(</span><span class="n">ra_deg</span><span class="p">)</span>
+    <span class="n">dec</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">dec_deg</span><span class="p">)</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">radians</span><span class="p">(</span><span class="n">lon_deg</span><span class="p">)</span>
+
+    <span class="n">lst</span> <span class="o">=</span> <span class="n">datetime2sidereal</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span> <span class="c1">#RADIANS</span>
+<span class="c1"># %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE</span>
+    <span class="n">lha</span> <span class="o">=</span> <span class="n">lst</span> <span class="o">-</span> <span class="n">ra</span>
+<span class="c1"># %% #Eq. 4-12 p. 267</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">arcsin</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">lha</span><span class="p">)</span> <span class="p">)</span>
+<span class="c1"># %% combine Eq. 4-13 and 4-14 p. 268</span>
+    <span class="n">az</span> <span class="o">=</span> <span class="n">arctan2</span><span class="p">(</span> <span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">lha</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">/</span> <span class="n">cos</span><span class="p">(</span><span class="n">el</span><span class="p">),</span>
+                   <span class="p">(</span> <span class="n">sin</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">el</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span>  <span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">degrees</span><span class="p">(</span><span class="n">az</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">,</span> <span class="n">degrees</span><span class="p">(</span><span class="n">el</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../pymap3d.html">pymap3d</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Michael Hirsch, Ph.D..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
