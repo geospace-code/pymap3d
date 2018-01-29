@@ -22,8 +22,8 @@ function [az, el, slantRange] = ecef2aer (x, y, z, lat0, lon0, alt0, spheroid, a
 % az: azimuth clockwise from local north
 % el: elevation angle above local horizon
 
-  if nargin < 7 || isempty(spheroid), spheroid = wgs84Ellipsoid();  end
-  if nargin<8, angleUnit='d'; end
+  if nargin < 7, spheroid = [];  end
+  if nargin < 8, angleUnit= []; end
 
   [e, n, u] = ecef2enu(x, y, z, lat0, lon0, alt0, spheroid, angleUnit);
   [az,el,slantRange] = enu2aer(e, n, u, angleUnit);

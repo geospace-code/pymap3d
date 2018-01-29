@@ -26,7 +26,7 @@ function [az, elev, slantRange] = enu2aer(e, n, u, angleUnit)
   elev = atan2(u,r);
   az = mod(atan2(e, n), 2 * atan2(0,-1));
 
-  if nargin < 4 || strcmpi(angleUnit(1),'d')
+  if nargin < 4 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
     elev = rad2deg(elev);
     az = rad2deg(az);
   end

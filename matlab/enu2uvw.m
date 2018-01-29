@@ -20,7 +20,7 @@ function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
 % -------
 % u,v,w:   coordinates of test point(s) (meters)
   
-    if nargin<6 || strcmpi(angleUnit(1),'d')
+    if nargin<6 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
         lat0 = deg2rad(lat0);
         lon0 = deg2rad(lon0);
     end

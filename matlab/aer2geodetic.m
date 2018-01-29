@@ -23,8 +23,8 @@ function [lat1, lon1, alt1] = aer2geodetic (az, el, slantRange, lat0, lon0, alt0
 % -------
 % lat1,lon1,alt1: geodetic coordinates of test points (degrees,degrees,meters)
 
-  if nargin<7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin<8, angleUnit='d';  end
+  if nargin<7, spheroid = []; end
+  if nargin<8, angleUnit= [];  end
 
   [x, y, z] = aer2ecef(az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit);
  

@@ -21,8 +21,8 @@ function [lat, lon, alt] = enu2geodetic(e, n, u, lat0, lon0, alt0, spheroid, ang
 % -------
 % lat,lon,alt: geodetic coordinates of test points (degrees,degrees,meters)
 %
-  if nargin<7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin<8, angleUnit='d'; end
+  if nargin<7, spheroid = []; end
+  if nargin<8, angleUnit= []; end
 
   [x, y, z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit);
   [lat, lon, alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit);

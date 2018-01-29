@@ -21,8 +21,8 @@ function [x, y, z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
 % -------
 % x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
                           
-  if nargin<7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin<8, angleUnit = 'd'; end
+  if nargin<7, spheroid = []; end
+  if nargin<8, angleUnit = []; end
 
   [x0, y0, z0] = geodetic2ecef(spheroid, lat0, lon0, alt0, angleUnit);
   [dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleUnit);

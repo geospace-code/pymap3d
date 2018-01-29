@@ -23,9 +23,7 @@ function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit)
 % Fortran reference at bottom of: http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
 
   if isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin < 5, angleUnit='d'; end
 
- 
   % Algorithm is based on 
   % http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
   % This algorithm provides a converging solution to the latitude equation
@@ -62,7 +60,7 @@ function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit)
   alt = ((r - a * cos (vnew)) .* cos (lat)) +  ...
       ((z - b * sin (vnew)) .* sin (lat));
       
-  if strcmpi(angleUnit(1),'d')
+  if nargin < 5 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
     lat = rad2deg(lat);
     lon = rad2deg(lon);
   end

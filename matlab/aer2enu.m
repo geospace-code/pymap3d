@@ -21,7 +21,7 @@ function [e, n, u] = aer2enu (az, el, slantRange, angleUnit)
 % -------
 % e,n,u:  East, North, Up coordinates of test points (meters)
 
-  if nargin==3 || strcmpi(angleUnit(1),'d') 
+  if nargin==3 || isempty(angleUnit) || strcmpi(angleUnit(1),'d') 
     az = deg2rad(az);
     el = deg2rad(el);
   end    
