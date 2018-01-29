@@ -6,6 +6,8 @@
 Welcome to PyMap3D's documentation!
 ===================================
 
+`Matlab docs <../index_matlab.html>`_
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -15,7 +17,7 @@ Welcome to PyMap3D's documentation!
    
 .. automodule:: pymap3d.vincenty
    :members:
-   
+
       
 .. automodule:: pymap3d.timeconv
    :members:
