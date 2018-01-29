@@ -21,6 +21,8 @@ Python 3-D coordinate conversions
 Python coordinate conversions, following convention of several popular Matlab routines.
 Tested from Python 2.7 through Python 3.7+
 
+:API docs: https://www.scivision.co/pymap3d
+
 For those not having AstroPy, lower accuracy fallback functions are included for some functions.
 
 .. contents::
