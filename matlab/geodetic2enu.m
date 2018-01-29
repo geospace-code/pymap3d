@@ -25,8 +25,8 @@ function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, ang
   if nargin < 7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
   if nargin < 8, angleUnit = 'd'; end
   
-  [x1,y1,z1] = geodetic2ecef(lat,lon,alt,spheroid,angleUnit);
-  [x2,y2,z2] = geodetic2ecef(lat0,lon0,alt0,spheroid,angleUnit);
+  [x1,y1,z1] = geodetic2ecef(spheroid, lat,lon,alt,angleUnit);
+  [x2,y2,z2] = geodetic2ecef(spheroid, lat0,lon0,alt0,angleUnit);
   
   dx = x1-x2;
   dy = y1-y2;

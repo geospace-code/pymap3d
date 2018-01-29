@@ -25,6 +25,6 @@ function [lat, lon, alt] = enu2geodetic(e, n, u, lat0, lon0, alt0, spheroid, ang
   if nargin<8, angleUnit='d'; end
 
   [x, y, z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit);
-  [lat, lon, alt] = ecef2geodetic(x, y, z, spheroid, angleUnit);
+  [lat, lon, alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit);
 
 end

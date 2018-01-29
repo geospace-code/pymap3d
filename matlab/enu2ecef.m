@@ -24,7 +24,7 @@ function [x, y, z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
   if nargin<7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
   if nargin<8, angleUnit = 'd'; end
 
-  [x0, y0, z0] = geodetic2ecef(lat0, lon0, alt0, spheroid, angleUnit);
+  [x0, y0, z0] = geodetic2ecef(spheroid, lat0, lon0, alt0, angleUnit);
   [dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleUnit);
   
    x = x0 + dx;

@@ -28,6 +28,6 @@ function [lat1, lon1, alt1] = aer2geodetic (az, el, slantRange, lat0, lon0, alt0
 
   [x, y, z] = aer2ecef(az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit);
  
-  [lat1, lon1, alt1] = ecef2geodetic(x, y, z, spheroid, angleUnit);
+  [lat1, lon1, alt1] = ecef2geodetic(spheroid, x, y, z, angleUnit);
 
 end
