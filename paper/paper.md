@@ -48,7 +48,7 @@ PyMap3D has already seen usage in projects including
 
 Other Python geodesy programs include:
 
-* [PyGeodsy](https://github.com/mrJean1/PyGeodesy) MIT license
+* [PyGeodesy](https://github.com/mrJean1/PyGeodesy) MIT license
 * [PyProj](https://github.com/jswhit/pyproj) ISC license
 
 These programs are targeted for geodesy experts, and require additional packages beyond Python that may not be readily accessible to users.
