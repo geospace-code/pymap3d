@@ -16,13 +16,14 @@ bibliography: paper.bib
 
 # Summary
 
-PyMap3D [@pymap3d] is a Python coordinate transformation program that converts between geospace coordinate systems.
+PyMap3D [@pymap3d] is a pure Python coordinate transformation program that converts between geospace coordinate systems.
 A subset of the Python functionality using syntax compatible with the $1000 Matlab Mapping Toolbox is provided for Matlab and GNU Octave users in the ``matlab/`` directory.
-Increased performance and accuracy is optionally available for certain functions for those using AstroPy, but it is not required.
-Since Numpy is used throughout PyMap3D, many of the functions operate with speed comparable to compiled languages.
+Optionally, increased performance and accuracy is available for certain functions for those using AstroPy, but it is not required.
+Optionally, Numpy enables multi-dimensional array inputs.
 Other functions that are iterative could possibly be sped up with modules such as Cython or Numba.
 
-PyMap3D is targeted for users needing conversions between coordinate systems for observation platforms near Earth's surface, whether underwater, ground-based or space-based platforms.
+PyMap3D is targeted for users needing conversions between coordinate systems for observation platforms near Earth's surface, 
+whether underwater, ground-based or space-based platforms.
 This includes rocket launches, orbiting spacecrafts, UAVs, cameras, radars and many more. 
 By adding ellipsoid parameters, it could be readily be used for other planets as well.
 The coordinate systems included are:
