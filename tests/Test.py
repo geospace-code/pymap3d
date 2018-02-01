@@ -10,15 +10,14 @@
 runs tests
 """
 import logging
-import subprocess
 import unittest
 from datetime import datetime
 try:
-    import numpy
+    import numpy, astropy
     from numpy import radians
     from pymap3d.vincenty import vreckon,vdist
 except ImportError:
-    numpy = None
+    numpy = astropy = None
     from math import radians
 from pytz import UTC
 #
@@ -49,15 +48,6 @@ ve,vn,vu =(5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
 class Pure(unittest.TestCase):
-
-    def test_bsr(self):
-        try:
-            from pathlib import Path
-            path = Path(__file__).parents[1]
-            subprocess.check_call(['octave-cli','-q','Test.m'], cwd=path/'tests')
-        except ImportError:
-            pass
-
 
     def test_str2dt(self):
 
@@ -215,7 +205,7 @@ class Numpy(unittest.TestCase):
 
 
     def test_eci(self):
-        if numpy is None:
+        if numpy is None or astropy is None:
             logging.warning('ECI not tested')
             return
         tlla = (tlat, tlon, talt)

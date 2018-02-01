@@ -1,5 +1,5 @@
 function Test()
-% Test   run a scalarself-test of the PyMap3D Matlab/ Octave  functions
+% Test run a scalar self-test of the PyMap3D Matlab/ Octave  functions
 
 fpath = fileparts(mfilename('fullpath'));
 addpath([fpath,filesep,'../matlab']) % comment this line to test Matlab Mapping Toolbox
@@ -65,6 +65,8 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
     assert_allclose([e3,n3,u3],[e1,n1,u1])
 
   end % function
+
+disp('test complete')
 end
 
 
