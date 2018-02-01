@@ -10,8 +10,8 @@ module maptran
   end type
 
   real(wp), parameter :: pi = 4._wp * atan(1.0)
-  
-  public :: ecef2geodetic, geodetic2ecef, assert_isclose
+
+  public :: ecef2geodetic, geodetic2ecef, aer2enu, aer2ecef, assert_isclose
 
 contains
 
@@ -28,13 +28,12 @@ subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
 
   real(wp), intent(in) :: x,y,z
   type(wgs84Ellipsoid), intent(in), optional :: spheroid
-  logical, intent(in), optional :: deg
+  logical, optional,value :: deg
   real(wp), intent(out) :: lat, lon, alt
 
-  type(wgs84Ellipsoid) :: ell
-  logical dg
   real(wp) :: ea, eb, rad, rho, c, vnew, v
   integer :: i
+  type(wgs84Ellipsoid) :: ell
 
   if (present(spheroid)) then
      ell = spheroid
@@ -42,11 +41,7 @@ subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
      ell = wgs84Ellipsoid()
   endif
 
-  if (present(deg)) then
-      dg = deg
-  else
-      dg = .true.
-  endif
+  if (.not.present(deg)) deg = .true.
 
     ea = ell%SemimajorAxis
     eb = ell%SemiminorAxis
@@ -76,33 +71,112 @@ subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
     alt = ((rad - ea * cos(vnew)) * cos(lat)) + &
            ((z - eb * sin(vnew)) * sin(lat))
 
-    if (dg) lat = degrees(lat); lon = degrees(lon)
+    if (deg) lat = degrees(lat); lon = degrees(lon)
 
 end subroutine ecef2geodetic
 
 
 subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
-  real(wp), intent(in) :: lat,lon,alt
+  real(wp), value :: lat,lon
+  real(wp), intent(in) :: alt
   real(wp), intent(out) :: x,y,z
-  type(wgs84Ellipsoid) :: spheroid
-  logical, intent(in) :: deg
-  
-  real(wp) :: N, lat1,lon1
-  
-  if (deg) then
-    lat1 = radians(lat); lon1 = radians(lon)
+  type(wgs84Ellipsoid), intent(in), optional :: spheroid
+  logical, optional, value :: deg
+
+  real(wp) :: N
+  type(wgs84Ellipsoid) :: ell
+
+  if (present(spheroid)) then
+     ell = spheroid
   else
-    lat1 = lat; lon1 = lon
+     ell = wgs84Ellipsoid()
   endif
+
+  if (.not.present(deg)) deg=.true.
+
+  if (deg) lat = radians(lat); lon = radians(lon)
+
 ! Radius of curvature of the prime vertical section
-  N = radius_normal(lat1, spheroid)
+  N = radius_normal(lat, ell)
 ! Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic coordinates.
-  
-  x = (N + alt) * cos(lat1) * cos(lon1)
-  y = (N + alt) * cos(lat1) * sin(lon1)
-  z = (N * (spheroid%SemiminorAxis / spheroid%SemimajorAxis)**2 + alt) * sin(lat1)
+
+  x = (N + alt) * cos(lat) * cos(lon)
+  y = (N + alt) * cos(lat) * sin(lon)
+  z = (N * (ell%SemiminorAxis / ell%SemimajorAxis)**2 + alt) * sin(lat)
 
 end subroutine geodetic2ecef
+
+
+subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
+!er2ecef  convert azimuth, elevation, range to target from observer to ECEF coordinates
+!
+! Inputs
+! ------
+! az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)
+! az: azimuth clockwise from local north
+! el: elevation angle above local horizon
+! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
+! spheroid: referenceEllipsoid parameter struct
+! deg: .true. degrees
+!
+! outputs
+! -------
+! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
+
+  real(wp), intent(in) :: az,el, slantRange, lat0, lon0, alt0
+  type(wgs84Ellipsoid), intent(in), optional :: spheroid
+  logical, intent(in), optional :: deg
+  real(wp), intent(out) :: x,y,z
+
+  real(wp) :: x0,y0,z0, e,n,u,dx,dy,dz
+
+
+! Origin of the local system in geocentric coordinates.
+  call geodetic2ecef(lat0, lon0, alt0,x0, y0, z0, spheroid,deg)
+! Convert Local Spherical AER to ENU
+  call aer2enu(az, el, slantRange, e, n, u,deg)
+! Rotating ENU to ECEF
+  call enu2uvw(e, n, u, lat0, lon0, dx, dy, dz,deg)
+! Origin + offset from origin equals position in ECEF
+  x = x0 + dx
+  y = y0 + dy
+  z = z0 + dz
+
+end subroutine aer2ecef
+
+
+subroutine aer2enu(az, el, slantRange, east, north, up, deg)
+!aer2enu  convert azimuth, elevation, range to ENU coordinates
+!
+! Inputs
+! ------
+! az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)
+! az: azimuth clockwise from local north
+! el: elevation angle above local horizon
+! angleUnit: string for angular units. Default 'd': degrees
+!
+! Outputs
+! -------
+! e,n,u:  East, North, Up coordinates of test points (meters)
+
+  real(wp), value :: az,el
+  real(wp), intent(in) :: slantRange
+  logical, optional, value :: deg
+  real(wp),intent(out) :: east, north,up
+
+  real(wp) :: r
+
+  if(.not.present(deg)) deg=.true.
+
+  if (deg) az = degrees(az); el = degrees(el)
+
+! Calculation of AER2ENU
+   up = slantRange * sin(el)
+   r = slantRange * cos(el)
+   east = r * sin(az)
+   north = r * cos(az)
+
+end subroutine aer2enu
 
 
 subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
@@ -117,25 +191,24 @@ subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
 ! outputs
 ! -------
 ! u,v,w:   coordinates of test point(s) (meters)
-  real(wp), intent(in) :: e,n,up,lat0,lon0
+  real(wp), intent(in) :: e,n,up
+  real(wp), value :: lat0,lon0
   real(wp), intent(out) :: u,v,w
-  logical, intent(in) :: deg
-  
-  real(wp) :: t,lat,lon
-  
-  if (deg) then
-    lat = radians(lat0); lon = radians(lon0)
-  else
-    lat = lat0; lon= lon0
-  endif
+  logical, optional, value :: deg
 
-    
-    t = cos(lat) * up - sin(lat) * n
-    w = sin(lat) * up + cos(lat) * n
+  real(wp) :: t
 
-    u = cos(lon) * t - sin(lon) * e
-    v = sin(lon) * t + cos(lon) * e
-    
+  if(.not.present(deg)) deg=.true.
+
+  if (deg) lat0 = radians(lat0); lon0 = radians(lon0)
+
+
+    t = cos(lat0) * up - sin(lat0) * n
+    w = sin(lat0) * up + cos(lat0) * n
+
+    u = cos(lon0) * t - sin(lon0) * e
+    v = sin(lon0) * t + cos(lon0) * e
+
 end subroutine enu2uvw
 
 
@@ -145,28 +218,18 @@ elemental real(wp) function radius_normal(lat,E)
 
     radius_normal = E%SemimajorAxis**2 / sqrt( E%SemimajorAxis**2 * cos(lat)**2 + E%SemiminorAxis**2 * sin(lat)**2 )
 
-end function radius_normal 
+end function radius_normal
 
 
-elemental logical function isclose(actual, desired, rtol, atol)
+logical function isclose(actual, desired, rtol, atol)
 ! https://www.python.org/dev/peps/pep-0485/#proposed-implementation
     real(wp), intent(in) :: actual, desired
-    real(wp), intent(in), optional :: rtol, atol
-    real(wp) :: r, a
+    real(wp), optional,value :: rtol, atol
 
-    if (present(rtol)) then
-        r = rtol
-    else
-        r = 1.0e-6
-    endif
+    if (.not.present(rtol)) rtol = 0.01
+    if (.not.present(atol)) atol = 0.
 
-    if (present(atol)) then
-        a = atol
-    else
-        a = 0.
-    endif
-
-    isclose = (abs(actual-desired) <= max(r * max(abs(actual), abs(desired)), a))
+    isclose = (abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol))
 end function isclose
 
 
@@ -175,12 +238,12 @@ subroutine assert_isclose(actual, desired, rtol, atol)
     real(wp), intent(in), optional :: rtol, atol
     logical ok
     ok = isclose(actual,desired,rtol,atol)
-    
+
     if (.not.ok) then
         print*,'actual',actual,'desired',desired
         error stop
     endif
-    
+
 end subroutine assert_isclose
 
 
