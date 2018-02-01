@@ -74,11 +74,17 @@ class Pure(unittest.TestCase):
         try:
             sdrapy = datetime2sidereal(t, radians(lon), False)
             assert_allclose(sdrapy, sra, rtol=1e-5)
+
+            sdrapy = datetime2sidereal([t], radians(lon), False)
+            assert_allclose(sdrapy, [sra], rtol=1e-5)
         except ImportError:
             pass
 
         sdrvallado = datetime2sidereal(t, radians(lon), True)
         assert_allclose(sdrvallado, sra, rtol=1e-5)
+
+        sdrvallado = datetime2sidereal([t], radians(lon), True)
+        assert_allclose(sdrvallado, [sra], rtol=1e-5)
 
 
 

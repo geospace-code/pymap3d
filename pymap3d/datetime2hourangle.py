@@ -86,15 +86,11 @@ def datetime2julian(T):
 
 
     T = str2dt(T)
-    if isinstance(T, datetime):
+
+    try:
         return _dt2julian(T)
-
-
-    jd = []
-    for i, t in enumerate(T):
-        jd.append(_dt2julian(t))
-
-    return jd
+    except (TypeError,AttributeError):
+        return [_dt2julian(t) for t in T]
 
 
 def julian2sidereal(juliandate):
@@ -110,11 +106,20 @@ def julian2sidereal(juliandate):
 
     """
 
-# %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
-    tUT1 = (juliandate - 2451545.0) / 36525.
+    def _jd2sr(jd):
+        # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+        tUT1 = (jd - 2451545.0) / 36525.
 
-    gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
-        tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3) # Eqn. 3-47 p. 188
+        gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
+            tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3) # Eqn. 3-47 p. 188
 
-    # 1/86400 and %(2*pi) implied by units of radians
-    return gmst_sec * (2 * pi) / 86400. % (2 * pi)
+        # 1/86400 and %(2*pi) implied by units of radians
+        tsr =  gmst_sec * (2 * pi) / 86400. % (2 * pi)
+
+        return tsr
+
+    try:
+        return _jd2sr(juliandate)
+    except TypeError:
+        return [_jd2sr(jd) for jd in juliandate]
+
