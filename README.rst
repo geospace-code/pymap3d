@@ -35,7 +35,7 @@ particularly for Python users accustomed to Matlab.
 .. contents::
 
 
-:prereqs: any of Python 2.6, 2.7, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, ...
+:prereqs: any of Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, 3.7, ...
 :OPTIONAL prereqs: Numpy, AstroPy  (for full functionality)
 
 Install
