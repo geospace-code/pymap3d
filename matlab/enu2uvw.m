@@ -1,9 +1,9 @@
-function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
+function [u,v,w] = enu2uvw(e,n,up,lat0,lon0,angleUnit)
 %enu2uvw   convert from ENU to UVW coordinates
 %
 % Inputs
 % ------
-% e,n,u:  East, North, Up coordinates of point(s) (meters)
+% e,n,up:  East, North, Up coordinates of point(s) (meters)
 % lat0,lon0: geodetic coordinates of observer/reference point (degrees)
 % angleUnit: string for angular units. Default 'd': degrees
 %
@@ -16,8 +16,8 @@ function [u,v,w] = enu2uvw(e,n,u,lat0,lon0,angleUnit)
         lon0 = deg2rad(lon0);
     end
     
-    t = cos(lat0) * u - sin(lat0) * n;
-    w = sin(lat0) * u + cos(lat0) * n;
+    t = cos(lat0) * up - sin(lat0) * n;
+    w = sin(lat0) * up + cos(lat0) * n;
 
     u = cos(lon0) * t - sin(lon0) * e;
     v = sin(lon0) * t + cos(lon0) * e;

@@ -101,10 +101,42 @@ subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
   x = (N + alt) * cos(lat1) * cos(lon1)
   y = (N + alt) * cos(lat1) * sin(lon1)
   z = (N * (spheroid%SemiminorAxis / spheroid%SemimajorAxis)**2 + alt) * sin(lat1)
-        
-
 
 end subroutine geodetic2ecef
+
+
+subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
+!enu2uvw   convert from ENU to UVW coordinates
+!
+! Inputs
+! ------
+! e,n,up:  East, North, Up coordinates of point(s) (meters)
+! lat0,lon0: geodetic coordinates of observer/reference point (degrees)
+! deg: ,true. degrees
+!
+! outputs
+! -------
+! u,v,w:   coordinates of test point(s) (meters)
+  real(wp), intent(in) :: e,n,up,lat0,lon0
+  real(wp), intent(out) :: u,v,w
+  logical, intent(in) :: deg
+  
+  real(wp) :: t,lat,lon
+  
+  if (deg) then
+    lat = radians(lat0); lon = radians(lon0)
+  else
+    lat = lat0; lon= lon0
+  endif
+
+    
+    t = cos(lat) * up - sin(lat) * n
+    w = sin(lat) * up + cos(lat) * n
+
+    u = cos(lon) * t - sin(lon) * e
+    v = sin(lon) * t + cos(lon) * e
+    
+end subroutine enu2uvw
 
 
 elemental real(wp) function radius_normal(lat,E)
