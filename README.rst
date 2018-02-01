@@ -23,12 +23,20 @@ Tested from Python 2.7 through Python 3.7+
 
 :API docs: https://www.scivision.co/pymap3d
 
-For those not having AstroPy, lower accuracy fallback functions are included for some functions.
+For those not having:
+* AstroPy: lower accuracy fallback functions are included for some functions.
+* Numpy: without numpy, scalar inputs are handled with pure Python builtins.
+
+Why not `PyProj <https://github.com/jswhit/pyproj>`_? 
+PyMap3D does not require anything beyond pure Python.
+PyProj is very powerful and comprehensive, but requires a learning curve to use, 
+particularly for Python users accustomed to Matlab.
 
 .. contents::
 
 
-:prereqs: AstroPy, Numpy, Python 3 or Python 2.7
+:prereqs: Python 2.6, 2.7, 3.4, 3.5, 3.6, 3.7, ...
+:OPTIONAL prereqs: Numpy, AstroPy  (for full functionality)
 
 Install
 =======
