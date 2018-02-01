@@ -8,7 +8,8 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import division
-from numpy import atleast_1d, empty_like, pi, nan
+from math import pi
+nan = float('nan')
 from datetime import datetime
 try:
     from astropy.time import Time
@@ -55,7 +56,7 @@ def datetime2sidereal(t, lon_radians, usevallado=True):
     return tsr
 
 
-def datetime2julian(t):
+def datetime2julian(T):
     """
     Python datetime to Julian time
 
@@ -63,32 +64,37 @@ def datetime2julian(t):
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
     """
 
-    t = str2dt(t)
-    t = atleast_1d(t)
+    def _dt2julian(t):
+        if t is None:
+            return None
 
-    assert isinstance(t[0], datetime)
-
-    jDate = empty_like(t, dtype=float)  # yes we need the dtype!
-
-    for i, d in enumerate(t):
-        if d is None:
-            jDate[i] = nan
-            continue
-
-        if d.month < 3:
-            year = d.year - 1
-            month = d.month + 12
+        if t.month < 3:
+            year = t.year - 1
+            month = t.month + 12
         else:
-            year = d.year
-            month = d.month
+            year = t.year
+            month = t.month
 
         A = int(year / 100.0)
         B = 2 - A + int(A / 4.)
-        C = ((d.second / 60. + d.minute) / 60. + d.hour) / 24.
-        jDate[i] = (int(365.25 * (year + 4716)) +
-                    int(30.6001 * (month + 1)) + d.day + B - 1524.5 + C)
+        C = ((t.second / 60. + t.minute) / 60. + t.hour) / 24.
 
-    return jDate
+        jd = (int(365.25 * (year + 4716)) +
+              int(30.6001 * (month + 1)) + t.day + B - 1524.5 + C)
+
+        return jd
+
+
+    T = str2dt(T)
+    if isinstance(T, datetime):
+        return _dt2julian(T)
+
+
+    jd = []
+    for i, t in enumerate(T):
+        jd.append(_dt2julian(t))
+
+    return jd
 
 
 def julian2sidereal(juliandate):

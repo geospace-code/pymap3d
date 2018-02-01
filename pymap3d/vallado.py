@@ -15,7 +15,14 @@ These functions are fallbacks for those who don't wish to use AstroPy (perhaps P
 Michael Hirsch implementation of algorithms from D. Vallado
 """
 from __future__ import division
-from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
+try:
+    import numpy
+    from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
+except ImportError:
+    numpy = None
+    from math import sin, cos, degrees, radians
+    from math import atan2 as arctan2
+    from math import asin as arcsin
 #
 from .datetime2hourangle import datetime2sidereal
 
@@ -52,13 +59,15 @@ def vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     from D.Vallado Fundamentals of Astrodynamics and Applications
     p.258-259
     """
-    az_deg = atleast_1d(az_deg)
-    el_deg = atleast_1d(el_deg)
-    lat_deg = atleast_1d(lat_deg)
-    lon_deg = atleast_1d(lon_deg)
+    if numpy is not None:
+        az_deg = atleast_1d(az_deg)
+        el_deg = atleast_1d(el_deg)
+        lat_deg = atleast_1d(lat_deg)
+        lon_deg = atleast_1d(lon_deg)
 
-    assert az_deg.shape == el_deg.shape, 'az and el must be same shape ndarray'
-    assert lat_deg.size == 1 and lon_deg.size == 1, 'need one observer and one or more  (az,el).'
+        assert az_deg.shape == el_deg.shape, 'az and el must be same shape ndarray'
+        assert lat_deg.size == 1 and lon_deg.size == 1, 'need one observer and one or more  (az,el).'
+
 
     az = radians(az_deg)
     el = radians(el_deg)
