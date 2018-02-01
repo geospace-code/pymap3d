@@ -11,7 +11,7 @@ module maptran
 
   real(wp), parameter :: pi = 4._wp * atan(1.0)
 
-  public :: ecef2geodetic, geodetic2ecef, aer2enu, aer2ecef, assert_isclose
+  public :: ecef2geodetic, geodetic2ecef, aer2enu, aer2ecef, ecef2aer, enu2ecef, ecef2enu, assert_isclose
 
 contains
 
@@ -108,7 +108,7 @@ end subroutine geodetic2ecef
 
 
 subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
-!er2ecef  convert azimuth, elevation, range to target from observer to ECEF coordinates
+! aer2ecef  convert azimuth, elevation, range to target from observer to ECEF coordinates
 !
 ! Inputs
 ! ------
@@ -145,6 +145,35 @@ subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
 end subroutine aer2ecef
 
 
+subroutine ecef2aer(x, y, z, lat0, lon0, alt0, az, el, slantRange, spheroid, deg)
+! ecef2aer  convert ECEF of target to azimuth, elevation, slant range from observer
+!
+! Inputs
+! ------
+! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
+! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
+! spheroid: referenceEllipsoid parameter struct
+! deg: .true.: degrees
+!
+! Outputs
+! -------
+! az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)
+! az: azimuth clockwise from local north
+! el: elevation angle above local horizon
+
+  real(wp), intent(in) :: x,y,z, lat0, lon0, alt0
+  type(wgs84Ellipsoid), intent(in), optional :: spheroid
+  logical, intent(in), optional :: deg
+  real(wp), intent(out) :: az,el, slantRange
+  
+  real(wp) :: east, north, up
+
+  call ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
+  call enu2aer(east, north, up, az, el, slantRange, deg)
+  
+end subroutine ecef2aer
+
+
 subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 !aer2enu  convert azimuth, elevation, range to ENU coordinates
 !
@@ -168,7 +197,7 @@ subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 
   if(.not.present(deg)) deg=.true.
 
-  if (deg) az = degrees(az); el = degrees(el)
+  if (deg) az = radians(az); el = radians(el)
 
 ! Calculation of AER2ENU
    up = slantRange * sin(el)
@@ -179,8 +208,129 @@ subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 end subroutine aer2enu
 
 
+subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
+! enu2aer   convert ENU to azimuth, elevation, slant range
+!
+! Inputs
+! ------
+! e,n,u:  East, North, Up coordinates of test points (meters)
+! angleUnit: string for angular units. Default 'd': degrees
+!
+! outputs
+! -------
+! az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)
+! az: azimuth clockwise from local north
+! el: elevation angle above local horizon
+
+  real(wp),intent(in) :: east,north,up
+  logical, optional, value :: deg
+  real(wp), intent(out) :: az, elev, slantRange
+  
+  real(wp) :: r
+  
+  if (.not.present(deg)) deg = .true.
+
+  r = hypot(east, north)
+  slantRange = hypot(r, up)
+  ! radians
+  elev = atan2(up, r)
+  az = mod(atan2(east, north), 2 * atan2(0.,-1.))
+
+  if (deg) elev = radians(elev); az = radians(az)
+  
+end subroutine enu2aer
+
+
+subroutine enu2ecef(e, n, u, lat0, lon0, alt0, x, y, z, spheroid, deg)
+! enu2ecef  convert from ENU to ECEF coordiantes
+!
+! Inputs
+! ------
+! e,n,u:  East, North, Up coordinates of test points (meters)
+! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
+! spheroid: referenceEllipsoid parameter struct
+! angleUnit: string for angular units. Default 'd': degrees
+!
+! outputs
+! -------
+! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
+  real(wp), intent(in) :: e,n,u,lat0,lon0,alt0
+  type(wgs84Ellipsoid), intent(in), optional :: spheroid
+  logical, intent(in), optional :: deg
+  real(wp), intent(out) :: x,y,z   
+  
+  real(wp) :: x0,y0,z0,dx,dy,dz           
+            
+
+  call geodetic2ecef(lat0, lon0, alt0, x0, y0, z0, spheroid, deg)
+  call enu2uvw(e, n, u, lat0, lon0, dx, dy, dz, deg)
+  
+   x = x0 + dx
+   y = y0 + dy
+   z = z0 + dz
+end subroutine enu2ecef
+
+
+
+subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
+! ecef2enu  convert ECEF to ENU
+!
+! Inputs
+! ------
+! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
+! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
+! spheroid: referenceEllipsoid parameter struct
+! angleUnit: string for angular units. Default 'd': degrees
+!
+! outputs
+! -------
+! e,n,u:  East, North, Up coordinates of test points (meters)
+  
+  real(wp), intent(in) :: x,y,z,lat0,lon0,alt0
+  type(wgs84Ellipsoid), intent(in), optional :: spheroid
+  logical, intent(in), optional :: deg
+  real(wp), intent(out) :: east,north,up
+  
+  real(wp) :: x0,y0,z0
+
+  call geodetic2ecef(lat0, lon0, alt0, x0,y0,z0,spheroid,deg)
+  call ecef2enuv(x - x0, y - y0, z - z0, lat0, lon0, east, north, up, deg)
+end subroutine ecef2enu
+
+
+subroutine ecef2enuv (u, v, w, lat0, lon0, east, north, up, deg)
+! ecef2enuv convert *vector projection* UVW to ENU
+!
+! Inputs
+! ------
+! u,v,w: meters
+! lat0,lon0: geodetic latitude and longitude (degrees)
+! deg: .true. degrees
+!
+! Outputs
+! -------
+! e,n,Up:  East, North, Up vector
+
+  real(wp), intent(in) :: u,v,w
+  real(wp), value :: lat0,lon0
+  logical, optional, value :: deg
+  real(wp), intent(out) :: east, north, up
+  
+  real(wp) :: t
+  
+  if (.not.present(deg)) deg = .true.
+  
+  if (deg) lat0 = radians(lat0); lon0 = radians(lon0)
+  
+  t     =  cos(lon0) * u + sin(lon0) * v
+  east  = -sin(lon0) * u + cos(lon0) * v
+  up    =  cos(lat0) * t + sin(lat0) * w
+  north = -sin(lat0) * t + cos(lat0) * w
+end
+
+
 subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
-!enu2uvw   convert from ENU to UVW coordinates
+! enu2uvw   convert from ENU to UVW coordinates
 !
 ! Inputs
 ! ------
