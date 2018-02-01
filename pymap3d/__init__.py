@@ -16,6 +16,7 @@ For most functions you can input Numpy arrays of any shape, except as noted in t
 see tests/Test.py for example uses.
 """
 from __future__ import division
+from copy import deepcopy
 from six import string_types,PY2
 from datetime import datetime
 try:
@@ -353,14 +354,14 @@ def ecef2geodetic(x, y, z, ell=None, deg=True):
     vnew = arctan2(ea * z, eb * rad)
 # Initializing the parametric latitude
     v = 0
-    count = 0
-    while (v != vnew).any() and count < 5:
-        v = vnew.copy()
+    for _ in range (5):
+        v = deepcopy(vnew)
 #%% Newtons Method for computing iterations
         vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) /
                     (2 * (cos(v - rho) - c * cos(2 * v))))
-        count += 1
 
+        if allclose(v,vnew):
+            break
 #%% Computing latitude from the root of the latitude equation
     lat = arctan2(ea * tan(vnew), eb)
     # by inspection
@@ -570,3 +571,16 @@ def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
 
     return altaz.az.degree, altaz.alt.degree
+# %%
+def isclose(actual, desired, rtol=1e-7, atol=0):
+    """https://www.python.org/dev/peps/pep-0485/#proposed-implementation"""
+    return abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol)
+
+
+def allclose(actual, desired, rtol=1e-7, atol=0):
+    """1-D only version of numpy.testing.assert_allclose"""
+    try:
+        for a,d in zip(actual, desired):
+            return isclose(a, d, rtol, atol)
+    except TypeError:
+        return isclose(actual, desired, rtol, atol)

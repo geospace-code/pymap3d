@@ -45,7 +45,10 @@ def datetime2sidereal(t, lon_radians, usevallado=True):
 # %% Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
 # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
-        tsr = gst + lon_radians  # radians
+        try:
+            tsr = gst + lon_radians  # radians
+        except TypeError:
+            tsr = [g + lon_radians for g in gst]
     else:  # astropy
         if Time is not None:
             tsr = Time(t).sidereal_time(kind='apparent',

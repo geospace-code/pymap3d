@@ -201,6 +201,9 @@ class Numpy(unittest.TestCase):
 
 
     def test_radec2azel(self):
+        if numpy is None:
+            logging.warning('RA DEC not tested')
+            return
         azapy, elapy = pm.radec2azel(ra,dec,  lat, lon, t)
         assert_allclose(azapy, azi, rtol=1e-2)
         assert_allclose(elapy, eli, rtol=1e-2)
@@ -212,6 +215,9 @@ class Numpy(unittest.TestCase):
 
 
     def test_eci(self):
+        if numpy is None:
+            logging.warning('ECI not tested')
+            return
         tlla = (tlat, tlon, talt)
         teci = (-3.977913815668146e6,-2.582332196263046e6,4.250818828152067e6)
         t = datetime(2013,1,15,12,0,5,tzinfo=UTC)
@@ -229,21 +235,8 @@ class Numpy(unittest.TestCase):
 
 #%%
 
-def isclose(actual, desired, rtol=1e-7, atol=0):
-    """https://www.python.org/dev/peps/pep-0485/#proposed-implementation"""
-    return abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol)
-
-
-def allclose(actual, desired, rtol=1e-7, atol=0):
-    """1-D only version of numpy.testing.assert_allclose"""
-    try:
-        for a,d in zip(actual, desired):
-            return isclose(a, d, rtol, atol)
-    except TypeError:
-        return isclose(actual, desired, rtol, atol)
-
 def assert_allclose(actual, desired, rtol=1e-7, atol=0,err_msg=''):
-    assert allclose(actual, desired, rtol, atol)
+    assert pm.allclose(actual, desired, rtol, atol)
 
 
 if __name__ == '__main__':
