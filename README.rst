@@ -23,6 +23,7 @@ Python coordinate conversions, following convention of several popular Matlab ro
 :API docs: https://www.scivision.co/pymap3d
 
 For those not having:
+
 * AstroPy: lower accuracy fallback functions are included for some functions.
 * Numpy: without numpy, scalar inputs are handled with pure Python builtins.
 
