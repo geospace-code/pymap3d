@@ -35,7 +35,7 @@ call assert_isclose(x2, xl)
 call assert_isclose(y2, yl)
 call assert_isclose(z2, zl)
 
-call ecef2geodetic(x0,y0,z0,lat2,lon2,alt2)
+call ecef2geodetic(x1,y1,z1,lat2,lon2,alt2)
 call assert_isclose(lat2,lat)
 call assert_isclose(lon2,lon)
 call assert_isclose(alt2,alt)
