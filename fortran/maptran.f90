@@ -3,7 +3,7 @@ module maptran
   implicit none
   private
 
-  type,public :: referenceEllipsoid
+  type,public :: Ellipsoid
      real(wp) :: SemimajorAxis 
      real(wp) :: Flattening 
      real(wp) :: SemiminorAxis 
@@ -11,10 +11,10 @@ module maptran
 
   real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
   
-  type(referenceEllipsoid), parameter, public :: wgs84Ellipsoid = &
-        referenceEllipsoid(SemimajorAxis=6378137._wp, &
-                           SemiminorAxis=6378137._wp * (1._wp - 1._wp / 298.2572235630_wp), &
-                           Flattening = 1. / 298.2572235630_wp)
+  type(Ellipsoid), parameter, public :: wgs84Ellipsoid = &
+        Ellipsoid(SemimajorAxis=6378137._wp, &
+                  SemiminorAxis=6378137._wp * (1._wp - 1._wp / 298.2572235630_wp), &
+                  Flattening = 1. / 298.2572235630_wp)
 
   public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,assert_isclose, &
@@ -34,13 +34,13 @@ subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
 ! not involve division by cos(phi) or sin(phi)
 
   real(wp), intent(in) :: x,y,z
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, optional,value :: deg
   real(wp), intent(out) :: lat, lon, alt
 
   real(wp) :: ea, eb, rad, rho, c, vnew, v
   integer :: i
-  type(referenceEllipsoid) :: ell
+  type(Ellipsoid) :: ell
 
   if (present(spheroid)) then
      ell = spheroid
@@ -89,7 +89,7 @@ subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
 ! Inputs
 ! ------
 ! lat,lon, alt:  ellipsoid geodetic coordinates of point(s) (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! deg: .true. degrees
 !
 ! outputs
@@ -99,11 +99,11 @@ subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
   real(wp), value :: lat,lon
   real(wp), intent(in) :: alt
   real(wp), intent(out) :: x,y,z
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, optional, value :: deg
 
   real(wp) :: N
-  type(referenceEllipsoid) :: ell
+  type(Ellipsoid) :: ell
 
   if (present(spheroid)) then
      ell = spheroid
@@ -135,7 +135,7 @@ subroutine aer2geodetic(az, el, slantRange, lat0, lon0, alt0, lat1, lon1, alt1, 
 ! az: azimuth clockwise from local north
 ! el: elevation angle above local horizon
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! deg: .true.: degrees
 !
 ! Outputs
@@ -143,7 +143,7 @@ subroutine aer2geodetic(az, el, slantRange, lat0, lon0, alt0, lat1, lon1, alt1, 
 ! lat1,lon1,alt1: geodetic coordinates of test points (degrees,degrees,meters)
   
   real(wp), intent(in) :: az, el, slantRange, lat0, lon0, alt0 
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: lat1,lon1,alt1
   
@@ -162,7 +162,7 @@ subroutine geodetic2aer(lat, lon, alt, lat0, lon0, alt0, az, el, slantRange, sph
 ! ------
 ! lat,lon, alt:  ellipsoid geodetic coordinates of point under test (degrees, degrees, meters)
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! angleUnit: string for angular units. Default 'd': degrees, otherwise Radians
 !
 ! Outputs
@@ -172,7 +172,7 @@ subroutine geodetic2aer(lat, lon, alt, lat0, lon0, alt0, az, el, slantRange, sph
 ! el: elevation angle above local horizon
 
   real(wp), intent(in) :: lat,lon,alt, lat0, lon0, alt0 
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: az, el, slantRange
 
@@ -193,7 +193,7 @@ subroutine geodetic2enu(lat, lon, alt, lat0, lon0, alt0, east, north, up, sphero
 ! ------
 ! lat,lon, alt:  ellipsoid geodetic coordinates of point under test (degrees, degrees, meters)
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! angleUnit: string for angular units. Default 'd': degrees
 !
 ! outputs
@@ -201,7 +201,7 @@ subroutine geodetic2enu(lat, lon, alt, lat0, lon0, alt0, east, north, up, sphero
 ! e,n,u:  East, North, Up coordinates of test points (meters)
 
   real(wp), intent(in) :: lat, lon, alt, lat0, lon0, alt0 
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: east, north, up
   
@@ -228,7 +228,7 @@ subroutine enu2geodetic(east, north, up, lat0, lon0, alt0, lat, lon, alt, sphero
 ! ------
 !  East, North, Up: coordinates of point(s) (meters)
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! deg: .true. degrees
 !
 ! outputs
@@ -236,7 +236,7 @@ subroutine enu2geodetic(east, north, up, lat0, lon0, alt0, lat, lon, alt, sphero
 ! lat,lon,alt: geodetic coordinates of test points (degrees,degrees,meters)
 
   real(wp), intent(in) :: east, north, up, lat0, lon0, alt0 
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: lat, lon, alt
   
@@ -258,7 +258,7 @@ subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
 ! az: azimuth clockwise from local north
 ! el: elevation angle above local horizon
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! deg: .true. degrees
 !
 ! outputs
@@ -266,7 +266,7 @@ subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
 ! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
 
   real(wp), intent(in) :: az,el, slantRange, lat0, lon0, alt0
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: x,y,z
 
@@ -294,7 +294,7 @@ subroutine ecef2aer(x, y, z, lat0, lon0, alt0, az, el, slantRange, spheroid, deg
 ! ------
 ! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! deg: .true.: degrees
 !
 ! Outputs
@@ -304,7 +304,7 @@ subroutine ecef2aer(x, y, z, lat0, lon0, alt0, az, el, slantRange, spheroid, deg
 ! el: elevation angle above local horizon
 
   real(wp), intent(in) :: x,y,z, lat0, lon0, alt0
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: az,el, slantRange
   
@@ -390,14 +390,14 @@ subroutine enu2ecef(e, n, u, lat0, lon0, alt0, x, y, z, spheroid, deg)
 ! ------
 ! e,n,u:  East, North, Up coordinates of test points (meters)
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! angleUnit: string for angular units. Default 'd': degrees
 !
 ! outputs
 ! -------
 ! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
   real(wp), intent(in) :: e,n,u,lat0,lon0,alt0
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: x,y,z   
   
@@ -421,7 +421,7 @@ subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
 ! ------
 ! x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
 ! lat0, lon0, alt0: ellipsoid geodetic coordinates of observer/reference (degrees, degrees, meters)
-! spheroid: referenceEllipsoid parameter struct
+! spheroid: Ellipsoid parameter struct
 ! angleUnit: string for angular units. Default 'd': degrees
 !
 ! outputs
@@ -429,7 +429,7 @@ subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
 ! e,n,u:  East, North, Up coordinates of test points (meters)
   
   real(wp), intent(in) :: x,y,z,lat0,lon0,alt0
-  type(referenceEllipsoid), intent(in), optional :: spheroid
+  type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
   real(wp), intent(out) :: east,north,up
   
@@ -506,7 +506,7 @@ end subroutine enu2uvw
 
 elemental real(wp) function radius_normal(lat,E)
     real(wp), intent(in) :: lat
-    type(referenceEllipsoid), intent(in) :: E
+    type(Ellipsoid), intent(in) :: E
 
     radius_normal = E%SemimajorAxis**2 / sqrt( E%SemimajorAxis**2 * cos(lat)**2 + E%SemiminorAxis**2 * sin(lat)**2 )
 
@@ -518,7 +518,7 @@ logical function isclose(actual, desired, rtol, atol)
     real(wp), intent(in) :: actual, desired
     real(wp), optional,value :: rtol, atol
 
-    if (.not.present(rtol)) rtol = 1e-6_wp
+    if (.not.present(rtol)) rtol = 1e-5_wp
     if (.not.present(atol)) atol = 0._wp
 
     isclose = (abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol))

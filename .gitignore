@@ -1,6 +1,10 @@
+bin/
 doctrees/
 .buildinfo
 
+
+*.out
+*.mod
 *~
 
 # Byte-compiled / optimized / DLL files

@@ -17,7 +17,9 @@ real(wp) :: lat2, lon2, alt2,lat3,lon3,alt3,lat4,lon4,alt4,&
             az2,el2,rng2,az3,el3,rng3,az4,el4,rng4,&
             e1,n1,u1,e2,n2,u2,e3,n3,u3
 
-type(referenceEllipsoid), parameter :: spheroid = wgs84Ellipsoid
+type(Ellipsoid), parameter :: spheroid = wgs84Ellipsoid
+
+print*,'Default WGS84 Ellipsoid:',spheroid
 
 
 call geodetic2ecef(lat,lon,alt,x1,y1,z1)
@@ -52,6 +54,8 @@ call assert_isclose(rng3,rng)
 
 call aer2geodetic(az,el,rng,lat,lon,alt, lat3,lon3,alt3)
 call assert_isclose(lat3, lat1)
+call assert_isclose(lon3, lon1)
+call assert_isclose(alt3, alt1)
 
 call geodetic2enu(lat3, lon3, alt3, lat, lon, alt, e2, n2, u2)
 call assert_isclose(e2,e1)
