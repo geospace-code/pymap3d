@@ -14,11 +14,12 @@
    :target: https://codeclimate.com/github/scivision/pymap3d/maintainability
    :alt: Maintainability
 
-==================================
-Python 3-D coordinate conversions
-==================================
+====================================================
+Python / Matlab / Fortran 3-D coordinate conversions
+====================================================
 
-Python coordinate conversions, following convention of several popular Matlab routines.
+3-D coordinate conversions for Python, Matlab, GNU Octave and Fortran.
+Follows API of popular $1000 Matlab Mapping Toolbox routines.
 
 :API docs: https://www.scivision.co/pymap3d
 
@@ -35,27 +36,69 @@ particularly for Python users accustomed to Matlab.
 .. contents::
 
 
-:prereqs: any of Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, 3.7, ...
-:OPTIONAL prereqs: Numpy, AstroPy  (for full functionality)
+Prereqs
+=======
+
+* Python PyMap3D:  any of Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, 3.7, ...
+  * optional: Numpy, AstroPy  (for full functionality)
+* Matlab / GNU Octave: under ``matlab/``
+* Fortran MapTran: under ``fortran/``:  any Fortran compiler (tested with ``gfortran``)
 
 Install
 =======
-::
+This repo is 3 separate packages, you can use them independently, they don't rely on each other.
+
+* Python PyMap3D::
     
     python -m pip install -e .
+* Fortran MapTran::
+
+    cd bin
+    cmake ..
+    make
+ 
 
 
 Usage
 =====
-a few quick examples
+
+Python
+------
 
 .. code:: python
 
    import pymap3d as pm
 
-   lat,lon,alt = pm.eci2geodetic(eci, t)
+   x,y,z = pm.geodetic2ecef(lat,lon,alt)
    
    az,el,range = pm.geodetic2aer(lat, lon, alt, 42, -82, 0)
+   
+Matlab / GNU Octave
+-------------------
+The syntax is reasonably compatible with the $1000 Matlab Mapping Toolbox.
+Under the ``matlab/`` directory:
+
+.. code:: matlab
+
+   x,y,z = geodetic2ecef([],lat,lon,alt)
+   
+   az,el,range = geodetic2aer(lat, lon, alt, 42, -82, 0)
+   
+
+Fortran
+-------
+The MapTran API is simple like PyMap3D.
+The subroutine last three arguments are typically the output (each subroutine is documented).
+Default precision is ``real64``, set at the top of ``fortran/maptran.f90``.
+
+.. code:: fortran
+
+    use maptran
+    
+    call geodetic2ecef(lat,lon,alt, x,y,z)
+    call geodetic2aer(lat,lon,alt, -42., -82., 0.)
+
+   
    
 
 Functions
