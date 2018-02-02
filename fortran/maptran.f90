@@ -1,5 +1,5 @@
 module maptran
-  use iso_fortran_env, only: wp=>real64
+  use, intrinsic:: iso_fortran_env, only: wp=>real64
   implicit none
   private
 
@@ -16,13 +16,14 @@ module maptran
                   SemiminorAxis=6378137._wp * (1._wp - 1._wp / 298.2572235630_wp), &
                   Flattening = 1. / 298.2572235630_wp)
 
-  public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
+  public :: wp,ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,assert_isclose, &
-            geodetic2aer,enu2geodetic
+            geodetic2aer,enu2geodetic,degrees,radians
 
 contains
 
-subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
+
+elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
 
 ! convert ECEF (meters) to geodetic coordintes
 
@@ -83,7 +84,7 @@ subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
 end subroutine ecef2geodetic
 
 
-subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
+elemental subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
 !geodetic2ecef   convert from geodetic to ECEF coordiantes
 !
 ! Inputs
@@ -103,8 +104,8 @@ subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
   logical, optional, value :: deg
 
   real(wp) :: N
-  type(Ellipsoid) :: ell
-
+  type(Ellipsoid) :: ell 
+  
   if (present(spheroid)) then
      ell = spheroid
   else
@@ -126,7 +127,7 @@ subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
 end subroutine geodetic2ecef
 
 
-subroutine aer2geodetic(az, el, slantRange, lat0, lon0, alt0, lat1, lon1, alt1, spheroid, deg)
+elemental subroutine aer2geodetic(az, el, slantRange, lat0, lon0, alt0, lat1, lon1, alt1, spheroid, deg)
 !aer2geodetic  convert azimuth, elevation, range of target from observer to geodetic coordiantes
 !
 ! Inputs
@@ -155,7 +156,7 @@ subroutine aer2geodetic(az, el, slantRange, lat0, lon0, alt0, lat1, lon1, alt1, 
 end subroutine aer2geodetic
 
 
-subroutine geodetic2aer(lat, lon, alt, lat0, lon0, alt0, az, el, slantRange, spheroid, deg)
+elemental subroutine geodetic2aer(lat, lon, alt, lat0, lon0, alt0, az, el, slantRange, spheroid, deg)
 !geodetic2aer   from an observer's perspective, convert target coordinates to azimuth, elevation, slant range.
 !
 ! Inputs
@@ -186,7 +187,7 @@ end subroutine geodetic2aer
 
 
 
-subroutine geodetic2enu(lat, lon, alt, lat0, lon0, alt0, east, north, up, spheroid, deg)
+elemental subroutine geodetic2enu(lat, lon, alt, lat0, lon0, alt0, east, north, up, spheroid, deg)
 ! geodetic2enu    convert from geodetic to ENU coordinates
 !
 ! Inputs
@@ -221,7 +222,7 @@ subroutine geodetic2enu(lat, lon, alt, lat0, lon0, alt0, east, north, up, sphero
 end subroutine geodetic2enu
 
 
-subroutine enu2geodetic(east, north, up, lat0, lon0, alt0, lat, lon, alt, spheroid, deg)
+elemental subroutine enu2geodetic(east, north, up, lat0, lon0, alt0, lat, lon, alt, spheroid, deg)
 ! enu2geodetic   convert from ENU to geodetic coordinates
 !
 ! Inputs
@@ -249,7 +250,7 @@ end subroutine enu2geodetic
 
 
 
-subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
+elemental subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
 ! aer2ecef  convert azimuth, elevation, range to target from observer to ECEF coordinates
 !
 ! Inputs
@@ -287,7 +288,7 @@ subroutine aer2ecef(az, el, slantRange, lat0, lon0, alt0, x,y,z, spheroid, deg)
 end subroutine aer2ecef
 
 
-subroutine ecef2aer(x, y, z, lat0, lon0, alt0, az, el, slantRange, spheroid, deg)
+elemental subroutine ecef2aer(x, y, z, lat0, lon0, alt0, az, el, slantRange, spheroid, deg)
 ! ecef2aer  convert ECEF of target to azimuth, elevation, slant range from observer
 !
 ! Inputs
@@ -316,7 +317,7 @@ subroutine ecef2aer(x, y, z, lat0, lon0, alt0, az, el, slantRange, spheroid, deg
 end subroutine ecef2aer
 
 
-subroutine aer2enu(az, el, slantRange, east, north, up, deg)
+elemental subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 !aer2enu  convert azimuth, elevation, range to ENU coordinates
 !
 ! Inputs
@@ -350,7 +351,7 @@ subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 end subroutine aer2enu
 
 
-subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
+elemental subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
 ! enu2aer   convert ENU to azimuth, elevation, slant range
 !
 ! Inputs
@@ -383,7 +384,7 @@ subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
 end subroutine enu2aer
 
 
-subroutine enu2ecef(e, n, u, lat0, lon0, alt0, x, y, z, spheroid, deg)
+elemental subroutine enu2ecef(e, n, u, lat0, lon0, alt0, x, y, z, spheroid, deg)
 ! enu2ecef  convert from ENU to ECEF coordiantes
 !
 ! Inputs
@@ -414,7 +415,7 @@ end subroutine enu2ecef
 
 
 
-subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
+elemental subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
 ! ecef2enu  convert ECEF to ENU
 !
 ! Inputs
@@ -440,7 +441,7 @@ subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, spheroid, deg)
 end subroutine ecef2enu
 
 
-subroutine ecef2enuv(u, v, w, lat0, lon0, east, north, up, deg)
+elemental subroutine ecef2enuv(u, v, w, lat0, lon0, east, north, up, deg)
 ! ecef2enuv convert *vector projection* UVW to ENU
 !
 ! Inputs
@@ -471,14 +472,14 @@ subroutine ecef2enuv(u, v, w, lat0, lon0, east, north, up, deg)
 end subroutine ecef2enuv
 
 
-subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
+elemental subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
 ! enu2uvw   convert from ENU to UVW coordinates
 !
 ! Inputs
 ! ------
 ! e,n,up:  East, North, Up coordinates of point(s) (meters)
 ! lat0,lon0: geodetic coordinates of observer/reference point (degrees)
-! deg: ,true. degrees
+! deg: ,true. degrcees
 !
 ! outputs
 ! -------
@@ -513,19 +514,30 @@ elemental real(wp) function radius_normal(lat,E)
 end function radius_normal
 
 
-logical function isclose(actual, desired, rtol, atol)
+elemental logical function isclose(actual, desired, rtol, atol)
 ! https://www.python.org/dev/peps/pep-0485/#proposed-implementation
+! Value wasn't used for atol and rtol to keep this fundamental function "pure"
     real(wp), intent(in) :: actual, desired
-    real(wp), optional,value :: rtol, atol
+    real(wp), intent(in), optional:: rtol, atol
+    real(wp) :: r,a
 
-    if (.not.present(rtol)) rtol = 1e-5_wp
-    if (.not.present(atol)) atol = 0._wp
+    if (.not.present(rtol)) then
+        r = 1e-5_wp
+    else
+        r = rtol
+    endif
+    
+    if (.not.present(atol)) then
+        a = 0._wp
+    else
+        a = atol
+    endif
 
-    isclose = (abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol))
+    isclose = (abs(actual-desired) <= max(r * max(abs(actual), abs(desired)), a))
 end function isclose
 
 
-subroutine assert_isclose(actual, desired, rtol, atol)
+impure elemental subroutine assert_isclose(actual, desired, rtol, atol)
     real(wp), intent(in) :: actual, desired
     real(wp), intent(in), optional :: rtol, atol
     logical ok
@@ -552,4 +564,4 @@ elemental real(wp) function radians(deg)
     radians = pi / 180._wp * deg
 end function radians
 
-endmodule
+end module

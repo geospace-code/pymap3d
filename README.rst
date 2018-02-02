@@ -87,7 +87,8 @@ Under the ``matlab/`` directory:
 
 Fortran
 -------
-The MapTran API is simple like PyMap3D.
+The Fortran API is simple like PyMap3D.
+Fortran 2008 standard is used, in particular ``Impure Elemental``, which enables seamless support of scalar or array coordinate inputs.
 The subroutine last three arguments are typically the output (each subroutine is documented).
 Default precision is ``real64``, set at the top of ``fortran/maptran.f90``.
 
