@@ -32,6 +32,11 @@ script:
       cd tests;
       octave-cli -q Test.m;
       cd ..;
+      
+      cd bin;
+      cmake ..
+      make
+      ./testmaptran
     fi
 
 after_success: 
