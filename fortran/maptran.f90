@@ -343,7 +343,7 @@ subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
 ! Inputs
 ! ------
 ! e,n,u:  East, North, Up coordinates of test points (meters)
-! angleUnit: string for angular units. Default 'd': degrees
+! deg: .true. degrees
 !
 ! outputs
 ! -------
@@ -365,7 +365,7 @@ subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
   elev = atan2(up, r)
   az = mod(atan2(east, north), 2 * atan2(0.,-1.))
 
-  if (deg) elev = radians(elev); az = radians(az)
+  if (deg) elev = degrees(elev); az = degrees(az)
   
 end subroutine enu2aer
 
