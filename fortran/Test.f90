@@ -55,15 +55,23 @@ call assert_isclose(lat3, lat1)
 
 call geodetic2enu(lat3, lon3, alt3, lat, lon, alt, e2, n2, u2)
 call assert_isclose(e2,e1)
+call assert_isclose(n2,n1)
+call assert_isclose(u2,u1)
 
 call geodetic2aer(lat3,lon3,alt3,lat,lon,alt, az4, el4, rng4)
 call assert_isclose(az4,az)
+call assert_isclose(el4, el)
+call assert_isclose(rng4, rng)
 
 call enu2ecef(e1,n1,u1,lat,lon,alt, x3, y3, z3)
 call assert_isclose(x3, x2)
+call assert_isclose(y3, y2)
+call assert_isclose(z3, z2)
 
 call enu2geodetic(e2,n2,u2,lat,lon,alt,lat4, lon4, alt4)
 call assert_isclose(lat4,lat3)
+call assert_isclose(lon4,lon3)
+call assert_isclose(alt4,alt3)
 
 call ecef2enu(x3,y3,z3,lat,lon,alt, e3,n3,u3)
 call assert_isclose(e3,e1)

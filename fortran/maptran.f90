@@ -5,15 +5,16 @@ module maptran
 
   type,public :: referenceEllipsoid
      real(wp) :: SemimajorAxis 
-!     real :: Flattening = 1 / 298.2572235630  ! flattening
+     real(wp) :: Flattening 
      real(wp) :: SemiminorAxis 
   end type
 
-  real(wp), parameter :: pi = 4._wp * atan(1.0)
+  real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
   
   type(referenceEllipsoid), parameter, public :: wgs84Ellipsoid = &
-        referenceEllipsoid(SemimajorAxis=6378137., &
-                           SemiminorAxis=6378137. * (1 - 1 / 298.2572235630))
+        referenceEllipsoid(SemimajorAxis=6378137._wp, &
+                           SemiminorAxis=6378137._wp * (1._wp - 1._wp / 298.2572235630_wp), &
+                           Flattening = 1. / 298.2572235630_wp)
 
   public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,assert_isclose, &
@@ -59,7 +60,7 @@ subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
 ! Starter for the Newtons Iteration Method
     vnew = atan2(ea * z, eb * rad)
 ! Initializing the parametric latitude
-    v = 0.
+    v = 0._wp
     do i = 1,5
       v = vnew
      ! Newtons Method for computing iterations
@@ -83,6 +84,18 @@ end subroutine ecef2geodetic
 
 
 subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
+!geodetic2ecef   convert from geodetic to ECEF coordiantes
+!
+! Inputs
+! ------
+! lat,lon, alt:  ellipsoid geodetic coordinates of point(s) (degrees, degrees, meters)
+! spheroid: referenceEllipsoid parameter struct
+! deg: .true. degrees
+!
+! outputs
+! -------
+! x,y,z:  ECEF coordinates of test point(s) (meters)
+!
   real(wp), value :: lat,lon
   real(wp), intent(in) :: alt
   real(wp), intent(out) :: x,y,z
@@ -363,7 +376,7 @@ subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
   slantRange = hypot(r, up)
   ! radians
   elev = atan2(up, r)
-  az = mod(atan2(east, north), 2 * atan2(0.,-1.))
+  az = mod(atan2(east, north), 2._wp * atan2(0._wp, -1._wp))
 
   if (deg) elev = degrees(elev); az = degrees(az)
   
@@ -505,8 +518,8 @@ logical function isclose(actual, desired, rtol, atol)
     real(wp), intent(in) :: actual, desired
     real(wp), optional,value :: rtol, atol
 
-    if (.not.present(rtol)) rtol = 0.01
-    if (.not.present(atol)) atol = 0.
+    if (.not.present(rtol)) rtol = 1e-6_wp
+    if (.not.present(atol)) atol = 0._wp
 
     isclose = (abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol))
 end function isclose
