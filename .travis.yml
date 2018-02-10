@@ -13,6 +13,8 @@ python:
 
 os:
   - linux
+  
+group: travis_latest
 
 git:
   depth: 3
