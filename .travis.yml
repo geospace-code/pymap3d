@@ -36,9 +36,9 @@ script:
       cd ..;
       
       cd bin;
-      cmake ..
-      make
-      ./testmaptran
+      cmake ..;
+      make;
+      ./testmaptran;
     fi
 
 after_success: 
