@@ -24,6 +24,7 @@ addons:
   apt:
     packages:
       - octave
+      - gfortran
 
 
 install: pip -q install -e .[tests]
