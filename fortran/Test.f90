@@ -91,4 +91,5 @@ call geodetic2aer(alat3,alon3, aalt3,lat,lon,alt, aaz4, ael4, arng4)
 call enu2ecef(ae1,an1,au1,lat,lon,alt, ax3, ay3, aaaz3)
 call enu2geodetic(ae2,an2,au2,lat,lon,alt,alat4, alon4, aalt4)
 
+print *,'Maptran OK'
 end program

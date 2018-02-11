@@ -16,15 +16,19 @@ os:
   
 group: travis_latest
 
+env: FC=gfortran-6
+
 git:
   depth: 3
   
   
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
+      - gfortran-6
       - octave
-      - gfortran
 
 
 install: pip -q install -e .[tests]
