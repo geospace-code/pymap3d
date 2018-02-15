@@ -47,10 +47,7 @@ elemental logical function isclose(actual, desired, rtol, atol, equal_nan)
   isclose = n.and.(ieee_is_nan(actual).and.ieee_is_nan(desired))
   if (isclose) return
 !--- Inf /= -Inf, unequal NaN
-  if (.not.ieee_is_finite(actual) .or. .not.ieee_is_finite(desired)) then
-    isclose = .false.
-    return
-  endif
+  if (.not.ieee_is_finite(actual) .or. .not.ieee_is_finite(desired)) return
 !--- floating point closeness check
   isclose = abs(actual-desired) <= max(r * max(abs(actual), abs(desired)), a)
 
