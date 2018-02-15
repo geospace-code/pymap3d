@@ -1,6 +1,7 @@
 program Test
 
 use maptran
+use assert
 
 implicit none
 

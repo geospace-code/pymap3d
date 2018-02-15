@@ -1,5 +1,6 @@
 module maptran
-  use, intrinsic:: iso_fortran_env, only: wp=>real64, stderr=>error_unit
+  use, intrinsic:: iso_fortran_env, only: wp=>real64
+  use assert, only: isclose
   implicit none
   private
 
@@ -15,7 +16,7 @@ module maptran
                   Flattening = 1. / 298.2572235630_wp)
 
   public :: wp,ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
-            enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,assert_isclose, &
+            enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,&
             geodetic2aer,enu2geodetic,degrees,radians
 
 contains
@@ -83,7 +84,7 @@ end subroutine ecef2geodetic
 
 
 elemental subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
-!geodetic2ecef   convert from geodetic to ECEF coordiantes
+! geodetic2ecef   convert from geodetic to ECEF coordiantes
 !
 ! Inputs
 ! ------
@@ -126,7 +127,7 @@ end subroutine geodetic2ecef
 
 
 elemental subroutine aer2geodetic(az, el, slantRange, lat0, lon0, alt0, lat1, lon1, alt1, spheroid, deg)
-!aer2geodetic  convert azimuth, elevation, range of target from observer to geodetic coordiantes
+! aer2geodetic  convert azimuth, elevation, range of target from observer to geodetic coordiantes
 !
 ! Inputs
 ! ------
@@ -155,7 +156,7 @@ end subroutine aer2geodetic
 
 
 elemental subroutine geodetic2aer(lat, lon, alt, lat0, lon0, alt0, az, el, slantRange, spheroid, deg)
-!geodetic2aer   from an observer's perspective, convert target coordinates to azimuth, elevation, slant range.
+! geodetic2aer   from an observer's perspective, convert target coordinates to azimuth, elevation, slant range.
 !
 ! Inputs
 ! ------
@@ -316,7 +317,7 @@ end subroutine ecef2aer
 
 
 elemental subroutine aer2enu(az, el, slantRange, east, north, up, deg)
-!aer2enu  convert azimuth, elevation, range to ENU coordinates
+! aer2enu  convert azimuth, elevation, range to ENU coordinates
 !
 ! Inputs
 ! ------
@@ -510,43 +511,6 @@ elemental real(wp) function radius_normal(lat,E)
     radius_normal = E%SemimajorAxis**2 / sqrt( E%SemimajorAxis**2 * cos(lat)**2 + E%SemiminorAxis**2 * sin(lat)**2 )
 
 end function radius_normal
-
-
-elemental logical function isclose(actual, desired, rtol, atol)
-! https://www.python.org/dev/peps/pep-0485/#proposed-implementation
-! Value wasn't used for atol and rtol to keep this fundamental function "pure"
-    real(wp), intent(in) :: actual, desired
-    real(wp), intent(in), optional:: rtol, atol
-    real(wp) :: r,a
-
-    if (.not.present(rtol)) then
-        r = 1e-5_wp
-    else
-        r = rtol
-    endif
-    
-    if (.not.present(atol)) then
-        a = 0._wp
-    else
-        a = atol
-    endif
-
-    isclose = (abs(actual-desired) <= max(r * max(abs(actual), abs(desired)), a))
-end function isclose
-
-
-impure elemental subroutine assert_isclose(actual, desired, rtol, atol)
-    real(wp), intent(in) :: actual, desired
-    real(wp), intent(in), optional :: rtol, atol
-    logical ok
-    ok = isclose(actual,desired,rtol,atol)
-
-    if (.not.ok) then
-        write(stderr,*) 'actual',actual,'desired',desired
-        error stop
-    endif
-
-end subroutine assert_isclose
 
 
 elemental real(wp) function degrees(rad)
