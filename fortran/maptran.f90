@@ -1,5 +1,5 @@
 module maptran
-  use, intrinsic:: iso_fortran_env, only: wp=>real64
+  use, intrinsic:: iso_fortran_env, only: wp=>real64, stderr=>error_unit
   implicit none
   private
 
@@ -544,7 +544,7 @@ impure elemental subroutine assert_isclose(actual, desired, rtol, atol)
     ok = isclose(actual,desired,rtol,atol)
 
     if (.not.ok) then
-        print*,'actual',actual,'desired',desired
+        write(stderr,*) 'actual',actual,'desired',desired
         error stop
     endif
 
