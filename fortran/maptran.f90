@@ -4,9 +4,7 @@ module maptran
   private
 
   type,public :: Ellipsoid
-     real(wp) :: SemimajorAxis 
-     real(wp) :: Flattening 
-     real(wp) :: SemiminorAxis 
+     real(wp) :: SemimajorAxis, Flattening, SemiminorAxis 
   end type
 
   real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
