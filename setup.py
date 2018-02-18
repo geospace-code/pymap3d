@@ -15,7 +15,7 @@ from setuptools import setup,find_packages
 
 setup(name='pymap3d',
       packages=find_packages(),
-      version = '1.5.1',
+      version = '1.5.2',
       description='pure Python coordinate conversions, following convention of several popular Matlab routines.',
       long_description=open('README.rst').read(),
       author = 'Michael Hirsch, Ph.D.',

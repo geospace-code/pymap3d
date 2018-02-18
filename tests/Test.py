@@ -51,6 +51,7 @@ class Pure(unittest.TestCase):
 
     def test_str2dt(self):
 
+        assert str2dt(datetime(2014,4,6,8, tzinfo=UTC)) == datetime(2014,4,6,8, tzinfo=UTC) # passthrough
         assert str2dt('2014-04-06T08:00:00Z') == datetime(2014,4,6,8, tzinfo=UTC)
         ti = [str2dt('2014-04-06T08:00:00Z'), str2dt('2014-04-06T08:01:02Z')]
         to = [datetime(2014,4,6,8, tzinfo=UTC),  datetime(2014,4,6,8,1,2, tzinfo=UTC)]
