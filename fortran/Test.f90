@@ -1,6 +1,7 @@
 program Test
 
 use maptran
+use vallado
 use assert, only:wp, assert_isclose
 
 implicit none
@@ -91,6 +92,12 @@ call geodetic2enu(alat3, alon3, aalt3, lat, lon, alt, ae2, an2, au2)
 call geodetic2aer(alat3,alon3, aalt3,lat,lon,alt, aaz4, ael4, arng4)
 call enu2ecef(ae1,an1,au1,lat,lon,alt, ax3, ay3, aaaz3)
 call enu2geodetic(ae2,an2,au2,lat,lon,alt,alat4, alon4, aalt4)
+
+!-------- Vallado
+call assert_isclose(gstime(100000._wp), 2.9310980581630943_wp)
+call assert_isclose(juliandayall(2012,2,1,10,5,1._wp),2455958.920150463_wp)
+call assert_isclose(lstime(0.43_wp,juliandayall(2012,2,1,10,5,1._wp)), 5.3567775815749386_wp)
+
 
 print *,'Maptran OK'
 end program

@@ -20,6 +20,7 @@ Python / Matlab / Fortran 3-D coordinate conversions
 
 3-D coordinate conversions for Python, Matlab, GNU Octave and Fortran.
 Follows API of popular $1000 Matlab Mapping Toolbox routines.
+Also some of `Vallado's algorithms <http://www.smad.com/vallado/fortran/fortran.html>`_.
 
 :API docs: https://www.scivision.co/pymap3d
 
