@@ -26,18 +26,9 @@ within double precision arithmetic limitations
 """
 
 
-def angledist_meeus(r0, d0, r1, d1):
+def anglesep_meeus(lon0, lat0, lon1, lat1):
     """
-    inputs:
-
-    r0,d0
-        for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
-
-    r1,d1
-        for second point, rightAscension,Declination [degrees] or (azimuth,elevation)
-
-
-    (or, azimuth/elevation respectively)
+    inputs: DEGREES  (right ascension, declination Meeus p. 109)
 
 
     from "Astronomical Algorithms" by Jean Meeus Ch. 16 p. 111 (16.5)
@@ -51,30 +42,21 @@ def angledist_meeus(r0, d0, r1, d1):
     either the arrays must be the same size, or one of them must be a scalar
     """
 
-    r0 = radians(r0)
-    r1 = radians(r1)
-    d0 = radians(d0)
-    d1 = radians(d1)
+    lon0 = radians(lon0)
+    lat0 = radians(lat0)
+    lon1 = radians(lon1)
+    lat1 = radians(lat1)
     dist_rad = 2 * arcsin(
         sqrt(
-            haversine(d1 - d0) +
-            cos(d0) * cos(d1) * haversine(r1 - r0)))
+            haversine(lat0 - lat1) +
+            cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
 
     return degrees(dist_rad)
 
 
-def angledist(lon1, lat1, lon2, lat2):
+def anglesep(lon1, lat1, lon2, lat2):
     """
-    inputs:
-
-    r0,d0
-        for first point, rightAscension,Declination [degrees]  or (azimuth,elevation)
-
-    r1,d1
-        for second point, rightAscension,Declination [degrees] or (azimuth,elevation)
-
-
-    (or, azimuth/elevation respectively)
+    inputs: DEGREES
 
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
     Angular separation between two points on a sphere.

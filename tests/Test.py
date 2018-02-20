@@ -22,7 +22,7 @@ except ImportError:
 from pytz import UTC
 #
 import pymap3d as pm
-from pymap3d.haversine import angledist,angledist_meeus
+from pymap3d.haversine import anglesep,anglesep_meeus
 from pymap3d.datetime2hourangle import datetime2sidereal
 from pymap3d.vallado import vazel2radec, vradec2azel
 from pymap3d.timeconv import str2dt
@@ -81,11 +81,11 @@ class Pure(unittest.TestCase):
 
     def test_haversine(self):
         try:
-            assert_allclose(angledist(35,23, 84,20), ha)
+            assert_allclose(anglesep(35,23, 84,20), ha)
         except ImportError:
             pass
         #%% compare with astropy
-        assert_allclose(ha, angledist_meeus(35,23, 84,20))
+        assert_allclose(anglesep_meeus(35,23, 84,20), ha)
 
 
     def test_geodetic(self):

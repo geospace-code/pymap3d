@@ -107,7 +107,7 @@ call azel2radec(azi,eli,lat,lon, jd, rae, dae)
 call radec2azel(rae,dae,lat,lon,jd,azrd,elrd)
 call assert_isclose([azi,eli],[azrd,elrd])
 !------- Meeus
-call assert_isclose(angledist(35._wp,23._wp, 84._wp,20._wp), ha)
+call assert_isclose(anglesep(35._wp,23._wp, 84._wp,20._wp), ha)
 
 
 print *,'Maptran OK'

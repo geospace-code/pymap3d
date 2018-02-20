@@ -17,7 +17,7 @@ module maptran
 
   public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,&
-            geodetic2aer,enu2geodetic,degrees,radians, angledist
+            geodetic2aer,enu2geodetic,degrees,radians, anglesep
 
 contains
 
@@ -512,7 +512,8 @@ elemental real(wp) function radius_normal(lat,E)
 
 end function radius_normal
 
-elemental real(wp) function angledist(lat0,lon0,lat1,lon1)
+elemental real(wp) function anglesep(lon0,lat0,lon1,lat1)
+! angular separation between two points on sphere
   real(wp), intent(in) :: lat0,lon0,lat1,lon1
   real(wp) :: la0,lo0,la1,lo1
   
@@ -521,11 +522,11 @@ elemental real(wp) function angledist(lat0,lon0,lat1,lon1)
   la1 = radians(lat1)
   lo1 = radians(lon1)
 
-  angledist = degrees(2 * asin(sqrt(haversine(lo1 - lo0) + &
-                        cos(lo0) * cos(lo1) * haversine(la1 - la0))))
+  anglesep = degrees(2 * asin(sqrt(haversine(la1 - la0) + &
+                        cos(la0) * cos(la1) * haversine(lo1 - lo0))))
 
 
-end function angledist
+end function anglesep
 
 
 elemental real(wp) function haversine(theta)
