@@ -1,10 +1,11 @@
 module vallado
 ! based on http://www.smad.com/vallado/
 
-use, intrinsic:: iso_fortran_env, only: dp=>real64, sp=>real32
+use assert, only : wp
+
 implicit none
 private
-integer, parameter :: wp=dp
+
 real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
 
 public:: toGST, toJulian, toLST, radec2azel, azel2radec

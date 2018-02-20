@@ -14,7 +14,8 @@ real(wp), parameter :: lat = 42, lon= -82, alt = 200, &
                        xl = 660.930e3_wp, yl = -4701.424e3_wp, zl = 4246.579e3_wp, & ! aer2ecef
                        er = 186.277521_wp, nr = 286.84222_wp, ur = 939.69262_wp, & ! aer2enu
                        lat1 = 42.0026_wp, lon1 = -81.9978_wp, alt1 = 1.1397e3_wp, & ! aer2geodetic
-                       azi = 180.1_wp,  eli = 80._wp
+                       azi = 180.1_wp,  eli = 80._wp, &
+                       ha = 45.482789587392013_wp
                
 integer,parameter :: N = 3               
 real(wp), dimension(N), parameter :: alat = [42,52,62], &
@@ -105,6 +106,8 @@ call assert_isclose(toLST(0.43_wp, jd), 5.3567775815749386_wp)
 call azel2radec(azi,eli,lat,lon, jd, rae, dae)
 call radec2azel(rae,dae,lat,lon,jd,azrd,elrd)
 call assert_isclose([azi,eli],[azrd,elrd])
+!------- Meeus
+call assert_isclose(angledist(35._wp,23._wp, 84._wp,20._wp), ha)
 
 
 print *,'Maptran OK'

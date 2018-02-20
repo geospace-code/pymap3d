@@ -17,7 +17,7 @@ module maptran
 
   public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,&
-            geodetic2aer,enu2geodetic,degrees,radians
+            geodetic2aer,enu2geodetic,degrees,radians, angledist
 
 contains
 
@@ -511,6 +511,30 @@ elemental real(wp) function radius_normal(lat,E)
     radius_normal = E%SemimajorAxis**2 / sqrt( E%SemimajorAxis**2 * cos(lat)**2 + E%SemiminorAxis**2 * sin(lat)**2 )
 
 end function radius_normal
+
+elemental real(wp) function angledist(lat0,lon0,lat1,lon1)
+  real(wp), intent(in) :: lat0,lon0,lat1,lon1
+  real(wp) :: la0,lo0,la1,lo1
+  
+  la0 = radians(lat0)
+  lo0 = radians(lon0)
+  la1 = radians(lat1)
+  lo1 = radians(lon1)
+
+  angledist = degrees(2 * asin(sqrt(haversine(lo1 - lo0) + &
+                        cos(lo0) * cos(lo1) * haversine(la1 - la0))))
+
+
+end function angledist
+
+
+elemental real(wp) function haversine(theta)
+
+  real(wp), intent(in) :: theta
+
+  haversine =  (1 - cos(theta)) / 2.
+
+end function haversine
 
 
 elemental real(wp) function degrees(rad)

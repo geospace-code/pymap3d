@@ -18,9 +18,13 @@
 Python / Matlab / Fortran 3-D coordinate conversions
 ====================================================
 
-3-D coordinate conversions for Python, Matlab, GNU Octave and Fortran.
-Follows API of popular $1000 Matlab Mapping Toolbox routines.
-Also some of `Vallado's algorithms <http://www.smad.com/vallado/fortran/fortran.html>`_.
+3-D coordinate conversions, like API of popular $1000 Matlab Mapping Toolbox routines for:
+
+* Python
+* Matlab, GNU Octave
+* modern Fortran ("elemental" functions and subroutines for massively parallel computation)
+
+Includes some relevant `Vallado's algorithms <http://www.smad.com/vallado/fortran/fortran.html>`_.
 
 :API docs: https://www.scivision.co/pymap3d
 
@@ -52,6 +56,7 @@ This repo is 3 separate packages, you can use them independently, they don't rel
 * Python PyMap3D::
     
     python -m pip install -e .
+    
 * Fortran MapTran::
 
     cd bin
@@ -89,8 +94,7 @@ Under the ``matlab/`` directory:
 Fortran
 -------
 The Fortran API is simple like PyMap3D.
-Fortran 2008 standard is used, in particular ``Impure Elemental``, which enables seamless support of scalar or array coordinate inputs.
-The subroutine last three arguments are typically the output (each subroutine is documented).
+Modern Fortran "Elemental" procedures throughout enable seamless support of scalar or array coordinate inputs.
 Default precision is ``real64``, set at the top of ``fortran/maptran.f90``.
 
 .. code:: fortran
