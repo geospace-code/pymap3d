@@ -1,4 +1,5 @@
 module vallado
+! based on http://www.smad.com/vallado/
 
 use, intrinsic:: iso_fortran_env, only: dp=>real64, sp=>real32
 implicit none
@@ -82,27 +83,21 @@ elemental real(wp) function toLST(Lon, JD) result(LST)
 END function toLST
       
 
-elemental real(wp) function toJulian(Year,Mon,Day,Hr,Mint,Sec, WhichType) result(jd)
+elemental real(wp) function toJulian(Year,Mon,Day,Hr,Mint,Sec) result(jd)
 
   INTEGER,intent(in) :: Year, Mon, Day, Hr, Mint
   real(wp), intent(in) :: sec
-  CHARACTER, intent(in), optional :: WhichType
   real(wp) :: B, y, m
   
   y = year
   m = mon
 
   IF ( M <= 2 ) THEN
-      Y = y - 1
-      M = m + 12
-    ENDIF
-  IF (present(whichtype).and. WhichType == 'J') THEN
-      ! -------- Use for Julian calender, every 4 years ---------
-      B = 0._wp
-  ELSE
-      ! --------------------- Use for Gregorian -----------------
-      B = 2 - INT(Y*0.01_wp) + INT(INT(Y*0.01_wp)*0.25_wp)
+    Y = y - 1
+    M = m + 12
   ENDIF
+    
+  B = 2 - INT(Y*0.01_wp) + INT(INT(Y*0.01_wp)*0.25_wp)
   
   JD= INT( 365.25_wp*(Y + 4716) ) + &
       INT( 30.6001_wp*(M+1) ) + &
@@ -113,7 +108,6 @@ END function toJulian
 
 
 elemental real(wp) FUNCTION toGST(JD) result(GST)
-! julian2sidereal(100000) = 2.9310980581630943
 
 
   real(wp), intent(in) :: JD
