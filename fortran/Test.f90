@@ -1,7 +1,7 @@
 program Test
 
 use maptran
-use assert
+use assert, only:wp, assert_isclose
 
 implicit none
 

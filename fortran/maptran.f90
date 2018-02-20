@@ -1,6 +1,6 @@
 module maptran
-  use, intrinsic:: iso_fortran_env, only: wp=>real64
-  use assert, only: isclose
+
+  use assert, only: wp,isclose
   implicit none
   private
 
@@ -15,7 +15,7 @@ module maptran
                   SemiminorAxis=6378137._wp * (1._wp - 1._wp / 298.2572235630_wp), &
                   Flattening = 1. / 298.2572235630_wp)
 
-  public :: wp,ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
+  public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,&
             geodetic2aer,enu2geodetic,degrees,radians
 
