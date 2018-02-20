@@ -9,6 +9,41 @@ real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
 public:: gstime, juliandayall, lstime
 contains
 
+
+elemental SUBROUTINE RADEC_AZEL  ( RtAsc,Decl,LST,Latgd, Direction, Az,El )
+
+  REAL(wp), value :: RtAsc,Decl,LST,Latgd
+  real(wp), intent(out) :: Az,El
+  CHARACTER(4), intent(in), optional :: Direction
+  REAL(wp) :: Sinv, Cosv, LHA
+
+        IF (present(direction) .and. Direction .eq. 'FROM' ) THEN
+            Decl = ASIN( SIN(El)*SIN(Latgd) + &
+     &                 COS(el)*COS(Latgd)*COS(Az) )
+
+            Sinv = -(SIN(az)*COS(el)*COS(Latgd)) / &
+     &              (COS(Latgd)*COS(Decl))
+            Cosv = (SIN(el) - SIN(Latgd)*SIN(decl)) / &
+     &              (COS(Latgd)*COS(Decl))
+            LHA  = ATAN2( Sinv,Cosv ) 
+            RtAsc= LST - LHA 
+          ELSE
+            LHA = LST - RtAsc
+
+            El  = ASIN( SIN(Decl)*SIN(Latgd) + &
+     &            COS(Decl)*COS(Latgd)*COS(LHA) )
+
+            Sinv= -SIN(LHA)*COS(Decl)*COS(Latgd) / &
+     &                (COS(el)*COS(Latgd))
+            Cosv= ( SIN(Decl)-SIN(el)*SIN(Latgd) ) / &
+     &             (COS(el)*COS(Latgd))
+            Az  = ATAN2( Sinv,Cosv ) 
+          ENDIF 
+
+
+END subroutine radec_azel
+
+
 elemental real(wp) function LSTIME( Lon, JD)
 
   REAL(wp), intent(in) :: Lon, JD
@@ -21,7 +56,7 @@ elemental real(wp) function LSTIME( Lon, JD)
   LSTime = MOD( LSTime, 2*pi )
   IF ( LSTime < 0._wp ) LSTime = LSTime + 2*pi
 
-END
+END function lstime
       
 
 elemental real(wp) function JULIANDAYALL(Year,Mon,Day,Hr,Mint,Sec, WhichType) result(jd)

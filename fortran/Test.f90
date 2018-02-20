@@ -98,6 +98,10 @@ call assert_isclose(gstime(100000._wp), 2.9310980581630943_wp)
 call assert_isclose(juliandayall(2012,2,1,10,5,1._wp),2455958.920150463_wp)
 call assert_isclose(lstime(0.43_wp,juliandayall(2012,2,1,10,5,1._wp)), 5.3567775815749386_wp)
 
+!call radec_azel
+!t = '2014-04-06T08:00:00Z'
+!lat, lon = (65, -148)
+!ra, dec = (166.5032081149338,55.000011165405752)
 
 print *,'Maptran OK'
 end program
