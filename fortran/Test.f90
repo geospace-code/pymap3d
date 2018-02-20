@@ -9,20 +9,22 @@ implicit none
 !type(Ellipsoid), parameter :: spheroid = wgs84Ellipsoid
 
 real(wp), parameter :: lat = 42, lon= -82, alt = 200, &
-                       az = 33, el=70, rng= 1e3, &
-                       x0 = 660.675e3, y0 = -4700.949e3, z0 = 4245.738e3, &
-                       xl = 660.930e3, yl = -4701.424e3, zl = 4246.579e3, & ! aer2ecef
-                       er = 186.277521, nr = 286.84222, ur = 939.69262, & ! aer2enu
-                       lat1 = 42.0026, lon1 = -81.9978, alt1 = 1.1397e3 ! aer2geodetic
+                       az = 33, el=70, rng= 1e3_wp, &
+                       x0 = 660.675e3_wp, y0 = -4700.949e3_wp, z0 = 4245.738e3_wp, &
+                       xl = 660.930e3_wp, yl = -4701.424e3_wp, zl = 4246.579e3_wp, & ! aer2ecef
+                       er = 186.277521_wp, nr = 286.84222_wp, ur = 939.69262_wp, & ! aer2enu
+                       lat1 = 42.0026_wp, lon1 = -81.9978_wp, alt1 = 1.1397e3_wp, & ! aer2geodetic
+                       azi = 180.1_wp,  eli = 80._wp
                
 integer,parameter :: N = 3               
 real(wp), dimension(N), parameter :: alat = [42,52,62], &
                                      deg0 = [15,30,45], &
                                      aaz = [33,43,53]
 
+
 real(wp) :: lat2, lon2, alt2,lat3,lon3,alt3,lat4,lon4,alt4,&
             x1,y1,z1,x2,y2,z2,x3,y3,z3,&
-            az2,el2,rng2,az3,el3,rng3,az4,el4,rng4,&
+            az2,el2,rng2,az3,el3,rng3,az4,el4,rng4,azrd,elrd,rae,dae,jd, &
             e1,n1,u1,e2,n2,u2,e3,n3,u3
   
 
@@ -30,6 +32,7 @@ real(wp), dimension(N) :: ax1, ay1, aaaz1, ax2, ay2, aaaz2, ax3,ay3,aaaz3, &
                           ae1, an1, au1, ae2,an2,au2, &
                           alat2,alon2,aalt2, alat3,alon3,aalt3, alat4,alon4,aalt4, &
                           aaz2, ael2, arng2, aaz3,ael3,arng3, aaz4,ael4,arng4
+                         
 
 real(wp), dimension(N) :: rad,deg
 
@@ -94,14 +97,15 @@ call enu2ecef(ae1,an1,au1,lat,lon,alt, ax3, ay3, aaaz3)
 call enu2geodetic(ae2,an2,au2,lat,lon,alt,alat4, alon4, aalt4)
 
 !-------- Vallado
-call assert_isclose(gstime(100000._wp), 2.9310980581630943_wp)
-call assert_isclose(juliandayall(2012,2,1,10,5,1._wp),2455958.920150463_wp)
-call assert_isclose(lstime(0.43_wp,juliandayall(2012,2,1,10,5,1._wp)), 5.3567775815749386_wp)
+jd = toJulian(2012,2,1,10,5,1._wp)
+call assert_isclose(toGST(100000._wp), 2.9310980581630943_wp)
+call assert_isclose(jd,2455958.920150463_wp)
+call assert_isclose(toLST(0.43_wp, jd), 5.3567775815749386_wp)
 
-!call radec_azel
-!t = '2014-04-06T08:00:00Z'
-!lat, lon = (65, -148)
-!ra, dec = (166.5032081149338,55.000011165405752)
+call azel2radec(azi,eli,lat,lon, jd, rae, dae)
+call radec2azel(rae,dae,lat,lon,jd,azrd,elrd)
+call assert_isclose([azi,eli],[azrd,elrd])
+
 
 print *,'Maptran OK'
 end program

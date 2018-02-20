@@ -6,60 +6,83 @@ private
 integer, parameter :: wp=dp
 real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
 
-public:: gstime, juliandayall, lstime
+public:: toGST, toJulian, toLST, radec2azel, azel2radec
 contains
 
+elemental subroutine azel2radec(az,el,lat,lon,jd, ra,decl)
 
-elemental SUBROUTINE RADEC_AZEL  ( RtAsc,Decl,LST,Latgd, Direction, Az,El )
+  real(wp), value :: az,el,lat,lon
+  real(wp), intent(in) :: jd ! Julian Date
+  real(wp), intent(out) :: ra, decl
+  real(wp) :: lst, lha, sinv, cosv
+  
+  az = radians(az)
+  el = radians(el)
+  lat = radians(lat)
+  lon = radians(lon)
 
-  REAL(wp), value :: RtAsc,Decl,LST,Latgd
+  Decl = ASIN(SIN(El)*SIN(lat) + &
+              COS(el)*COS(lat)*COS(Az) )
+
+  Sinv = -(SIN(az)*COS(el)*COS(lat)) / &
+          (COS(lat)*COS(Decl))
+          
+  Cosv = (SIN(el) - SIN(lat)*SIN(decl)) / &
+         (COS(lat)*COS(Decl))
+         
+  LHA  = ATAN2(Sinv,Cosv)
+  lst = toLST(Lon, JD)
+  
+  ra = modulo(degrees(LST - LHA), 360._wp)
+  decl = degrees(decl)
+
+end subroutine azel2radec
+
+
+elemental SUBROUTINE radec2azel(ra,Decl,lat,lon,jd, Az,El)
+
+  REAL(wp), value :: ra,Decl,lat, lon
+  real(wp), intent(in) :: jd
   real(wp), intent(out) :: Az,El
-  CHARACTER(4), intent(in), optional :: Direction
   REAL(wp) :: Sinv, Cosv, LHA
+  
+  lat = radians(lat)
+  lon = radians(lon)
+  ra = radians(ra)
+  decl = radians(decl)
 
-        IF (present(direction) .and. Direction .eq. 'FROM' ) THEN
-            Decl = ASIN( SIN(El)*SIN(Latgd) + &
-     &                 COS(el)*COS(Latgd)*COS(Az) )
+  LHA = toLST(Lon, JD) - ra
 
-            Sinv = -(SIN(az)*COS(el)*COS(Latgd)) / &
-     &              (COS(Latgd)*COS(Decl))
-            Cosv = (SIN(el) - SIN(Latgd)*SIN(decl)) / &
-     &              (COS(Latgd)*COS(Decl))
-            LHA  = ATAN2( Sinv,Cosv ) 
-            RtAsc= LST - LHA 
-          ELSE
-            LHA = LST - RtAsc
+  El = ASIN( SIN(Decl)*SIN(lat) + &
+              COS(Decl)*COS(lat)*COS(LHA) )
 
-            El  = ASIN( SIN(Decl)*SIN(Latgd) + &
-     &            COS(Decl)*COS(Latgd)*COS(LHA) )
-
-            Sinv= -SIN(LHA)*COS(Decl)*COS(Latgd) / &
-     &                (COS(el)*COS(Latgd))
-            Cosv= ( SIN(Decl)-SIN(el)*SIN(Latgd) ) / &
-     &             (COS(el)*COS(Latgd))
-            Az  = ATAN2( Sinv,Cosv ) 
-          ENDIF 
+  Sinv = -SIN(LHA)*COS(Decl)*COS(lat) / &
+        (COS(el)*COS(lat))
+        
+  Cosv = ( SIN(Decl)-SIN(el)*SIN(lat) ) / &
+         (COS(el)*COS(lat))
+         
+  Az = modulo(degrees(ATAN2(Sinv,Cosv)), 360._wp)
+  el = degrees(el)
 
 
-END subroutine radec_azel
+END subroutine radec2azel
 
 
-elemental real(wp) function LSTIME( Lon, JD)
-
+elemental real(wp) function toLST(Lon, JD) result(LST)
+! longitude in RADIANS
   REAL(wp), intent(in) :: Lon, JD
-  real(wp) :: GST
+ 
+  LST = Lon + toGST(jd)
 
+  LST = MOD( LST, 2*pi )
+  
+  IF (LST < 0._wp) LST = LST + 2*pi
 
-  GST = GSTIME(jd)
-  LSTime = Lon + GST
-
-  LSTime = MOD( LSTime, 2*pi )
-  IF ( LSTime < 0._wp ) LSTime = LSTime + 2*pi
-
-END function lstime
+END function toLST
       
 
-elemental real(wp) function JULIANDAYALL(Year,Mon,Day,Hr,Mint,Sec, WhichType) result(jd)
+elemental real(wp) function toJulian(Year,Mon,Day,Hr,Mint,Sec, WhichType) result(jd)
 
   INTEGER,intent(in) :: Year, Mon, Day, Hr, Mint
   real(wp), intent(in) :: sec
@@ -86,10 +109,10 @@ elemental real(wp) function JULIANDAYALL(Year,Mon,Day,Hr,Mint,Sec, WhichType) re
       Day + B - 1524.5_wp + &
       ( (Sec/60.0_wp + Mint ) / 60.0_wp + Hr ) / 24.0_wp
 
-END function juliandayall
+END function toJulian
 
 
-pure elemental real(wp) FUNCTION GSTIME(JD)
+elemental real(wp) FUNCTION toGST(JD) result(GST)
 ! julian2sidereal(100000) = 2.9310980581630943
 
 
@@ -98,17 +121,17 @@ pure elemental real(wp) FUNCTION GSTIME(JD)
 
 
   TUT1= ( JD - 2451545._wp ) / 36525._wp
-  gstime = -6.2e-6_wp*TUT1**3 + &
+  gst = -6.2e-6_wp*TUT1**3 + &
               0.093104_wp*TUT1**2 + &
              (876600._wp*3600._wp + 8640184.812866_wp)*TUT1 + &
               67310.54841_wp
               
-  gstime = MOD(radians(gstime) / 240._wp, 2*pi) ! 360/86400 = 1/240, to deg, to rad
+  gst = MOD(radians(gst) / 240._wp, 2*pi) ! 360/86400 = 1/240, to deg, to rad
   
-  IF (gstime < 0._wp) gstime = gstime + 2*pi
+  gst = modulo(gst, 2*pi)
 
 
-end function gstime
+end function toGST
 
 
 elemental real(wp) function degrees(rad)
