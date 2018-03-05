@@ -4,11 +4,9 @@ fast_finish: true
 python:
   - 2.6
   - 2.7
-  - 3.3
   - 3.4
   - 3.5
   - 3.6
-  - "3.7-dev"
   
 
 os:
@@ -36,7 +34,7 @@ install: pip -q install -e .[tests]
 script: 
   - pytest
 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7* ]]; then
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
       coverage run tests/test_all.py -v;
       
       cd tests;
@@ -50,4 +48,4 @@ script:
     fi
 
 after_success: 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.7* ]]; then coveralls; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coveralls; fi
