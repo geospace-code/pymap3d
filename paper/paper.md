@@ -16,7 +16,7 @@ bibliography: paper.bib
 
 # Summary
 
-PyMap3D [@pymap3d] is a pure Python coordinate transformation program that converts between geospace coordinate systems.
+PyMap3D [@pymap3d] is a pure Python coordinate transformation program that converts between geographic coordinate systems and local coordinate systems useful for airborne, space and remote sensing systems.
 Additional standalone coordinate conversions are provided for Matlab/GNU Octave and Fortran.
 A subset of PyMap3D functions using syntax compatible with the $1000 Matlab Mapping Toolbox is provided for Matlab and GNU Octave users in the ``matlab/`` directory.
 A modern Fortran 2018 implementation of many of the PyMap3D routines is provided in the ``fortran/`` directory.
