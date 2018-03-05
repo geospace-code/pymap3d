@@ -18,7 +18,7 @@
 Python / Matlab / Fortran 3-D coordinate conversions
 ====================================================
 
-3-D coordinate conversions, like API of popular $1000 Matlab Mapping Toolbox routines for:
+3-D geographic coordinate conversions, with API similar to popular $1000 Matlab Mapping Toolbox routines for:
 
 * Python
 * Matlab, GNU Octave
@@ -30,39 +30,51 @@ Includes some relevant `Vallado's algorithms <http://www.smad.com/vallado/fortra
 
 For those not having:
 
-* AstroPy: lower accuracy fallback functions are included for some functions.
-* Numpy: without numpy, scalar inputs are handled with pure Python builtins.
+* `AstroPy <http://www.astropy.org/>`_: lower accuracy fallback functions are automatically used.
+* Numpy: without Numpy, scalar inputs are handled with pure Python builtins.
 
-Why not `PyProj <https://github.com/jswhit/pyproj>`_? 
-PyMap3D does not require anything beyond pure Python.
-PyProj is very powerful and comprehensive, but requires a learning curve to use, 
-particularly for Python users accustomed to Matlab.
+Why not `PyProj <https://github.com/jswhit/pyproj>`_?
+
+* PyMap3D does not require anything beyond pure Python.
+* PyMap3D API is virtually identical to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
+* PyMap3D intrinsically handles local coordinate systems such as ENU, while for PyProj ENU requires some `additional effort <https://github.com/jswhit/pyproj/issues/105>`_.
+* PyProj is oriented towards points on the planet surface, while PyMap3D handles points on or above the planet surface equally well, particularly import for airborne vehicles and remote sensing.
 
 .. contents::
 
 
-Prereqs
-=======
+Prerequisites
+=============
 
 * Python PyMap3D:  any of Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, 3.7, ...
-  * optional: Numpy, AstroPy  (for full functionality)
+  * Numpy (optional): if not present, function from ``math`` are automatically used, and if Numpy is present, it is automatically used.
+  * `AstroPy <http://www.astropy.org/>`_  (optional): If not present, ECI coordinate conversions are not available.
 * Matlab / GNU Octave: under ``matlab/``
 * Fortran MapTran: under ``fortran/``:  any Fortran compiler (tested with ``gfortran``)
 
 Install
 =======
-This repo is 3 separate packages, you can use them independently, they don't rely on each other.
+The three separate packages are independent, they don't rely on each other.
 
 * Python PyMap3D::
-    
-    python -m pip install -e .
-    
+
+      pip install pymap3d
+
+  or for the latest development code::
+
+      git clone https://github.com/scivision/pymap3d
+
+      pip install -e .
+
 * Fortran MapTran::
 
     cd bin
     cmake ..
     make
- 
+
+* Matlab/Octave::
+
+    addpath(pymap3d/matlab)
 
 
 Usage
@@ -76,9 +88,9 @@ Python
    import pymap3d as pm
 
    x,y,z = pm.geodetic2ecef(lat,lon,alt)
-   
-   az,el,range = pm.geodetic2aer(lat, lon, alt, 42, -82, 0)
-   
+
+   az,el,range = pm.geodetic2aer(lat, lon, alt, observer_lat, observer_lon, 0)
+
 Matlab / GNU Octave
 -------------------
 The syntax is reasonably compatible with the $1000 Matlab Mapping Toolbox.
@@ -87,44 +99,53 @@ Under the ``matlab/`` directory:
 .. code:: matlab
 
    x,y,z = geodetic2ecef([],lat,lon,alt)
-   
-   az,el,range = geodetic2aer(lat, lon, alt, 42, -82, 0)
-   
+
+   az,el,range = geodetic2aer(lat, lon, alt, observer_lat, observer_lon, observer_alt)
+
 
 Fortran
 -------
-The Fortran API is simple like PyMap3D.
-Modern Fortran "Elemental" procedures throughout enable seamless support of scalar or array coordinate inputs.
+The Fortran API under ``fortran/`` directory is simple like PyMap3D.
+Modern Fortran "elemental" procedures throughout enable seamless support of scalar or array coordinate inputs.
 Default precision is ``real64``, set at the top of ``fortran/maptran.f90``.
 
 .. code:: fortran
 
     use maptran
-    
-    call geodetic2ecef(lat,lon,alt, x,y,z)
-    call geodetic2aer(lat,lon,alt, -42., -82., 0.)
 
-   
-   
+    call geodetic2ecef(lat,lon,alt, x,y,z)
+    call geodetic2aer(lat,lon,alt, observer_lat, observer_lon, observer_alt)
+
+
+
 
 Functions
 ---------
-Popular mapping toolbox functions ported to Python include::
+Popular mapping toolbox functions ported to Python include the following, where the source coordinate system (before the "2") is converted to the desired coordinate system::
 
   aer2ecef  aer2enu  aer2geodetic  aer2ned
-  ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv  ecef2eci
-  eci2ecef
-  enu2aer  enu2ecef  enu2ecefv  enu2geodetic
+  ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
+  ecef2eci  eci2ecef
+  enu2aer  enu2ecef   enu2geodetic
   geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
-  ned2aer  ned2ecef  ned2ecefv  ned2geodetic
-  vreckon vdist
+  ned2aer  ned2ecef   ned2geodetic
   azel2radec radec2azel
+  vreckon vdist
+
+Abbreviations:
+
+* `AER: Azimuth, Elevation, Range <https://en.wikipedia.org/wiki/Spherical_coordinate_system>`_
+* `ECEF: Earth-centered, Earth-fixed <https://en.wikipedia.org/wiki/ECEF>`_
+* `ECI: Earth-centered Inertial <https://en.wikipedia.org/wiki/Earth-centered_inertial>`_
+* `ENU: East North Up <https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED>`_
+* `NED: North East Down <https://en.wikipedia.org/wiki/North_east_down>`_
+* `radec: right ascension, declination <https://en.wikipedia.org/wiki/Right_ascension>`_
 
 
 Caveats
 -------
 
-* Atmospheric effects neglected in all functions not invoking AstroPy. Need to update code to add these input parameters (just start a GitHub Issue to request).
+* Atmospheric effects neglected in all functions not invoking AstroPy. Would need to update code to add these input parameters (just start a GitHub Issue to request).
 * Planetary perturbations and nutation etc. not fully considered.
 
 
@@ -137,6 +158,6 @@ Mathworks currently charges $1000 for the `Matlab Mapping Toolbox <https://www.m
 * The full set of Python conversions can be accessed from Matlab >= R2014b by commands like::
 
     lla = py.pymap3d.geodetic2ecef(x,y,z)
-    
+
 * Matlab `documentation <https://www.scivision.co/pymap3d>`_ generated by `m2html <https://www.artefact.tk/software/matlab/m2html/>`_.
 

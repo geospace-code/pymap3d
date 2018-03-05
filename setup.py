@@ -9,24 +9,26 @@
 
 
 install_requires = ['six','python-dateutil','pytz']
-tests_require = ['nose','coveralls']
+tests_require = ['pytest','coveralls','pyproj']
 # %%
 from setuptools import setup,find_packages
 
 setup(name='pymap3d',
       packages=find_packages(),
-      version = '1.6.0',
+      version = '1.6.1',
       description='pure Python coordinate conversions, following convention of several popular Matlab routines.',
       long_description=open('README.rst').read(),
       author = 'Michael Hirsch, Ph.D.',
       url = 'https://github.com/scivision/pymap3d',
       classifiers=[
-      'Intended Audience :: Science/Research',
       'Development Status :: 5 - Production/Stable',
+      'Environment :: Console',
+      'Intended Audience :: Science/Research',
       'License :: OSI Approved :: BSD License',
-      'Topic :: Scientific/Engineering :: GIS',
+      'Operating System :: OS Independent',
       'Programming Language :: Python :: 3',
       'Programming Language :: Python',
+      'Topic :: Scientific/Engineering :: GIS',
       ],
       install_requires=install_requires,
       tests_require=tests_require,

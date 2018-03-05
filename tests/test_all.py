@@ -19,6 +19,12 @@ try:
 except ImportError:
     numpy = astropy = None
     from math import radians
+
+try: # for validation
+    import pyproj
+except ImportError:
+    pyproj = None
+
 from pytz import UTC
 #
 import pymap3d as pm
@@ -89,16 +95,24 @@ class Pure(unittest.TestCase):
 
 
     def test_geodetic(self):
+        if pyproj:
+            ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
+            lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
+
         x1,y1,z1 = pm.geodetic2ecef(tlat,tlon,talt)
 
         assert_allclose(pm.geodetic2ecef(radians(tlat),radians(tlon),talt,deg=False),
                         (x1,y1,z1))
 
         assert_allclose((x1,y1,z1), (x0,y0,z0),
-                        err_msg='geodetic2ecef:')
+                        err_msg='geodetic2ecef')
 
         assert_allclose(pm.ecef2geodetic(x1,y1,z1), (tlat,tlon,talt),
-                    err_msg='ecef2geodetic:')
+                    err_msg='ecef2geodetic')
+
+        if pyproj:
+            assert_allclose(pyproj.transform(lla,ecef,tlon,tlat,talt), (x1,y1,z1))
+            assert_allclose(pyproj.transform(ecef, lla, x1, y1, z1), (tlon,tlat,talt))
 
 
         lat2,lon2,alt2 = pm.aer2geodetic(taz,tel,tsrange,tlat,tlon,talt)
@@ -177,8 +191,15 @@ class Numpy(unittest.TestCase):
         lat2,lon2,a21 = vreckon(10,20,sr,az)
         assert_allclose((lat2,lon2,a21),
                             (10.02137267,20.016847,218.0029286))
+        if pyproj:
+            p4lon,p4lat,p4a21 = pyproj.Geod(ellps='WGS84').fwd(lon2,lat2,az,sr)
+            assert_allclose((p4lon,p4lat,p4a21 % 360.), (lon2,lat2, a21), rtol=0.0025)
 
-        assert_allclose(vdist(10,20,lat2,lon2),(sr,az,a21))
+
+        assert_allclose(vdist(10,20,lat2,lon2), (sr,az,a21))
+        if pyproj:
+            p4az,p4a21,p4sr = pyproj.Geod(ellps='WGS84').inv(20,10,lon2,lat2)
+            assert_allclose((p4az,p4a21 % 360.,p4sr), (az,a21,sr))
 
 
     def test_azel2radec(self):
@@ -227,7 +248,10 @@ class Numpy(unittest.TestCase):
 #%%
 
 def assert_allclose(actual, desired, rtol=1e-7, atol=0,err_msg=''):
-    assert pm.allclose(actual, desired, rtol, atol)
+    if numpy:
+        numpy.testing.assert_allclose(actual, desired, rtol, atol)
+    else:
+        assert pm.allclose(actual, desired, rtol, atol)
 
 
 if __name__ == '__main__':
