@@ -24,6 +24,7 @@ Python / Matlab / Fortran 3-D coordinate conversions
 * Matlab, GNU Octave
 * modern Fortran ("elemental" functions and subroutines for massively parallel computation)
 
+PyMap3D is intended for non-interactive use on massively parallel (HPC) and embedded systems.
 Includes some relevant `Vallado's algorithms <http://www.smad.com/vallado/fortran/fortran.html>`_.
 
 :API docs: https://www.scivision.co/pymap3d
