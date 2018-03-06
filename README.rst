@@ -94,7 +94,9 @@ Python
 
    az,el,range = pm.geodetic2aer(lat, lon, alt, observer_lat, observer_lon, 0)
    
-Python `argument unpacking <https://docs.python.org/3.6/tutorial/controlflow.html#unpacking-argument-lists>`_ can be used for compact function arguments with scalars or arbitrarily shaped N-D arrays:
+`Python >= 3.5 <https://www.python.org/dev/peps/pep-0448/>`_
+`argument unpacking <https://docs.python.org/3.6/tutorial/controlflow.html#unpacking-argument-lists>`_ 
+can be used for compact function arguments with scalars or arbitrarily shaped N-D arrays:
 
 .. code:: python
 
