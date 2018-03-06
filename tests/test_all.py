@@ -33,7 +33,7 @@ from pymap3d.datetime2hourangle import datetime2sidereal
 from pymap3d.vallado import vazel2radec, vradec2azel
 from pymap3d.timeconv import str2dt
 
-t = '2014-04-06T08:00:00Z'
+t0 = '2014-04-06T08:00:00Z'
 lat, lon = (65, -148)
 ra, dec = (166.5032081149338,55.000011165405752)
 ha = 45.482789587392013
@@ -78,19 +78,15 @@ class Pure(unittest.TestCase):
         sra = 2.90658
         # http://www.jgiesen.de/astro/astroJS/siderealClock/
         try:
-            sdrapy = datetime2sidereal(t, radians(lon), False)
-            assert_allclose(sdrapy, sra, rtol=1e-5)
+            assert_allclose(datetime2sidereal(t0, radians(lon), False), sra, rtol=1e-5)
 
-            sdrapy = datetime2sidereal([t], radians(lon), False)
-            assert_allclose(sdrapy, [sra], rtol=1e-5)
+            assert_allclose(datetime2sidereal([t0], radians(lon), False), [sra], rtol=1e-5)
         except ImportError:
             pass
 
-        sdrvallado = datetime2sidereal(t, radians(lon), True)
-        assert_allclose(sdrvallado, sra, rtol=1e-5)
+        assert_allclose(datetime2sidereal(t0, radians(lon), True), sra, rtol=1e-5)
 
-        sdrvallado = datetime2sidereal([t], radians(lon), True)
-        assert_allclose(sdrvallado, [sra], rtol=1e-5)
+        assert_allclose(datetime2sidereal([t0], radians(lon), True), [sra], rtol=1e-5)
 
 
 
@@ -209,11 +205,11 @@ class Numpy(unittest.TestCase):
 
 
     def test_azel2radec(self):
-        R,D = pm.azel2radec(azi, eli, lat, lon, t)
+        R,D = pm.azel2radec(azi, eli, lat, lon, t0)
         assert_allclose(R, ra, rtol=1e-2)
         assert_allclose(D, dec, rtol=1e-2)
 
-        Rv, Dv = vazel2radec(azi, eli, lat, lon, t)
+        Rv, Dv = vazel2radec(azi, eli, lat, lon, t0)
         assert_allclose(Rv, ra)
         assert_allclose(Dv, dec)
 
@@ -222,11 +218,11 @@ class Numpy(unittest.TestCase):
         if numpy is None:
             logging.warning('RA DEC not tested')
             return
-        azapy, elapy = pm.radec2azel(ra,dec,  lat, lon, t)
+        azapy, elapy = pm.radec2azel(ra,dec,  lat, lon, t0)
         assert_allclose(azapy, azi, rtol=1e-2)
         assert_allclose(elapy, eli, rtol=1e-2)
 
-        azvallado, elvallado = vradec2azel(ra, dec, lat, lon, t)
+        azvallado, elvallado = vradec2azel(ra, dec, lat, lon, t0)
         assert_allclose(azvallado, azi, rtol=1e-2)
         assert_allclose(elvallado, eli, rtol=1e-2)
 

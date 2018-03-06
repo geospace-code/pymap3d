@@ -21,6 +21,10 @@ integer,parameter :: N = 3
 real(wp), dimension(N), parameter :: alat = [42,52,62], &
                                      deg0 = [15,30,45], &
                                      aaz = [33,43,53]
+                                     
+type(time), parameter :: t0 = time(2014,4,6,8,0,0) ! UTC 
+real(wp), parameter ::  jd0 = 2456753.833333_wp
+
 
 
 real(wp) :: lat2, lon2, alt2,lat3,lon3,alt3,lat4,lon4,alt4,&
@@ -133,10 +137,12 @@ call enu2ecef(ae1,an1,au1,lat,lon,alt, ax3, ay3, aaaz3)
 call enu2geodetic(ae2,an2,au2,lat,lon,alt,alat4, alon4, aalt4)
 
 !-------- Vallado
-jd = toJulian(2012,2,1,10,5,1._wp)
-call assert_isclose(toGST(100000._wp), 2.9310980581630943_wp)
-call assert_isclose(jd,2455958.920150463_wp)
-call assert_isclose(toLST(0.43_wp, jd), 5.3567775815749386_wp)
+jd = toJulian(t0)
+! http://aa.usno.navy.mil/jdconverter?ID=AA&year=2014&month=4&day=6&era=1&hr=8&min=0&sec=0.0
+call assert_isclose(jd, jd0, err_msg='toJulian')
+
+call assert_isclose(toGST(jd), 5.4896448816_wp, err_msg='toGST')
+call assert_isclose(toLST(radians(-148._wp), jd), 2.90658_wp, err_msg='toLST')
 
 call azel2radec(azi,eli,lat,lon, jd, rae, dae)
 call radec2azel(rae,dae,lat,lon,jd,azrd,elrd)

@@ -6,16 +6,33 @@ use assert, only : wp
 implicit none
 private
 
-real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
+  real(wp), parameter :: pi = 4._wp * atan(1.0_wp)
+
+  type,public :: time
+     integer :: year, month, day, hour, minute
+     real(wp) :: second
+  end type
 
 public:: toGST, toJulian, toLST, radec2azel, azel2radec
 contains
 
 elemental subroutine azel2radec(az,el,lat,lon,jd, ra,decl)
+! convert azimuth, elevation to right ascension, declination
+! 
+! inputs
+! ------
+! az, el: azimuth, elevation (degrees)
+! lat, lon: geodetic latitude, longitude (degrees)
+! jd: julian date (decimal)
+! 
+! outputs
+! -------
+! ra, decl: right ascension, declination (degrees)
 
   real(wp), value :: az,el,lat,lon
   real(wp), intent(in) :: jd ! Julian Date
   real(wp), intent(out) :: ra, decl
+  
   real(wp) :: lst, lha, sinv, cosv
   
   az = radians(az)
@@ -42,6 +59,17 @@ end subroutine azel2radec
 
 
 elemental SUBROUTINE radec2azel(ra,Decl,lat,lon,jd, Az,El)
+! convert right ascension, declination to azimuth, elevation 
+! 
+! inputs
+! ------
+! ra, decl: right ascension, declination (degrees)
+! lat, lon: geodetic latitude, longitude (degrees)
+! jd: julian date (decimal)
+! 
+! outputs
+! -------
+! az, el: azimuth, elevation (degrees)
 
   REAL(wp), value :: ra,Decl,lat, lon
   real(wp), intent(in) :: jd
@@ -72,26 +100,38 @@ END subroutine radec2azel
 
 
 elemental real(wp) function toLST(Lon, JD) result(LST)
-! longitude in RADIANS
+! Julian Date => local sidereal time
+!
+! inputs
+! ------
+! lon: geodetic longitude (radians)
+! jd: Julian Date (decimal)
+
   REAL(wp), intent(in) :: Lon, JD
  
   LST = Lon + toGST(jd)
 
-  LST = MOD( LST, 2*pi )
-  
-  IF (LST < 0._wp) LST = LST + 2*pi
+  LST = modulo(LST, 2*pi )
 
 END function toLST
       
 
-elemental real(wp) function toJulian(Year,Mon,Day,Hr,Mint,Sec) result(jd)
+elemental real(wp) function toJulian(t) result(jd)
+! Gregorian date, time => Julian Date
+!
+! inputs
+! ------
+! time: Gregorian user-defined type
+!
+! output
+! -----
+! JD: Julian Date
 
-  INTEGER,intent(in) :: Year, Mon, Day, Hr, Mint
-  real(wp), intent(in) :: sec
+  type(time), intent(in) :: t
   real(wp) :: B, y, m
   
-  y = year
-  m = mon
+  y = t%year
+  m = t%month
 
   IF ( M <= 2 ) THEN
     Y = y - 1
@@ -102,14 +142,22 @@ elemental real(wp) function toJulian(Year,Mon,Day,Hr,Mint,Sec) result(jd)
   
   JD= INT( 365.25_wp*(Y + 4716) ) + &
       INT( 30.6001_wp*(M+1) ) + &
-      Day + B - 1524.5_wp + &
-      ( (Sec/60.0_wp + Mint ) / 60.0_wp + Hr ) / 24.0_wp
+      t%day + B - 1524.5_wp + &
+      ( (t%second/60.0_wp + t%minute ) / 60.0_wp + t%hour ) / 24.0_wp
 
 END function toJulian
 
 
 elemental real(wp) FUNCTION toGST(JD) result(GST)
-
+! Julian Date => to Greenwich Sidereal Time
+!
+! inputs
+! ------
+! JD: Julian Date (decimal)
+!
+! output
+! ------
+! GST: Greenwich Sidereal Time (decimal)
 
   real(wp), intent(in) :: JD
   real(wp) :: TUT1
@@ -121,10 +169,8 @@ elemental real(wp) FUNCTION toGST(JD) result(GST)
              (876600._wp*3600._wp + 8640184.812866_wp)*TUT1 + &
               67310.54841_wp
               
-  gst = MOD(radians(gst) / 240._wp, 2*pi) ! 360/86400 = 1/240, to deg, to rad
+  gst = modulo(radians(gst) / 240._wp, 2*pi) ! 360/86400 = 1/240, to deg, to rad
   
-  gst = modulo(gst, 2*pi)
-
 
 end function toGST
 
