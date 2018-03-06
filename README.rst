@@ -81,6 +81,8 @@ The three separate packages are independent, they don't rely on each other.
 Usage
 =====
 
+Where consistent with the definition of the functions, all arguments may be arbitrarily shaped (scalar, N-D array).
+
 Python
 ------
 
@@ -91,6 +93,19 @@ Python
    x,y,z = pm.geodetic2ecef(lat,lon,alt)
 
    az,el,range = pm.geodetic2aer(lat, lon, alt, observer_lat, observer_lon, 0)
+   
+Python `argument unpacking <https://docs.python.org/3.6/tutorial/controlflow.html#unpacking-argument-lists>`_ can be used for compact function arguments with scalars or arbitrarily shaped N-D arrays:
+
+.. code:: python
+
+    aer = (az,el,slantrange)
+    obslla = (obs_lat,obs_lon,obs_alt)
+    
+    lla = pm.aer2geodetic(*aer,*obslla)
+    
+where tuple ``lla`` is comprised of scalar or N-D arrays ``(lat,lon,alt)``.
+
+
 
 Matlab / GNU Octave
 -------------------

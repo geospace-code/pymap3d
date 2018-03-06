@@ -24,10 +24,12 @@ test_transforms('d',lat,lon, lat1, lon1, az, el)
 test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2rad(az), deg2rad(el))
 
   function test_transforms(angleUnit,lat,lon,lat1,lon1,az,el)
+  
+    angleUnit=char(angleUnit);
 
     %% aer2ecef contains:
     [x1,y1,z1] = geodetic2ecef(E,lat,lon,alt, angleUnit);
-    assert_allclose([x1,y1,z1],[x0,y0,z0])
+    assert_allclose([x1,y1,z1],[x0,y0,z0],[],[],['geodetic2ecef: ',angleUnit])
 
     [e1,n1,u1] = aer2enu(az, el, srange, angleUnit);
     assert_allclose([e1,n1,u1], [er,nr,ur])
@@ -66,7 +68,7 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
 
   end % function
 
-disp('test complete')
+disp('GNU Octave / Matlab code OK')
 end
 
 

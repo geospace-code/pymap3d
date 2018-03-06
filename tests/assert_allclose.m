@@ -1,4 +1,4 @@
-function ok = assert_allclose(actual, desired, atol, rtol)
+function ok = assert_allclose(actual, desired, atol, rtol, err_msg)
 % ok = assert_allclose(actual, desired, atol, rtol)
 %
 % Inputs
@@ -16,7 +16,8 @@ function ok = assert_allclose(actual, desired, atol, rtol)
 %
 % if "actual" is within atol OR rtol of "desired", no error is emitted.
 
-    if nargin < 4, rtol=1e-5; end
+    if nargin < 5, err_msg=''; end
+    if nargin < 4 || isempty(rtol), rtol=1e-5; end
     if nargin < 3 || isempty(atol), atol=1e-8; end
     
     assert(isscalar(rtol))
@@ -26,7 +27,7 @@ function ok = assert_allclose(actual, desired, atol, rtol)
     if maxerrmag > atol + rtol * abs(desired)
       disp(['Actual: ',num2str(actual)])
       disp([' desired: ',num2str(desired)])
-      error(['AssertionError: maximum error magnitude ',num2str(maxerrmag),' on ',int2str(i),'th value: ',num2str(actual(i)),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
+      error(['AssertionError: ',err_msg,' maximum error magnitude ',num2str(maxerrmag),' on ',int2str(i),'th value: ',num2str(actual(i)),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
     end
 
 end

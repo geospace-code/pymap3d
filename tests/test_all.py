@@ -39,13 +39,22 @@ ra, dec = (166.5032081149338,55.000011165405752)
 ha = 45.482789587392013
 azi, eli = (180.1,80)
 
-tlat,tlon,talt = 42, -82, 200
-taz,tel,tsrange = 33, 70, 1000
+lla0 = 42, -82, 200
+rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
+
+aer0 = (33, 70, 1000)
+raer0 = (radians(aer0[0]), radians(aer0[1]), aer0[2])
+
 # %% outcomes from matlab
-x0, y0, z0 = 660.6753e3, -4700.9487e3, 4245.738e3 # geodetic2ecef
-lat1, lon1, alt1 = 42.002582, -81.997752, 1.1397018e3 #aer2geodetic
-a2x, a2y, a2z = 660930.2, -4701424, 4246579.6 #aer2ecef
-e0, n0, u0 = 186.277521, 286.842228, 939.692621 #aer2enu
+xyz0 = (660.6753e3, -4700.9487e3, 4245.738e3) # geodetic2ecef
+
+lla1 = (42.002582, -81.997752, 1.1397018e3) #aer2geodetic
+rlla1 = (radians(lla1[0]), radians(lla1[1]), lla1[2])
+
+axyz0 = 660930.2, -4701424, 4246579.6 #aer2ecef
+
+enu0 = (186.277521, 286.842228, 939.692621) #aer2enu
+ned0 = (enu0[1],enu0[0],-enu0[2])
 
 # vector
 vx,vy,vz = (5,3,2)
@@ -99,85 +108,82 @@ class Pure(unittest.TestCase):
             ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
             lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
 
-        x1,y1,z1 = pm.geodetic2ecef(tlat,tlon,talt)
+        xyz1 = pm.geodetic2ecef(*lla0)
 
-        assert_allclose(pm.geodetic2ecef(radians(tlat),radians(tlon),talt,deg=False),
-                        (x1,y1,z1))
+        assert_allclose(pm.geodetic2ecef(*rlla0, deg=False), xyz1, err_msg='geodetic2ecef: rad')
+        assert_allclose(xyz1, xyz0, err_msg='geodetic2ecef: deg')
 
-        assert_allclose((x1,y1,z1), (x0,y0,z0),
-                        err_msg='geodetic2ecef')
-
-        assert_allclose(pm.ecef2geodetic(x1,y1,z1), (tlat,tlon,talt),
-                    err_msg='ecef2geodetic')
+        assert_allclose(pm.ecef2geodetic(*xyz1), lla0, err_msg='ecef2geodetic: deg')
+        assert_allclose(pm.ecef2geodetic(*xyz1, deg=False), rlla0, err_msg='ecef2geodetic: rad')
 
         if pyproj:
-            assert_allclose(pyproj.transform(lla,ecef,tlon,tlat,talt), (x1,y1,z1))
-            assert_allclose(pyproj.transform(ecef, lla, x1, y1, z1), (tlon,tlat,talt))
+            assert_allclose(pyproj.transform(lla,ecef,lla0[1],lla0[0],lla0[2]), xyz1)
+            assert_allclose(pyproj.transform(ecef, lla, *xyz1), 
+                            (lla0[1],lla0[0],lla0[2]))
 
 
-        lat2,lon2,alt2 = pm.aer2geodetic(taz,tel,tsrange,tlat,tlon,talt)
+        lla2 = pm.aer2geodetic(*aer0, *lla0)
+        rlla2 = pm.aer2geodetic(*raer0, *rlla0, deg=False)
 
-        assert_allclose((lat2,lon2,alt2), (lat1,lon1,alt1),
-                   err_msg='aer2geodetic')
+        assert_allclose(lla2, lla1, err_msg='aer2geodetic: deg')
+        assert_allclose(rlla2, rlla1, err_msg='aer2geodetic:rad')
 
-        assert_allclose(pm.geodetic2aer(lat2,lon2,alt2,tlat,tlon,talt),
-                        (taz,tel,tsrange),
-                         err_msg= 'geodetic2aer')
+        assert_allclose(pm.geodetic2aer(*lla2, *lla0), aer0, err_msg= 'geodetic2aer: deg')
+        assert_allclose(pm.geodetic2aer(*rlla2, *rlla0, deg=False), raer0, err_msg= 'geodetic2aer: rad')
+        
+# %% aer-ecef
+        xyz2 = pm.aer2ecef(*aer0,*lla0)
 
+        assert_allclose(pm.aer2ecef(*raer0, *rlla0,deg=False),
+                                    axyz0, err_msg='aer2ecef:rad')
 
-        x2,y2,z2 = pm.aer2ecef(taz,tel,tsrange,tlat,tlon,talt)
+        assert_allclose(xyz2, axyz0, err_msg='aer2ecef: deg')
 
-        assert_allclose(pm.aer2ecef(radians(taz),radians(tel),tsrange,radians(tlat),radians(tlon),talt,deg=False),
-                        (a2x,a2y,a2z))
+        assert_allclose(pm.ecef2aer(*xyz2, *lla0), aer0, err_msg='ecef2aer:deg')
+        assert_allclose(pm.ecef2aer(*xyz2, *rlla0, deg=False), raer0, err_msg='ecef2aer:rad')
+# %% aer-enu
+        enu1 = pm.aer2enu(*aer0)
+        ned1 = (enu1[1],enu1[0],-enu1[2])
+        
+        assert_allclose(enu1,enu0, err_msg='aer2enu: deg')
+        assert_allclose(pm.aer2enu(*raer0, deg=False), enu0, err_msg='aer2enu: rad')
 
-        assert_allclose((x2,y2,z2), (a2x,a2y,a2z),
-                         err_msg='aer2ecef')
+        assert_allclose(pm.aer2ned(*aer0), ned0, err_msg='aer2ned')
 
-        assert_allclose(pm.ecef2aer(x2, y2, z2, tlat, tlon,talt), (taz,tel,tsrange),
-                        err_msg='ecef2aer')
+        assert_allclose(pm.enu2aer(*enu1), aer0, err_msg='enu2aer: deg')
+        assert_allclose(pm.enu2aer(*enu1, deg=False), raer0, err_msg='enu2aer: rad')
 
+        assert_allclose(pm.ned2aer(*ned1), aer0, err_msg='ned2aer')
 
-        e1,n1,u1 = pm.aer2enu(taz,tel,tsrange)
+# %% enu-ecef
+        assert_allclose(pm.enu2ecef(*enu1, *lla0), xyz2, err_msg='enu2ecef: deg')
+        assert_allclose(pm.enu2ecef(*enu1, *rlla0, deg=False), xyz2, err_msg='enu2ecef: rad')
 
-        assert_allclose((e1,n1,u1),(e0,n0,u0),
-                        err_msg='aer2enu')
+        assert_allclose(pm.ecef2enu(*xyz2, *lla0), enu1, err_msg='ecef2enu:deg')
+        assert_allclose(pm.ecef2enu(*xyz2, *rlla0, deg=False), enu1, err_msg='ecef2enu:rad')
 
-        assert_allclose(pm.aer2ned(taz,tel,tsrange),(n0,e0,-u0),
-                        err_msg='aer2ned')
-
-        assert_allclose(pm.enu2aer(e1,n1,u1), (taz,tel,tsrange),
-                        err_msg='enu2aer')
-
-        assert_allclose(pm.ned2aer(n1,e1,-u1), (taz,tel,tsrange),
-                        err_msg='ned2aer')
-
-
-        assert_allclose(pm.enu2ecef(e1,n1,u1,tlat,tlon,talt),(x2, y2, z2),
-                        err_msg='enu2ecef')
-
-        assert_allclose(pm.ecef2enu(x2,y2,z2, tlat, tlon, talt),(e1,n1,u1),
-                        err_msg='ecef2enu')
-
-        assert_allclose(pm.ecef2ned(x2,y2,z2, tlat, tlon, talt),(n1,e1,-u1),
+        assert_allclose(pm.ecef2ned(*xyz2, *lla0), ned1,
                         err_msg='ecef2ned')
 
-        assert_allclose(pm.ned2ecef(n1,e1,-u1,tlat,tlon,talt),(x2,y2,z2),
+        assert_allclose(pm.ned2ecef(*ned1, *lla0), xyz2,
                         err_msg='ned2ecef')
-    # %%
-        assert_allclose(pm.ecef2enuv(vx,vy,vz,tlat,tlon), (ve,vn,vu))
+# %%
+        assert_allclose(pm.ecef2enuv(vx,vy,vz, *lla0[:2]), (ve,vn,vu))
 
 
-        assert_allclose(pm.ecef2nedv(vx,vy,vz,tlat,tlon), (vn,ve,-vu))
+        assert_allclose(pm.ecef2nedv(vx,vy,vz, *lla0[:2]), (vn,ve,-vu))
 
-    #%%
-        e3,n3,u3 = pm.geodetic2enu(lat2,lon2,alt2,tlat,tlon,talt)
+# %%
+        enu3 = pm.geodetic2enu(*lla2, *lla0)
+        ned3 = (enu3[1],enu3[0],-enu3[2])
 
-        assert_allclose(pm.geodetic2ned(lat2,lon2,alt2,tlat,tlon,talt),(n3,e3,-u3))
+        assert_allclose(pm.geodetic2ned(*lla2, *lla0), ned3,
+                        err_msg='geodetic2ned: deg')
 
-        assert_allclose(pm.enu2geodetic(e3,n3,u3,tlat,tlon,talt),(lat2,lon2,alt2),
+        assert_allclose(pm.enu2geodetic(*enu3, *lla0), lla2,
                         err_msg='enu2geodetic')
 
-        assert_allclose(pm.ned2geodetic(n3,e3,-u3,tlat,tlon,talt),(lat2,lon2,alt2),
+        assert_allclose(pm.ned2geodetic(*ned3, *lla0), lla2,
                         err_msg='ned2geodetic')
 
 class Numpy(unittest.TestCase):
@@ -230,11 +236,11 @@ class Numpy(unittest.TestCase):
         if numpy is None or astropy is None:
             logging.warning('ECI not tested')
             return
-        tlla = (tlat, tlon, talt)
+            
         teci = (-3.977913815668146e6,-2.582332196263046e6,4.250818828152067e6)
         t = datetime(2013,1,15,12,0,5,tzinfo=UTC)
         lla = numpy.asarray(pm.eci2geodetic(teci,t)).squeeze()
-        assert_allclose(lla,tlla,rtol=0.2)
+        assert_allclose(lla, lla0,rtol=0.2)
 
         assert_allclose(pm.eci2ecef(teci,t).squeeze(),
                     [649012.04640917,-4697980.55129606,4250818.82815207])

@@ -42,48 +42,47 @@ elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
   integer :: i
   type(Ellipsoid) :: ell
 
-  if (present(spheroid)) then
-     ell = spheroid
-  else
-     ell = wgs84Ellipsoid
-  endif
+  ell = merge(spheroid, wgs84Ellipsoid, present(spheroid))
 
   if (.not.present(deg)) deg = .true.
 
-    ea = ell%SemimajorAxis
-    eb = ell%SemiminorAxis
-    rad = hypot(x, y)
+  ea = ell%SemimajorAxis
+  eb = ell%SemiminorAxis
+  rad = hypot(x, y)
 ! Constant required for Latitude equation
-    rho = atan2(eb * z, ea * rad)
+  rho = atan2(eb * z, ea * rad)
 ! Constant required for latitude equation
-    c = (ea**2 - eb**2) / hypot(ea * rad, eb * z)
+  c = (ea**2 - eb**2) / hypot(ea * rad, eb * z)
 ! Starter for the Newtons Iteration Method
-    vnew = atan2(ea * z, eb * rad)
+  vnew = atan2(ea * z, eb * rad)
 ! Initializing the parametric latitude
-    v = 0._wp
-    do i = 1,5
-      v = vnew
-     ! Newtons Method for computing iterations
-      vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) / &
-                (2 * (cos(v - rho) - c * cos(2 * v))))
+  v = 0._wp
+  do i = 1,5
+    v = vnew
+   ! Newtons Method for computing iterations
+    vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) / &
+              (2 * (cos(v - rho) - c * cos(2 * v))))
 
-      if (isclose(v,vnew)) exit
-    enddo
+    if (isclose(v,vnew)) exit
+  enddo
 
 ! Computing latitude from the root of the latitude equation
-    lat = atan2(ea * tan(vnew), eb)
+  lat = atan2(ea * tan(vnew), eb)
 ! by inspection
-    lon = atan2(y, x)
+  lon = atan2(y, x)
 
-    alt = ((rad - ea * cos(vnew)) * cos(lat)) + &
-           ((z - eb * sin(vnew)) * sin(lat))
+  alt = ((rad - ea * cos(vnew)) * cos(lat)) + &
+         ((z - eb * sin(vnew)) * sin(lat))
 
-    if (deg) lat = degrees(lat); lon = degrees(lon)
+  if (deg) then
+    lat = degrees(lat)
+    lon = degrees(lon)
+  endif
 
 end subroutine ecef2geodetic
 
 
-elemental subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
+elemental subroutine geodetic2ecef(lat,lon,alt, x,y,z, spheroid, deg)
 ! geodetic2ecef   convert from geodetic to ECEF coordiantes
 !
 ! Inputs
@@ -105,15 +104,14 @@ elemental subroutine geodetic2ecef(lat,lon,alt,x,y,z,spheroid,deg)
   real(wp) :: N
   type(Ellipsoid) :: ell 
   
-  if (present(spheroid)) then
-     ell = spheroid
-  else
-     ell = wgs84Ellipsoid
-  endif
+  ell = merge(spheroid, wgs84Ellipsoid, present(spheroid)) 
 
   if (.not.present(deg)) deg=.true.
 
-  if (deg) lat = radians(lat); lon = radians(lon)
+  if (deg) then
+    lat = radians(lat)
+    lon = radians(lon)
+  endif
 
 ! Radius of curvature of the prime vertical section
   N = radius_normal(lat, ell)
@@ -339,7 +337,10 @@ elemental subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 
   if(.not.present(deg)) deg=.true.
 
-  if (deg) az = radians(az); el = radians(el)
+  if (deg) then
+    az = radians(az)
+    el = radians(el)
+  endif
 
 ! Calculation of AER2ENU
    up = slantRange * sin(el)
@@ -376,9 +377,12 @@ elemental subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
   slantRange = hypot(r, up)
   ! radians
   elev = atan2(up, r)
-  az = mod(atan2(east, north), 2._wp * atan2(0._wp, -1._wp))
+  az = modulo(atan2(east, north), 2._wp * atan2(0._wp, -1._wp))
 
-  if (deg) elev = degrees(elev); az = degrees(az)
+  if (deg) then
+    elev = degrees(elev)
+    az = degrees(az)
+  endif
   
 end subroutine enu2aer
 
@@ -435,7 +439,7 @@ elemental subroutine ecef2enu(x, y, z, lat0, lon0, alt0, east, north, up, sphero
   
   real(wp) :: x0,y0,z0
 
-  call geodetic2ecef(lat0, lon0, alt0, x0,y0,z0,spheroid,deg)
+  call geodetic2ecef(lat0, lon0, alt0, x0,y0,z0, spheroid,deg)
   call ecef2enuv(x - x0, y - y0, z - z0, lat0, lon0, east, north, up, deg)
 end subroutine ecef2enu
 
@@ -462,7 +466,10 @@ elemental subroutine ecef2enuv(u, v, w, lat0, lon0, east, north, up, deg)
   
   if (.not.present(deg)) deg = .true.
   
-  if (deg) lat0 = radians(lat0); lon0 = radians(lon0)
+  if (deg) then
+    lat0 = radians(lat0)
+    lon0 = radians(lon0)
+  endif
   
   t     =  cos(lon0) * u + sin(lon0) * v
   east  = -sin(lon0) * u + cos(lon0) * v
@@ -492,14 +499,17 @@ elemental subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
 
   if(.not.present(deg)) deg=.true.
 
-  if (deg) lat0 = radians(lat0); lon0 = radians(lon0)
+  if (deg) then
+    lat0 = radians(lat0)
+    lon0 = radians(lon0)
+  endif
 
 
-    t = cos(lat0) * up - sin(lat0) * n
-    w = sin(lat0) * up + cos(lat0) * n
+  t = cos(lat0) * up - sin(lat0) * n
+  w = sin(lat0) * up + cos(lat0) * n
 
-    u = cos(lon0) * t - sin(lon0) * e
-    v = sin(lon0) * t + cos(lon0) * e
+  u = cos(lon0) * t - sin(lon0) * e
+  v = sin(lon0) * t + cos(lon0) * e
 
 end subroutine enu2uvw
 
@@ -514,6 +524,8 @@ end function radius_normal
 
 elemental real(wp) function anglesep(lon0,lat0,lon1,lat1)
 ! angular separation between two points on sphere
+! all input/output in DEGREES
+
   real(wp), intent(in) :: lat0,lon0,lat1,lon1
   real(wp) :: la0,lo0,la1,lo1
   
@@ -530,6 +542,7 @@ end function anglesep
 
 
 elemental real(wp) function haversine(theta)
+! theta: angle in RADIANS
 
   real(wp), intent(in) :: theta
 
