@@ -9,6 +9,9 @@
 
 .. image:: https://coveralls.io/repos/github/scivision/pymap3d/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/pymap3d?branch=master
+    
+.. image:: https://ci.appveyor.com/api/projects/status/af479t19j66t8x5n?svg=true
+    :target: https://ci.appveyor.com/project/scivision/pymap3d
 
 .. image:: https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability
    :target: https://codeclimate.com/github/scivision/pymap3d/maintainability

@@ -1,0 +1,41 @@
+image:
+- Visual Studio 2017
+- Ubuntu
+
+stack: python 3
+
+environment:
+  MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
+  PY_DIR: C:\Python36-x64
+
+clone_depth: 3
+
+before_build:
+- cmd: set PATH=%MINGW_DIR%;%PY_DIR%;%PY_DIR%\Scripts;%PATH%
+# fix CMake sh.exe issue, by removing Git path.
+- cmd: set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+- cmd: set FC=%MINGW_DIR%\gfortran 
+- cmd: set CXX=%MINGW_DIR%\g++ 
+- cmd: set CC=%MINGW_DIR%\gcc
+
+- sh: sudo apt -yq update > /dev/null
+- sh: sudo apt install -yq --no-install-suggests --no-install-recommends gfortran cmake make > /dev/null
+
+- cd bin
+
+build_script:
+- cmd: cmake -G "MinGW Makefiles" ..
+- cmd: mingw32-make
+- cmd: testmaptran
+
+- sh: cmake ..
+- sh: make
+- sh: ./testmaptran
+
+- cd ..
+- python --version
+- pip install -e .[tests]
+  
+after_build:
+- pytest -v
+
