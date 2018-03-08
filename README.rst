@@ -51,8 +51,10 @@ Prerequisites
 =============
 
 * Python PyMap3D:  any of Python 2.6, 2.7, 3.4, 3.5, 3.6, ...
+  
   * Numpy (optional): if not present, function from ``math`` are automatically used, and if Numpy is present, it is automatically used.
   * `AstroPy <http://www.astropy.org/>`_  (optional): If not present, ECI coordinate conversions are not available.
+  
 * Matlab / GNU Octave: under ``matlab/``
 * Fortran MapTran: under ``fortran/``:  any Fortran compiler (tested with ``gfortran``)
 
