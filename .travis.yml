@@ -38,7 +38,7 @@ script:
       cd bin;
       cmake ..;
       make;
-      ./testmaptran;
+      ctest -V;
     fi
 
 after_success: 

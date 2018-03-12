@@ -73,6 +73,7 @@ The three separate packages are independent, they don't rely on each other.
       
   One can verify Python functionality after installation by::
   
+      pip install -e .[tests]  
       pytest -v
 
 * Fortran MapTran::
@@ -81,9 +82,9 @@ The three separate packages are independent, they don't rely on each other.
     cmake ..
     make
     
-  One can verify Fortran functionality after compiling by::
+  verify Fortran functionality after compiling by::
   
-      ./testmaptran
+      ctest -V
 
 * Matlab/Octave: from within Matlab/Octave::
 

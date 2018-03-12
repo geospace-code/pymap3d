@@ -26,11 +26,11 @@ before_build:
 build_script:
 - cmd: cmake -G "MinGW Makefiles" ..
 - cmd: mingw32-make
-- cmd: testmaptran
 
 - sh: cmake ..
 - sh: make
-- sh: ./testmaptran
+
+- ctest -V
 
 - cd ..
 - python --version
