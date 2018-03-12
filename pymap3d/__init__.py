@@ -38,7 +38,7 @@ from .timeconv import str2dt
 
 
 class EarthEllipsoid:
-
+    """generate reference ellipsoid"""
     def __init__(self,model='wgs84'):
         if model == 'wgs84':
             """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
@@ -55,8 +55,20 @@ class EarthEllipsoid:
 #%% to AER (azimuth, elevation, range)
 def ecef2aer(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
-    Convert ECEF of target to azimuth, elevation, range (meters) from observer at lat0,lon0,h0 (meters)
-    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    Observer => Point
+
+    input:
+    -----
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]
+    h0     [meters]                observer altitude                 [0,Infinity)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+    output: AER
+    ------
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
     """
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
@@ -65,8 +77,20 @@ def ecef2aer(x, y, z, lat0, lon0, h0, ell=None, deg=True):
 
 def eci2aer(eci, lat0, lon0, h0, t):
     """
-    Convert ECI of target to azimuth, elevation, range (meters) from observer at lat0,lon0,h0 (meters)
-    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    Observer => Point
+
+    input
+    -----
+    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
+    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]
+    h0     [meters]                observer altitude                [0,Infinity)
+    t  time (datetime.datetime)   time of obsevation (UTC)
+
+
+    output: AER
+    ------
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
     """
     ecef = eci2ecef(eci, t)
 
@@ -75,11 +99,17 @@ def eci2aer(eci, lat0, lon0, h0, t):
 
 def enu2aer(e, n, u, deg=True):
     """
-    Convert ENU (meters) to azimuth, elevation, range (meters)
+    Observer => Point
 
-    input: east, north, up [m]
+    input
+    -----
+    e,n,u  [meters]  East, north, up                                [0,Infinity)
+    deg    degrees input/output  (False: radians in/out)
 
-    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    output: AER
+    ------
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
     """
     r = hypot(e, n)
     slantRange = hypot(r, u)
@@ -93,12 +123,19 @@ def enu2aer(e, n, u, deg=True):
 
 def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
     """
-    gives az,el,range from observer looking to target geodetic coordinates.
+    Observer => Point
 
-    input: Point(s): lat, lon, h (altitude, meters)
-           Observer: lat0, lon0, h0 (altitude, meters)
+    input:
+    -----
+    Target:   lat, lon, h (altitude, meters)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
 
-    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    output: AER
+    ------
+    azimuth, elevation (degrees/radians)
+    slant range [meters]
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
 
@@ -107,9 +144,17 @@ def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
 
 def ned2aer(n, e, d, deg=True):
     """
-    Convert target NED to azimuth, elevation, range (meters)
+    Observer => Point
 
-    output: azimuth (deg), elevation (deg), slant range (m) for Obs->Point
+    input
+    -----
+    n,e,d  [meters]  North,east, down                                [0,Infinity)
+    deg    degrees input/output  (False: radians in/out)
+
+    output: AER
+    ------
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
     """
     return enu2aer(e, n, -d, deg=deg)
 
@@ -118,7 +163,13 @@ def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=None, deg=True):
     """
     convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.
 
-     Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]
+     Input:
+     -----
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
 
      output: ECEF x,y,z  [meters]
 
@@ -136,11 +187,16 @@ def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=None, deg=True):
 
 def eci2ecef(eci, t):
     """
-    Convert ECI to ECEF coordinates
+     Observer => Point
 
-    inputs: t is either a datetime or float in radians
+    input
+    -----
+    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
+    t  time (datetime.datetime)   time of obsevation (UTC)
 
-    output: ECEF x,y,z (meters)
+    output
+    ------
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
     """
     if numpy is None or Time is None:
         raise ImportError('eci2ecef requires Numpy and AstroPy')
@@ -174,27 +230,39 @@ def eci2ecef(eci, t):
     return ecef
 
 
-def enu2ecef(e1, n1, u1, lat0, lon0, alt0, ell=None, deg=True):
-    """convert ENU to ECEF coordinates
+def enu2ecef(e1, n1, u1, lat0, lon0, h0, ell=None, deg=True):
+    """
+    Observer => Point
 
     inputs:
-        ENU e1, n1, u1 (meters)
-        observer lat0, lon0, alt0 (degrees,degrees,meters)
+     e1, n1, u1 (meters)   east, north, up
+     observer: lat0, lon0, h0 (degrees/radians,degrees/radians, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
 
-    output: ECEF x,y,z (meters)
 
+    output
+    ------
+    x,y,z  [meters] target ECEF location                         [0,Infinity)
     """
-    x0, y0, z0 = geodetic2ecef(lat0, lon0, alt0, ell, deg=deg)
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
     dx, dy, dz = _enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
 
     return x0 + dx, y0 + dy, z0 + dz
 
 
 def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
-    """convert geodetic latitude, longitude, altiude (meters) to ECEF
+    """
+    Observer => Point
+
+    input:
+    -----
+    Target:   lat, lon, h (altitude, meters)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
 
     output: ECEF x,y,z (meters)
-
     """
     if ell is None:
         ell = EarthEllipsoid()
@@ -214,15 +282,39 @@ def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
 
 
 def ned2ecef(n, e, d, lat0, lon0, h0, ell=None, deg=True):
-    """convert NED to ECEF coordinates, from observer at lat0,lon0,h0 (meters)
+    """
+    Observer => Point
 
-    output: NED (meters)
+    input
+    -----
+    n,e,d  [meters]  North,east, down                                [0,Infinity)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+    output:
+    ------
+    ECEF  x,y,z  (meters)
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
 #%% to ECI
 def aer2eci(az, el, srange, lat0, lon0, h0, t, ell=None, deg=True):
-    """convert target azimuth, elevation, range to ECI"""
+    """
+
+    input
+    -----
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+    t  datetime.datetime of obseration
+
+    output
+    ------
+    eci  x,y,z (meters)
+    """
     if numpy is None:
         raise ImportError('aer2eci requires Numpy')
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
@@ -232,8 +324,17 @@ def aer2eci(az, el, srange, lat0, lon0, h0, t, ell=None, deg=True):
 
 def ecef2eci(ecef, t):
     """
-    input t is either a datetime or float in radians
+    Point => Point
 
+    input
+    -----
+    ecef:  Nx3  x,y,z  (meters)
+    t:  datetime.datetime
+
+
+    output
+    ------
+    eci  x,y,z (meters)
     """
     if Time is None or numpy is None:
         raise ImportError('ecef2eci requires Numpy and AstroPy')
@@ -267,8 +368,13 @@ def ecef2eci(ecef, t):
 #%% to ENU
 def aer2enu(az, el, srange, deg=True):
     """
-    input: azimuth, elevation [deg]    slant range [m]
-    output: East, North, Up [m]
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
+    deg    degrees input/output  (False: radians in/out)
+
+    output:
+    -------
+    e,n,u   East, North, Up [m]
 
     """
     if deg:
@@ -282,7 +388,17 @@ def aer2enu(az, el, srange, deg=True):
 
 def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
-    convert target ECEF (meters) to ENU (meters) from observer at lat0,lon0,h0 (degrees,degrees,meters)
+
+    input
+    -----
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+    output:
+    -------
+    e,n,u   East, North, Up [m]
 
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
@@ -293,6 +409,11 @@ def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
 def ecef2enuv(u, v, w, lat0, lon0, deg=True):
     """
     for VECTOR i.e. between two points
+
+    input
+    -----
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
+
     """
     if deg:
         lat0 = radians(lat0)
@@ -307,7 +428,20 @@ def ecef2enuv(u, v, w, lat0, lon0, deg=True):
 
 
 def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
-    """convert target geodetic coordinates to ENU (meters) from observer at lat0,lon0,h0 (degrees,degrees,meters)"""
+    """
+
+    input
+    -----
+    target: lat,lon, h
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+
+    output:
+    -------
+    e,n,u   East, North, Up [m]
+    """
     x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)
     x2, y2, z2 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
     dx = x1 - x2
@@ -316,21 +450,41 @@ def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
 
     return _uvw2enu(dx, dy, dz, lat0, lon0, deg=deg)
 #%% to geodetic
-def aer2geodetic(az, el, srange, lat0, lon0, alt0, deg=True):
+def aer2geodetic(az, el, srange, lat0, lon0, h0, deg=True):
     """
-    Input: az,el; lat0,lon0 [degrees]   srange, alt0 [meters]
+    Input:
+    -----
+    az,el (degrees/radians)
+    srange[meters]
 
-    output: WGS84 lat,lon [degrees]  altitude above spheroid  [meters]
+    Observer: lat0,lon0 [degrees]
+              altitude h0 [meters]
+
+    deg :   degrees input/output  (False: radians in/out)
+
+    output:
+    WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]
 
     """
-    x, y, z = aer2ecef(az, el, srange, lat0, lon0, alt0, deg=deg)
+    x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, deg=deg)
 
     return ecef2geodetic(x, y, z, deg=deg)
 
 
 def ecef2geodetic(x, y, z, ell=None, deg=True):
     """
-    convert ECEF (meters) to geodetic coordintes
+    convert ECEF (meters) to geodetic coordinates
+
+    input
+    -----
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+    output
+    ------
+    lat,lon   (degrees/radians)
+    alt  (meters)
 
     Algorithm is based on
     http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
@@ -415,8 +569,14 @@ def eci2geodetic(eci, t):
 
     inputs:
 
-    eci/ecef: a Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
+    eci/ecef: Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
     t : length N vector of datetime OR greenwich sidereal time angle [radians].
+
+
+    output
+    ------
+    lat,lon   (degrees/radians)
+    alt  (meters)
 
     Note: Conversion is idealized: doesn't consider nutations, perterbations,
     etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
@@ -430,7 +590,21 @@ def eci2geodetic(eci, t):
 
 
 def enu2geodetic(e, n, u, lat0, lon0, h0,  ell=None, deg=True):
-    """convert target ENU from observer at lat0,lon0,h0 to geodetic coordinates"""
+    """
+
+    input
+    -----
+    e,n,u   East, North, Up [m]
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+
+    output:
+    -------
+    target: lat,lon, h  (degrees/radians,degrees/radians, meters)
+
+    """
 
     x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell, deg=deg)
 
@@ -438,14 +612,38 @@ def enu2geodetic(e, n, u, lat0, lon0, h0,  ell=None, deg=True):
 
 
 def ned2geodetic(n, e, d, lat0, lon0, h0, ell=None, deg=True):
-    """convert target NED from observer at lat0,lon0,h0 to geodetic coordinates"""
+    """
+
+    input
+    -----
+    n,e,d   North, east, down (meters)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+
+    output:
+    -------
+    target: lat,lon, h  (degrees/radians,degrees/radians, meters)
+
+    """
     x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0,  ell, deg=deg)
 
     return ecef2geodetic(x, y, z, ell, deg=deg)
 # %% to NED
 
 def aer2ned(az, elev, slantRange, deg=True):
-    """convert target azimuth, elevation, range to NED coordinates (meters)"""
+    """
+    input
+    -----
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
+    deg    degrees input/output  (False: radians in/out)
+
+    output:
+    -------
+    n,e,d  North,east, down [m]
+    """
     e, n, u = aer2enu(az, elev, slantRange, deg=deg)
 
     return n, e, -u
@@ -453,7 +651,17 @@ def aer2ned(az, elev, slantRange, deg=True):
 
 def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
-    convert target ECEF (meters) to NED (meters) from observer at lat0,lon0,h0
+    input
+    -----
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    Observer: lat0, lon0, h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+    output:
+    -------
+    n,e,d  North,east, down [m]
+
     """
     e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
@@ -470,7 +678,21 @@ def ecef2nedv(u, v, w, lat0, lon0, deg=True):
 
 
 def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
-    """convert target geodetic coordinates to NED (meters) from observer at lat0,lon0,h0"""
+    """
+    input
+    -----
+    target: lat,lon  (degrees/radians)
+    h (altitude, meters)
+    Observer: lat0, lon0 (degrees/radians)
+    h0 (altitude, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+
+    output:
+    -------
+    n,e,d  North,east, down [m]
+    """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
 
     return n, e, -u
@@ -478,6 +700,7 @@ def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
 #%% shared functions
 
 def get_radius_normal(lat_radians, ell):
+    """ Compute normal radius of planetary body"""
     if ell is None:
         ell = EarthEllipsoid()
 
@@ -573,7 +796,10 @@ def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
     return altaz.az.degree, altaz.alt.degree
 # %%
 def isclose(actual, desired, rtol=1e-7, atol=0):
-    """https://www.python.org/dev/peps/pep-0485/#proposed-implementation"""
+    """
+    rigourously evaluates closeness of values.
+    https://www.python.org/dev/peps/pep-0485/#proposed-implementation
+    """
     return abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol)
 
 
