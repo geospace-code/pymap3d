@@ -50,7 +50,7 @@ Why not `PyProj <https://github.com/jswhit/pyproj>`_?
 Prerequisites
 =============
 
-* Python PyMap3D:  any of Python 2.6, 2.7, 3.4, 3.5, 3.6, ...
+* Python PyMap3D:  any of Python 2.6, 2.7, 3.4, 3.5, 3.6, but only Python >= 3.5 is tested regularly.
   * Numpy (optional): if not present, function from ``math`` are automatically used, and if Numpy is present, it is automatically used.
   * `AstroPy <http://www.astropy.org/>`_  (optional): If not present, ECI coordinate conversions are not available.
 * Matlab / GNU Octave: under ``matlab/``
@@ -69,16 +69,29 @@ The three separate packages are independent, they don't rely on each other.
       git clone https://github.com/scivision/pymap3d
 
       pip install -e .
+      
+      
+  One can verify Python functionality after installation by::
+  
+      pytest -v
 
 * Fortran MapTran::
 
     cd bin
     cmake ..
     make
+    
+  One can verify Fortran functionality after compiling by::
+  
+      ./testmaptran
 
-* Matlab/Octave::
+* Matlab/Octave: from within Matlab/Octave::
 
     addpath(pymap3d/matlab)
+    
+  One can verify Matlab code functionality by running::
+  
+      tests/Test.m
 
 
 Usage

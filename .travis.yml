@@ -28,11 +28,9 @@ addons:
 install: pip -q install -e .[tests]
 
 script: 
-  - pytest
+  - pytest -v
 
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-      coverage run tests/test_all.py -v;
-      
       cd tests;
       octave-cli -q Test.m;
       cd ..;
@@ -44,4 +42,7 @@ script:
     fi
 
 after_success: 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then coveralls; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
+    coverage run tests/test_ongc.py;
+    coveralls;
+    fi

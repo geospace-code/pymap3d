@@ -1,6 +1,7 @@
 ## Issues 
 
 GitHub Issues are a great way to report problems or request features.
+This project adheres to [Semantic Versioning](https://semver.org).
 The goal of PyMap3D is to provide a Matlab Mapping Toolbox - like API for 3D coordinate conversion,
 allowing for arbitrarily shaped input/output arrays where feasible.
 
