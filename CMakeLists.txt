@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.7)
 project(MapTran Fortran)
 
+set(CTEST_OUTPUT_ON_FAILURE ON)
+
 add_compile_options(-O3 -march=native -ffpe-trap=invalid,zero,overflow -g -fbacktrace 
                     -Wall -Wextra -Wpedantic -Warray-bounds)# -Wfatal-errors)
                     
