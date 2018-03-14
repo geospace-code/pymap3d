@@ -82,9 +82,9 @@ The three separate packages are independent, they don't rely on each other.
     cmake ..
     make
     
-  verify Fortran functionality after compiling by::
+  verify Fortran (as well as Python and Matlab/Octave) functionality after compiling by::
   
-      ctest -V
+    make test
 
 * Matlab/Octave: from within Matlab/Octave::
 

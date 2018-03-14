@@ -25,24 +25,17 @@ addons:
       - octave
 
 
-install: pip -q install -e .[tests]
+install: 
+  - pip -q install -e .[tests]
+  - cd bin
+  - cmake ..
+  - make
 
 script: 
-  - pytest -v
-
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-      cd tests;
-      octave-cli -q Test.m;
-      cd ..;
-      
-      cd bin;
-      cmake ..;
-      make;
-      ctest -V;
-    fi
+  - make test
 
 after_success: 
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-    coverage run tests/test_ongc.py;
+    coverage run tests/test_all.py;
     coveralls;
     fi
