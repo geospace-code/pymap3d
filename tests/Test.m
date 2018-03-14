@@ -69,14 +69,11 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
   end % function
 
 disp('GNU Octave / Matlab code OK')
-end
+
+end % function
 
 
-function rad = deg2rad(deg) 
-% for Octave < 4.0
-  rad = deg * (pi / 180);
 
-end
 
 % Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 %
