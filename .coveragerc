@@ -1,8 +1,13 @@
-[report]
+[run]
 omit =
     */python?.?/*
-exclude_lines = 
-    RuntimeError
-    ImportError
-    ValueError
-    TypeError
+    
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise RuntimeError
+    raise NotImplementedError
+    raise ImportError
+    raise ValueError
+    raise TypeError
