@@ -13,6 +13,14 @@
 .. image:: https://ci.appveyor.com/api/projects/status/af479t19j66t8x5n?svg=true
     :target: https://ci.appveyor.com/project/scivision/pymap3d
 
+.. image:: https://img.shields.io/pypi/pyversions/pymap3d.svg
+  :target: https://pypi.python.org/pypi/pymap3d
+  :alt: Python versions (PyPI)
+
+.. image::  https://img.shields.io/pypi/format/pymap3d.svg
+  :target: https://pypi.python.org/pypi/pymap3d
+  :alt: Distribution format (PyPI)
+
 .. image:: https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability
    :target: https://codeclimate.com/github/scivision/pymap3d/maintainability
    :alt: Maintainability
