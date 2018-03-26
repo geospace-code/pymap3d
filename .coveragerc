@@ -1,4 +1,5 @@
 [run]
+cover_pylib = false
 omit =
     /home/travis/virtualenv/*
     
