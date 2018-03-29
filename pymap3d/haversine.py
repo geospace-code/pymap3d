@@ -26,7 +26,7 @@ within double precision arithmetic limitations
 """
 
 
-def anglesep_meeus(lon0, lat0, lon1, lat1):
+def anglesep_meeus(lon0, lat0, lon1, lat1, deg:bool=True):
     """
     inputs: DEGREES  (right ascension, declination Meeus p. 109)
 
@@ -42,19 +42,22 @@ def anglesep_meeus(lon0, lat0, lon1, lat1):
     either the arrays must be the same size, or one of them must be a scalar
     """
 
-    lon0 = radians(lon0)
-    lat0 = radians(lat0)
-    lon1 = radians(lon1)
-    lat1 = radians(lat1)
-    dist_rad = 2 * arcsin(
-        sqrt(
-            haversine(lat0 - lat1) +
-            cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
+    if deg:
+        lon0 = radians(lon0)
+        lat0 = radians(lat0)
+        lon1 = radians(lon1)
+        lat1 = radians(lat1)
 
-    return degrees(dist_rad)
+    sep_rad = 2 * arcsin(sqrt( haversine(lat0 - lat1) +
+                              cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
+
+    if deg:
+        return degrees(sep_rad)
+    else:
+        return sep_rad
 
 
-def anglesep(lon1, lat1, lon2, lat2):
+def anglesep(lon0, lat0, lon1, lat1, deg:bool=True):
     """
     inputs: DEGREES
 
@@ -64,9 +67,18 @@ def anglesep(lon1, lat1, lon2, lat2):
     if angular_separation is None:
         raise ImportError('angledist requires AstroPy. Try pure Python angledis_meeus')
 
-    return degrees(angular_separation(radians(lon1),
-                                      radians(lat1), radians(lon2),
-                                      radians(lat2)))
+    if deg:
+        lon0 = radians(lon0)
+        lat0 = radians(lat0)
+        lon1 = radians(lon1)
+        lat1 = radians(lat1)
+
+    sep_rad = angular_separation(lon0,lat0, lon1, lat1)
+
+    if deg:
+        return degrees(sep_rad)
+    else:
+        return sep_rad
 
 
 def haversine(theta):
