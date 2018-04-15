@@ -22,11 +22,14 @@ function ok = assert_allclose(actual, desired, atol, rtol, err_msg)
     
     assert(isscalar(rtol))
     assert(isscalar(atol))
+    
+    actual = actual(:);
+    desired = desired(:);
 
     [maxerrmag,i] = max(abs(actual-desired));
-    if maxerrmag > atol + rtol * abs(desired)
-      disp(['Actual: ',num2str(actual)])
-      disp([' desired: ',num2str(desired)])
+    if any(maxerrmag > atol + rtol * abs(desired))
+      disp(['Actual: ',num2str(actual(i))])
+      disp([' desired: ',num2str(desired(i))])
       error(['AssertionError: ',err_msg,' maximum error magnitude ',num2str(maxerrmag),' on ',int2str(i),'th value: ',num2str(actual(i)),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
     end
 
