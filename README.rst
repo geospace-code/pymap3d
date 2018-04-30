@@ -53,7 +53,7 @@ Why not `PyProj <https://github.com/jswhit/pyproj>`_?
 * PyMap3D does not require anything beyond pure Python.
 * PyMap3D API is virtually identical to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
 * PyMap3D intrinsically handles local coordinate systems such as ENU, while for PyProj ENU requires some `additional effort <https://github.com/jswhit/pyproj/issues/105>`_.
-* PyProj is oriented towards points on the planet surface, while PyMap3D handles points on or above the planet surface equally well, particularly import for airborne vehicles and remote sensing.
+* PyProj is oriented towards points on the planet surface, while PyMap3D handles points on or above the planet surface equally well, particularly important for airborne vehicles and remote sensing.
 
 .. contents::
 
