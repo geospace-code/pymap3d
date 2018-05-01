@@ -1,3 +1,5 @@
+.pytest_cache/
+
 bin/
 doctrees/
 .buildinfo
