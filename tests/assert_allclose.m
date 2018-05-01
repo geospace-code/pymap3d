@@ -1,5 +1,5 @@
-function ok = assert_allclose(actual, desired, atol, rtol, err_msg)
-% ok = assert_allclose(actual, desired, atol, rtol)
+function ok = assert_allclose(actual, desired, rtol, atol, err_msg,notclose,verbose)
+% ok = assert_allclose(actual, desired, rtol, atol)
 %
 % Inputs
 % ------
@@ -15,23 +15,44 @@ function ok = assert_allclose(actual, desired, atol, rtol, err_msg)
 % for Matlab and GNU Octave
 %
 % if "actual" is within atol OR rtol of "desired", no error is emitted.
+  narginchk(2,7)
 
-    if nargin < 5, err_msg=''; end
-    if nargin < 4 || isempty(rtol), rtol=1e-5; end
-    if nargin < 3 || isempty(atol), atol=1e-8; end
-    
-    assert(isscalar(rtol))
-    assert(isscalar(atol))
-    
-    actual = actual(:);
-    desired = desired(:);
-
-    [maxerrmag,i] = max(abs(actual-desired));
-    if any(maxerrmag > atol + rtol * abs(desired))
-      disp(['Actual: ',num2str(actual(i))])
-      disp([' desired: ',num2str(desired(i))])
-      error(['AssertionError: ',err_msg,' maximum error magnitude ',num2str(maxerrmag),' on ',int2str(i),'th value: ',num2str(actual(i)),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
+  if nargin < 7, verbose=false; end
+  if nargin < 6, notclose=false; end
+  if nargin < 5, err_msg=''; end
+  if nargin < 4 || isempty(atol), atol=0; end
+  if nargin < 3 || isempty(rtol), rtol=1e-8; end
+  
+  assert(isscalar(rtol))
+  assert(isscalar(atol))
+  
+  actual = actual(:);
+  desired = desired(:);
+  
+  measdiff = abs(actual-desired);
+  tol = atol + rtol * abs(desired);
+  result = measdiff <= tol;
+%% assert_allclose vs assert_not_allclose
+  if notclose % more than N % of values should be changed more than tolerance (arbitrary)
+    testok = sum(~result) > 0.0001*numel(desired);
+  else
+    testok = all(result);
+  end
+  
+  if ~testok
+    Nfail = sum(~result);
+    j = find(~result);
+    [bigbad,i] = max(measdiff(j));
+    i = j(i);
+    if verbose
+      disp(['error mag.: ',num2str(measdiff(j)')])
+      disp(['tolerance:  ',num2str(tol(j)')])
+      disp(['Actual:     ',num2str(actual(i))])
+      disp(['desired:    ',num2str(desired(i))])
     end
+
+    error(['AssertionError: ',err_msg,' ',num2str(Nfail/numel(desired)*100,'%.2f'),'% failed accuracy. maximum error magnitude ',num2str(bigbad),' Actual: ',num2str(actual(i)),' Desired: ',num2str(desired(i)),' atol: ',num2str(atol),' rtol: ',num2str(rtol)])
+  end
 
 end
 

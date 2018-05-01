@@ -14,6 +14,7 @@ xl = 660.930e3; yl = -4701.424e3; zl = 4246.579e3; % aer2ecef
 lat1 = 42.0026; lon1 = -81.9978; alt1 = 1.1397e3; % aer2geodetic
 x0 = 660.675e3; y0 = -4700.949e3; z0 = 4245.738e3; % geodetic2ecef, ecef2geodetic
 %% 
+rtol=1e-5;
 
 if isoctave
   test_transforms([],lat,lon, lat1, lon1, az, el)
@@ -29,46 +30,46 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
 
     %% aer2ecef contains:
     [x1,y1,z1] = geodetic2ecef(E,lat,lon,alt, angleUnit);
-    assert_allclose([x1,y1,z1],[x0,y0,z0],[],[],['geodetic2ecef: ',angleUnit])
+    assert_allclose([x1,y1,z1],[x0,y0,z0], rtol,[],['geodetic2ecef: ',angleUnit])
 
     [e1,n1,u1] = aer2enu(az, el, srange, angleUnit);
-    assert_allclose([e1,n1,u1], [er,nr,ur])
+    assert_allclose([e1,n1,u1], [er,nr,ur], rtol)
 
     [x2,y2,z2] = aer2ecef(az,el,srange,lat,lon,alt,E, angleUnit);
-    assert_allclose([x2,y2,z2], [xl,yl,zl])
+    assert_allclose([x2,y2,z2], [xl,yl,zl], rtol)
 
     %% ecef2geodetic is self-contained, iterative algorithm.
     [lat2, lon2, alt2] = ecef2geodetic(E, x1, y1, z1, angleUnit); % round-trip
-    assert_allclose([lat2, lon2, alt2], [lat, lon, alt])
+    assert_allclose([lat2, lon2, alt2], [lat, lon, alt], rtol)
 
     [az2, el2, rng2] = enu2aer(e1,n1,u1, angleUnit); % round-trip
-    assert_allclose([az2,el2,rng2],[az,el,srange])
+    assert_allclose([az2,el2,rng2],[az,el,srange], rtol)
 
     [az3, el3, rng3] = ecef2aer(x2,y2,z2, lat,lon,alt, E, angleUnit); % round-trip
-    assert_allclose([az3,el3,rng3], [az,el,srange])
+    assert_allclose([az3,el3,rng3], [az,el,srange], rtol)
 
 
     [lat3,lon3,alt3] = aer2geodetic(az,el,srange,lat,lon,alt, E, angleUnit);
-    assert_allclose([lat3,lon3,alt3], [lat1, lon1, alt1])
+    assert_allclose([lat3,lon3,alt3], [lat1, lon1, alt1], rtol)
 
     [e2, n2, u2] = geodetic2enu(lat3, lon3, alt3, lat, lon, alt, E, angleUnit);
-    assert_allclose([e2,n2,u2],[e1,n1,u1])
+    assert_allclose([e2,n2,u2],[e1,n1,u1], rtol)
 
     [az4, el4, rng4] = geodetic2aer(lat3,lon3,alt3,lat,lon,alt, E, angleUnit); % round-trip
-    assert_allclose([az4,el4,rng4], [az,el,srange])
+    assert_allclose([az4,el4,rng4], [az,el,srange], rtol)
     %%
     [x3, y3, z3] = enu2ecef(e1,n1,u1,lat,lon,alt, E, angleUnit);
-    assert_allclose([x3,y3,z3],[x2,y2,z2])
+    assert_allclose([x3,y3,z3],[x2,y2,z2], rtol)
 
     [lat4, lon4, alt4] = enu2geodetic(e2,n2,u2,lat,lon,alt, E, angleUnit); % round-trip
-    assert_allclose([lat4, lon4, alt4],[lat3, lon3, alt3])
+    assert_allclose([lat4, lon4, alt4],[lat3, lon3, alt3], rtol)
 
     [e3,n3,u3] = ecef2enu(x3,y3,z3,lat,lon,alt, E, angleUnit); % round-trip
-    assert_allclose([e3,n3,u3],[e1,n1,u1])
+    assert_allclose([e3,n3,u3],[e1,n1,u1], rtol)
 
   end % function
 
-disp('GNU Octave / Matlab code OK')
+disp('OK: GNU Octave / Matlab code')
 
 end % function
 

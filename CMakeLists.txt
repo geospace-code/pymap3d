@@ -1,17 +1,32 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.10)
 project(MapTran Fortran)
+enable_testing()
 
 set(CTEST_OUTPUT_ON_FAILURE ON)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
 
-add_compile_options(-O3 -march=native -ffpe-trap=invalid,zero,overflow -g -fbacktrace 
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+  add_compile_options(-g -O0)
+else()
+  add_compile_options(-O3)
+endif()
+
+if(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
+  add_compile_options(-check all -traceback -warn -debug extended)
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
+  add_compile_options(-O3 -march=native -ffpe-trap=invalid,zero,overflow -g -fbacktrace 
                     -Wall -Wextra -Wpedantic -Warray-bounds)# -Wfatal-errors)
-                    
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
+  add_compile_options(-Mallocatable=03)
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Flang)
+  add_compile_options(-Mallocatable=03)
+  link_libraries(-static-flang-libs)
+endif()
+    
+
 
 add_library(maptran fortran/maptran.f90 fortran/vallado.f90 fortran/assert.f90 )
 # --- testing
-enable_testing()
-
 add_executable(testmaptran fortran/Test.f90)
 target_link_libraries(testmaptran maptran)
 
