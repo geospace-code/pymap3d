@@ -1,4 +1,0 @@
-[build-system]
-requires = ["setuptools", "wheel",
-'python-dateutil','pytz','numpy','astropy',
- "nose"] 
