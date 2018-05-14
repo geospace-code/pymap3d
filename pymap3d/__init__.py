@@ -209,6 +209,8 @@ def eci2ecef(eci, t):
         gst = Time(t).sidereal_time('apparent', 'greenwich').radian
     elif isinstance(t[0],float):
         gst = t
+    elif t[0].dtype=='M8[ns]': # datetime64 from xarray
+        t = [datetime.utcfromtimestamp(T.astype(datetime)/1e9) for T in t]
     else:
         raise TypeError('eci2ecef: time must be datetime or radian float')
 
