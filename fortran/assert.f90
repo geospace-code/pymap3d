@@ -1,15 +1,16 @@
 module assert
+! Gfortran >= 6 needed for ieee_arithmetic: ieee_is_nan
 
   use, intrinsic:: iso_c_binding, only: sp=>c_float, dp=>c_double
   use, intrinsic:: iso_fortran_env, only: stderr=>error_unit
   use, intrinsic:: ieee_arithmetic
   implicit none
   private
-  
+
   integer,parameter :: wp = sp
-  
+
   public :: wp,isclose, assert_isclose, err
-  
+
 contains
 
 elemental logical function isclose(actual, desired, rtol, atol, equal_nan)
@@ -29,7 +30,7 @@ elemental logical function isclose(actual, desired, rtol, atol, equal_nan)
   real(wp), intent(in) :: actual, desired
   real(wp), intent(in), optional :: rtol, atol
   logical, intent(in), optional :: equal_nan
-  
+
   real(wp) :: r,a
   logical :: n
   ! this is appropriate INSTEAD OF merge(), since non present values aren't defined.
@@ -41,11 +42,11 @@ elemental logical function isclose(actual, desired, rtol, atol, equal_nan)
   if (present(equal_nan)) n = equal_nan
   
   !print*,r,a,n,actual,desired
-  
+
 !--- sanity check
   if ((r < 0._wp).or.(a < 0._wp)) error stop 'tolerances must be non-negative'
 !--- simplest case
-  isclose = (actual == desired) 
+  isclose = (actual == desired)
   if (isclose) return
 !--- equal nan
   isclose = n.and.(ieee_is_nan(actual).and.ieee_is_nan(desired))
