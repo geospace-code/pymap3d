@@ -1,13 +1,14 @@
 module assert
 
-  use, intrinsic:: iso_fortran_env, only: sp=>real32, dp=>real64, qp=>real128, stderr=>error_unit
+  use, intrinsic:: iso_c_binding, only: sp=>c_float, dp=>c_double
+  use, intrinsic:: iso_fortran_env, only: stderr=>error_unit
   use, intrinsic:: ieee_arithmetic
   implicit none
   private
   
-  integer,parameter :: wp = dp
+  integer,parameter :: wp = sp
   
-  public :: wp,isclose, assert_isclose
+  public :: wp,isclose, assert_isclose, err
   
 contains
 
@@ -31,10 +32,13 @@ elemental logical function isclose(actual, desired, rtol, atol, equal_nan)
   
   real(wp) :: r,a
   logical :: n
-
-  r = merge(rtol, 1e-5_wp, present(rtol)) 
-  a = merge(atol, 0._wp, present(atol)) 
-  n = merge(equal_nan, .false., present(equal_nan))
+  ! this is appropriate INSTEAD OF merge(), since non present values aren't defined.
+  r = 1e-5_wp
+  a = 0._wp
+  n = .false.
+  if (present(rtol)) r = rtol
+  if (present(atol)) a = atol
+  if (present(equal_nan)) n = equal_nan
   
   !print*,r,a,n,actual,desired
   
@@ -69,7 +73,7 @@ impure elemental subroutine assert_isclose(actual, desired, rtol, atol, equal_na
   real(wp), intent(in) :: actual, desired
   real(wp), intent(in), optional :: rtol, atol
   logical, intent(in), optional :: equal_nan
-  character(*), intent(in), optional :: err_msg  
+  character(*), intent(in), optional :: err_msg
 
   if (.not.isclose(actual,desired,rtol,atol,equal_nan)) then
     write(stderr,*) merge(err_msg,'',present(err_msg)),': actual',actual,'desired',desired
@@ -77,5 +81,11 @@ impure elemental subroutine assert_isclose(actual, desired, rtol, atol, equal_na
   endif
 
 end subroutine assert_isclose
+
+
+pure subroutine err(msg)
+  character, intent(in) :: msg
+  error stop msg
+end subroutine err
 
 end module assert

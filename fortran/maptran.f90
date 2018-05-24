@@ -35,16 +35,15 @@ elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
 
   real(wp), intent(in) :: x,y,z
   type(Ellipsoid), intent(in), optional :: spheroid
-  logical, optional,value :: deg
+  logical, intent(in), optional :: deg
   real(wp), intent(out) :: lat, lon, alt
 
   real(wp) :: ea, eb, rad, rho, c, vnew, v
   integer :: i
   type(Ellipsoid) :: ell
+  logical :: d
 
   ell = merge(spheroid, wgs84Ellipsoid, present(spheroid))
-
-  if (.not.present(deg)) deg = .true.
 
   ea = ell%SemimajorAxis
   eb = ell%SemiminorAxis
@@ -57,14 +56,14 @@ elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
   vnew = atan2(ea * z, eb * rad)
 ! Initializing the parametric latitude
   v = 0._wp
-  do i = 1,5
+  newton: do i = 1,5
     v = vnew
    ! Newtons Method for computing iterations
     vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) / &
               (2 * (cos(v - rho) - c * cos(2 * v))))
 
-    if (isclose(v,vnew)) exit
-  enddo
+    if (isclose(v,vnew)) exit newton
+  enddo newton
 
 ! Computing latitude from the root of the latitude equation
   lat = atan2(ea * tan(vnew), eb)
@@ -74,7 +73,10 @@ elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
   alt = ((rad - ea * cos(vnew)) * cos(lat)) + &
          ((z - eb * sin(vnew)) * sin(lat))
 
-  if (deg) then
+  d=.true.
+  if (present(deg)) d = deg
+
+  if (d) then
     lat = degrees(lat)
     lon = degrees(lon)
   endif
@@ -99,16 +101,18 @@ elemental subroutine geodetic2ecef(lat,lon,alt, x,y,z, spheroid, deg)
   real(wp), intent(in) :: alt
   real(wp), intent(out) :: x,y,z
   type(Ellipsoid), intent(in), optional :: spheroid
-  logical, optional, value :: deg
+  logical, intent(in), optional :: deg
 
   real(wp) :: N
-  type(Ellipsoid) :: ell 
+  type(Ellipsoid) :: ell
+  logical :: d
+
+  d=.true.
+  if (present(deg)) d = deg
   
   ell = merge(spheroid, wgs84Ellipsoid, present(spheroid)) 
 
-  if (.not.present(deg)) deg=.true.
-
-  if (deg) then
+  if (d) then
     lat = radians(lat)
     lon = radians(lon)
   endif
@@ -330,14 +334,16 @@ elemental subroutine aer2enu(az, el, slantRange, east, north, up, deg)
 
   real(wp), value :: az,el
   real(wp), intent(in) :: slantRange
-  logical, optional, value :: deg
+  logical, intent(in), optional :: deg
   real(wp),intent(out) :: east, north,up
 
   real(wp) :: r
+  logical :: d
 
-  if(.not.present(deg)) deg=.true.
+  d=.true.
+  if (present(deg)) d = deg
 
-  if (deg) then
+  if (d) then
     az = radians(az)
     el = radians(el)
   endif
@@ -366,20 +372,22 @@ elemental subroutine enu2aer(east, north, up, az, elev, slantRange, deg)
 ! el: elevation angle above local horizon
 
   real(wp),intent(in) :: east,north,up
-  logical, optional, value :: deg
+  logical, intent(in), optional :: deg
   real(wp), intent(out) :: az, elev, slantRange
   
   real(wp) :: r
+  logical :: d
   
-  if (.not.present(deg)) deg = .true.
-
   r = hypot(east, north)
   slantRange = hypot(r, up)
   ! radians
   elev = atan2(up, r)
   az = modulo(atan2(east, north), 2._wp * atan2(0._wp, -1._wp))
 
-  if (deg) then
+  d=.true.
+  if (present(deg)) d = deg
+
+  if (d) then
     elev = degrees(elev)
     az = degrees(az)
   endif
@@ -459,14 +467,16 @@ elemental subroutine ecef2enuv(u, v, w, lat0, lon0, east, north, up, deg)
 
   real(wp), intent(in) :: u,v,w
   real(wp), value :: lat0,lon0
-  logical, optional, value :: deg
+  logical, intent(in), optional :: deg
   real(wp), intent(out) :: east, north, up
   
   real(wp) :: t
-  
-  if (.not.present(deg)) deg = .true.
-  
-  if (deg) then
+  logical :: d
+
+  d=.true.
+  if (present(deg)) d = deg
+
+  if (d) then
     lat0 = radians(lat0)
     lon0 = radians(lon0)
   endif
@@ -493,13 +503,15 @@ elemental subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
   real(wp), intent(in) :: e,n,up
   real(wp), value :: lat0,lon0
   real(wp), intent(out) :: u,v,w
-  logical, optional, value :: deg
+  logical, intent(in), optional :: deg
 
   real(wp) :: t
+  logical :: d
 
-  if(.not.present(deg)) deg=.true.
-
-  if (deg) then
+  d=.true.
+  if (present(deg)) d = deg
+ 
+  if (d) then
     lat0 = radians(lat0)
     lon0 = radians(lon0)
   endif

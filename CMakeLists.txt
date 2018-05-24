@@ -12,36 +12,52 @@ else()
 endif()
 
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
-  add_compile_options(-check all -traceback -warn -debug extended)
+  list(APPEND FFLAGS -check all -traceback -warn -debug extended)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
-  add_compile_options(-O3 -march=native -ffpe-trap=invalid,zero,overflow -g -fbacktrace 
+  if(${CMAKE_Fortran_COMPILER_VERSION} VERSION_GREATER_EQUAL 8.1)
+    list(APPEND FFLAGS -std=f2018)
+  endif()
+
+  list(APPEND FFLAGS -march=native -ffpe-trap=invalid,zero,overflow -fbacktrace 
                     -Wall -Wextra -Wpedantic -Warray-bounds)# -Wfatal-errors)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
-  add_compile_options(-Mallocatable=03)
+  list(APPEND FFLAGS -Mallocatable=03)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Flang)
-  add_compile_options(-Mallocatable=03)
+  list(APPEND FFLAGS -Mallocatable=03)
   link_libraries(-static-flang-libs)
 endif()
     
 
+set(okcomp GNU Intel)
+if(CMAKE_Fortran_COMPILER_ID IN_LIST okcomp)
+  add_library(assert fortran/assert.f90)
+else()
+  add_library(assert fortran/assert_legacy.f90)
+endif()
+target_compile_options(assert PRIVATE ${FFLAGS})
 
-add_library(maptran fortran/maptran.f90 fortran/vallado.f90 fortran/assert.f90 )
+add_library(maptran fortran/maptran.f90 fortran/vallado.f90)
+target_link_libraries(maptran PRIVATE assert)
+target_compile_options(maptran PRIVATE ${FFLAGS})
 # --- testing
 add_executable(testmaptran fortran/Test.f90)
-target_link_libraries(testmaptran maptran)
-
+target_link_libraries(testmaptran PRIVATE assert maptran)
+target_compile_options(testmaptran PRIVATE ${FFLAGS})
 add_test(NAME Fortran COMMAND testmaptran)
+set_tests_properties(Fortran PROPERTIES TIMEOUT 10)
 
 find_package(PythonInterp)
 #if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
 if(PYTHONINTERP_FOUND)
   add_test(NAME Python COMMAND pytest -v
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set_tests_properties(Python PROPERTIES TIMEOUT 10)
 endif()
 
 find_package(Octave)
 if (OCTAVE_MAJOR_VERSION GREATER_EQUAL 4)
   add_test(NAME MatlabOctave COMMAND octave-cli -q Test.m
            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests)
+  set_tests_properties(MatlabOctave PROPERTIES TIMEOUT 10)
 endif()
 

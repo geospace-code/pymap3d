@@ -1,3 +1,4 @@
+! error tolerances are set for single precision, double precision is much more precise.
 program Test
 
 use maptran
@@ -45,7 +46,8 @@ real(wp), dimension(N) :: ax1, ay1, aaaz1, ax2, ay2, aaaz2, ax3,ay3,aaaz3, &
 ! --------- scalar degrees
 
 call geodetic2ecef(lat,lon,alt, x1,y1,z1)
-call assert_isclose([x1,y1,z1],[x0,y0,z0])
+call assert_isclose([x1,y1,z1],[x0,y0,z0], &
+                   err_msg='geodetic2ecef-degrees')
 
 call aer2enu(az,el,rng, e1,n1,u1)
 call assert_isclose([e1,n1,u1], [er,nr,ur])
@@ -54,33 +56,40 @@ call aer2ecef(az,el,rng,lat,lon,alt,x2,y2,z2)
 call assert_isclose([x2,y2,z2],[xl,yl,zl])
 
 call ecef2geodetic(x1,y1,z1,lat2,lon2,alt2)
-call assert_isclose([lat2,lon2,alt2],[lat,lon,alt])
+call assert_isclose([lat2,lon2,alt2],[lat,lon,alt], &
+                    rtol=0.01_wp, err_msg='ecef2geodetic-degrees')
 
 call enu2aer(e1,n1,u1, az2, el2, rng2)
-call assert_isclose([az2,el2,rng2],[az,el,rng])
+call assert_isclose([az2,el2,rng2],[az,el,rng],err_msg='enu2aer-degrees')
 
 call ecef2aer(x2,y2,z2, lat,lon,alt, az3, el3, rng3)
-call assert_isclose([az3,el3,rng3],[az,el,rng])
+call assert_isclose([az3,el3,rng3],[az,el,rng], & 
+                    rtol=1e-3_wp, err_msg='ecef2aer-degrees')
 
 call aer2geodetic(az,el,rng,lat,lon,alt, lat3,lon3,alt3)
-call assert_isclose([lat3,lon3,alt3],[lat1,lon1,alt1])
+call assert_isclose([lat3,lon3,alt3],[lat1,lon1,alt1], &
+                    rtol=1e-3_wp, err_msg='aer2geodetic-degrees')
 
 call geodetic2enu(lat3, lon3, alt3, lat, lon, alt, e2, n2, u2)
-call assert_isclose([e2,n2,u2],[e1,n1,u1])
+call assert_isclose([e2,n2,u2],[e1,n1,u1], &
+                    rtol=0.01_wp, err_msg='geodetic2enu-degrees')
 
 call geodetic2aer(lat3,lon3,alt3,lat,lon,alt, az4, el4, rng4)
-call assert_isclose([az4,el4,rng4],[az,el,rng])
+call assert_isclose([az4,el4,rng4],[az,el,rng], &
+                    rtol=0.01_wp, err_msg='geodetic2aer-degrees')
 
 call enu2ecef(e1,n1,u1,lat,lon,alt, x3, y3, z3)
-call assert_isclose([x3,y3,z3],[x2,y2,z2])
+call assert_isclose([x3,y3,z3],[x2,y2,z2], err_msg='enu2ecef-degrees')
 
 call enu2geodetic(e2,n2,u2,lat,lon,alt,lat4, lon4, alt4)
-call assert_isclose([lat4,lon4,alt4],[lat3,lon3,alt3])
+call assert_isclose([lat4,lon4,alt4],[lat3,lon3,alt3], &
+                    rtol=1e-3_wp, err_msg='enu2geodetic-degrees')
 
 call ecef2enu(x3,y3,z3,lat,lon,alt, e3,n3,u3)
-call assert_isclose([e3,n3,u3],[e1,n1,u1])
+call assert_isclose([e3,n3,u3],[e1,n1,u1], &
+                    rtol=1e-3_wp, err_msg='ecef2enu-degrees')
 
-call assert_isclose(degrees(radians(deg0)), deg0)
+call assert_isclose(degrees(radians(deg0)), deg0, err_msg='deg<->rad')
 
 ! ------ scalar radians
 
@@ -94,35 +103,41 @@ call aer2ecef(radians(az),radians(el),rng, radians(lat),radians(lon),alt, x2,y2,
 call assert_isclose([x2,y2,z2],[xl,yl,zl])
 
 call ecef2geodetic(x1,y1,z1,lat2,lon2,alt2, deg=.false.)
-call assert_isclose([degrees(lat2),degrees(lon2),alt2],[lat,lon,alt])
+call assert_isclose([degrees(lat2),degrees(lon2),alt2],[lat,lon,alt], & 
+                     rtol=0.01_wp, err_msg='ecef2geodetic-radians')
 
 call enu2aer(e1,n1,u1, az2, el2, rng2, deg=.false.)
-call assert_isclose([degrees(az2),degrees(el2),rng2],[az,el,rng], err_msg='enu2aer: rad')
+call assert_isclose([degrees(az2),degrees(el2),rng2],[az,el,rng], & 
+                    err_msg='enu2aer: rad')
 
 call ecef2aer(x2,y2,z2, radians(lat),radians(lon),alt, az3,el3,rng3, deg=.false.)
-call assert_isclose([degrees(az3),degrees(el3),rng3],[az,el,rng])
+call assert_isclose([degrees(az3),degrees(el3),rng3],[az,el,rng], &
+                    rtol=1e-3_wp, err_msg='ecef2aer-radians')
 
 call aer2geodetic(radians(az),radians(el),rng, radians(lat),radians(lon),alt, lat3,lon3,alt3, deg=.false.)
-call assert_isclose([degrees(lat3),degrees(lon3),alt3],[lat1,lon1,alt1], err_msg='aer2geodetic: rad')
+call assert_isclose([degrees(lat3),degrees(lon3),alt3],[lat1,lon1,alt1], &
+                    rtol=1e-3_wp, err_msg='aer2geodetic-radians')
 
 call geodetic2enu(lat3,lon3,alt3, radians(lat),radians(lon),alt, e2,n2,u2, deg=.false.)
-call assert_isclose([e2,n2,u2],[e1,n1,u1], err_msg='geodetic2enu: rad')
+call assert_isclose([e2,n2,u2],[e1,n1,u1], &
+                    rtol=0.01_wp, err_msg='geodetic2enu-radians')
 
 call geodetic2aer(lat3,lon3,alt3, radians(lat),radians(lon),alt, az4,el4,rng4, deg=.false.)
-call assert_isclose([degrees(az4),degrees(el4),rng4],[az,el,rng], err_msg='geodetic2aer: rad')
+call assert_isclose([degrees(az4),degrees(el4),rng4],[az,el,rng], &
+                    rtol=0.01_wp, err_msg='geodetic2aer-radians')
 
 call enu2ecef(e1,n1,u1, radians(lat),radians(lon),alt, x3,y3,z3, deg=.false.)
 call assert_isclose([x3,y3,z3],[x2,y2,z2], err_msg='enu2ecef: rad')
 
 call enu2geodetic(e2,n2,u2, radians(lat),radians(lon),alt, lat4,lon4,alt4, deg=.false.)
-call assert_isclose([lat4,lon4,alt4],[lat3,lon3,alt3], err_msg='enu2geodetic: rad')
+call assert_isclose([lat4,lon4,alt4],[lat3,lon3,alt3], &
+                    rtol=1e-3_wp, err_msg='enu2geodetic-radians')
 
 call ecef2enu(x3,y3,z3, radians(lat),radians(lon),alt, e3,n3,u3, deg=.false.)
-call assert_isclose([e3,n3,u3],[e1,n1,u1], err_msg='ecef2enu: rad')
+call assert_isclose([e3,n3,u3],[e1,n1,u1], & 
+                    rtol=1e-3_wp, err_msg='ecef2enu-radians')
 
 ! --- array
-
-
 
 call geodetic2ecef(alat,lon,alt,ax1,ay1,aaaz1)
 call aer2enu(aaz, el, rng, ae1, an1, au1)
@@ -141,14 +156,17 @@ jd = toJulian(t0)
 ! http://aa.usno.navy.mil/jdconverter?ID=AA&year=2014&month=4&day=6&era=1&hr=8&min=0&sec=0.0
 call assert_isclose(jd, jd0, err_msg='toJulian')
 
-call assert_isclose(toGST(jd), 5.4896448816_wp, err_msg='toGST')
-call assert_isclose(toLST(radians(-148._wp), jd), 2.90658_wp, err_msg='toLST')
+call assert_isclose(toGST(jd), 5.4896448816_wp, &
+                    rtol=0.1_wp, err_msg='toGST')
+call assert_isclose(toLST(radians(-148._wp), jd), 2.90658_wp, &
+                    rtol=0.2_wp, err_msg='toLST')
 
 call azel2radec(azi,eli,lat,lon, jd, rae, dae)
 call radec2azel(rae,dae,lat,lon,jd,azrd,elrd)
-call assert_isclose([azi,eli],[azrd,elrd])
+call assert_isclose([azi,eli],[azrd,elrd],err_msg='azel<->radec')
 !------- Meeus
-call assert_isclose(anglesep(35._wp,23._wp, 84._wp,20._wp), ha)
+call assert_isclose(anglesep(35._wp,23._wp, 84._wp,20._wp), ha,& 
+                   err_msg='angle_sep')
 
 
 print *,'Maptran OK'
