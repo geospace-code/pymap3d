@@ -27,6 +27,10 @@
 .. image:: https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability
    :target: https://codeclimate.com/github/scivision/pymap3d/maintainability
    :alt: Maintainability
+   
+.. image:: http://pepy.tech/badge/pymap3d
+   :target: http://pepy.tech/project/pymap3d
+   :alt: PyPi Download stats
 
 ====================================================
 Python / Matlab / Fortran 3-D coordinate conversions
