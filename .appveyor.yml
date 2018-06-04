@@ -22,7 +22,7 @@ before_build:
 - sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran cmake make octave > /dev/null
 
 build_script:
-- pip install -e .[tests]
+- pip install -e .[tests,full]
 
 - cd bin
 - cmd: cmake -G "MinGW Makefiles" ..
