@@ -32,6 +32,7 @@ install:
 
 script: 
   - make test
+  - cd ..
   - mypy . --ignore-missing-imports
   - flake8
 
