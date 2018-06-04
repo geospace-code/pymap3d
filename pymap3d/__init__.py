@@ -1,35 +1,23 @@
 #!/usr/bin/env python
-
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
-#
-# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-# 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 Input/output: default units are METERS and DEGREES.
 boolean deg=True means degrees
 
-For most functions you can input Numpy arrays of any shape, except as noted in the functions
+Most functions accept Numpy arrays of any shape
 
 see tests/Test.py for example uses.
 """
-from __future__ import division
 from copy import deepcopy
-from six import string_types,PY2
 from datetime import datetime
-try:
-    import numpy
-    from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees
-except ImportError:
-    numpy = None
-    from math import sin, cos, tan, sqrt, radians, hypot, degrees
-    from math import atan2 as arctan2
+from typing import Tuple, List, Union
+import numpy as np
+from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees
 try:
     from astropy.time import Time
     from astropy import units as u
-    from astropy.coordinates import Angle,SkyCoord, EarthLocation, AltAz, ICRS
+    from astropy.coordinates import Angle, SkyCoord, EarthLocation, AltAz, ICRS
 except ImportError:
     Time = None
 #
@@ -39,21 +27,24 @@ from .timeconv import str2dt
 
 class EarthEllipsoid:
     """generate reference ellipsoid"""
-    def __init__(self,model='wgs84'):
+
+    def __init__(self, model: str='wgs84') -> None:
         if model == 'wgs84':
             """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
             self.a = 6378137.  # semi-major axis [m]
             self.f = 1 / 298.2572235630  # flattening
             self.b = self.a * (1 - self.f)  # semi-minor axis
-        elif model=='grs80':
+        elif model == 'grs80':
             """https://en.wikipedia.org/wiki/GRS_80"""
             self.a = 6378137.  # semi-major axis [m]
             self.f = 1 / 298.257222100882711243  # flattening
             self.b = self.a * (1 - self.f)  # semi-minor axis
 
 
-#%% to AER (azimuth, elevation, range)
-def ecef2aer(x, y, z, lat0, lon0, h0, ell=None, deg=True):
+# %% to AER (azimuth, elevation, range)
+def ecef2aer(x: float, y: float, z: float,
+             lat0: float, lon0: float, h0: float,
+             ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -75,7 +66,8 @@ def ecef2aer(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     return enu2aer(xEast, yNorth, zUp, deg=deg)
 
 
-def eci2aer(eci, lat0, lon0, h0, t):
+def eci2aer(eci: List[float], lat0: float, lon0: float, h0: float,
+            t: Union[datetime, List[datetime]]) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -97,7 +89,7 @@ def eci2aer(eci, lat0, lon0, h0, t):
     return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
 
 
-def enu2aer(e, n, u, deg=True):
+def enu2aer(e: float, n: float, u: float, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -114,14 +106,16 @@ def enu2aer(e, n, u, deg=True):
     r = hypot(e, n)
     slantRange = hypot(r, u)
     elev = arctan2(u, r)
-    az =  arctan2(e, n) % (2 * arctan2(0, -1))
+    az = arctan2(e, n) % (2 * arctan2(0, -1))
     if deg:
         return degrees(az), degrees(elev), slantRange
     else:
         return az, elev, slantRange  # radians
 
 
-def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
+def geodetic2aer(lat: float, lon: float, h: float,
+                 lat0: float, lon0: float, h0: float,
+                 ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -142,7 +136,7 @@ def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
     return enu2aer(e, n, u, deg=deg)
 
 
-def ned2aer(n, e, d, deg=True):
+def ned2aer(n: float, e: float, d: float, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -158,8 +152,12 @@ def ned2aer(n, e, d, deg=True):
     """
     return enu2aer(e, n, -d, deg=deg)
 
-#%% to ECEF
-def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=None, deg=True):
+# %% to ECEF
+
+
+def aer2ecef(az: float, el: float, srange: float,
+             lat0: float, lon0: float, alt0: float,
+             ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.
 
@@ -185,7 +183,7 @@ def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=None, deg=True):
     return x0 + dx, y0 + dy, z0 + dz
 
 
-def eci2ecef(eci, t):
+def eci2ecef(eci: np.ndarray, time: Union[datetime, np.ndarray]) -> np.ndarray:
     """
      Observer => Point
 
@@ -198,41 +196,43 @@ def eci2ecef(eci, t):
     ------
     x,y,z  [meters] target ECEF location                             [0,Infinity)
     """
-    if numpy is None or Time is None:
+    if Time is None:
         raise ImportError('eci2ecef requires Numpy and AstroPy')
 
-    t = numpy.atleast_1d(t)
-    if isinstance(t[0], string_types): #don't just ram in in case it's float
+    t = np.atleast_1d(time)
+    if isinstance(t[0], str):  # don't just ram in in case it's float
         t = str2dt(t)
 
     if isinstance(t[0], datetime):
         gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    elif isinstance(t[0],float):
+    elif isinstance(t[0], float):
         gst = t
-    elif t[0].dtype=='M8[ns]': # datetime64 from xarray
-        t = [datetime.utcfromtimestamp(T.astype(datetime)/1e9) for T in t]
+    elif t[0].dtype == 'M8[ns]':  # datetime64 from xarray
+        t = [datetime.utcfromtimestamp(T.astype(datetime) / 1e9) for T in t]
     else:
         raise TypeError('eci2ecef: time must be datetime or radian float')
 
     assert isinstance(gst[0], float)  # must be in radians!
 
-    eci = numpy.atleast_2d(eci)
+    eci = np.atleast_2d(eci)
     N, trip = eci.shape
     if eci.ndim > 2 or trip != 3:
         raise ValueError('eci triplets must be shape (N,3)')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
-    ecef = numpy.empty_like(eci)
+    ecef = np.empty_like(eci)
 
     for i in range(N):
-        #ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
+        # ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
         ecef[i, :] = _rottrip(gst[i]).dot(eci[i, :])
 
     return ecef
 
 
-def enu2ecef(e1, n1, u1, lat0, lon0, h0, ell=None, deg=True):
+def enu2ecef(e1: float, n1: float, u1: float,
+             lat0: float, lon0: float, h0: float,
+             ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -253,7 +253,8 @@ def enu2ecef(e1, n1, u1, lat0, lon0, h0, ell=None, deg=True):
     return x0 + dx, y0 + dy, z0 + dz
 
 
-def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
+def geodetic2ecef(lat: float, lon: float, alt: float,
+                  ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -283,7 +284,9 @@ def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
     return x, y, z
 
 
-def ned2ecef(n, e, d, lat0, lon0, h0, ell=None, deg=True):
+def ned2ecef(n: float, e: float, d: float,
+             lat0: float, lon0: float, h0: float,
+             ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -300,8 +303,12 @@ def ned2ecef(n, e, d, lat0, lon0, h0, ell=None, deg=True):
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
-#%% to ECI
-def aer2eci(az, el, srange, lat0, lon0, h0, t, ell=None, deg=True):
+# %% to ECI
+
+
+def aer2eci(az: float, el: float, srange: float,
+            lat0: float, lon0: float, h0: float, t: datetime,
+            ell: EarthEllipsoid=None, deg: bool=True) -> np.ndarray:
     """
 
     input
@@ -317,58 +324,58 @@ def aer2eci(az, el, srange, lat0, lon0, h0, t, ell=None, deg=True):
     ------
     eci  x,y,z (meters)
     """
-    if numpy is None:
-        raise ImportError('aer2eci requires Numpy')
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
-    return ecef2eci(numpy.column_stack((x, y, z)), t)
+    return ecef2eci(np.column_stack((x, y, z)), t)
 
 
-def ecef2eci(ecef, t):
+def ecef2eci(ecef: np.ndarray, time: datetime) -> float:
     """
     Point => Point
 
     input
     -----
     ecef:  Nx3  x,y,z  (meters)
-    t:  datetime.datetime
+    time:  datetime.datetime
 
 
     output
     ------
     eci  x,y,z (meters)
     """
-    if Time is None or numpy is None:
+    if Time is None:
         raise ImportError('ecef2eci requires Numpy and AstroPy')
 
-    t = numpy.atleast_1d(t)
-    if isinstance(t[0], string_types): #don't just ram in in case it's float
+    t = np.atleast_1d(time)
+    if isinstance(t[0], str):  # don't just ram in in case it's float
         t = str2dt(t)
 
     if isinstance(t[0], datetime):
         gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    elif isinstance(t[0],float):
+    elif isinstance(t[0], float):
         gst = t
     else:
         raise TypeError('eci2ecef: time must be datetime or radian float')
 
     assert isinstance(gst[0], float)  # must be in radians!
 
-    ecef = numpy.atleast_2d(ecef)
+    ecef = np.atleast_2d(ecef)
     N, trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
         raise TypeError('ecef triplets must be shape (N,3)')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
-    eci = numpy.empty_like(ecef)
+    eci = np.empty_like(ecef)
     for i in range(N):
-        #eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
-        eci[i, :] = _rottrip(gst[i]).T.dot(ecef[i, :]) # this one is transposed
+        # eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
+        eci[i, :] = _rottrip(gst[i]).T.dot(ecef[i, :])  # this one is transposed
 
     return eci
-#%% to ENU
-def aer2enu(az, el, srange, deg=True):
+# %% to ENU
+
+
+def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float, float, float]:
     """
     azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     slant range [meters]                                             [0,Infinity)
@@ -388,7 +395,9 @@ def aer2enu(az, el, srange, deg=True):
     return r * sin(az), r * cos(az), srange * sin(el)
 
 
-def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
+def ecef2enu(x: float, y: float, z: float,
+             lat0: float, lon0: float, h0: float,
+             ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
 
     input
@@ -408,7 +417,8 @@ def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     return _uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
 
-def ecef2enuv(u, v, w, lat0, lon0, deg=True):
+def ecef2enuv(u: float, v: float, w: float,
+              lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
     """
     for VECTOR i.e. between two points
 
@@ -421,17 +431,18 @@ def ecef2enuv(u, v, w, lat0, lon0, deg=True):
         lat0 = radians(lat0)
         lon0 = radians(lon0)
 
-    t      =  cos(lon0) * u + sin(lon0) * v
-    uEast  = -sin(lon0) * u + cos(lon0) * v
-    wUp    =  cos(lat0) * t + sin(lat0) * w
+    t = cos(lon0) * u + sin(lon0) * v
+    uEast = -sin(lon0) * u + cos(lon0) * v
+    wUp = cos(lat0) * t + sin(lat0) * w
     vNorth = -sin(lat0) * t + cos(lat0) * w
 
     return uEast, vNorth, wUp
 
 
-def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
+def geodetic2enu(lat: float, lon: float, h: float,
+                 lat0: float, lon0: float, h0: float,
+                 ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
-
     input
     -----
     target: lat,lon, h
@@ -451,8 +462,11 @@ def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
     dz = z1 - z2
 
     return _uvw2enu(dx, dy, dz, lat0, lon0, deg=deg)
-#%% to geodetic
-def aer2geodetic(az, el, srange, lat0, lon0, h0, deg=True):
+# %% to geodetic
+
+
+def aer2geodetic(az: float, el: float, srange: float,
+                 lat0: float, lon0: float, h0: float, deg: bool=True) -> Tuple[float, float, float]:
     """
     Input:
     -----
@@ -473,7 +487,8 @@ def aer2geodetic(az, el, srange, lat0, lon0, h0, deg=True):
     return ecef2geodetic(x, y, z, deg=deg)
 
 
-def ecef2geodetic(x, y, z, ell=None, deg=True):
+def ecef2geodetic(x: float, y: float, z: float,
+                  ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -510,15 +525,15 @@ def ecef2geodetic(x, y, z, ell=None, deg=True):
     vnew = arctan2(ea * z, eb * rad)
 # Initializing the parametric latitude
     v = 0
-    for _ in range (5):
+    for _ in range(5):
         v = deepcopy(vnew)
-#%% Newtons Method for computing iterations
+# %% Newtons Method for computing iterations
         vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) /
                     (2 * (cos(v - rho) - c * cos(2 * v))))
 
-        if allclose(v,vnew):
+        if np.allclose(v, vnew):
             break
-#%% Computing latitude from the root of the latitude equation
+# %% Computing latitude from the root of the latitude equation
     lat = arctan2(ea * tan(vnew), eb)
     # by inspection
     lon = arctan2(y, x)
@@ -530,6 +545,8 @@ def ecef2geodetic(x, y, z, ell=None, deg=True):
         return degrees(lat), degrees(lon), alt
     else:
         return lat, lon, alt  # radians
+
+
 """
 this is from PySatel and gives same result to EIGHT decimal places
 def cbrt(x):
@@ -565,7 +582,8 @@ def ecef2geodetic(x, y, z, ell=EarthEllipsoid(),deg=True):
         return lat, lon, alt #radians
 """
 
-def eci2geodetic(eci, t):
+
+def eci2geodetic(eci: List[float], t: datetime) -> Tuple[float, float, float]:
     """
     convert ECI to geodetic coordinates
 
@@ -591,7 +609,9 @@ def eci2geodetic(eci, t):
     return ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])
 
 
-def enu2geodetic(e, n, u, lat0, lon0, h0,  ell=None, deg=True):
+def enu2geodetic(e: float, n: float, u: float,
+                 lat0: float, lon0: float, h0: float,
+                 ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
 
     input
@@ -613,7 +633,9 @@ def enu2geodetic(e, n, u, lat0, lon0, h0,  ell=None, deg=True):
     return ecef2geodetic(x, y, z, ell, deg=deg)
 
 
-def ned2geodetic(n, e, d, lat0, lon0, h0, ell=None, deg=True):
+def ned2geodetic(n: float, e: float, d: float,
+                 lat0: float, lon0: float, h0: float,
+                 ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
 
     input
@@ -629,12 +651,13 @@ def ned2geodetic(n, e, d, lat0, lon0, h0, ell=None, deg=True):
     target: lat,lon, h  (degrees/radians,degrees/radians, meters)
 
     """
-    x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0,  ell, deg=deg)
+    x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
     return ecef2geodetic(x, y, z, ell, deg=deg)
 # %% to NED
 
-def aer2ned(az, elev, slantRange, deg=True):
+
+def aer2ned(az: float, elev: float, slantRange: float, deg: bool=True) -> Tuple[float, float, float]:
     """
     input
     -----
@@ -651,7 +674,7 @@ def aer2ned(az, elev, slantRange, deg=True):
     return n, e, -u
 
 
-def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True):
+def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True) -> Tuple[float, float, float]:
     """
     input
     -----
@@ -670,7 +693,7 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     return n, e, -u
 
 
-def ecef2nedv(u, v, w, lat0, lon0, deg=True):
+def ecef2nedv(u, v, w, lat0, lon0, deg=True) -> Tuple[float, float, float]:
     """
     for VECTOR between two points
     """
@@ -679,7 +702,7 @@ def ecef2nedv(u, v, w, lat0, lon0, deg=True):
     return n, e, -u
 
 
-def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
+def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True) -> Tuple[float, float, float]:
     """
     input
     -----
@@ -699,13 +722,13 @@ def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
 
     return n, e, -u
 
-#%% shared functions
+# %% shared functions
 
-def get_radius_normal(lat_radians, ell):
+
+def get_radius_normal(lat_radians: float, ell: EarthEllipsoid) -> float:
     """ Compute normal radius of planetary body"""
     if ell is None:
         ell = EarthEllipsoid()
-
 
     a = ell.a
     b = ell.b
@@ -713,20 +736,23 @@ def get_radius_normal(lat_radians, ell):
     return a**2 / sqrt(
         a**2 * (cos(lat_radians))**2 + b**2 *
         (sin(lat_radians))**2)
-#%% internal use
-def _rottrip(ang):
+# %% internal use
+
+
+def _rottrip(ang: np.ndarray) -> np.ndarray:
     ang = ang.squeeze()
     if ang.size > 1:
         raise ValueError('only one angle allowed at a time')
     """ported from:
     https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
     """
-    return numpy.array([[cos(ang),  sin(ang), 0],
+    return np.array([[cos(ang), sin(ang), 0],
                      [-sin(ang), cos(ang), 0],
-                     [0,         0,        1]])
+                     [0, 0, 1]])
 
 
-def _enu2uvw(east, north, up, lat0, lon0, deg=True):
+def _enu2uvw(east: float, north: float, up: float,
+             lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -739,7 +765,8 @@ def _enu2uvw(east, north, up, lat0, lon0, deg=True):
     return u, v, w
 
 
-def _uvw2enu(u, v, w, lat0, lon0, deg):
+def _uvw2enu(u: float, v: float, w: float,
+             lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -751,10 +778,15 @@ def _uvw2enu(u, v, w, lat0, lon0, deg):
     return East, North, Up
 
 # %% azel radec
-def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
-    """convert astronomical target horizontal azimuth, elevation to ecliptic right ascension, declination (degrees)"""
 
-    if PY2 or Time is None: # non-AstroPy method, less accurate
+
+def azel2radec(az_deg: float, el_deg: float,
+               lat_deg: float, lon_deg: float, t: datetime) -> Tuple[float, float]:
+    """convert astronomical target horizontal azimuth, elevation to
+       ecliptic right ascension, declination (degrees)
+    """
+
+    if Time is None:  # non-AstroPy method, less accurate
         return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t)
 
     t = str2dt(t)
@@ -769,46 +801,33 @@ def azel2radec(az_deg, el_deg, lat_deg, lon_deg, t):
     return sky.ra.deg, sky.dec.deg
 
 
-def radec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t):
-    """convert astronomical target ecliptic right ascension, declination to horizontal azimuth, eelvation (degrees)"""
-    if numpy is None:
-        raise ImportError('radec2azel requires Numpy')
-
+def radec2azel(ra_deg: float, dec_deg: float,
+               lat_deg: float, lon_deg: float, t: datetime) -> Tuple[float, float]:
+    """convert astronomical target ecliptic right ascension, declination to
+       horizontal azimuth, eelvation (degrees)
+    """
     if Time is None:
         return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t)
-#%% input trapping
+# %% input trapping
     t = str2dt(t)
-    lat_deg = numpy.atleast_1d(lat_deg)
-    lon_deg = numpy.atleast_1d(lon_deg)
-    ra_deg = numpy.atleast_1d(ra_deg)
-    dec_deg = numpy.atleast_1d(dec_deg)
+    lat = np.atleast_1d(lat_deg)
+    lon = np.atleast_1d(lon_deg)
+    ra = np.atleast_1d(ra_deg)
+    dec = np.atleast_1d(dec_deg)
 
-    assert lat_deg.size == 1 & lon_deg.size == 1, 'radec2azel is designed for one observer and one or more points (ra,dec).'
-    assert ra_deg.shape == dec_deg.shape, 'ra and dec must be the same shape ndarray'
+    if not(lat.size == 1 & lon.size == 1):
+        raise ValueError('radec2azel is designed for one observer and one or more points (ra,dec).')
 
-    obs = EarthLocation(lat=lat_deg * u.deg,
-                        lon=lon_deg * u.deg)
+    if ra.shape != dec.shape:
+        raise ValueError('ra and dec must be the same shape ndarray')
 
-    points = SkyCoord(Angle(ra_deg,  unit=u.deg),
-                      Angle(dec_deg, unit=u.deg),
+    obs = EarthLocation(lat=lat * u.deg,
+                        lon=lon * u.deg)
+
+    points = SkyCoord(Angle(ra, unit=u.deg),
+                      Angle(dec, unit=u.deg),
                       equinox='J2000.0')
 
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
 
     return altaz.az.degree, altaz.alt.degree
-# %%
-def isclose(actual, desired, rtol=1e-7, atol=0):
-    """
-    rigourously evaluates closeness of values.
-    https://www.python.org/dev/peps/pep-0485/#proposed-implementation
-    """
-    return abs(actual-desired) <= max(rtol * max(abs(actual), abs(desired)), atol)
-
-
-def allclose(actual, desired, rtol=1e-7, atol=0):
-    """1-D only version of numpy.testing.assert_allclose"""
-    try:
-        for a,d in zip(actual, desired):
-            return isclose(a, d, rtol, atol)
-    except TypeError:
-        return isclose(actual, desired, rtol, atol)
