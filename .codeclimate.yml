@@ -1,2 +1,6 @@
 languages:
   python: true
+
+exclude_patterns:
+  - "doc/"
+  - "paper/"
