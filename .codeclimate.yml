@@ -3,4 +3,5 @@ languages:
 
 exclude_patterns:
   - "doc/"
+  - "docs/"
   - "paper/"
