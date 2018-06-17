@@ -75,18 +75,21 @@ impure elemental subroutine assert_isclose(actual, desired, rtol, atol, equal_na
   real(wp), intent(in), optional :: rtol, atol
   logical, intent(in), optional :: equal_nan
   character(*), intent(in), optional :: err_msg
+  
+  character(80) :: msg
 
   if (.not.isclose(actual,desired,rtol,atol,equal_nan)) then
-    write(stderr,*) merge(err_msg,'',present(err_msg)),': actual',actual,'desired',desired
-    error stop
+    write(msg,*) merge(err_msg,'',present(err_msg)),': actual',actual,'desired',desired
+    call err(msg)
   endif
 
 end subroutine assert_isclose
 
 
-pure subroutine err(msg)
-  character, intent(in) :: msg
-  error stop msg
+subroutine err(msg)
+  character(*), intent(in) :: msg
+  write(stderr,*) msg
+  error stop ! even Intel Fortran 2019 cannot handle string with error stop.
 end subroutine err
 
 end module assert

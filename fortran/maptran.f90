@@ -107,7 +107,7 @@ elemental subroutine geodetic2ecef(lat,lon,alt, x,y,z, spheroid, deg)
   type(Ellipsoid) :: ell
   logical :: d
 
-  d=.true.
+  d = .true.  ! not merge, Flang gives segfault
   if (present(deg)) d = deg
   
   ell = merge(spheroid, wgs84Ellipsoid, present(spheroid)) 
@@ -558,7 +558,7 @@ elemental real(wp) function haversine(theta)
 
   real(wp), intent(in) :: theta
 
-  haversine =  (1 - cos(theta)) / 2.
+  haversine =  (1 - cos(theta)) / 2._wp
 
 end function haversine
 
