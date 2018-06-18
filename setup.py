@@ -13,6 +13,7 @@ setup(name='pymap3d',
       version='1.7.0',
       description='pure Python coordinate conversions, following convention of several popular Matlab routines.',
       long_description=open('README.rst').read(),
+      long_description_content_type="text/markdown",
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/pymap3d',
       classifiers=[

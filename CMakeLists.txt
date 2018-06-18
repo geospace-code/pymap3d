@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules/)
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
   add_compile_options(-g -O0)
 else()
-  add_compile_options(-O3)
+  add_compile_options(-g -O3)
 endif()
 
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
@@ -28,14 +28,17 @@ elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Flang)
 endif()
     
 
-set(okcomp GNU Intel)
-if(CMAKE_Fortran_COMPILER_ID IN_LIST okcomp)
-  add_library(assert fortran/assert.f90)
-else()
-  add_library(assert fortran/assert_legacy.f90)
-endif()
+# --- assert library
+add_library(assert fortran/assert.f90)
 target_compile_options(assert PRIVATE ${FFLAGS})
 
+set(okcomp GNU Intel)
+if(CMAKE_Fortran_COMPILER_ID IN_LIST okcomp)
+ target_sources(assert PRIVATE fortran/error2008.f90)
+else()  # non-Fortran 2008 compilers
+  target_sources(assert PRIVATE fortran/error2003.f90)
+endif()
+# --- other libraries
 add_library(maptran fortran/maptran.f90 fortran/vallado.f90)
 target_link_libraries(maptran PRIVATE assert)
 target_compile_options(maptran PRIVATE ${FFLAGS})

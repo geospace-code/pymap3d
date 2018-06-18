@@ -8,6 +8,7 @@ doctrees/
 
 *.out
 *.mod
+*.smod
 *~
 
 # Byte-compiled / optimized / DLL files

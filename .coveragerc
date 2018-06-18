@@ -10,4 +10,6 @@ exclude_lines =
     RuntimeError
     NotImplementedError
     ImportError
+    KeyError
+    logging.warning
 
