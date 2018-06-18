@@ -43,8 +43,7 @@ Why not [PyProj](https://github.com/jswhit/pyproj)?
     -   [AstroPy](http://www.astropy.org/) (optional): If not present,
         ECI coordinate conversions are not available.
 -   Matlab / GNU Octave: under `matlab/`
--   Fortran MapTran: under `fortran/`: Fortran 2008 compliant compiler
-    (tested with `gfortran`)
+-   Fortran MapTran: under `fortran/`: Fortran 2018 compliant compiler.  Tested with `gfortran`, `ifort`, PGI and `flang`, where the latter two use Fortran 2003 fallback code.
 
 ## Install
 
