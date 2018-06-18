@@ -10,7 +10,7 @@ tests_require = ['pytest', 'coveralls', 'pyproj', 'flake8', 'mypy']
 
 setup(name='pymap3d',
       packages=find_packages(),
-      version='1.7.0',
+      version='1.7.1',
       description='pure Python coordinate conversions, following convention of several popular Matlab routines.',
       long_description=open('README.md').read(),
       long_description_content_type="text/markdown",
