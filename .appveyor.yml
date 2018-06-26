@@ -27,8 +27,8 @@ build_script:
 - cd bin
 - cmd: cmake -G "MinGW Makefiles" ..
 - sh: cmake ..
-- make
+- cmake --build .
   
 after_build:
-- make test
+- ctest -V
 
