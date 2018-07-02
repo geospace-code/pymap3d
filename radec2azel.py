@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-# Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """
 Example Kitt Peak
 
 ./radec2azel.py 257.96295344 15.437854 31.9583 -111.5967 2014-12-25T22:00:00MST
 """
 from pymap3d import radec2azel
+from argparse import ArgumentParser
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+
+def main():
     p = ArgumentParser(description="RightAscension,Declination =>"
                                    "Azimuth,Elevation")
     p.add_argument('ra', help='right ascension [degrees]', type=float)
@@ -23,3 +23,7 @@ if __name__ == '__main__':
     az_deg, el_deg = radec2azel(P.ra, P.dec, P.lat, P.lon, P.time)
     print('azimuth: [deg]', az_deg)
     print('elevation [deg]:', el_deg)
+
+
+if __name__ == '__main__':
+    main()

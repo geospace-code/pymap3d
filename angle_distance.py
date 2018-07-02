@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from numpy.testing import assert_allclose
 from pymap3d.haversine import anglesep, anglesep_meeus
+from argparse import ArgumentParser
 
 
-if __name__ == '__main__':  # pragma: no cover
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description="angular distance between two sky points")
     p.add_argument('r0', help='right ascension: first point [deg]', type=float)
     p.add_argument('d0', help='declination: first point [deg]', type=float)
@@ -18,3 +18,7 @@ if __name__ == '__main__':  # pragma: no cover
     print('{:.6f} deg sep'.format(dist_deg))
 
     assert_allclose(dist_deg, dist_deg_astropy)
+
+
+if __name__ == '__main__':
+    main()
