@@ -27,9 +27,8 @@ Includes some relevant
 
 Why not [PyProj](https://github.com/jswhit/pyproj)?
 
--   PyMap3D does not require anything beyond pure Python.
--   PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's
-    interface is quite distinct
+-   PyMap3D does not require anything beyond pure Python + Numpy.
+-   PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
 -   PyMap3D intrinsically handles local coordinate systems such as ENU,
     while for PyProj ENU requires some [additional
     effort](https://github.com/jswhit/pyproj/issues/105).
@@ -67,13 +66,15 @@ The three separate packages are independent, they don't rely on each other.
 -   Fortran MapTran:
 
         cd bin
+        
         cmake ..
-        make
+        
+        cmake --build .
 
     verify Fortran (as well as Python and Matlab/Octave) functionality
     after compiling by:
 
-        make test
+        ctest -V
 
 -   Matlab/Octave: from within Matlab/Octave:
 
@@ -114,7 +115,7 @@ where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
 
 ### Matlab / GNU Octave
 
-The syntax is reasonably compatible with the \$1000 Matlab Mapping
+The syntax is reasonably compatible with the $1000 Matlab Mapping
 Toolbox. Under the `matlab/` directory:
 
 ```matlab
@@ -154,18 +155,12 @@ converted to the desired coordinate system:
 
 Abbreviations:
 
--   [AER: Azimuth, Elevation,
-    Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
--   [ECEF: Earth-centered,
-    Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
--   [ECI: Earth-centered
-    Inertial](https://en.wikipedia.org/wiki/Earth-centered_inertial)
--   [ENU: East North
-    Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
--   [NED: North East
-    Down](https://en.wikipedia.org/wiki/North_east_down)
--   [radec: right ascension,
-    declination](https://en.wikipedia.org/wiki/Right_ascension)
+-   [AER: Azimuth, Elevation, Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
+-   [ECEF: Earth-centered, Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
+-   [ECI: Earth-centered Inertial](https://en.wikipedia.org/wiki/Earth-centered_inertial)
+-   [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
+-   [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
+-   [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
 
 ### Caveats
 
@@ -179,12 +174,11 @@ Matlab / Octave
 
 The `matlab/` directory contains a subset of the Python conversion
 functions, usable from Matlab or GNU Octave. Mathworks currently charges
-\$1000 for the [Matlab Mapping
-Toolbox](https://www.mathworks.com/products/mapping.html) that provides
-these functions.
+$1000 for the 
+[Matlab Mapping Toolbox](https://www.mathworks.com/products/mapping.html) 
+that provides these functions.
 
--   The full set of Python conversions can be accessed from Matlab &ge;
-    R2014b by commands like:
+-   The full set of Python conversions are accessed from Matlab &ge; R2014b by commands like:
 
         lla = py.pymap3d.geodetic2ecef(x,y,z)
 
