@@ -31,7 +31,7 @@ before_install:
   - sudo apt-get update -q
   - sudo apt-get install -yq gfortran-6
 
-install: 
+install:
   - pip install -e .[tests,full]
 
   - cd bin
