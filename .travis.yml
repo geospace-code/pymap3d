@@ -19,12 +19,17 @@ env: FC=gfortran-6
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
+#    sources:
+#      - ubuntu-toolchain-r-test
     packages:
-      - gfortran-6
+#      - gfortran-6
       - octave
 
+# FIXME: temporary for travis xenial
+before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -yq
+  - sudo apt-get update -q
+  - sudo apt-get install -yq gfortran-6
 
 install: 
   - pip install -e .[tests,full]
