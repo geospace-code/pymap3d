@@ -16,7 +16,6 @@ os:
 
 env: FC=gfortran-6
 
-
 addons:
   apt:
 #    sources:
@@ -38,7 +37,7 @@ install:
   - cmake ..
   - cmake --build .
 
-script: 
+script:
   - ctest -V
   - cd ..
 
