@@ -11,6 +11,9 @@ from numpy.testing import assert_allclose
 import pymap3d as pm
 from pymap3d.timeconv import str2dt
 
+pi = np.pi
+nan = np.nan
+
 lla0 = (42, -82, 200)
 rlla0 = (np.radians(lla0[0]), np.radians(lla0[1]), lla0[2])
 
@@ -42,6 +45,25 @@ def test_str2dt():
     assert ti == to   # even though ti is numpy array of datetime and to is list of datetime
 
 # %%
+
+
+def test_losint():
+
+    az = [0., 10., 125.]
+
+    lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt=0.)
+    assert (lat[0] == lat).all() and (lon[0] == lon).all() and (sr[0] == sr).all()
+
+    assert_allclose((lat[0], lon[0], sr[0]), lla0, err_msg='los identity')
+# %%
+    tilt = [30., 45., 90.]
+    lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt)
+
+    truth = np.array([[42.00103959, lla0[1], 230.9413173],
+                      [42.00177328, -81.9995808, 282.84715651],
+                      [nan, nan, nan]])
+
+    assert_allclose(np.column_stack((lat, lon, sr)), truth)
 
 
 def test_geodetic():

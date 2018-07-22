@@ -1,4 +1,4 @@
-function ok = assert_allclose(actual, desired, rtol, atol, err_msg,notclose,verbose)
+function ok = assert_allclose(actual, desired, rtol, atol, equal_nan, err_msg,notclose,verbose)
 % ok = assert_allclose(actual, desired, rtol, atol)
 %
 % Inputs
@@ -17,9 +17,10 @@ function ok = assert_allclose(actual, desired, rtol, atol, err_msg,notclose,verb
 % if "actual" is within atol OR rtol of "desired", no error is emitted.
   narginchk(2,7)
 
-  if nargin < 7, verbose=false; end
-  if nargin < 6, notclose=false; end
-  if nargin < 5, err_msg=''; end
+  if nargin < 8, verbose=false; end
+  if nargin < 7, notclose=false; end
+  if nargin < 6, err_msg=''; end
+  if nargin < 5 || isempty(equal_nan), equal_nan=false; end
   if nargin < 4 || isempty(atol), atol=0; end
   if nargin < 3 || isempty(rtol), rtol=1e-8; end
   
@@ -29,14 +30,22 @@ function ok = assert_allclose(actual, desired, rtol, atol, err_msg,notclose,verb
   actual = actual(:);
   desired = desired(:);
   
+  if equal_nan
+    match = false(size(actual));
+    match(isnan(actual)) = true;
+  else
+    match = true;
+  end
+
+  
   measdiff = abs(actual-desired);
   tol = atol + rtol * abs(desired);
   result = measdiff <= tol;
 %% assert_allclose vs assert_not_allclose
   if notclose % more than N % of values should be changed more than tolerance (arbitrary)
-    testok = sum(~result) > 0.0001*numel(desired);
+    testok = match | sum(~result) > 0.0001*numel(desired);
   else
-    testok = all(result);
+    testok = all(match | result);
   end
   
   if ~testok

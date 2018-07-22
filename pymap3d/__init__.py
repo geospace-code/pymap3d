@@ -13,7 +13,7 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Tuple, List, Union
 import numpy as np
-from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees
+from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees, pi
 from .timeconv import str2dt  # noqa: F401
 from .azelradec import radec2azel, azel2radec  # noqa: F401
 from .eci import eci2ecef, ecef2eci
@@ -34,11 +34,13 @@ class EarthEllipsoid:
             self.a = 6378137.  # semi-major axis [m]
             self.f = 1 / 298.257222100882711243  # flattening
             self.b = self.a * (1 - self.f)  # semi-minor axis
-            
-def los_intersect(lat0:float, lon0:float, h0:float, az:float, tilt:float,
-                  ell: EarthEllipsoid=None,
-                  deg: bool=True):
+
+
+def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
+                  ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
+    Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
+
     Args:
         lat0, lon0: latitude and longitude of starting point
         h0: altitude of starting point in meters
@@ -54,33 +56,41 @@ def los_intersect(lat0:float, lon0:float, h0:float, az:float, tilt:float,
     if ell is None:
         ell = EarthEllipsoid()
 
+    tilt = np.asarray(tilt)
+
     a = ell.a
     b = ell.a
     c = ell.b
 
-    if deg:
-        el = np.array(tilt)-90.0
-    else:
-        el = np.array(tilt) - radians(90.0)
+    el = tilt - 90. if deg else tilt - pi / 2
 
-    e, n, u = aer2enu(az,el,1,deg=deg)
-    u, v, w = _enu2uvw(e, n, u,lat0,lon0, deg=deg)
-    x,y,z = geodetic2ecef(lat0, lon0, h0, deg=deg)
+    e, n, u = aer2enu(az, el, srange=1., deg=deg)  # fixed 1 km slant range
+    u, v, w = _enu2uvw(e, n, u, lat0, lon0, deg=deg)
+    x, y, z = geodetic2ecef(lat0, lon0, h0, deg=deg)
 
-    value = -a**2*b**2*w*z - a**2*c**2*v*y - b**2*c**2*u*x
-    radical = a**2*b**2*w**2 + a**2*c**2*v**2 - a**2*v**2*z**2 + 2*a**2*v*w*y*z - a**2*w**2*y**2 + b**2*c**2*u**2 - b**2*u**2*z**2 + 2*b**2*u*w*x*z - b**2*w**2*x**2 - c**2*u**2*y**2 + 2*c**2*u*v*x*y - c**2*v**2*x**2
-    magnitude = a**2*b**2*w**2 + a**2*c**2*v**2 + b**2*c**2*u**2
+    value = -a**2 * b**2 * w * z - a**2 * c**2 * v * y - b**2 * c**2 * u * x
+    radical = (a**2 * b**2 * w**2 + a**2 * c**2 * v**2 - a**2 * v**2 * z**2 + 2 * a**2 * v * w * y * z -
+               a**2 * w**2 * y**2 + b**2 * c**2 * u**2 - b**2 * u**2 * z**2 + 2 * b**2 * u * w * x * z -
+               b**2 * w**2 * x**2 - c**2 * u**2 * y**2 + 2 * c**2 * u * v * x * y - c**2 * v**2 * x**2)
+
+    magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
 
 #   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     with np.errstate(invalid='ignore'):
-        d = np.where(radical >0, (value - a*b*c*np.sqrt(radical)) / magnitude, np.nan)
-        d = np.where(d<0, np.nan, d)
+        d = np.where(radical > 0,
+                     (value - a * b * c * np.sqrt(radical)) / magnitude,
+                     np.nan)
+        d[d < 0] = np.nan
 
-    lat, lon, h = ecef2geodetic(x + d * u, y + d * v, z + d * w,deg=deg)
+    lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
-    return np.array(lat), np.array(lon), d
+    return lat, lon, d
 
+# alias
+los_intersect = lookAtSpheroid
 # %% to AER (azimuth, elevation, range)
+
+
 def ecef2aer(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
              ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
@@ -692,6 +702,7 @@ def _enu2uvw(east: float, north: float, up: float,
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
+
     t = cos(lat0) * up - sin(lat0) * north
     w = sin(lat0) * up + cos(lat0) * north
 
@@ -706,6 +717,7 @@ def _uvw2enu(u: float, v: float, w: float,
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
+
     t = cos(lon0) * u + sin(lon0) * v
     East = -sin(lon0) * u + cos(lon0) * v
     Up = cos(lat0) * t + sin(lat0) * w

@@ -30,7 +30,7 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
 
     %% aer2ecef contains:
     [x1,y1,z1] = geodetic2ecef(E,lat,lon,alt, angleUnit);
-    assert_allclose([x1,y1,z1],[x0,y0,z0], rtol,[],['geodetic2ecef: ',angleUnit])
+    assert_allclose([x1,y1,z1],[x0,y0,z0], rtol,[], [],['geodetic2ecef: ',angleUnit])
 
     [e1,n1,u1] = aer2enu(az, el, srange, angleUnit);
     assert_allclose([e1,n1,u1], [er,nr,ur], rtol)
@@ -66,7 +66,26 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
 
     [e3,n3,u3] = ecef2enu(x3,y3,z3,lat,lon,alt, E, angleUnit); % round-trip
     assert_allclose([e3,n3,u3],[e1,n1,u1], rtol)
+    %% 
+    if strcmp(angleUnit, 'd')
+      az5 = [0., 10., 125.];
+      tilt = [30, 45, 90];
 
+      [lat5, lon5, rng5] = lookAtSpheroid(lat, lon, alt, az5, 0., [], angleUnit);
+      assert(all(lat(1) == lat)) 
+      assert(all(lon(1) == lon))
+      assert(all(rng5(1) == rng5))
+
+      assert_allclose([lat5(1), lon5(1), rng5(1)], [lat,lon,alt])
+
+      [lat5, lon5, rng5] = lookAtSpheroid(lat, lon, alt, az5, tilt, [], angleUnit);
+
+      truth = [42.00103959, lon, 230.9413173;
+               42.00177328, -81.9995808, 282.84715651;
+               nan, nan, nan];
+
+      assert_allclose([lat5, lon5, rng5], truth, [], [],true)
+    end
   end % function
 
 disp('OK: GNU Octave / Matlab code')

@@ -19,8 +19,8 @@
     for massively parallel computation)
 
 PyMap3D is intended for non-interactive use on massively parallel (HPC)
-and embedded systems. 
-Includes some relevant 
+and embedded systems.
+Includes some relevant
 [Vallado's algorithms](http://www.smad.com/vallado/fortran/fortran.html).
 
 [API docs](https://www.scivision.co/pymap3d)
@@ -60,15 +60,15 @@ The three separate packages are independent, they don't rely on each other.
 
     One can verify Python functionality after installation by:
 
-        pip install -e .[tests]  
+        pip install -e .[tests]
         pytest -v
 
 -   Fortran MapTran:
 
         cd bin
-        
+
         cmake ..
-        
+
         cmake --build .
 
     verify Fortran (as well as Python and Matlab/Octave) functionality
@@ -99,7 +99,7 @@ x,y,z = pm.geodetic2ecef(lat,lon,alt)
 az,el,range = pm.geodetic2aer(lat, lon, alt, observer_lat, observer_lon, 0)
 ```
 
-[Python](https://www.python.org/dev/peps/pep-0448/) 
+[Python](https://www.python.org/dev/peps/pep-0448/)
 [argument unpacking](https://docs.python.org/3.6/tutorial/controlflow.html#unpacking-argument-lists)
 can be used for compact function arguments with scalars or arbitrarily
 shaped N-D arrays:
@@ -152,6 +152,7 @@ converted to the desired coordinate system:
     ned2aer  ned2ecef   ned2geodetic
     azel2radec radec2azel
     vreckon vdist
+    lookAtSpheroid
 
 Abbreviations:
 
@@ -174,8 +175,8 @@ Matlab / Octave
 
 The `matlab/` directory contains a subset of the Python conversion
 functions, usable from Matlab or GNU Octave. Mathworks currently charges
-$1000 for the 
-[Matlab Mapping Toolbox](https://www.mathworks.com/products/mapping.html) 
+$1000 for the
+[Matlab Mapping Toolbox](https://www.mathworks.com/products/mapping.html)
 that provides these functions.
 
 -   The full set of Python conversions are accessed from Matlab &ge; R2014b by commands like:
