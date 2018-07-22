@@ -11,7 +11,7 @@ Michael Hirsch implementation of algorithms from D. Vallado
 from datetime import datetime
 from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
 from typing import Tuple, Union
-from . import datetime2sidereal
+from .datetime2hourangle import datetime2sidereal
 
 
 def vazel2radec(az_deg: float, el_deg: float,

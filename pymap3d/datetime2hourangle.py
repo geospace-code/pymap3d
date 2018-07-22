@@ -2,7 +2,7 @@
 from math import pi
 from typing import Union, List
 from datetime import datetime
-from . import str2dt
+from .timeconv import str2dt
 #
 nan = float('nan')
 try:
@@ -48,7 +48,7 @@ def datetime2sidereal(time: Union[str, datetime],
             tsr = Time(time).sidereal_time(kind='apparent',
                                            longitude=Longitude(lon_radians, unit=u.radian)).radian
         else:
-            raise ImportError('AstroPy required, or use "usevallado=True"')
+            return datetime2sidereal(time, lon_radians, True)
 
     return tsr
 

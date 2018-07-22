@@ -1,7 +1,7 @@
 from typing import List, Union
 from datetime import datetime
 import numpy as np
-from . import str2dt
+from .timeconv import str2dt
 try:
     from astropy.time import Time
 except ImportError as e:
