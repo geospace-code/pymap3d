@@ -1,30 +1,26 @@
 image:
 - Visual Studio 2017
+# - Ubuntu   too old CMake 3.5
 
 stack: python 3
 
 environment:
   MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
-  PY_DIR: C:\Python36-x64
+  PY_DIR: C:\Python37-x64
 
 clone_depth: 3
 
 before_build:
 - cmd: set PATH=%MINGW_DIR%;%PY_DIR%;%PY_DIR%\Scripts;%PATH%
-# fix CMake sh.exe issue, by removing Git path.
-- cmd: set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-- cmd: set FC=%MINGW_DIR%\gfortran 
-- cmd: set CXX=%MINGW_DIR%\g++ 
-- cmd: set CC=%MINGW_DIR%\gcc
 
 - sh: sudo apt-get -yq update > /dev/null
 - sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran cmake make octave > /dev/null
 
 build_script:
-- pip install -e .[tests,full]
+- pip install -e .[tests]
 
 - cd bin
-- cmd: cmake -G "MinGW Makefiles" ..
+- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
 - sh: cmake ..
 - cmake --build .
   

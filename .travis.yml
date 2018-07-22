@@ -31,7 +31,7 @@ before_install:
   - sudo apt-get install -yq gfortran-6
 
 install:
-  - pip install -e .[tests,full]
+  - pip install -e .[tests]
 
   - cd bin
   - cmake ..
