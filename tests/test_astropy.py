@@ -43,6 +43,7 @@ def test_anglesep_meeus():
     # %% compare with astropy
     assert_allclose(pmh.anglesep_meeus(35, 23, 84, 20), ha)
 
+
 @pytest.mark.skipif(astropy is None, reason="AstroPy not installed")
 def test_eci():
     teci = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
