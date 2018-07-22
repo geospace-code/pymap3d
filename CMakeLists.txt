@@ -47,7 +47,7 @@ add_executable(testmaptran fortran/Test.f90)
 target_link_libraries(testmaptran PRIVATE assert maptran)
 target_compile_options(testmaptran PRIVATE ${FFLAGS})
 add_test(NAME FortranMap COMMAND testmaptran)
-set_tests_properties(Fortran PROPERTIES TIMEOUT 30)
+set_tests_properties(FortranMap PROPERTIES TIMEOUT 30)
 
 find_package(PythonInterp)
 if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
