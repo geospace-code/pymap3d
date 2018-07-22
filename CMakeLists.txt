@@ -32,8 +32,8 @@ endif()
 add_library(assert fortran/assert.f90)
 target_compile_options(assert PRIVATE ${FFLAGS})
 
-set(okcomp GNU Intel)
-if(CMAKE_Fortran_COMPILER_ID IN_LIST okcomp)
+set(f08 GNU Intel)
+if(CMAKE_Fortran_COMPILER_ID IN_LIST f08)
  target_sources(assert PRIVATE fortran/error2008.f90)
 else()  # non-Fortran 2008 compilers
   target_sources(assert PRIVATE fortran/error2003.f90)
@@ -46,13 +46,12 @@ target_compile_options(maptran PRIVATE ${FFLAGS})
 add_executable(testmaptran fortran/Test.f90)
 target_link_libraries(testmaptran PRIVATE assert maptran)
 target_compile_options(testmaptran PRIVATE ${FFLAGS})
-add_test(NAME Fortran COMMAND testmaptran)
+add_test(NAME FortranMap COMMAND testmaptran)
 set_tests_properties(Fortran PROPERTIES TIMEOUT 30)
 
 find_package(PythonInterp)
-#if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
-if(PYTHONINTERP_FOUND)
-  add_test(NAME Python COMMAND pytest -v
+if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
+  add_test(NAME Python COMMAND pytest -sv
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set_tests_properties(Python PROPERTIES TIMEOUT 30)
 endif()

@@ -1,20 +1,26 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
-from typing import Union
+from typing import Union, List
 from datetime import datetime
 from dateutil.parser import parse
+import numpy as np
 
 
-def str2dt(t: Union[str, datetime]):
+def str2dt(time: Union[str, datetime, list, tuple, np.ndarray]) -> Union[datetime, List[datetime], np.ndarray]:
     """
     Converts times in string or list of strings to datetime(s)
 
     output: datetime
     """
-    if isinstance(t, datetime):
-        return t
-    elif isinstance(t, str):
-        t = parse(t)
-    elif t is not None:
-        t = [parse(T) for T in t]
+    if isinstance(time, (float, int)) or (isinstance(time, (tuple, list, np.ndarray)) and isinstance(time[0], (float, int))):
+        return time  # assuming Unix epoch time or radians
 
-    return t
+    if isinstance(time, datetime):
+        return time
+    elif isinstance(time, str):
+        time = parse(time)
+    elif time is not None:  # iterable
+        time = [parse(t) for t in time]
+    else:
+        raise TypeError(f'unkknown time spec type {type(time)}')
+
+    return time

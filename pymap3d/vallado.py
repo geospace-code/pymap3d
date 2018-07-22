@@ -10,13 +10,13 @@ Michael Hirsch implementation of algorithms from D. Vallado
 """
 from datetime import datetime
 from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
-from typing import Tuple
-#
-from .datetime2hourangle import datetime2sidereal
+from typing import Tuple, Union
+from . import datetime2sidereal
 
 
 def vazel2radec(az_deg: float, el_deg: float,
-                lat_deg: float, lon_deg: float, t: datetime) -> Tuple[float, float]:
+                lat_deg: float, lon_deg: float,
+                time: Union[str, datetime]) -> Tuple[float, float]:
     """
     convert azimuth, elevation to right ascension, declination
 
@@ -34,7 +34,7 @@ def vazel2radec(az_deg: float, el_deg: float,
     lon_deg
         scalar observer WGS84 longitude [degrees]
 
-    t
+    time
         time of observation
 
     Outputs
@@ -68,14 +68,15 @@ def vazel2radec(az_deg: float, el_deg: float,
     lha = arctan2(-(sin(az) * cos(el)) / cos(dec),
                   (sin(el) - sin(lat) * sin(dec)) / (cos(dec) * cos(lat)))
 
-    lst = datetime2sidereal(t, lon)  # lon, ra in RADIANS
+    lst = datetime2sidereal(time, lon)  # lon, ra in RADIANS
 
     """ by definition right ascension \in [0,360) degrees """
     return degrees(lst - lha) % 360, degrees(dec)
 
 
 def vradec2azel(ra_deg: float, dec_deg: float,
-                lat_deg: float, lon_deg: float, t: datetime) -> Tuple[float, float]:
+                lat_deg: float, lon_deg: float,
+                time: Union[str, datetime]) -> Tuple[float, float]:
     """
     convert right ascension, declination to azimuth, elevation
 
@@ -93,7 +94,7 @@ def vradec2azel(ra_deg: float, dec_deg: float,
     lon_deg
         scalar observer WGS84 longitude [degrees]
 
-    t
+    time
         time of observation
 
     Outputs
@@ -123,7 +124,7 @@ def vradec2azel(ra_deg: float, dec_deg: float,
     lat = radians(lat)
     lon = radians(lon)
 
-    lst = datetime2sidereal(t, lon)  # RADIANS
+    lst = datetime2sidereal(time, lon)  # RADIANS
 # %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
     lha = lst - ra
 # %% #Eq. 4-12 p. 267

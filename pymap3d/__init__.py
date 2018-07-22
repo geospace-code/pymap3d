@@ -14,15 +14,10 @@ from datetime import datetime
 from typing import Tuple, List, Union
 import numpy as np
 from numpy import sin, cos, tan, sqrt, radians, arctan2, hypot, degrees
-try:
-    from astropy.time import Time
-    from astropy import units as u
-    from astropy.coordinates import Angle, SkyCoord, EarthLocation, AltAz, ICRS
-except ImportError:
-    Time = None
-#
-from .vallado import vazel2radec, vradec2azel
-from .timeconv import str2dt
+from .timeconv import str2dt  # noqa: F401
+from .azelradec import radec2azel, azel2radec  # noqa: F401
+from .eci import eci2ecef, ecef2eci
+from .datetime2hourangle import datetime2sidereal  # noqa: F401
 
 
 class EarthEllipsoid:
@@ -64,29 +59,6 @@ def ecef2aer(x: float, y: float, z: float,
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
     return enu2aer(xEast, yNorth, zUp, deg=deg)
-
-
-def eci2aer(eci: List[float], lat0: float, lon0: float, h0: float,
-            t: Union[datetime, List[datetime]]) -> Tuple[float, float, float]:
-    """
-    Observer => Point
-
-    input
-    -----
-    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
-    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]
-    h0     [meters]                observer altitude                [0,Infinity)
-    t  time (datetime.datetime)   time of obsevation (UTC)
-
-
-    output: AER
-    ------
-    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    slant range [meters]                                             [0,Infinity)
-    """
-    ecef = eci2ecef(eci, t)
-
-    return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
 
 
 def enu2aer(e: float, n: float, u: float, deg: bool=True) -> Tuple[float, float, float]:
@@ -183,53 +155,6 @@ def aer2ecef(az: float, el: float, srange: float,
     return x0 + dx, y0 + dy, z0 + dz
 
 
-def eci2ecef(eci: np.ndarray, time: Union[datetime, np.ndarray]) -> np.ndarray:
-    """
-     Observer => Point
-
-    input
-    -----
-    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
-    t  time (datetime.datetime)   time of obsevation (UTC)
-
-    output
-    ------
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
-    """
-    if Time is None:
-        raise ImportError('eci2ecef requires Numpy and AstroPy')
-
-    t = np.atleast_1d(time)
-    if isinstance(t[0], str):  # don't just ram in in case it's float
-        t = str2dt(t)
-
-    if isinstance(t[0], datetime):
-        gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    elif isinstance(t[0], float):
-        gst = t
-    elif t[0].dtype == 'M8[ns]':  # datetime64 from xarray
-        t = [datetime.utcfromtimestamp(T.astype(datetime) / 1e9) for T in t]
-    else:
-        raise TypeError('eci2ecef: time must be datetime or radian float')
-
-    assert isinstance(gst[0], float)  # must be in radians!
-
-    eci = np.atleast_2d(eci)
-    N, trip = eci.shape
-    if eci.ndim > 2 or trip != 3:
-        raise ValueError('eci triplets must be shape (N,3)')
-    """ported from:
-    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    """
-    ecef = np.empty_like(eci)
-
-    for i in range(N):
-        # ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
-        ecef[i, :] = _rottrip(gst[i]).dot(eci[i, :])
-
-    return ecef
-
-
 def enu2ecef(e1: float, n1: float, u1: float,
              lat0: float, lon0: float, h0: float,
              ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
@@ -303,7 +228,7 @@ def ned2ecef(n: float, e: float, d: float,
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
-# %% to ECI
+# %% ECI
 
 
 def aer2eci(az: float, el: float, srange: float,
@@ -329,49 +254,28 @@ def aer2eci(az: float, el: float, srange: float,
     return ecef2eci(np.column_stack((x, y, z)), t)
 
 
-def ecef2eci(ecef: np.ndarray, time: datetime) -> float:
+def eci2aer(eci: List[float], lat0: float, lon0: float, h0: float,
+            t: Union[datetime, List[datetime]]) -> Tuple[float, float, float]:
     """
-    Point => Point
+    Observer => Point
 
     input
     -----
-    ecef:  Nx3  x,y,z  (meters)
-    time:  datetime.datetime
+    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
+    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]
+    h0     [meters]                observer altitude                [0,Infinity)
+    t  time (datetime.datetime)   time of obsevation (UTC)
 
 
-    output
+    output: AER
     ------
-    eci  x,y,z (meters)
+    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    slant range [meters]                                             [0,Infinity)
     """
-    if Time is None:
-        raise ImportError('ecef2eci requires Numpy and AstroPy')
+    ecef = eci2ecef(eci, t)
 
-    t = np.atleast_1d(time)
-    if isinstance(t[0], str):  # don't just ram in in case it's float
-        t = str2dt(t)
+    return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
 
-    if isinstance(t[0], datetime):
-        gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    elif isinstance(t[0], float):
-        gst = t
-    else:
-        raise TypeError('eci2ecef: time must be datetime or radian float')
-
-    assert isinstance(gst[0], float)  # must be in radians!
-
-    ecef = np.atleast_2d(ecef)
-    N, trip = ecef.shape
-    if ecef.ndim > 2 or trip != 3:
-        raise TypeError('ecef triplets must be shape (N,3)')
-    """ported from:
-    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    """
-    eci = np.empty_like(ecef)
-    for i in range(N):
-        # eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :] # this one is transposed
-        eci[i, :] = _rottrip(gst[i]).T.dot(ecef[i, :])  # this one is transposed
-
-    return eci
 # %% to ENU
 
 
@@ -739,18 +643,6 @@ def get_radius_normal(lat_radians: float, ell: EarthEllipsoid) -> float:
 # %% internal use
 
 
-def _rottrip(ang: np.ndarray) -> np.ndarray:
-    ang = ang.squeeze()
-    if ang.size > 1:
-        raise ValueError('only one angle allowed at a time')
-    """ported from:
-    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    """
-    return np.array([[cos(ang), sin(ang), 0],
-                     [-sin(ang), cos(ang), 0],
-                     [0, 0, 1]])
-
-
 def _enu2uvw(east: float, north: float, up: float,
              lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
     if deg:
@@ -776,58 +668,3 @@ def _uvw2enu(u: float, v: float, w: float,
     North = -sin(lat0) * t + cos(lat0) * w
 
     return East, North, Up
-
-# %% azel radec
-
-
-def azel2radec(az_deg: float, el_deg: float,
-               lat_deg: float, lon_deg: float, t: datetime) -> Tuple[float, float]:
-    """convert astronomical target horizontal azimuth, elevation to
-       ecliptic right ascension, declination (degrees)
-    """
-
-    if Time is None:  # non-AstroPy method, less accurate
-        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, t)
-
-    t = str2dt(t)
-
-    obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
-
-    direc = AltAz(location=obs, obstime=Time(t),
-                  az=az_deg * u.deg, alt=el_deg * u.deg)
-
-    sky = SkyCoord(direc.transform_to(ICRS()))
-
-    return sky.ra.deg, sky.dec.deg
-
-
-def radec2azel(ra_deg: float, dec_deg: float,
-               lat_deg: float, lon_deg: float, t: datetime) -> Tuple[float, float]:
-    """convert astronomical target ecliptic right ascension, declination to
-       horizontal azimuth, eelvation (degrees)
-    """
-    if Time is None:
-        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, t)
-# %% input trapping
-    t = str2dt(t)
-    lat = np.atleast_1d(lat_deg)
-    lon = np.atleast_1d(lon_deg)
-    ra = np.atleast_1d(ra_deg)
-    dec = np.atleast_1d(dec_deg)
-
-    if not(lat.size == 1 & lon.size == 1):
-        raise ValueError('radec2azel is designed for one observer and one or more points (ra,dec).')
-
-    if ra.shape != dec.shape:
-        raise ValueError('ra and dec must be the same shape ndarray')
-
-    obs = EarthLocation(lat=lat * u.deg,
-                        lon=lon * u.deg)
-
-    points = SkyCoord(Angle(ra, unit=u.deg),
-                      Angle(dec, unit=u.deg),
-                      equinox='J2000.0')
-
-    altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
-
-    return altaz.az.degree, altaz.alt.degree

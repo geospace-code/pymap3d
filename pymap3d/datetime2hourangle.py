@@ -2,7 +2,7 @@
 from math import pi
 from typing import Union, List
 from datetime import datetime
-from .timeconv import str2dt
+from . import str2dt
 #
 nan = float('nan')
 try:
@@ -18,7 +18,7 @@ However, AstroPy is more accurate.
 """
 
 
-def datetime2sidereal(t: Union[str, datetime],
+def datetime2sidereal(time: Union[str, datetime],
                       lon_radians: float,
                       usevallado: bool=True) -> Union[float, List[float]]:
     """
@@ -27,14 +27,14 @@ def datetime2sidereal(t: Union[str, datetime],
     :algorithm: D. Vallado Fundamentals of Astrodynamics and Applications
 
 
-    t
+    time
         Python datetime
 
     lon
         longitude in RADIANS
     """
     if usevallado:
-        jd = datetime2julian(t)
+        jd = datetime2julian(time)
 # %% Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
 # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
@@ -45,15 +45,15 @@ def datetime2sidereal(t: Union[str, datetime],
             tsr = [g + lon_radians for g in gst]
     else:  # astropy
         if Time is not None:
-            tsr = Time(t).sidereal_time(kind='apparent',
-                                        longitude=Longitude(lon_radians, unit=u.radian)).radian
+            tsr = Time(time).sidereal_time(kind='apparent',
+                                           longitude=Longitude(lon_radians, unit=u.radian)).radian
         else:
             raise ImportError('AstroPy required, or use "usevallado=True"')
 
     return tsr
 
 
-def datetime2julian(time: Union[str, datetime]) -> Union[float, List[float]]:
+def datetime2julian(time: Union[str, datetime, List[datetime]]) -> Union[float, List[float]]:
     """
     Python datetime to Julian time
 
@@ -78,12 +78,14 @@ def datetime2julian(time: Union[str, datetime]) -> Union[float, List[float]]:
 
         return jd
 
-    T = str2dt(time)
+    time = str2dt(time)
 
-    if isinstance(T, datetime):
-        return _dt2julian(T)
+    assert isinstance(time, datetime) or isinstance(time[0], datetime)
+
+    if isinstance(time, datetime):
+        return _dt2julian(time)
     else:
-        return [_dt2julian(t) for t in T]
+        return [_dt2julian(t) for t in time]
 
 
 def julian2sidereal(juliandate: Union[float, List[float]]) -> Union[float, List[float]]:

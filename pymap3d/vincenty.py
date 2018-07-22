@@ -183,7 +183,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
     B = u2 / 1024 * (256 + u2 * (-128 + u2 * (74 - 47 * u2)))
     deltasigma = (B * sin(sigma) *
                   (cos2sigmam + B / 4 * (cos(sigma) * (-1 + 2 * cos2sigmam**2) -
-                   B / 6 * cos2sigmam * (-3 + 4 * sin(sigma)**2) * (-3 + 4 * cos2sigmam**2))))
+                                         B / 6 * cos2sigmam * (-3 + 4 * sin(sigma)**2) * (-3 + 4 * cos2sigmam**2))))
 
     dist_m = (b * A * (sigma - deltasigma)).reshape(keepsize)
 

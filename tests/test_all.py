@@ -15,21 +15,10 @@ try:  # for validation
 except ImportError:
     pyproj = None
 
-from pytz import UTC
-#
 import pymap3d as pm
-from pymap3d.haversine import anglesep, anglesep_meeus
-from pymap3d.datetime2hourangle import datetime2sidereal
-from pymap3d.vallado import vazel2radec, vradec2azel
 from pymap3d.timeconv import str2dt
 
-t0 = '2014-04-06T08:00:00Z'
-lat, lon = (65, -148)
-ra, dec = (166.5032081149338, 55.000011165405752)
-ha = 45.482789587392013
-azi, eli = (180.1, 80)
-
-lla0 = 42, -82, 200
+lla0 = (42, -82, 200)
 rlla0 = (np.radians(lla0[0]), np.radians(lla0[1]), lla0[2])
 
 aer0 = (33, 70, 1000)
@@ -53,37 +42,13 @@ ve, vn, vu = (5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 def test_str2dt():
 
-    assert str2dt(datetime(2014, 4, 6, 8, tzinfo=UTC)) == datetime(2014, 4, 6, 8, tzinfo=UTC)  # passthrough
-    assert str2dt('2014-04-06T08:00:00Z') == datetime(2014, 4, 6, 8, tzinfo=UTC)
-    ti = [str2dt('2014-04-06T08:00:00Z'), str2dt('2014-04-06T08:01:02Z')]
-    to = [datetime(2014, 4, 6, 8, tzinfo=UTC), datetime(2014, 4, 6, 8, 1, 2, tzinfo=UTC)]
+    assert str2dt(datetime(2014, 4, 6, 8)) == datetime(2014, 4, 6, 8)  # passthrough
+    assert str2dt('2014-04-06T08:00:00') == datetime(2014, 4, 6, 8)
+    ti = [str2dt('2014-04-06T08:00:00'), str2dt('2014-04-06T08:01:02')]
+    to = [datetime(2014, 4, 6, 8), datetime(2014, 4, 6, 8, 1, 2)]
     assert ti == to   # even though ti is numpy array of datetime and to is list of datetime
 
 # %%
-
-
-def test_datetime2sidereal():
-    sra = 2.90658
-    # http://www.jgiesen.de/astro/astroJS/siderealClock/
-    try:
-        assert_allclose(datetime2sidereal(t0, np.radians(lon), False), sra, rtol=1e-5)
-
-        assert_allclose(datetime2sidereal([t0], np.radians(lon), False), [sra], rtol=1e-5)
-    except ImportError:
-        pass
-
-    assert_allclose(datetime2sidereal(t0, np.radians(lon), True), sra, rtol=1e-5)
-
-    assert_allclose(datetime2sidereal([t0], np.radians(lon), True), [sra], rtol=1e-5)
-
-
-def test_haversine():
-    try:
-        assert_allclose(anglesep(35, 23, 84, 20), ha)
-    except ImportError:
-        pass
-    # %% compare with astropy
-    assert_allclose(anglesep_meeus(35, 23, 84, 20), ha)
 
 
 def test_geodetic():
@@ -182,42 +147,6 @@ def test_vincenty():
     if pyproj:
         p4az, p4a21, p4sr = pyproj.Geod(ellps='WGS84').inv(20, 10, lon2, lat2)
         assert_allclose((p4az, p4a21 % 360., p4sr), (az, a21, sr))
-
-
-def test_azel2radec():
-    R, D = pm.azel2radec(azi, eli, lat, lon, t0)
-    assert_allclose(R, ra, rtol=1e-2)
-    assert_allclose(D, dec, rtol=1e-2)
-
-    Rv, Dv = vazel2radec(azi, eli, lat, lon, t0)
-    assert_allclose(Rv, ra)
-    assert_allclose(Dv, dec)
-
-
-def test_radec2azel():
-    azapy, elapy = pm.radec2azel(ra, dec, lat, lon, t0)
-    assert_allclose(azapy, azi, rtol=1e-2)
-    assert_allclose(elapy, eli, rtol=1e-2)
-
-    azvallado, elvallado = vradec2azel(ra, dec, lat, lon, t0)
-    assert_allclose(azvallado, azi, rtol=1e-2)
-    assert_allclose(elvallado, eli, rtol=1e-2)
-
-
-def test_eci():
-    teci = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
-    t = datetime(2013, 1, 15, 12, 0, 5, tzinfo=UTC)
-    lla = np.asarray(pm.eci2geodetic(teci, t)).squeeze()
-    assert_allclose(lla, lla0, rtol=0.2)
-
-    assert_allclose(pm.eci2ecef(teci, t).squeeze(),
-                    [649012.04640917, -4697980.55129606, 4250818.82815207])
-
-    assert_allclose(pm.ecef2eci([649012.04640917, -4697980.55129606, 4250818.82815207], t).squeeze(),
-                    teci)
-
-    assert_allclose(np.asarray(pm.eci2aer(teci, 42, -100, 0, t)).squeeze(),
-                    [83.73050, -6.614478, 1.473510e6])
 
 
 if __name__ == '__main__':
