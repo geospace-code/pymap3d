@@ -37,7 +37,7 @@ class EarthEllipsoid:
 
 
 def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
-                  ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
+                   ell: EarthEllipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -85,6 +85,7 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
     return lat, lon, d
+
 
 # alias
 los_intersect = lookAtSpheroid
