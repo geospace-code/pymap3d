@@ -26,9 +26,9 @@ addons:
 
 # FIXME: temporary for travis xenial
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
-  - sudo apt-get install -yq gfortran-6
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y > /dev/null
+  - sudo apt-get update -q > /dev/null
+  - sudo apt-get install -yq gfortran-6 > /dev/null
 
 install:
   - pip install -e .[tests]
