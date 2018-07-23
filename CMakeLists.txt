@@ -18,7 +18,7 @@ elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
     list(APPEND FFLAGS -std=f2018)
   endif()
 
-  list(APPEND FFLAGS -march=native -ffpe-trap=invalid,zero,overflow -fbacktrace 
+  list(APPEND FFLAGS -march=native -ffpe-trap=zero,overflow -fbacktrace 
                     -Wall -Wextra -Wpedantic -Warray-bounds)# -Wfatal-errors)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
   list(APPEND FFLAGS -Mallocatable=03)

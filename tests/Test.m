@@ -72,11 +72,10 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
       tilt = [30, 45, 90];
 
       [lat5, lon5, rng5] = lookAtSpheroid(lat, lon, alt, az5, 0., [], angleUnit);
-      assert(all(lat(1) == lat)) 
-      assert(all(lon(1) == lon))
-      assert(all(rng5(1) == rng5))
+      assert_allclose(lat5, lat)
+      assert_allclose(lon5, lon)
+      assert_allclose(rng5, alt)
 
-      assert_allclose([lat5(1), lon5(1), rng5(1)], [lat,lon,alt])
 
       [lat5, lon5, rng5] = lookAtSpheroid(lat, lon, alt, az5, tilt, [], angleUnit);
 

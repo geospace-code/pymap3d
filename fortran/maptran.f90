@@ -1,5 +1,5 @@
 module maptran
-
+  use, intrinsic:: ieee_arithmetic, only: ieee_quiet_nan, ieee_value
   use assert, only: wp,isclose
   implicit none
   private
@@ -17,9 +17,77 @@ module maptran
 
   public :: ecef2geodetic, geodetic2ecef, aer2enu, enu2aer, aer2ecef, ecef2aer, &
             enu2ecef, ecef2enu, aer2geodetic, geodetic2enu,&
-            geodetic2aer,enu2geodetic,degrees,radians, anglesep
+            geodetic2aer,enu2geodetic,degrees,radians, anglesep, &
+            lookAtSpheroid
 
 contains
+
+
+impure elemental subroutine lookAtSpheroid(lat0, lon0, h0, az, tilt, lat, lon, srange, spheroid, deg)
+! lookAtSpheroid: Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
+!
+!    Args:
+!        lat0, lon0: latitude and longitude of starting point
+!        h0: altitude of starting point in meters
+!        az: azimuth angle of line-of-sight, clockwise from North
+!        tilt: tilt angle of line-of-sight with respect to local vertical (nadir = 0)
+!    Returns:
+!        lat, lon: latitude and longitude where the line-of-sight intersects with the Earth ellipsoid
+!        d: slant range in meters from the starting point to the intersect point
+!        Values will be NaN if the line of sight does not intersect.
+!    Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
+
+real(wp), intent(in) :: lat0, lon0, h0, az, tilt
+type(Ellipsoid), intent(in), optional :: spheroid
+logical, intent(in), optional :: deg
+real(wp), intent(out) :: lat, lon, srange
+
+type(Ellipsoid) :: ell
+real(wp) :: a,b,c,east,north,up,u,v,w,x,y,z, el, val, radical, magnitude
+logical :: d
+real(wp):: nan
+
+nan = ieee_value(0._wp, ieee_quiet_nan)
+
+ell = merge(spheroid, wgs84Ellipsoid, present(spheroid))
+
+d=.true.
+if (present(deg)) d = deg
+
+ a = ell%SemimajorAxis
+ b = a
+ c = ell%SemiminorAxis
+
+if (d) then
+  el = tilt - 90._wp
+else 
+  el = tilt - pi / 2
+endif 
+
+call aer2enu(az, el, 1._wp, east, north, up, deg=d) ! fixed 1 km slant range
+call enu2uvw(east,north,up, lat0,lon0, u,v,w, deg=d)
+call geodetic2ecef(lat0,lon0,h0, x,y,z, spheroid=ell, deg=d)
+
+val = -a**2 * b**2 * w * z - a**2 * c**2 * v * y - b**2 * c**2 * u * x
+
+radical = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 - a**2 * v**2 * z**2 + 2 * a**2 * v * w * y * z - &
+          a**2 * w**2 * y**2 + b**2 * c**2 * u**2 - b**2 * u**2 * z**2 + 2 * b**2 * u * w * x * z - &
+          b**2 * w**2 * x**2 - c**2 * u**2 * y**2 + 2 * c**2 * u * v * x * y - c**2 * v**2 * x**2
+
+magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
+
+! Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
+if (radical > 0) then
+  srange = (val - a * b * c * sqrt(radical)) / magnitude
+else 
+  srange = nan
+endif 
+
+if (srange < 0) srange = nan
+
+call ecef2geodetic(x+srange*u, y+srange*v, z+srange*w, lat, lon, spheroid=ell, deg=d)
+
+end subroutine lookAtSpheroid
 
 
 elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
@@ -36,7 +104,8 @@ elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
   real(wp), intent(in) :: x,y,z
   type(Ellipsoid), intent(in), optional :: spheroid
   logical, intent(in), optional :: deg
-  real(wp), intent(out) :: lat, lon, alt
+  real(wp), intent(out) :: lat, lon
+  real(wp), intent(out), optional :: alt
 
   real(wp) :: ea, eb, rad, rho, c, vnew, v
   integer :: i
@@ -69,9 +138,8 @@ elemental subroutine ecef2geodetic(x, y, z, lat, lon, alt, spheroid, deg)
   lat = atan2(ea * tan(vnew), eb)
 ! by inspection
   lon = atan2(y, x)
-
-  alt = ((rad - ea * cos(vnew)) * cos(lat)) + &
-         ((z - eb * sin(vnew)) * sin(lat))
+ 
+  if (present(alt)) alt = ((rad - ea * cos(vnew)) * cos(lat)) + ((z - eb * sin(vnew)) * sin(lat))
 
   d=.true.
   if (present(deg)) d = deg
@@ -488,7 +556,7 @@ elemental subroutine ecef2enuv(u, v, w, lat0, lon0, east, north, up, deg)
 end subroutine ecef2enuv
 
 
-elemental subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
+elemental subroutine enu2uvw(east,north,up, lat0,lon0, u,v,w, deg)
 ! enu2uvw   convert from ENU to UVW coordinates
 !
 ! Inputs
@@ -500,7 +568,7 @@ elemental subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
 ! outputs
 ! -------
 ! u,v,w:   coordinates of test point(s) (meters)
-  real(wp), intent(in) :: e,n,up
+  real(wp), intent(in) :: east,north,up
   real(wp), value :: lat0,lon0
   real(wp), intent(out) :: u,v,w
   logical, intent(in), optional :: deg
@@ -517,11 +585,11 @@ elemental subroutine enu2uvw(e,n,up,lat0,lon0,u,v,w,deg)
   endif
 
 
-  t = cos(lat0) * up - sin(lat0) * n
-  w = sin(lat0) * up + cos(lat0) * n
+  t = cos(lat0) * up - sin(lat0) * north
+  w = sin(lat0) * up + cos(lat0) * north
 
-  u = cos(lon0) * t - sin(lon0) * e
-  v = sin(lon0) * t + cos(lon0) * e
+  u = cos(lon0) * t - sin(lon0) * east
+  v = sin(lon0) * t + cos(lon0) * east
 
 end subroutine enu2uvw
 
