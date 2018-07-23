@@ -32,6 +32,10 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
     [x1,y1,z1] = geodetic2ecef(E,lat,lon,alt, angleUnit);
     assert_allclose([x1,y1,z1],[x0,y0,z0], rtol,[], [],['geodetic2ecef: ',angleUnit])
 
+    [x1,y1,z1] = geodetic2ecef(lat,lon,alt, angleUnit); % simple input
+    assert_allclose([x1,y1,z1],[x0,y0,z0], rtol,[], [],['geodetic2ecef: ',angleUnit])
+
+    
     [e1,n1,u1] = aer2enu(az, el, srange, angleUnit);
     assert_allclose([e1,n1,u1], [er,nr,ur], rtol)
 
@@ -40,6 +44,9 @@ test_transforms('r',deg2rad(lat),deg2rad(lon), deg2rad(lat1),deg2rad(lon1), deg2
 
     %% ecef2geodetic is self-contained, iterative algorithm.
     [lat2, lon2, alt2] = ecef2geodetic(E, x1, y1, z1, angleUnit); % round-trip
+    assert_allclose([lat2, lon2, alt2], [lat, lon, alt], rtol)
+    
+    [lat2, lon2, alt2] = ecef2geodetic(x1, y1, z1, angleUnit); % simple input
     assert_allclose([lat2, lon2, alt2], [lat, lon, alt], rtol)
 
     [az2, el2, rng2] = enu2aer(e1,n1,u1, angleUnit); % round-trip

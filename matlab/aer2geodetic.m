@@ -13,13 +13,14 @@ function [lat1, lon1, alt1] = aer2geodetic (az, el, slantRange, lat0, lon0, alt0
 % Outputs
 % -------
 % lat1,lon1,alt1: geodetic coordinates of test points (degrees,degrees,meters)
+narginchk(6,8)
 
-  if nargin<7, spheroid = []; end
-  if nargin<8, angleUnit= [];  end
+if nargin<7, spheroid = []; end
+if nargin<8, angleUnit= [];  end
 
-  [x, y, z] = aer2ecef(az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit);
- 
-  [lat1, lon1, alt1] = ecef2geodetic(spheroid, x, y, z, angleUnit);
+[x, y, z] = aer2ecef(az, el, slantRange, lat0, lon0, alt0, spheroid, angleUnit);
+
+[lat1, lon1, alt1] = ecef2geodetic(spheroid, x, y, z, angleUnit);
 
 end
 

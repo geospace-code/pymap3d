@@ -15,18 +15,23 @@ function ok = assert_allclose(actual, desired, rtol, atol, equal_nan, err_msg,no
 % for Matlab and GNU Octave
 %
 % if "actual" is within atol OR rtol of "desired", no error is emitted.
-  narginchk(2,7)
+narginchk(2,7)
 
-  if nargin < 8, verbose=false; end
-  if nargin < 7, notclose=false; end
-  if nargin < 6, err_msg=''; end
-  if nargin < 5 || isempty(equal_nan), equal_nan=false; end
-  if nargin < 4 || isempty(atol), atol=0; end
-  if nargin < 3 || isempty(rtol), rtol=1e-8; end
-  
-  assert(isscalar(rtol))
-  assert(isscalar(atol))
-  
+if nargin < 8, verbose=false; end
+if nargin < 7, notclose=false; end
+if nargin < 6, err_msg=''; end
+if nargin < 5 || isempty(equal_nan), equal_nan=false; end
+if nargin < 4 || isempty(atol), atol=0; end
+if nargin < 3 || isempty(rtol), rtol=1e-8; end
+
+validateattributes(actual, {'numeric'}, {'real'})
+validateattributes(desired, {'numeric'}, {'real'})
+validateattributes(rtol, {'numeric'}, {'real','scalar','finite'})
+validateattributes(atol, {'numeric'}, {'real','scalar','finite'})
+validateattributes(equal_nan, {'numeric','logical'}, {'scalar'})
+validateattributes(notclose, {'numeric','logical'}, {'scalar'})
+validateattributes(verbose, {'numeric','logical'}, {'scalar'})
+%% compute
   actual = actual(:);
   desired = desired(:);
   

@@ -10,8 +10,11 @@ function N = get_radius_normal(lat, E)
 % Outputs
 % -------
 % N: normal along the prime vertical section ellipsoidal radius of curvature, at a given geodetic latitude.
+narginchk(2,2)
+validateattributes(E,{'struct'},{'nonempty'})
+validateattributes(lat, {'numeric'}, {'real','>=',-90,'<=',90})
 
-    N = E.SemimajorAxis^2 ./ sqrt( E.SemimajorAxis^2 .* cos(lat).^2 + E.SemiminorAxis^2 .* sin(lat).^2 );
+N = E.SemimajorAxis^2 ./ sqrt( E.SemimajorAxis^2 .* cos(lat).^2 + E.SemiminorAxis^2 .* sin(lat).^2 );
 end
 
 % Copyright (c) 2014-2018 Michael Hirsch, Ph.D.

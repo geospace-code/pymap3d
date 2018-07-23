@@ -1,4 +1,4 @@
-function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit)
+function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z, angleUnit)
 %ecef2geodetic   convert ECEF to geodetic coordinates
 %
 % Inputs
@@ -13,49 +13,72 @@ function [lat,lon,alt] = ecef2geodetic(spheroid, x, y, z,  angleUnit)
 %
 % also see: http://www.oc.nps.edu/oc2902w/coord/coordcvt.pdf
 % Fortran reference at bottom of: http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
+narginchk(3,5)
+if isempty(spheroid)
+  spheroid = wgs84Ellipsoid();
+elseif isnumeric(spheroid) && nargin == 3
+  z = y;
+  y = x;
+  x = spheroid;
+  spheroid = wgs84Ellipsoid();
+elseif isnumeric(spheroid) && ischar(z) && nargin == 4
+  angleUnit = z;
+  z = y;
+  y = x;
+  x = spheroid;
+  spheroid = wgs84Ellipsoid();
+end
 
-  if isempty(spheroid), spheroid = wgs84Ellipsoid(); end
+if nargin < 5 || isempty(angleUnit), angleUnit='d'; end
 
-  % Algorithm is based on 
-  % http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
-  % This algorithm provides a converging solution to the latitude equation
-  % in terms of the parametric or reduced latitude form (v)
-  % This algorithm provides a uniform solution over all latitudes as it does
-  % not involve division by cos(phi) or sin(phi)
-   a = spheroid.SemimajorAxis; 
-   b = spheroid.SemiminorAxis;
-  r = hypot(x, y);
-  % Constant required for Latitude equation
-  rho = atan2(b * z, a * r);  
-  % Constant required for latitude equation
-  c = (a^2 - b^2) ./ hypot(a*r, b*z);  
-   count = 0;
+validateattributes(spheroid,{'struct'},{'nonempty'})
+validateattributes(x, {'numeric'}, {'real'})
+validateattributes(y, {'numeric'}, {'real'})
+validateattributes(z, {'numeric'}, {'real'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
+
+%% compute
+
+% Algorithm is based on 
+% http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
+% This algorithm provides a converging solution to the latitude equation
+% in terms of the parametric or reduced latitude form (v)
+% This algorithm provides a uniform solution over all latitudes as it does
+% not involve division by cos(phi) or sin(phi)
+a = spheroid.SemimajorAxis; 
+b = spheroid.SemiminorAxis;
+r = hypot(x, y);
+% Constant required for Latitude equation
+rho = atan2(b * z, a * r);  
+% Constant required for latitude equation
+c = (a^2 - b^2) ./ hypot(a*r, b*z);  
+count = 0;
 % Starter for the Newtons Iteration Method
-  vnew = atan2(a * z, b * r);  
+vnew = atan2(a * z, b * r);  
 % Initializing the parametric latitude
-   v = 0;
-  while v ~= vnew && count < 5
- %   disp([v,vnew])
-     v = vnew;
-    % Derivative of latitude equation
-    w = 2 * (cos (v - rho) - c .* cos(2 * v)); 
-    % Newtons Method for computing iterations  
-    vnew = v - ((2 * sin (v - rho) - c .* sin(2 * v)) ./ w);  
-    count = count+1;
-  end %while
+v = 0;
+while all(v ~= vnew) && count < 5
+%   disp([v,vnew])
+ v = vnew;
+% Derivative of latitude equation
+w = 2 * (cos (v - rho) - c .* cos(2 * v)); 
+% Newtons Method for computing iterations  
+vnew = v - ((2 * sin (v - rho) - c .* sin(2 * v)) ./ w);  
+count = count+1;
+end %while
 
 %% Computing latitude from the root of the latitude equation
-  lat = atan2(a * tan (vnew), b); 
-  % Computing longitude
-  lon = atan2(y, x); 
- % Computing h from latitude obtained 
-  alt = ((r - a * cos (vnew)) .* cos (lat)) +  ...
-      ((z - b * sin (vnew)) .* sin (lat));
-      
-  if nargin < 5 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
-    lat = rad2deg(lat);
-    lon = rad2deg(lon);
-  end
+lat = atan2(a * tan (vnew), b); 
+% Computing longitude
+lon = atan2(y, x); 
+% Computing h from latitude obtained 
+alt = ((r - a * cos (vnew)) .* cos (lat)) +  ...
+  ((z - b * sin (vnew)) .* sin (lat));
+
+if strcmpi(angleUnit(1),'d')
+  lat = rad2deg(lat);
+  lon = rad2deg(lon);
+end
 
  end % function
 

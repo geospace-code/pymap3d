@@ -11,17 +11,25 @@ function [e, n, u] = aer2enu (az, el, slantRange, angleUnit)
 % Outputs
 % -------
 % e,n,u:  East, North, Up coordinates of test points (meters)
+narginchk(3,4)
 
-  if nargin==3 || isempty(angleUnit) || strcmpi(angleUnit(1),'d') 
-    az = deg2rad(az);
-    el = deg2rad(el);
-  end    
+if nargin==3 || isempty(angleUnit), angleUnit='d'; end
+
+validateattributes(az, {'numeric'}, {'real'})
+validateattributes(el, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(slantRange, {'numeric'}, {'real'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
+%% compute
+if strcmpi(angleUnit(1),'d') 
+  az = deg2rad(az);
+  el = deg2rad(el);
+end    
 
 %% Calculation of AER2ENU
-   u = slantRange .* sin(el);
-   r = slantRange .* cos(el);
-   e = r .* sin(az);
-   n = r .* cos(az);
+u = slantRange .* sin(el);
+r = slantRange .* cos(el);
+e = r .* sin(az);
+n = r .* cos(az);
 
 end
 

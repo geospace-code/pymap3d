@@ -1,4 +1,4 @@
-function [az, elev, slantRange] = enu2aer(e, n, u, angleUnit)
+function [az, elev, slantRange] = enu2aer(east, north, up, angleUnit)
 %enu2aer   convert ENU to azimuth, elevation, slant range
 %
 % Inputs
@@ -12,16 +12,27 @@ function [az, elev, slantRange] = enu2aer(e, n, u, angleUnit)
 % az: azimuth clockwise from local north
 % el: elevation angle above local horizon
 
-  r = hypot(e, n);
-  slantRange = hypot(r,u);
-  % radians
-  elev = atan2(u,r);
-  az = mod(atan2(e, n), 2 * atan2(0,-1));
+narginchk(3,4)
+if nargin < 4 || isempty(angleUnit), angleUnit='d'; end
 
-  if nargin < 4 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
-    elev = rad2deg(elev);
-    az = rad2deg(az);
-  end
+validateattributes(east, {'numeric'}, {'real'})
+validateattributes(north, {'numeric'}, {'real'})
+validateattributes(up, {'numeric'}, {'real'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
+
+%% compute
+
+
+r = hypot(east, north);
+slantRange = hypot(r,up);
+% radians
+elev = atan2(up,r);
+az = mod(atan2(east, north), 2 * atan2(0,-1));
+
+if strcmpi(angleUnit(1),'d')
+  elev = rad2deg(elev);
+  az = rad2deg(az);
+end
   
 end
 

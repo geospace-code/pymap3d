@@ -13,20 +13,20 @@ function [x,y,z] = aer2ecef(az, el, slantRange, lat0, lon0, alt0, spheroid, angl
 % outputs
 % -------
 % x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
-     
-  if nargin < 7 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  if nargin < 8, angleUnit = 'd'; end
+narginchk(6,8)
+if nargin < 7, spheroid = []; end
+if nargin < 8, angleUnit = []; end
 
-  %% Origin of the local system in geocentric coordinates.
-  [x0, y0, z0] = geodetic2ecef(spheroid, lat0, lon0, alt0, angleUnit);
-  %% Convert Local Spherical AER to ENU
-  [e, n, u] = aer2enu(az, el, slantRange, angleUnit);
-  %% Rotating ENU to ECEF
-  [dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleUnit);
-  %% Origin + offset from origin equals position in ECEF
-  x = x0 + dx;
-  y = y0 + dy;
-  z = z0 + dz;
+%% Origin of the local system in geocentric coordinates.
+[x0, y0, z0] = geodetic2ecef(spheroid, lat0, lon0, alt0, angleUnit);
+%% Convert Local Spherical AER to ENU
+[e, n, u] = aer2enu(az, el, slantRange, angleUnit);
+%% Rotating ENU to ECEF
+[dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleUnit);
+%% Origin + offset from origin equals position in ECEF
+x = x0 + dx;
+y = y0 + dy;
+z = z0 + dz;
 
 end
 

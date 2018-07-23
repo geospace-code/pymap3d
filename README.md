@@ -82,7 +82,7 @@ The three separate packages are independent, they don't rely on each other.
 
     One can verify Matlab code functionality by running:
 
-        tests/Test.m
+        tests/Test_maptran.m
 
 ## Usage
 

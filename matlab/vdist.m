@@ -65,17 +65,20 @@ function varargout = vdist(lat1,lon1,lat2,lon2)
 %            above in (9).
 %       (12) No warranties; use at your own risk.
 
-% reshape inputs
+narginchk(4,4)
+
+validateattributes(lat1, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lat2, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lon1, {'numeric'}, {'real'})
+validateattributes(lon2, {'numeric'}, {'real'})
+%% reshape inputs
 keepsize = size(lat1);
 lat1=lat1(:);
 lon1=lon1(:);
 lat2=lat2(:);
 lon2=lon2(:);
-% Input check:
-if any(abs(lat1)>90 | abs(lat2)>90)
-    error('Input latitudes must be between -90 and 90 degrees, inclusive.')
-end
-% Supply WGS84 earth ellipsoid axis lengths in meters:
+
+%% Supply WGS84 earth ellipsoid axis lengths in meters:
 a = 6378137; % definitionally
 b = 6356752.31424518; % computed from WGS84 earth flattening coefficient
 % preserve true input latitudes:

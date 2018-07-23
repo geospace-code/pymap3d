@@ -1,4 +1,4 @@
-function [x,y,z] = geodetic2ecef(spheroid, lat, lon, alt,  angleUnit)
+function [x,y,z] = geodetic2ecef(spheroid, lat, lon, alt, angleUnit)
 %geodetic2ecef   convert from geodetic to ECEF coordiantes
 %
 % Inputs
@@ -10,23 +10,46 @@ function [x,y,z] = geodetic2ecef(spheroid, lat, lon, alt,  angleUnit)
 % outputs
 % -------
 % x,y,z:  ECEF coordinates of test point(s) (meters)
-%
 
-  if isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-  
-  if nargin < 5 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
-    lat = deg2rad(lat);
-    lon = deg2rad(lon);
-  end
- 
-  
+narginchk(3,5)
+
+if isempty(spheroid)
+  spheroid = wgs84Ellipsoid();
+elseif isnumeric(spheroid) && nargin == 3
+  alt = lon;
+  lon = lat;
+  lat = spheroid;
+  spheroid = wgs84Ellipsoid();
+elseif isnumeric(spheroid) && ischar(alt) && nargin == 4
+  angleUnit = alt;
+  alt = lon;
+  lon = lat;
+  lat = spheroid;
+  spheroid = wgs84Ellipsoid();
+end
+
+if nargin < 5 || isempty(angleUnit), angleUnit = 'd'; end
+
+validateattributes(spheroid,{'struct'},{'nonempty'})
+validateattributes(lat, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lon, {'numeric'}, {'real'})
+validateattributes(alt, {'numeric'}, {'real','nonnegative'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
+
+%% compute
+
+if strcmpi(angleUnit(1),'d')
+  lat = deg2rad(lat);
+  lon = deg2rad(lon);
+end
+
 %% Radius of curvature of the prime vertical section
-  N = get_radius_normal(lat, spheroid);
+N = get_radius_normal(lat, spheroid);
 %% Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic coordinates.
-  
-  x = (N + alt) .* cos(lat) .* cos(lon);
-  y = (N + alt) .* cos(lat) .* sin(lon);
-  z = (N .* (spheroid.SemiminorAxis / spheroid.SemimajorAxis)^2 + alt) .* sin(lat);
+
+x = (N + alt) .* cos(lat) .* cos(lon);
+y = (N + alt) .* cos(lat) .* sin(lon);
+z = (N .* (spheroid.SemiminorAxis / spheroid.SemimajorAxis)^2 + alt) .* sin(lat);
         
 end
  

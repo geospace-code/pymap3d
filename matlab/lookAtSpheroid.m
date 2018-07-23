@@ -14,10 +14,18 @@ function [lat, lon, d] = lookAtSpheroid(lat0, lon0, h0, az, tilt, spheroid, angl
 %  Values will be NaN if the line of sight does not intersect.
 %
 % Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
-
+narginchk(5,7)
 if nargin < 6 || isempty(spheroid), spheroid = wgs84Ellipsoid(); end
-
 if nargin < 7 || isempty(angleUnit), angleUnit='d'; end
+
+validateattributes(lat0, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lon0, {'numeric'}, {'real','finite'})
+validateattributes(h0, {'numeric'}, {'real','nonnegative','finite'})
+validateattributes(az, {'numeric'}, {'real','finite'})
+validateattributes(tilt, {'numeric'}, {'real','nonnegative','<=',180})
+validateattributes(spheroid,{'struct'},{'nonempty'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
+%% computation
 
 if strcmpi(angleUnit(1),'d')
   el = tilt - 90;
@@ -29,7 +37,7 @@ a = spheroid.SemimajorAxis;
 b = a;
 c = spheroid.SemiminorAxis;
 
-[e, n, u] = aer2enu(az, el, 1., angleUnit);  # fixed 1 km slant range
+[e, n, u] = aer2enu(az, el, 1., angleUnit);  % fixed 1 km slant range
 [u, v, w] = enu2uvw(e, n, u, lat0, lon0, angleUnit);
 [x, y, z] = geodetic2ecef([], lat0, lon0, h0, angleUnit);
 
@@ -40,10 +48,11 @@ radical = a.^2 .* b.^2 .* w.^2 + a.^2 .* c.^2 .* v.^2 - a.^2 .* v.^2 .* z.^2 + 2
 
 magnitude = a.^2 .* b.^2 .* w.^2 + a.^2 .* c.^2 .* v.^2 + b.^2 .* c.^2 .* u.^2;
 
-#   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth 
+% Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth 
 d = (value - a .* b .* c .* sqrt(radical)) ./ magnitude;
 d(radical < 0 | d < 0) = nan; % separate line
 
+% altitude should be zero
 [lat, lon] = ecef2geodetic([], x + d .* u, y + d .* v, z + d .* w, angleUnit);
 
 end % function

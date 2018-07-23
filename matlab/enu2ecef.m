@@ -11,16 +11,16 @@ function [x, y, z] = enu2ecef(e, n, u, lat0, lon0, alt0, spheroid, angleUnit)
 % outputs
 % -------
 % x,y,z: Earth Centered Earth Fixed (ECEF) coordinates of test point (meters)
-                          
-  if nargin<7, spheroid = []; end
-  if nargin<8, angleUnit = []; end
+narginchk(6,8)              
+if nargin<7, spheroid = []; end
+if nargin<8, angleUnit = []; end
 
-  [x0, y0, z0] = geodetic2ecef(spheroid, lat0, lon0, alt0, angleUnit);
-  [dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleUnit);
-  
-   x = x0 + dx;
-   y = y0 + dy;
-   z = z0 + dz;
+[x0, y0, z0] = geodetic2ecef(spheroid, lat0, lon0, alt0, angleUnit);
+[dx, dy, dz] = enu2uvw(e, n, u, lat0, lon0, angleUnit);
+
+x = x0 + dx;
+y = y0 + dy;
+z = z0 + dz;
 end
 
 % Copyright (c) 2014-2018 Michael Hirsch, Ph.D.

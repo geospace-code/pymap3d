@@ -8,9 +8,10 @@ function E = wgs84Ellipsoid(lengthUnit)
 % Outputs
 % ------
 % E: struct with referenceEllipsoid() properties
+narginchk(0,1)
 
 if nargin>0 && ~strcmpi(lengthUnit(1),'m')
-    error('wgs84Ellipsoid only accepts units of meters for now.')
+  error('wgs84Ellipsoid only accepts units of meters for now.')
 end
 
 E = getreferenceEllipsoid('wgs84');

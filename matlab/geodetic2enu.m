@@ -11,20 +11,19 @@ function [e, n, u] = geodetic2enu(lat, lon, alt, lat0, lon0, alt0, spheroid, ang
 % outputs
 % -------
 % e,n,u:  East, North, Up coordinates of test points (meters)
+narginchk(6,8)
 
+if nargin < 7, spheroid = []; end
+if nargin < 8, angleUnit = []; end
 
-  if nargin < 7, spheroid = []; end
-  if nargin < 8, angleUnit = []; end
-  
-  [x1,y1,z1] = geodetic2ecef(spheroid, lat,lon,alt,angleUnit);
-  [x2,y2,z2] = geodetic2ecef(spheroid, lat0,lon0,alt0,angleUnit);
-  
-  dx = x1-x2;
-  dy = y1-y2;
-  dz = z1-z2;
-  
-  [e, n, u] = ecef2enuv(dx, dy, dz, lat0, lon0, angleUnit);
-  
+[x1,y1,z1] = geodetic2ecef(spheroid, lat,lon,alt,angleUnit);
+[x2,y2,z2] = geodetic2ecef(spheroid, lat0,lon0,alt0,angleUnit);
+
+dx = x1-x2;
+dy = y1-y2;
+dz = z1-z2;
+
+[e, n, u] = ecef2enuv(dx, dy, dz, lat0, lon0, angleUnit);
 
 end % function
 

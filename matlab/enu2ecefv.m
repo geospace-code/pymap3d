@@ -1,4 +1,4 @@
-function [u, v, w] = enu2ecefv(e, n, u, lat0, lon0, angleUnit)
+function [u, v, w] = enu2ecefv(east, north, up, lat0, lon0, angleUnit)
 %enu2ecef  convert from ENU to ECEF coordinates
 %
 % Inputs
@@ -10,17 +10,27 @@ function [u, v, w] = enu2ecefv(e, n, u, lat0, lon0, angleUnit)
 % outputs
 % -------
 % u,v,w:   coordinates of test point(s) (meters)
+narginchk(5,6)
+if nargin < 6 || isempty(angleUnit), angleUnit='d'; end
 
-  if nargin < 6 || isempty(angleUnit) || strcmpi(angleUnit(1),'d')
-    lat0 = deg2rad(lat0);
-    lon0 = deg2rad(lon0);
-  end
+validateattributes(east, {'numeric'}, {'real'})
+validateattributes(north, {'numeric'}, {'real'})
+validateattributes(up, {'numeric'}, {'real'})
+validateattributes(lat0, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lon0, {'numeric'}, {'real'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
 
-  t = cos(lat0) .* u - sin(lat0) .* n;
-  w = sin(lat0) .* u + cos(lat0) .* n;
+    
+if strcmpi(angleUnit(1),'d')
+  lat0 = deg2rad(lat0);
+  lon0 = deg2rad(lon0);
+end
 
-  u = cos(lon0) .* t - sin(lon0) .* e;
-  v = sin(lon0) .* t + cos(lon0) .* e;
+t = cos(lat0) .* up - sin(lat0) .* north;
+w = sin(lat0) .* up + cos(lat0) .* north;
+
+u = cos(lon0) .* t - sin(lon0) .* east;
+v = sin(lon0) .* t + cos(lon0) .* east;
   
 end
 

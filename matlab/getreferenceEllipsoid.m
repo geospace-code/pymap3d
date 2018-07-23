@@ -12,9 +12,12 @@ function E = getreferenceEllipsoid(name)
 % -------
 % E: referenceEllipsoid parameter struct
 %
+narginchk(0,1)
 
 if ~nargin
   name='wgs84';
+else
+  validateattributes(name,{'char','string'},{'vector'})
 end
 
 switch name
@@ -50,22 +53,26 @@ end
 end % function
 
 function v = spheroidvolume(E)
+validateattributes(E,{'struct'},{'nonempty'})
 
-  v = 4*pi/3 * E.SemimajorAxis^2 * E.SemiminorAxis;
-  
-  assert(v>=0)
+v = 4*pi/3 * E.SemimajorAxis^2 * E.SemiminorAxis;
+
+assert(v>=0)
 
 end
 
 function r = meanradius(E)
+validateattributes(E,{'struct'},{'nonempty'})
 
-  r = (2*E.SemimajorAxis + E.SemiminorAxis) / 3;
+r = (2*E.SemimajorAxis + E.SemiminorAxis) / 3;
 
-  assert(r>=0)
+assert(r>=0)
 
 end
 
 function ecc = get_eccentricity(E)
+narginchk(1,1)
+validateattributes(E,{'struct'},{'nonempty'})
 
 ecc = sqrt ( (E.SemimajorAxis^2 - E.SemiminorAxis^2) / (E.SemimajorAxis^2)); 
 

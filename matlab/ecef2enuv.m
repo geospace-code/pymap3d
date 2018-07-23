@@ -1,4 +1,4 @@
-function [e, n, Up] = ecef2enuv (u, v, w, lat0, lon0, angleUnit)
+function [e, n, Up] = ecef2enuv(u, v, w, lat0, lon0, angleUnit)
 %ecef2enuv convert *vector projection* UVW to ENU
 %
 % Inputs
@@ -10,16 +10,27 @@ function [e, n, Up] = ecef2enuv (u, v, w, lat0, lon0, angleUnit)
 % Outputs
 % -------
 % e,n,Up:  East, North, Up vector
-%
-  if nargin<6 || isempty(angleUnit) || strcmpi(angleUnit(1), 'd')
-    lat0 = deg2rad(lat0);
-    lon0 = deg2rad(lon0);
-  end
+narginchk(5,6)
+if nargin<6 || isempty(angleUnit), angleUnit='d'; end
 
-  t  =  cos(lon0) .* u + sin(lon0) .* v;
-  e  = -sin(lon0) .* u + cos(lon0) .* v;
-  Up =  cos(lat0) .* t + sin(lat0) .* w;
-  n  = -sin(lat0) .* t + cos(lat0) .* w;
+validateattributes(u, {'numeric'}, {'real'})
+validateattributes(v, {'numeric'}, {'real'})
+validateattributes(w, {'numeric'}, {'real'})
+validateattributes(lat0, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lon0, {'numeric'}, {'real'})
+validateattributes(angleUnit,{'string','char'},{'scalar'})
+
+%% compute
+
+if strcmpi(angleUnit(1), 'd')
+  lat0 = deg2rad(lat0);
+  lon0 = deg2rad(lon0);
+end
+
+t  =  cos(lon0) .* u + sin(lon0) .* v;
+e  = -sin(lon0) .* u + cos(lon0) .* v;
+Up =  cos(lat0) .* t + sin(lat0) .* w;
+n  = -sin(lat0) .* t + cos(lat0) .* w;
 end
 
 % Copyright (c) 2014-2018 Michael Hirsch, Ph.D.

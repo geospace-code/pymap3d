@@ -47,10 +47,12 @@ function [lat2,lon2,a21] = vreckon(lat1,lon1,s,a12)
 % (6) Tested but no warranty. Use at your own risk.
 % (7) Ver 1.0, Michael Kleder, November 2007
 
-% Input check:
-if abs(lat1)>90
-    error('Input latitude must be between -90 and 90 degrees, inclusive.')
-end
+narginchk(4,4)
+validateattributes(lat1, {'numeric'}, {'real','>=',-90,'<=',90})
+validateattributes(lon1, {'numeric'}, {'real'})
+validateattributes(s, {'numeric'}, {'real','nonnegative'})
+validateattributes(a12, {'numeric'}, {'real'})
+%% compute
 a = 6378137; % semimajor axis
 b = 6356752.31424518; % semiminor axis
 f = 1/298.257223563; % flattening coefficient

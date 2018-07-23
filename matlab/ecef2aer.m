@@ -13,12 +13,12 @@ function [az, el, slantRange] = ecef2aer(x, y, z, lat0, lon0, alt0, spheroid, an
 % az, el, slantrange: look angles and distance to point under test (degrees, degrees, meters)
 % az: azimuth clockwise from local north
 % el: elevation angle above local horizon
+narginchk(6,8)
+if nargin < 7, spheroid = [];  end
+if nargin < 8, angleUnit= []; end
 
-  if nargin < 7, spheroid = [];  end
-  if nargin < 8, angleUnit= []; end
-
-  [e, n, u] = ecef2enu(x, y, z, lat0, lon0, alt0, spheroid, angleUnit);
-  [az,el,slantRange] = enu2aer(e, n, u, angleUnit);
+[e, n, u] = ecef2enu(x, y, z, lat0, lon0, alt0, spheroid, angleUnit);
+[az,el,slantRange] = enu2aer(e, n, u, angleUnit);
   
 end
 

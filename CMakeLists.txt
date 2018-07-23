@@ -58,7 +58,7 @@ endif()
 
 find_package(Octave)
 if (OCTAVE_MAJOR_VERSION GREATER_EQUAL 4)
-  add_test(NAME MatlabOctave COMMAND octave-cli -q Test.m
+  add_test(NAME MatlabOctave COMMAND octave-cli -q Test_maptran.m
            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests)
   set_tests_properties(MatlabOctave PROPERTIES TIMEOUT 30)
 endif()
