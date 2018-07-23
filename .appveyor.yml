@@ -2,6 +2,8 @@ image:
 - Visual Studio 2017
 # - Ubuntu   too old CMake 3.5
 
+build: off
+
 stack: python 3
 
 environment:
@@ -10,13 +12,13 @@ environment:
 
 clone_depth: 3
 
-before_build:
+init:
 - cmd: set PATH=%MINGW_DIR%;%PY_DIR%;%PY_DIR%\Scripts;%PATH%
 
 - sh: sudo apt-get -yq update > /dev/null
 - sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran cmake make octave > /dev/null
 
-build_script:
+install:
 - pip install -e .[tests]
 
 - cd bin
@@ -24,6 +26,6 @@ build_script:
 - sh: cmake ..
 - cmake --build .
   
-after_build:
+test_script:
 - ctest -V
 
