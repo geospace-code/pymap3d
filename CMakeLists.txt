@@ -49,13 +49,6 @@ target_compile_options(testmaptran PRIVATE ${FFLAGS})
 add_test(NAME FortranMap COMMAND testmaptran)
 set_tests_properties(FortranMap PROPERTIES TIMEOUT 30)
 
-find_package(PythonInterp)
-if(PYTHON_VERSION_STRING STRGREATER_EQUAL 3.6)
-  add_test(NAME Python COMMAND pytest -sv
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set_tests_properties(Python PROPERTIES TIMEOUT 30)
-endif()
-
 find_package(Octave)
 if (OCTAVE_MAJOR_VERSION GREATER_EQUAL 4)
   add_test(NAME MatlabOctave COMMAND octave-cli -q Test_maptran.m
