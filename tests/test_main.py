@@ -145,4 +145,4 @@ def test_ned():
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(['-x', __file__])

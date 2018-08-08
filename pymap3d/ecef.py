@@ -1,6 +1,9 @@
 from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt
 from copy import deepcopy
-from typing import Tuple
+from typing import Tuple, Sequence
+from datetime import datetime
+
+from .eci import eci2ecef
 
 
 class EarthEllipsoid:
@@ -164,25 +167,6 @@ def ecef2enu(x: float, y: float, z: float,
     return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
 
-def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True) -> Tuple[float, float, float]:
-    """
-    input
-    -----
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
-
-    output:
-    -------
-    n,e,d  North,east, down [m]
-
-    """
-    e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
-
-    return n, e, -u
-
-
 def enu2uvw(east: float, north: float, up: float,
             lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
     if deg:
@@ -210,3 +194,52 @@ def uvw2enu(u: float, v: float, w: float,
     North = -sin(lat0) * t + cos(lat0) * w
 
     return East, North, Up
+
+
+def eci2geodetic(eci: Sequence[float], t: datetime) -> Tuple[float, float, float]:
+    """
+    convert ECI to geodetic coordinates
+
+    inputs:
+
+    eci/ecef: Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
+    t : length N vector of datetime OR greenwich sidereal time angle [radians].
+
+
+    output
+    ------
+    lat,lon   (degrees/radians)
+    alt  (meters)
+
+    Note: Conversion is idealized: doesn't consider nutations, perterbations,
+    etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
+    from ECI to ECEF
+    """
+
+    """ a.k.a. eci2lla() """
+    ecef = eci2ecef(eci, t)
+
+    return ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])
+
+
+def enu2ecef(e1: float, n1: float, u1: float,
+             lat0: float, lon0: float, h0: float,
+             ell=None, deg: bool=True) -> Tuple[float, float, float]:
+    """
+    Observer => Point
+
+    inputs:
+     e1, n1, u1 (meters)   east, north, up
+     observer: lat0, lon0, h0 (degrees/radians,degrees/radians, meters)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+
+    output
+    ------
+    x,y,z  [meters] target ECEF location                         [0,Infinity)
+    """
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+    dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
+
+    return x0 + dx, y0 + dy, z0 + dz
