@@ -23,7 +23,7 @@ install: pip install -e .[tests]
 
 script:
 - cd tests
-- octave-cli -q Test_maptran.m
+- octave-cli -q test_matlab.m
 - cd ..
 
 - pytest -rsv
