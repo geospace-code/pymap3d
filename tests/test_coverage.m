@@ -1,6 +1,6 @@
 profile('off')
 profile('on')
-Test_maptran
+test_matlab
 profile('off')
 
 profile('viewer')

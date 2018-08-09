@@ -14,18 +14,9 @@ python:
 os:
 - linux
 
-addons:
-  apt:
-    packages:
-    - octave
-
 install: pip install -e .[tests]
 
 script:
-- cd tests
-- octave-cli -q test_matlab.m
-- cd ..
-
 - pytest -rsv
 - flake8
 - mypy . --ignore-missing-imports

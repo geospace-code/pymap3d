@@ -2,10 +2,6 @@ import pytest
 from pymap3d.vincenty import vreckon, vdist
 from numpy.testing import assert_allclose
 import pymap3d as pm
-try:  # for validation
-    import pyproj
-except ImportError:
-    pyproj = None
 
 az = 38
 sr = 3e3
@@ -21,8 +17,9 @@ def test_vincenty():
     assert_allclose(vdist(10, 20, lat2, lon2), (sr, az, a21))
 
 
-@pytest.mark.skipif(pyproj is None, reason="PyProj not installed")
 def test_compare_vicenty():
+    pyproj = pytest.importorskip('pyproj')
+    
     lat2, lon2, a21 = vreckon(10, 20, sr, az)
 
     p4lon, p4lat, p4a21 = pyproj.Geod(ellps='WGS84').fwd(lon2, lat2, az, sr)
@@ -32,8 +29,9 @@ def test_compare_vicenty():
     assert_allclose((p4az, p4a21 % 360., p4sr), (az, a21, sr))
 
 
-@pytest.mark.skipif(pyproj is None, reason="PyProj not installed")
 def test_compare_geodetic():
+    pyproj = pytest.importorskip('pyproj')
+    
     xyz = pm.geodetic2ecef(*lla0)
 
     ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
@@ -45,4 +43,4 @@ def test_compare_geodetic():
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(['-x', __file__])
