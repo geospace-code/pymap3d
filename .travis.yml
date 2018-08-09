@@ -14,31 +14,16 @@ python:
 os:
 - linux
 
-env: FC=gfortran-6
-
 addons:
   apt:
-#    sources:
-#      - ubuntu-toolchain-r-test
     packages:
-#      - gfortran-6
-      - octave
+    - octave
 
-# FIXME: temporary for travis xenial
-before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y > /dev/null
-  - sudo apt-get update -q > /dev/null
-  - sudo apt-get install -yq gfortran-6 > /dev/null
-
-install:
-- pip install -e .[tests]
-
-- cd bin
-- cmake ..
-- cmake --build .
+install: pip install -e .[tests]
 
 script:
-- ctest -V
+- cd tests
+- octave-cli -q Test_maptran.m
 - cd ..
 
 - pytest -rsv
@@ -47,7 +32,7 @@ script:
 
 after_success:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-  pytest --cov;
+  pytest --cov --cov-config=setup.cfg;
   coveralls;
   fi
 

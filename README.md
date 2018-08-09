@@ -9,17 +9,15 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability)](https://codeclimate.com/github/scivision/pymap3d/maintainability)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
 
-# Python / Matlab / Fortran 3-D coordinate conversions
+# Python / Matlab 3-D coordinate conversions
 
 3-D geographic coordinate conversions, with API similar to popular $1000 Matlab Mapping Toolbox routines for:
 
 -   Python
 -   Matlab, GNU Octave
--   modern Fortran 2008 standard ("elemental" functions and subroutines
-    for massively parallel computation)
+-   [modern Fortran](https://github.com/scivision/maptran)
 
-PyMap3D is intended for non-interactive use on massively parallel (HPC)
-and embedded systems.
+PyMap3D is intended for non-interactive use on massively parallel (HPC) and embedded systems.
 Includes some relevant
 [Vallado's algorithms](http://www.smad.com/vallado/fortran/fortran.html).
 
@@ -39,14 +37,12 @@ Why not [PyProj](https://github.com/jswhit/pyproj)?
 ## Prerequisites
 
 -   Python PyMap3D: Python &gt;= 3.6
-    -   [AstroPy](http://www.astropy.org/) (optional): If not present,
-        ECI coordinate conversions are not available.
+    -   [AstroPy](http://www.astropy.org/) (optional, used for ECI coordinates)
 -   Matlab / GNU Octave: under `matlab/`
--   Fortran MapTran: under `fortran/`: Fortran 2018 compliant compiler.  Tested with `gfortran`, `ifort`, PGI and `flang`, where the latter two use Fortran 2003 fallback code.
 
 ## Install
 
-The three separate packages are independent, they don't rely on each other.
+The packages are independent, they don't rely on each other.
 
 -   Python PyMap3D:
 
@@ -62,19 +58,6 @@ The three separate packages are independent, they don't rely on each other.
 
         pip install -e .[tests]
         pytest -v
-
--   Fortran MapTran:
-
-        cd bin
-
-        cmake ..
-
-        cmake --build .
-
-    verify Fortran (as well as Python and Matlab/Octave) functionality
-    after compiling by:
-
-        ctest -V
 
 -   Matlab/Octave: from within Matlab/Octave:
 
@@ -124,19 +107,7 @@ x,y,z = geodetic2ecef([],lat,lon,alt)
 az,el,range = geodetic2aer(lat, lon, alt, observer_lat, observer_lon, observer_alt)
 ```
 
-### Fortran
 
-The Fortran API under `fortran/` directory is simple like PyMap3D.
-Modern Fortran "elemental" procedures throughout enable seamless support
-of scalar or array coordinate inputs. Default precision is `real64`, set
-at the top of `fortran/maptran.f90`.
-
-```fortran
-use maptran
-
-call geodetic2ecef(lat,lon,alt, x,y,z)
-call geodetic2aer(lat,lon,alt, observer_lat, observer_lon, observer_alt)
-```
 
 ### Functions
 
@@ -170,8 +141,7 @@ Abbreviations:
     a GitHub Issue to request).
 -   Planetary perturbations and nutation etc. not fully considered.
 
-Matlab / Octave
----------------
+## Matlab / Octave
 
 The `matlab/` directory contains a subset of the Python conversion
 functions, usable from Matlab or GNU Octave. Mathworks currently charges

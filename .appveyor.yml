@@ -5,7 +5,6 @@ image:
 stack: python 3
 
 environment:
-  MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
   PY_DIR: C:\Python37-x64
 
 clone_depth: 3
@@ -13,20 +12,9 @@ clone_depth: 3
 build: off
 
 init:
-- cmd: set PATH=%MINGW_DIR%;%PATH%
 - cmd: set PATH=%PY_DIR%;%PY_DIR%\Scripts;%PATH%
 
-- sh: sudo apt-get -yq update > /dev/null
-- sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends octave > /dev/null
+install: pip install -e .[tests]
 
-install:
-- pip install -e .[tests]
-
-- cd bin
-- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
-- sh: cmake ..
-- cmake --build .
-
-test_script:
-- ctest -V
+test_script: pytest -rsv
 

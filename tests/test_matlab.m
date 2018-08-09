@@ -1,8 +1,11 @@
-function Test()
-% Test run a scalar self-test of the PyMap3D Matlab/ Octave  functions
+function test_matlab(vendor)
+% Test run a scalar self-test of the Matlab/ Octave 3-D coordinate conversion functions
 
 fpath = fileparts(mfilename('fullpath'));
-addpath([fpath,filesep,'../matlab']) % comment this line to test Matlab Mapping Toolbox
+if nargin == 0 || ~vendor
+  addpath(fpath)
+  addpath([fpath,filesep,'../matlab'])
+end
 
 E = wgs84Ellipsoid();
 %% reference inputs
