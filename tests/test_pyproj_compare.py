@@ -19,7 +19,7 @@ def test_vincenty():
 
 def test_compare_vicenty():
     pyproj = pytest.importorskip('pyproj')
-    
+
     lat2, lon2, a21 = vreckon(10, 20, sr, az)
 
     p4lon, p4lat, p4a21 = pyproj.Geod(ellps='WGS84').fwd(lon2, lat2, az, sr)
@@ -31,7 +31,7 @@ def test_compare_vicenty():
 
 def test_compare_geodetic():
     pyproj = pytest.importorskip('pyproj')
-    
+
     xyz = pm.geodetic2ecef(*lla0)
 
     ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')

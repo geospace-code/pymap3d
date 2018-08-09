@@ -33,7 +33,7 @@ def test_datetime2sidereal_vallado():
 
 def test_anglesep():
     pytest.importorskip('astropy')
-    
+
     assert pmh.anglesep(35, 23, 84, 20) == approx(ha)
 
 
@@ -44,7 +44,7 @@ def test_anglesep_meeus():
 
 def test_eci():
     pytest.importorskip('astropy')
-    
+
     teci = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
     t = datetime(2013, 1, 15, 12, 0, 5)
     lla = np.asarray(pm.eci2geodetic(teci, t)).squeeze()
