@@ -9,13 +9,13 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability)](https://codeclimate.com/github/scivision/pymap3d/maintainability)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
 
-# Python / Matlab 3-D coordinate conversions
+# Python 3-D coordinate conversions
 
 3-D geographic coordinate conversions, with API similar to popular $1000 Matlab Mapping Toolbox routines for:
 
--   Python
--   Matlab, GNU Octave
--   [modern Fortran](https://github.com/scivision/maptran)
+* Python
+* [Matlab, GNU Octave](https://github.com/scivision/matmap3d)
+* [modern Fortran](https://github.com/scivision/maptran)
 
 PyMap3D is intended for non-interactive use on massively parallel (HPC) and embedded systems.
 Includes some relevant
@@ -36,43 +36,33 @@ Why not [PyProj](https://github.com/jswhit/pyproj)?
 
 ## Prerequisites
 
--   Python PyMap3D: Python &gt;= 3.6
-    -   [AstroPy](http://www.astropy.org/) (optional, used for ECI coordinates)
--   Matlab / GNU Octave: under `matlab/`
+* Python &gt;= 3.6
+* [AstroPy](http://www.astropy.org/) (optional, used for ECI coordinates)
+
 
 ## Install
 
-The packages are independent, they don't rely on each other.
+```sh
+pip install pymap3d
+```
 
--   Python PyMap3D:
+or for the latest development code:
+```sh
+git clone https://github.com/scivision/pymap3d
 
-        pip install pymap3d
+pip install -e .
+```
 
-    or for the latest development code:
-
-        git clone https://github.com/scivision/pymap3d
-
-        pip install -e .
-
-    One can verify Python functionality after installation by:
-
-        pip install -e .[tests]
-        pytest -v
-
--   Matlab/Octave: from within Matlab/Octave:
-
-        addpath('pymap3d/matlab')
-
-    One can verify Matlab code functionality by running:
-
-        tests/Test_maptran.m
+One can verify Python functionality after installation by:
+```sh
+pip install -e .[tests]
+pytest -rsv
+```
 
 ## Usage
 
 Where consistent with the definition of the functions, all arguments may
 be arbitrarily shaped (scalar, N-D array).
-
-### Python
 
 ```python
 import pymap3d as pm
@@ -95,18 +85,6 @@ lla = pm.aer2geodetic(*aer,*obslla)
 ```
 
 where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
-
-### Matlab / GNU Octave
-
-The syntax is reasonably compatible with the $1000 Matlab Mapping
-Toolbox. Under the `matlab/` directory:
-
-```matlab
-x,y,z = geodetic2ecef([],lat,lon,alt)
-
-az,el,range = geodetic2aer(lat, lon, alt, observer_lat, observer_lon, observer_alt)
-```
-
 
 
 ### Functions
@@ -136,23 +114,7 @@ Abbreviations:
 
 ### Caveats
 
--   Atmospheric effects neglected in all functions not invoking AstroPy.
-    Would need to update code to add these input parameters (just start
-    a GitHub Issue to request).
--   Planetary perturbations and nutation etc. not fully considered.
-
-## Matlab / Octave
-
-The `matlab/` directory contains a subset of the Python conversion
-functions, usable from Matlab or GNU Octave. Mathworks currently charges
-$1000 for the
-[Matlab Mapping Toolbox](https://www.mathworks.com/products/mapping.html)
-that provides these functions.
-
--   The full set of Python conversions are accessed from Matlab &ge; R2014b by commands like:
-
-        lla = py.pymap3d.geodetic2ecef(x,y,z)
-
--   Matlab [documentation](https://www.scivision.co/pymap3d) generated
-    by [m2html](https://www.artefact.tk/software/matlab/m2html/).
+* Atmospheric effects neglected in all functions not invoking AstroPy.
+  Would need to update code to add these input parameters (just start a GitHub Issue to request).
+* Planetary perturbations and nutation etc. not fully considered.
 
