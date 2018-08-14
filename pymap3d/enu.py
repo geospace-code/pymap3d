@@ -1,12 +1,12 @@
 from typing import Tuple
-from numpy import radians, sin, cos, hypot, arctan2, degrees
+from numpy import radians, sin, cos, hypot, arctan2, degrees, asarray
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 
 
 def enu2aer(e: float, n: float, u: float, deg: bool=True) -> Tuple[float, float, float]:
     """
-    Observer => Point
+    ENU to Azimuth, Elevation, Range
 
     input
     -----
@@ -22,14 +22,18 @@ def enu2aer(e: float, n: float, u: float, deg: bool=True) -> Tuple[float, float,
     slantRange = hypot(r, u)
     elev = arctan2(u, r)
     az = arctan2(e, n) % (2 * arctan2(0, -1))
+
     if deg:
-        return degrees(az), degrees(elev), slantRange
-    else:
-        return az, elev, slantRange  # radians
+        az = degrees(az)
+        elev = degrees(elev)
+
+    return az, elev, slantRange
 
 
 def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float, float, float]:
     """
+    input:
+    ------
     azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     slant range [meters]                                             [0,Infinity)
     deg    degrees input/output  (False: radians in/out)
@@ -42,6 +46,9 @@ def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float,
     if deg:
         el = radians(el)
         az = radians(az)
+
+    if (asarray(srange) < 0).any():
+        raise ValueError('Slant range \in  [0, Infinity)')
 
     r = srange * cos(el)
 

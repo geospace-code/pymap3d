@@ -21,6 +21,9 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
         Values will be NaN if the line of sight does not intersect.
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
+    if (np.asarray(h0) < 0).any():
+        raise ValueError('Altitude \in  [0, Infinity)')
+
     tilt = np.asarray(tilt)
 
     a = ell.a

@@ -1,4 +1,4 @@
-from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt
+from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt, asarray
 from copy import deepcopy
 from typing import Tuple, Sequence
 from datetime import datetime
@@ -36,12 +36,12 @@ def get_radius_normal(lat_radians: float, ell=None) -> float:
 def geodetic2ecef(lat: float, lon: float, alt: float,
                   ell=None, deg: bool=True) -> Tuple[float, float, float]:
     """
-    Observer => Point
+    Point
 
     input:
     -----
-    Target:   lat, lon, h (altitude, meters)
-    Observer: lat0, lon0, h0 (altitude, meters)
+    lat, lon (degrees)
+    alt (altitude, meters)    [0, Infinity)
     ell    reference ellipsoid
     deg    degrees input/output  (False: radians in/out)
 
@@ -53,6 +53,9 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
     if deg:
         lat = radians(lat)
         lon = radians(lon)
+
+    if (asarray(alt) < 0).any():
+        raise ValueError('altitude \in  [0, Infinity)')
     # radius of curvature of the prime vertical section
     N = get_radius_normal(lat, ell)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
@@ -226,7 +229,7 @@ def enu2ecef(e1: float, n1: float, u1: float,
              lat0: float, lon0: float, h0: float,
              ell=None, deg: bool=True) -> Tuple[float, float, float]:
     """
-    Observer => Point
+    ENU to ECEF
 
     inputs:
      e1, n1, u1 (meters)   east, north, up

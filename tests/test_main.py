@@ -5,9 +5,9 @@
 runs tests
 """
 import pytest
+from pytest import approx
 from datetime import datetime
 import numpy as np
-from numpy.testing import assert_allclose
 import pymap3d as pm
 from pymap3d.timeconv import str2dt
 
@@ -54,7 +54,11 @@ def test_losint():
     lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt=0.)
     assert (lat[0] == lat).all() and (lon[0] == lon).all() and (sr[0] == sr).all()
 
-    assert_allclose((lat[0], lon[0], sr[0]), lla0, err_msg='los identity')
+    assert (lat[0], lon[0], sr[0]) == approx(lla0)
+
+    with pytest.raises(ValueError):
+        pm.lookAtSpheroid(lla0[0], lla0[1], -1, az, 0)
+
 # %%
     tilt = [30., 45., 90.]
     lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt)
@@ -63,38 +67,42 @@ def test_losint():
                       [42.00177328, -81.9995808, 282.84715651],
                       [nan, nan, nan]])
 
-    assert_allclose(np.column_stack((lat, lon, sr)), truth)
+    assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
 
 
 def test_geodetic():
     xyz = pm.geodetic2ecef(*lla0)
 
-    assert_allclose(pm.geodetic2ecef(*rlla0, deg=False), xyz, err_msg='geodetic2ecef: rad')
-    assert_allclose(xyz, xyz0, err_msg='geodetic2ecef: deg')
+    assert xyz == approx(xyz0)
+    assert pm.geodetic2ecef(*rlla0, deg=False) == approx(xyz)
 
-    assert_allclose(pm.ecef2geodetic(*xyz), lla0, err_msg='ecef2geodetic: deg')
-    assert_allclose(pm.ecef2geodetic(*xyz, deg=False), rlla0, err_msg='ecef2geodetic: rad')
+    with pytest.raises(ValueError):
+        pm.geodetic2ecef(lla0[0], lla0[1], -1)
+
+    assert pm.ecef2geodetic(*xyz) == approx(lla0)
+    assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
 
     lla2 = pm.aer2geodetic(*aer0, *lla0)
     rlla2 = pm.aer2geodetic(*raer0, *rlla0, deg=False)
 
-    assert_allclose(lla2, lla1, err_msg='aer2geodetic: deg')
-    assert_allclose(rlla2, rlla1, err_msg='aer2geodetic:rad')
+    assert lla2 == approx(lla1)
+    assert rlla2 == approx(rlla1)
 
-    assert_allclose(pm.geodetic2aer(*lla2, *lla0), aer0, err_msg='geodetic2aer: deg')
-    assert_allclose(pm.geodetic2aer(*rlla2, *rlla0, deg=False), raer0, err_msg='geodetic2aer: rad')
+    assert pm.geodetic2aer(*lla2, *lla0) == approx(aer0)
+    assert pm.geodetic2aer(*rlla2, *rlla0, deg=False) == approx(raer0)
 
 
 def test_aer_ecef():
     xyz = pm.aer2ecef(*aer0, *lla0)
 
-    assert_allclose(pm.aer2ecef(*raer0, *rlla0, deg=False),
-                    axyz0, err_msg='aer2ecef:rad')
+    assert xyz == approx(axyz0)
+    assert pm.aer2ecef(*raer0, *rlla0, deg=False) == approx(axyz0)
 
-    assert_allclose(xyz, axyz0, err_msg='aer2ecef: deg')
+    with pytest.raises(ValueError):
+        pm.aer2ecef(aer0[0], aer0[1], -1, *lla0)
 
-    assert_allclose(pm.ecef2aer(*xyz, *lla0), aer0, err_msg='ecef2aer:deg')
-    assert_allclose(pm.ecef2aer(*xyz, *rlla0, deg=False), raer0, err_msg='ecef2aer:rad')
+    assert pm.ecef2aer(*xyz, *lla0) == approx(aer0)
+    assert pm.ecef2aer(*xyz, *rlla0, deg=False) == approx(raer0)
 
 
 def test_aer_enu():
@@ -102,14 +110,14 @@ def test_aer_enu():
 
     enu = pm.aer2enu(*aer0)
 
-    assert_allclose(enu, enu0, err_msg='aer2enu: deg')
-    assert_allclose(pm.aer2enu(*raer0, deg=False), enu0, err_msg='aer2enu: rad')
+    assert enu == approx(enu0)
+    assert pm.aer2enu(*raer0, deg=False) == approx(enu0)
 
-    assert_allclose(pm.enu2ecef(*enu, *lla0), xyz, err_msg='enu2ecef: deg')
-    assert_allclose(pm.enu2ecef(*enu, *rlla0, deg=False), xyz, err_msg='enu2ecef: rad')
+    assert pm.enu2ecef(*enu, *lla0) == approx(xyz)
+    assert pm.enu2ecef(*enu, *rlla0, deg=False) == approx(xyz)
 
-    assert_allclose(pm.ecef2enu(*xyz, *lla0), enu, err_msg='ecef2enu:deg')
-    assert_allclose(pm.ecef2enu(*xyz, *rlla0, deg=False), enu, err_msg='ecef2enu:rad')
+    assert pm.ecef2enu(*xyz, *lla0) == approx(enu)
+    assert pm.ecef2enu(*xyz, *rlla0, deg=False) == approx(enu)
 
 
 def test_ned():
@@ -118,30 +126,30 @@ def test_ned():
     ned = (enu[1], enu[0], -enu[2])
     lla = pm.aer2geodetic(*aer0, *lla0)
 
-    assert_allclose(pm.aer2ned(*aer0), ned0, err_msg='aer2ned')
+    assert pm.aer2ned(*aer0) == approx(ned0)
 
-    assert_allclose(pm.enu2aer(*enu), aer0, err_msg='enu2aer: deg')
-    assert_allclose(pm.enu2aer(*enu, deg=False), raer0, err_msg='enu2aer: rad')
+    assert pm.enu2aer(*enu) == approx(aer0)
+    assert pm.enu2aer(*enu, deg=False) == approx(raer0)
 
-    assert_allclose(pm.ned2aer(*ned), aer0, err_msg='ned2aer')
+    assert pm.ned2aer(*ned) == approx(aer0)
 
-    assert_allclose(pm.ecef2ned(*xyz, *lla0), ned, err_msg='ecef2ned')
+    assert pm.ecef2ned(*xyz, *lla0) == approx(ned)
 
-    assert_allclose(pm.ned2ecef(*ned, *lla0), xyz, err_msg='ned2ecef')
+    assert pm.ned2ecef(*ned, *lla0) == approx(xyz)
 # %%
-    assert_allclose(pm.ecef2enuv(vx, vy, vz, *lla0[:2]), (ve, vn, vu))
+    assert pm.ecef2enuv(vx, vy, vz, *lla0[:2]) == approx((ve, vn, vu))
 
-    assert_allclose(pm.ecef2nedv(vx, vy, vz, *lla0[:2]), (vn, ve, -vu))
+    assert pm.ecef2nedv(vx, vy, vz, *lla0[:2]) == approx((vn, ve, -vu))
 
 # %%
     enu3 = pm.geodetic2enu(*lla, *lla0)
     ned3 = (enu3[1], enu3[0], -enu3[2])
 
-    assert_allclose(pm.geodetic2ned(*lla, *lla0), ned3, err_msg='geodetic2ned: deg')
+    assert pm.geodetic2ned(*lla, *lla0) == approx(ned3)
 
-    assert_allclose(pm.enu2geodetic(*enu3, *lla0), lla, err_msg='enu2geodetic')
+    assert pm.enu2geodetic(*enu3, *lla0) == approx(lla)
 
-    assert_allclose(pm.ned2geodetic(*ned3, *lla0), lla, err_msg='ned2geodetic')
+    assert pm.ned2geodetic(*ned3, *lla0) == approx(lla)
 
 
 if __name__ == '__main__':

@@ -59,7 +59,7 @@ def aer2geodetic(az: float, el: float, srange: float,
     Input:
     -----
     az,el (degrees/radians)
-    srange[meters]
+    srange[meters]        [0, Infinity)
 
     Observer: lat0,lon0 [degrees]
               altitude h0 [meters]
