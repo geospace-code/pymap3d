@@ -13,9 +13,9 @@ ll0 = [10, 20]
 lla1 = [40, -80, 1120]
 
 
-lat2 = (10.02137267, 10.01917819)
-lon2 = (20.0168471, 20.0193493)
-az2 = (218.00292856, 225.00336316)
+lat2 = [10.02137267, 10.01917819]
+lon2 = [20.0168471, 20.0193493]
+az2 = [218.00292856, 225.00336316]
 
 lat3 = (10.02137267, 10.00639286)
 lon3 = (20.0168471, 20.00644951)
@@ -28,10 +28,15 @@ def test_vreckon():
     # scalar
     assert vreckon(*ll0, sr[0], az[0]) == approx((lat2[0], lon2[0], az2[0]))
     # az vector
-    assert vreckon(*ll0, sr[0], az) == approx((lat2, lon2, az2))
+    a, b, c = vreckon(*ll0, sr[0], az)
+    assert a == approx(lat2)
+    assert b == approx(lon2)
+    assert c == approx(az2)
     # rng, az vectors
-    assert vreckon(*ll0, sr, az) == approx((lat3, lon3, az3))
-
+    a, b, c = vreckon(*ll0, sr, az)
+    assert a == approx(lat3)
+    assert b == approx(lon3)
+    assert c == approx(az3)
 
 def test_vdist():
     lat1, lon1, a21 = vreckon(*ll0, sr[0], az[0])
