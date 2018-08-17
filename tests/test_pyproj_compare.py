@@ -23,7 +23,7 @@ az3 = (218.00292856, 225.0011203)
 
 
 def test_vreckon():
-    """ tests scalars, vectors, and arrays"""
+    """ tests scalars, vectors"""
 
     # scalar
     assert vreckon(*ll0, sr[0], az[0]) == approx((lat2[0], lon2[0], az2[0]))
@@ -37,6 +37,7 @@ def test_vreckon():
     assert a == approx(lat3)
     assert b == approx(lon3)
     assert c == approx(az3)
+
 
 def test_vdist():
     lat1, lon1, a21 = vreckon(*ll0, sr[0], az[0])
