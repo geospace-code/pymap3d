@@ -319,11 +319,6 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     kidx = abs(pi / 2 - abs(lat1)) < 1e-10
     lat1[kidx] = sign(lat1[kidx]) * (pi / 2 - (1e-10))
 
-    #  Allow for multiple circles starting from the same point
-    if lat1.size == 1 and lon1.size == 1 and rng.size > 1:
-        lat1 = broadcast_to(lat1, rng.shape)
-        lon1 = broadcast_to(lon1, rng.shape)
-
     if rng.size != azim.size and rng.size == 1:
         rng = broadcast_to(rng, azim.size)
 
