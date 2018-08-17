@@ -324,15 +324,8 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
         lat1 = broadcast_to(lat1, rng.shape)
         lon1 = broadcast_to(lon1, rng.shape)
 
-    if rng.size != azim.size:
-        if rng.size == 1:
-            rng = broadcast_to(rng, azim.size)
-
-        if azim.size == 1:
-            azim = broadcast_to(azim, rng.size)
-
-    if rng.size != azim.size:
-        raise ValueError('Range must be a scalar or vector with length equal to azimuth.')
+    if rng.size != azim.size and rng.size == 1:
+        rng = broadcast_to(rng, azim.size)
 
     alpha1 = radians(azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
