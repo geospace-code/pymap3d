@@ -294,6 +294,9 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     rng = atleast_1d(Rng)
     azim = atleast_1d(Azim)
 
+    if rng.ndim != 1 or azim.ndim != 1:
+        raise ValueError('Range and azimuth must be scalar or vector')
+
     if abs(lat1) > 90:
         raise ValueError('VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
 
@@ -323,14 +326,13 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 
     if rng.size != azim.size:
         if rng.size == 1:
-            rng = broadcast_to(rng, azim.shape)
+            rng = broadcast_to(rng, azim.size)
 
         if azim.size == 1:
-            azim = broadcast_to(azim, rng.shape)
+            azim = broadcast_to(azim, rng.size)
 
-    if rng.shape[0] != azim.shape[0]:
-        raise ValueError('Range must be a scalar or vector with length equal to azimuth number of rows. \n'
-                         'Consider np.broadcast_to()')
+    if rng.size != azim.size:
+        raise ValueError('Range must be a scalar or vector with length equal to azimuth.')
 
     alpha1 = radians(azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
@@ -345,6 +347,7 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     uSq = cosSqAlpha * (a**2 - b**2) / b**2
     A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
     B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
+
     sigma = rng / (b * A)
     sigmaP = 2 * pi
 
@@ -366,9 +369,9 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
             sigma = rng / (b * A) + deltaSigma
     else:
         # This part is not vectorized
-        cos2SigmaM = empty(sigma.shape)
-        sinSigma = empty(sigma.shape)
-        cosSigma = empty(sigma.shape)
+        cos2SigmaM = empty(sigma.size)
+        sinSigma = empty(sigma.size)
+        cosSigma = empty(sigma.size)
 
         for k in range(sigma.size):
             while (abs(sigma[k] - sigmaP) > 1e-12).any():
