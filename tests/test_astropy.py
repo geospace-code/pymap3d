@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pytest
 from pytest import approx
 import numpy as np
@@ -80,4 +81,4 @@ def test_radec2azel():
 
 
 if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+    pytest.main(['-xv', __file__])

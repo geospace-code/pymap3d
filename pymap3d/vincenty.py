@@ -5,8 +5,8 @@
 from typing import Tuple
 import logging
 from numpy import (atleast_1d, arctan, sqrt, tan, sign,
-                   sin, cos, arctan2, arcsin,
-                   ones, empty, zeros, radians, degrees, tile, nan, pi)
+                   sin, cos, arctan2, arcsin, broadcast_to,
+                   ones, empty, zeros, radians, degrees, nan, pi)
 from . import Ellipsoid
 
 
@@ -41,7 +41,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
         longitude of first point (degrees)
 
     lat2, lon2
-        second point (degrees)
+        second point(s) (degrees)
 
     Original algorithm source:
     T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid
@@ -76,12 +76,22 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
      12. No warranties; use at your own risk.
 
     """
-# %% reshape inputs
+# %% prepare inputs
     lat1 = atleast_1d(Lat1)
     lat2 = atleast_1d(Lat2)
     lon1 = atleast_1d(Lon1)
     lon2 = atleast_1d(Lon2)
-    keepsize = lat1.shape
+
+    assert lat1.shape == lon1.shape and lat2.shape == lon2.shape
+
+    if lat1.shape != lat2.shape:
+        if lat1.size == 1:
+            lat1 = broadcast_to(lat1, lat2.shape)
+            lon1 = broadcast_to(lon1, lon2.shape)
+
+        if lat2.size == 1:
+            lat2 = broadcast_to(lat2, lat1.shape)
+            lon2 = broadcast_to(lon2, lon1.shape)
 # %% Input check:
     if ((abs(lat1) > 90) | (abs(lat2) > 90)).any():
         raise ValueError('Input latitudes must be in [-90, 90] degrees.')
@@ -127,13 +137,10 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
     sinsigma = empty(notdone.shape)
     cossigma = empty(notdone.shape)
     while notdone.any():  # force at least one execution
-        # print('iter:',itercount)
-        # print(f'lambda[21752] = {lamb[21752],20}')
         itercount += 1
         if itercount > 50:
             if not warninggiven:
-                logging.warning('Essentially antipodal points--'
-                                'precision may be reduced slightly.')
+                logging.warning('Essentially antipodal points--precision may be reduced slightly.')
 
             lamb[notdone] = pi
             break
@@ -170,8 +177,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
         if (lamb[notdone] > pi).any():
-            logging.warning('Essentially antipodal points encountered.'
-                            'Precision may be reduced slightly.')
+            logging.warning('Essentially antipodal points encountered. Precision may be reduced slightly.')
             warninggiven = True
             lambdaold[lamb > pi] = pi
             lamb[lamb > pi] = pi
@@ -185,7 +191,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
                   (cos2sigmam + B / 4 * (cos(sigma) * (-1 + 2 * cos2sigmam**2) -
                                          B / 6 * cos2sigmam * (-3 + 4 * sin(sigma)**2) * (-3 + 4 * cos2sigmam**2))))
 
-    dist_m = (b * A * (sigma - deltasigma)).reshape(keepsize)
+    dist_m = (b * A * (sigma - deltasigma))
 
 # %% From point #1 to point #2
     # correct sign of lambda for azimuth calcs:
@@ -200,7 +206,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
     # %% from poles
     a12[lat1tr <= -90] = 0
     a12[lat1tr >= 90] = pi
-    az = degrees(a12).reshape(keepsize)
+    az = degrees(a12)
 
 # %% From point #2 to point #1
     # correct sign of lambda for azimuth calcs:
@@ -215,7 +221,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
     # %% backwards from poles:
     a21[lat2tr >= 90] = pi
     a21[lat2tr <= -90] = 0.
-    backaz = degrees(a21).reshape(keepsize)
+    backaz = degrees(a21)
 
     return dist_m.squeeze()[()], az.squeeze()[()], backaz.squeeze()[()]
 
@@ -223,6 +229,8 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
 def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
             ellipsoid: Ellipsoid=None) -> Tuple[float, float, float]:
     """
+    This is the Vincenty "forward" solution.
+
     Computes points at a specified azimuth and range in an ellipsoidal earth.
     Using the WGS-84 Earth ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
     and return the endpoint within a few millimeters of accuracy, using Vincenty's algorithm.
@@ -286,8 +294,10 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     rng = atleast_1d(Rng)
     azim = atleast_1d(Azim)
 
-    assert abs(lat1) <= 90, 'VRECKON: Input lat. must be between -90 and 90 deg., inclusive.'
-    if lat1.size != 1 and rng.size > 1:
+    if abs(lat1) > 90:
+        raise ValueError('VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
+
+    if lat1.size > 1 and rng.size > 1:
         raise ValueError('VRECKON: Variable ranges are only allowed for a single point.')
 
     if ellipsoid is not None:
@@ -308,17 +318,19 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 
     #  Allow for multiple circles starting from the same point
     if lat1.size == 1 and lon1.size == 1 and rng.size > 1:
-        lat1 = tile(lat1, rng.shape)
-        lon1 = tile(lon1, rng.shape)
+        lat1 = broadcast_to(lat1, rng.shape)
+        lon1 = broadcast_to(lon1, rng.shape)
 
-    if rng.size == 1:
-        rng = tile(rng, azim.shape)
+    if rng.size != azim.size:
+        if rng.size == 1:
+            rng = broadcast_to(rng, azim.shape)
 
-    if azim.size == 1:
-        azim = tile(azim, rng.shape)
+        if azim.size == 1:
+            azim = broadcast_to(azim, rng.shape)
 
-    assert rng.size == azim.shape[0], (
-        'Range must be a scalar or vector with the same shape as azim.')
+    if rng.shape[0] != azim.shape[0]:
+        raise ValueError('Range must be a scalar or vector with length equal to azimuth number of rows. \n'
+                         'Consider np.broadcast_to()')
 
     alpha1 = radians(azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
