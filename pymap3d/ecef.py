@@ -6,8 +6,12 @@ from datetime import datetime
 from .eci import eci2ecef
 
 
-class EarthEllipsoid:
-    """generate reference ellipsoid"""
+class Ellipsoid:
+    """
+    generate reference ellipsoid parameters
+
+    https://en.wikibooks.org/wiki/PROJ.4#Spheroid
+    """
 
     def __init__(self, model: str='wgs84') -> None:
         if model == 'wgs84':
@@ -20,12 +24,30 @@ class EarthEllipsoid:
             self.a = 6378137.  # semi-major axis [m]
             self.f = 1 / 298.257222100882711243  # flattening
             self.b = self.a * (1 - self.f)  # semi-minor axis
+        elif model == 'clrk66':  # Clarke 1866
+            self.a = 6378206.4  # semi-major axis [m]
+            self.b = 6356583.8  # semi-minor axis
+            self.f = -(self.b / self.a - 1)
+        elif model == 'mars':  # https://tharsis.gsfc.nasa.gov/geodesy.html
+            self.a = 3396900
+            self.b = 3376097.80585952
+            self.f = 1 / 163.295274386012
+        elif model == 'moon':
+            self.a = 1738000.
+            self.b = 1738000.
+            self.f = 0.
+        elif model == 'venus':
+            self.a = 6051000.
+            self.b = 6051000.
+            self.f = 0.
+        else:
+            raise NotImplementedError(f'{model} model not implemented, let us know and we will add it (or make a pull request)')
 
 
 def get_radius_normal(lat_radians: float, ell=None) -> float:
     """ Compute normal radius of planetary body"""
     if ell is None:
-        ell = EarthEllipsoid()
+        ell = Ellipsoid()
 
     a = ell.a
     b = ell.b
@@ -48,7 +70,7 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
     output: ECEF x,y,z (meters)
     """
     if ell is None:
-        ell = EarthEllipsoid()
+        ell = Ellipsoid()
 
     if deg:
         lat = radians(lat)
@@ -91,7 +113,7 @@ def ecef2geodetic(x: float, y: float, z: float,
     not involve division by cos(phi) or sin(phi)
     """
     if ell is None:
-        ell = EarthEllipsoid()
+        ell = Ellipsoid()
 
     ea = ell.a
     eb = ell.b

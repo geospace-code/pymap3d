@@ -2,11 +2,11 @@ from typing import Tuple
 import numpy as np
 from math import pi
 from .aer import aer2enu
-from .ecef import enu2uvw, geodetic2ecef, EarthEllipsoid, ecef2geodetic
+from .ecef import enu2uvw, geodetic2ecef, Ellipsoid, ecef2geodetic
 
 
 def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
-                   ell=EarthEllipsoid(), deg: bool=True) -> Tuple[float, float, float]:
+                   ell=Ellipsoid(), deg: bool=True) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 

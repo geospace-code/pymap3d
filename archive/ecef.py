@@ -1,7 +1,7 @@
 """
 this is from PySatel and gives same result to EIGHT decimal places
 """
-from pymap3d.ecef import EarthEllipsoid
+from pymap3d.ecef import Ellipsoid
 from numpy import sqrt, arctan, arctan2, hypot, degrees
 
 
@@ -12,7 +12,7 @@ def cbrt(x):
         return -pow(abs(x), 1.0 / 3.0)
 
 
-def ecef2geodetic(x, y, z, ell=EarthEllipsoid(), deg=True):
+def ecef2geodetic(x, y, z, ell=Ellipsoid(), deg=True):
     a = ell.a
     b = ell.b
     esq = 6.69437999014 * 0.001

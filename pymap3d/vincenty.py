@@ -7,7 +7,7 @@ import logging
 from numpy import (atleast_1d, arctan, sqrt, tan, sign,
                    sin, cos, arctan2, arcsin,
                    ones, empty, zeros, radians, degrees, tile, nan, pi)
-from . import EarthEllipsoid
+from . import Ellipsoid
 
 
 def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, float, float]:
@@ -221,7 +221,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
 
 
 def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
-            ellipsoid: EarthEllipsoid=None) -> Tuple[float, float, float]:
+            ellipsoid: Ellipsoid=None) -> Tuple[float, float, float]:
     """
     Computes points at a specified azimuth and range in an ellipsoidal earth.
     Using the WGS-84 Earth ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
@@ -286,11 +286,9 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     rng = atleast_1d(Rng)
     azim = atleast_1d(Azim)
 
-    assert abs(lat1) <= 90, (
-        'VRECKON: Input lat. must be between -90 and 90 deg., inclusive.')
+    assert abs(lat1) <= 90, 'VRECKON: Input lat. must be between -90 and 90 deg., inclusive.'
     if lat1.size != 1 and rng.size > 1:
-        raise ValueError(
-            'VRECKON: Variable ranges are only allowed for a single point.')
+        raise ValueError('VRECKON: Variable ranges are only allowed for a single point.')
 
     if ellipsoid is not None:
         a = ellipsoid.a

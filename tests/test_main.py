@@ -36,6 +36,16 @@ vx, vy, vz = (5, 3, 2)
 ve, vn, vu = (5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
+def test_ellipsoid():
+
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('wgs84')) == approx([42., -82., 200.24339])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('grs80')) == approx([42., -82., 200.24344])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('clrk66')) == approx([42.00213, -82., 237.17182])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('mars')) == approx([41.99476, -82., 2.981169e6])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('venus')) == approx([41.808706, -82., 3.178069e5])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('moon')) == approx([41.808706, -82., 4.630807e6])
+
+
 def test_str2dt():
 
     assert str2dt(datetime(2014, 4, 6, 8)) == datetime(2014, 4, 6, 8)  # passthrough
@@ -153,4 +163,4 @@ def test_ned():
 
 
 if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+    pytest.main(['-xv', __file__])
