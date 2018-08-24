@@ -1,6 +1,4 @@
 language: python
-sudo: required
-dist: xenial
 group: travis_latest
 
 git:
@@ -9,17 +7,23 @@ git:
 
 python:
 - 3.6
-- 3.7
+- 3.5
+- pypy3
 
 os:
 - linux
 
-install: pip install -e .[tests]
+install:
+- pip install -e .[tests]
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then pip install -e .[cov]; fi
 
 script:
 - pytest -rsv
-- flake8
-- mypy . --ignore-missing-imports
+
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
+  flake8;
+  mypy . --ignore-missing-imports;
+  fi
 
 after_success:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then

@@ -1,4 +1,5 @@
-from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt, asarray
+from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt
+import numpy as np
 from copy import deepcopy
 from typing import Tuple, Sequence
 from datetime import datetime
@@ -41,7 +42,7 @@ class Ellipsoid:
             self.b = 6051000.
             self.f = 0.
         else:
-            raise NotImplementedError(f'{model} model not implemented, let us know and we will add it (or make a pull request)')
+            raise NotImplementedError('{} model not implemented, let us know and we will add it (or make a pull request)'.format(model))
 
 
 def get_radius_normal(lat_radians: float, ell=None) -> float:
@@ -76,8 +77,9 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         lat = radians(lat)
         lon = radians(lon)
 
-    if (asarray(alt) < 0).any():
-        raise ValueError('altitude \in  [0, Infinity)')
+    with np.errstate(invalid='ignore'):
+        if (np.asarray(alt) < 0).any():
+            raise ValueError('altitude \in  [0, Infinity)')
     # radius of curvature of the prime vertical section
     N = get_radius_normal(lat, ell)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic

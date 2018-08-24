@@ -1,5 +1,6 @@
 from typing import Tuple
-from numpy import radians, sin, cos, hypot, arctan2, degrees, asarray
+from numpy import radians, sin, cos, hypot, arctan2, degrees
+import numpy as np
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 
@@ -47,8 +48,9 @@ def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float,
         el = radians(el)
         az = radians(az)
 
-    if (asarray(srange) < 0).any():
-        raise ValueError('Slant range \in  [0, Infinity)')
+    with np.errstate(invalid='ignore'):
+        if (np.asarray(srange) < 0).any():
+            raise ValueError('Slant range \in  [0, Infinity)')
 
     r = srange * cos(el)
 

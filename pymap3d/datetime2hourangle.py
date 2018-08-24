@@ -38,9 +38,8 @@ def datetime2sidereal(time: Union[str, datetime],
 # %% Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
 # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
-        tsr: Union[float, List[float]]
         if isinstance(gst, float):
-            tsr = gst + lon_radians  # radians
+            tsr = gst + lon_radians  # type:  Union[float, List[float]]
         else:
             tsr = [g + lon_radians for g in gst]
     else:  # astropy

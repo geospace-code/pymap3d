@@ -4,9 +4,10 @@
 [![image](https://travis-ci.org/scivision/pymap3d.svg?branch=master)](https://travis-ci.org/scivision/pymap3d)
 [![image](https://coveralls.io/repos/github/scivision/pymap3d/badge.svg?branch=master)](https://coveralls.io/github/scivision/pymap3d?branch=master)
 [![image](https://ci.appveyor.com/api/projects/status/af479t19j66t8x5n?svg=true)](https://ci.appveyor.com/project/scivision/pymap3d)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability)](https://codeclimate.com/github/scivision/pymap3d/maintainability)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
 [![image](https://img.shields.io/pypi/format/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
-[![Maintainability](https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability)](https://codeclimate.com/github/scivision/pymap3d/maintainability)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
 
 # Python 3-D coordinate conversions
@@ -36,7 +37,7 @@ Why not [PyProj](https://github.com/jswhit/pyproj)?
 
 ## Prerequisites
 
-* Python &gt;= 3.6
+* Python &ge; 3.5 or PyPy3
 * [AstroPy](http://www.astropy.org/) (optional, used for ECI coordinates)
 
 

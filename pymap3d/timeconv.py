@@ -21,6 +21,6 @@ def str2dt(time: Union[str, datetime, list, tuple, np.ndarray]) -> Union[datetim
     elif time is not None:  # iterable
         time = [parse(t) for t in time]
     else:
-        raise TypeError(f'unkknown time spec type {type(time)}')
+        raise TypeError('unknown time spec type {}'.format(type(time)))
 
     return time

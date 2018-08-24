@@ -10,7 +10,7 @@ from numpy import (atleast_1d, arctan, sqrt, tan, sign,
 from . import Ellipsoid
 
 
-def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell=None) -> Tuple[float, float, float]:
+def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=None) -> Tuple[float, float, float]:
     """
     Using the WGS-84 Earth ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -229,7 +229,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell=None) -> Tuple
 
 
 def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
-            ellipsoid: Ellipsoid=None) -> Tuple[float, float, float]:
+            ell: Ellipsoid=None) -> Tuple[float, float, float]:
     """
     This is the Vincenty "forward" solution.
 
@@ -305,10 +305,10 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     if lat1.size > 1 and rng.size > 1:
         raise ValueError('VRECKON: Variable ranges are only allowed for a single point.')
 
-    if ellipsoid is not None:
-        a = ellipsoid.a
-        b = ellipsoid.b
-        f = ellipsoid.f
+    if ell is not None:
+        a = ell.a
+        b = ell.b
+        f = ell.f
     else:   # Supply WGS84 earth ellipsoid axis lengths in meters:
         a = 6378137                 # semimajor axis
         b = 6356752.31424518   # WGS84 earth flattening coefficient definition
