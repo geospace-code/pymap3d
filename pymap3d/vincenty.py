@@ -10,7 +10,7 @@ from numpy import (atleast_1d, arctan, sqrt, tan, sign,
 from . import Ellipsoid
 
 
-def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, float, float]:
+def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell=None) -> Tuple[float, float, float]:
     """
     Using the WGS-84 Earth ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -76,6 +76,8 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
      12. No warranties; use at your own risk.
 
     """
+    if ell is None:
+        ell = Ellipsoid()
 # %% prepare inputs
     lat1 = atleast_1d(Lat1)
     lat2 = atleast_1d(Lat2)
@@ -96,8 +98,8 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float) -> Tuple[float, fl
     if ((abs(lat1) > 90) | (abs(lat2) > 90)).any():
         raise ValueError('Input latitudes must be in [-90, 90] degrees.')
 # %% Supply WGS84 earth ellipsoid axis lengths in meters:
-    a = 6378137  # definitionally
-    b = 6356752.31424518  # computed from WGS84 earth flattening coefficient
+    a = ell.a
+    b = ell.b
 # %% preserve true input latitudes:
     lat1tr = lat1.copy()
     lat2tr = lat2.copy()
