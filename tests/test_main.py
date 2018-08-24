@@ -100,8 +100,8 @@ def test_geodetic():
 
     assert pm.geodetic2aer(*lla2, *lla0) == approx(aer0)
     assert pm.geodetic2aer(*rlla2, *rlla0, deg=False) == approx(raer0)
-    
-    anan = np.empty((10,10))
+
+    anan = np.empty((10, 10))
     anan.fill(np.nan)
     assert np.isnan(pm.geodetic2aer(anan, anan, anan, *lla0)).all()
     assert np.isnan(pm.aer2geodetic(anan, anan, anan, *lla0)).all()
@@ -168,4 +168,4 @@ def test_ned():
 
 
 if __name__ == '__main__':
-    pytest.main(['-xv', __file__])
+    pytest.main(['-xrsv', __file__])

@@ -81,4 +81,4 @@ def test_radec2azel():
 
 
 if __name__ == '__main__':
-    pytest.main(['-xv', __file__])
+    pytest.main(['-xrsv', __file__])

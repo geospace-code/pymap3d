@@ -3,6 +3,7 @@ import pytest
 from pytest import approx
 from pymap3d.vincenty import vreckon, vdist
 import pymap3d as pm
+import numpy as np
 
 az = [38., 45.]
 sr = [3e3, 1e3]
@@ -46,7 +47,7 @@ def test_vdist():
     # lat, lon vectors
     asr, aaz, aa21 = vdist(*ll0, lat2, lon2)
 
-    assert asr == approx(sr[0])
+    assert np.all(sr[0] == approx(asr))  # for older pytest
     assert aaz == approx(az)
 
 
@@ -76,4 +77,4 @@ def test_compare_geodetic():
 
 
 if __name__ == '__main__':
-    pytest.main(['-xv', __file__])
+    pytest.main(['-xrsv', __file__])
