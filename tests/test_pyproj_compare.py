@@ -4,6 +4,9 @@ from pytest import approx
 from pymap3d.vincenty import vreckon, vdist
 import pymap3d as pm
 import numpy as np
+from packaging import version
+
+OLD = version.parse(pytest.__version__) < version.parse('3.5')
 
 az = [38., 45.]
 sr = [3e3, 1e3]
@@ -23,6 +26,7 @@ lon3 = (20.0168471, 20.00644951)
 az3 = (218.00292856, 225.0011203)
 
 
+@pytest.mark.skipif(OLD, reason='too old pytest')
 def test_vreckon():
     """ tests scalars, vectors"""
 
@@ -40,6 +44,7 @@ def test_vreckon():
     assert c == approx(az3)
 
 
+@pytest.mark.skipif(OLD, reason='too old pytest')
 def test_vdist():
     lat1, lon1, a21 = vreckon(*ll0, sr[0], az[0])
 
