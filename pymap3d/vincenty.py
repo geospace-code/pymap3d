@@ -405,3 +405,71 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     a21 = 180. + degrees(a21)  # note direction reversal
 
     return degrees(lat2).squeeze()[()], lon2.squeeze()[()], a21.squeeze()[()] % 360.
+
+
+def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell=None, npts: int=100, deg: bool=True):
+    """
+     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
+
+     input
+     -----
+     lat1
+     GEODETIC latitude of first point (degrees/radians)
+
+     lon1
+     longitude of first point (degrees/radians)
+
+     lat2, lon2
+     second point (degrees/radians)
+
+     ell    reference ellipsoid
+     npts   number of points (default is 100)
+     deg    degrees input/output  (False: radians in/out)
+
+     output
+     ------
+     lats, lons  latitudes and longitudes of points along great circle track
+
+     Based on code posted to the GMT mailing list in Dec 1999 by Jim Levens and by Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+     """
+
+    if ell is None:
+        ell = Ellipsoid()
+
+    if npts <= 1:
+        raise ValueError('npts must be greater than 1')
+    elif npts == 2:
+        return [lat1,lat2],[lon1,lon2]
+
+    if deg is True:
+        rlat1, rlon1, rlat2, rlon2 = np.deg2rad([lat1,lon1,lat2,lon2])
+    else:
+        rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
+
+    gcarclen = 2.*np.asin(np.sqrt((np.sin((rlat1-rlat2)/2))**2+
+    np.cos(rlat1)*np.cos(rlat2)*(np.sin((rlon1-rlon2)/2))**2))
+    # check to see if points are antipodal (if so, route is undefined).
+    if gcarclen == math.pi:
+        raise ValueError('cannot compute intermediate points on a great circle whose endpoints are antipodal')
+
+    distance, azimuth, _ = vdist(lat1, lon1, lat2, lon2)
+    incdist  = distance/(npts-1)
+
+    latpt = lat1
+    lonpt = lon1
+    lons = [lonpt]
+    lats = [latpt]
+    for n in range(npts-2):
+        latptnew,lonptnew, _ = vreckon(latpt, lonpt, incdist, azimuth)
+        _,azimuth,_ = vdist(latptnew,lonptnew,lat2,lon2, ell=ell)
+        lats.append(latptnew)
+        lons.append(lonptnew)
+        latpt = latptnew; lonpt = lonptnew
+    lons.append(lon2)
+    lats.append(lat2)
+
+    if deg is False:
+        lats = np.deg2rad(lats)
+        lons = np.deg2rad(lons)
+
+    return lats, lons
