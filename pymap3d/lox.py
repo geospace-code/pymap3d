@@ -63,7 +63,7 @@ def meridian_dist(lat: float, ell=None, deg: bool=True):
     notes:
     Formula given Baeschlin, C.F., 1948,
     "Lehrbuch Der Geodasie", Orell Fussli Verlag, Zurich, pp.47-50.
-    
+
     Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
     School of Mathematical and Geospatial Sciences, RMIT University, January 2010
     """
@@ -171,7 +171,5 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float, ell=No
 
     if deg is True:
         az12 = np.rad2deg(az12)
-
-    print(m1, m2, dm, lox_s, az12)
 
     return lox_s, az12
