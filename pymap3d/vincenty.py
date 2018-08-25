@@ -446,7 +446,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell=None, npts: i
     else:
         rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
 
-    gcarclen = 2.*np.asin(np.sqrt((np.sin((rlat1-rlat2)/2))**2+
+    gcarclen = 2.*np.arcsin(np.sqrt((np.sin((rlat1-rlat2)/2))**2+
     np.cos(rlat1)*np.cos(rlat2)*(np.sin((rlon1-rlon2)/2))**2))
     # check to see if points are antipodal (if so, route is undefined).
     if gcarclen == math.pi:
