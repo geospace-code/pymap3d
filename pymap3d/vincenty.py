@@ -4,10 +4,9 @@
 """
 from typing import Tuple
 import logging
-from numpy import (atleast_1d, arctan, sqrt, tan, sign,
-                   sin, cos, arctan2, arcsin, broadcast_to,
-                   ones, empty, zeros, radians, degrees, nan, pi)
-from . import Ellipsoid
+from numpy import arctan, sqrt, tan, sign, sin, cos, arctan2, arcsin, nan, pi
+import numpy as np
+from .ecef import Ellipsoid
 
 
 def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=None) -> Tuple[float, float, float]:
@@ -79,21 +78,21 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=Non
     if ell is None:
         ell = Ellipsoid()
 # %% prepare inputs
-    lat1 = atleast_1d(Lat1)
-    lat2 = atleast_1d(Lat2)
-    lon1 = atleast_1d(Lon1)
-    lon2 = atleast_1d(Lon2)
+    lat1 = np.atleast_1d(Lat1)
+    lat2 = np.atleast_1d(Lat2)
+    lon1 = np.atleast_1d(Lon1)
+    lon2 = np.atleast_1d(Lon2)
 
     assert lat1.shape == lon1.shape and lat2.shape == lon2.shape
 
     if lat1.shape != lat2.shape:
         if lat1.size == 1:
-            lat1 = broadcast_to(lat1, lat2.shape)
-            lon1 = broadcast_to(lon1, lon2.shape)
+            lat1 = np.broadcast_to(lat1, lat2.shape)
+            lon1 = np.broadcast_to(lon1, lon2.shape)
 
         if lat2.size == 1:
-            lat2 = broadcast_to(lat2, lat1.shape)
-            lon2 = broadcast_to(lon2, lon1.shape)
+            lat2 = np.broadcast_to(lat2, lat1.shape)
+            lon2 = np.broadcast_to(lon2, lon1.shape)
 # %% Input check:
     if ((abs(lat1) > 90) | (abs(lat2) > 90)).any():
         raise ValueError('Input latitudes must be in [-90, 90] degrees.')
@@ -103,11 +102,11 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=Non
 # %% preserve true input latitudes:
     lat1tr = lat1.copy()
     lat2tr = lat2.copy()
-# %% convert inputs in degrees to radians:
-    lat1 = radians(lat1)
-    lon1 = radians(lon1)
-    lat2 = radians(lat2)
-    lon2 = radians(lon2)
+# %% convert inputs in degrees to np.radians:
+    lat1 = np.radians(lat1)
+    lon1 = np.radians(lon1)
+    lat2 = np.radians(lat2)
+    lon2 = np.radians(lon2)
 # %% correct for errors at exact poles by adjusting 0.6 millimeters:
     kidx = abs(pi / 2 - abs(lat1)) < 1e-10
     if kidx.any():
@@ -128,16 +127,16 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=Non
         L[kidx] = 2 * pi - L[kidx]
 
     lamb = L.copy()  # NOTE: program will fail without copy!
-    lambdaold = zeros(lat1.shape)
+    lambdaold = np.zeros(lat1.shape)
     itercount = 0
-    notdone = ones(lat1.shape, dtype=bool)
-    alpha = zeros(lat1.shape)
-    sigma = zeros(lat1.shape)
-    cos2sigmam = zeros(lat1.shape)
-    C = zeros(lat1.shape)
+    notdone = np.ones(lat1.shape, dtype=bool)
+    alpha = np.zeros(lat1.shape)
+    sigma = np.zeros(lat1.shape)
+    cos2sigmam = np.zeros(lat1.shape)
+    C = np.zeros(lat1.shape)
     warninggiven = False
-    sinsigma = empty(notdone.shape)
-    cossigma = empty(notdone.shape)
+    sinsigma = np.empty(notdone.shape)
+    cossigma = np.empty(notdone.shape)
     while notdone.any():  # force at least one execution
         itercount += 1
         if itercount > 50:
@@ -208,7 +207,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=Non
     # %% from poles
     a12[lat1tr <= -90] = 0
     a12[lat1tr >= 90] = pi
-    az = degrees(a12)
+    az = np.degrees(a12)
 
 # %% From point #2 to point #1
     # correct sign of lambda for azimuth calcs:
@@ -223,7 +222,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=Non
     # %% backwards from poles:
     a21[lat2tr >= 90] = pi
     a21[lat2tr <= -90] = 0.
-    backaz = degrees(a21)
+    backaz = np.degrees(a21)
 
     return dist_m.squeeze()[()], az.squeeze()[()], backaz.squeeze()[()]
 
@@ -291,10 +290,10 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 
     """
 
-    lat1 = atleast_1d(Lat1)
-    lon1 = atleast_1d(Lon1)
-    rng = atleast_1d(Rng)
-    azim = atleast_1d(Azim)
+    lat1 = np.atleast_1d(Lat1)
+    lon1 = np.atleast_1d(Lon1)
+    rng = np.atleast_1d(Rng)
+    azim = np.atleast_1d(Azim)
 
     if rng.ndim != 1 or azim.ndim != 1:
         raise ValueError('Range and azimuth must be scalar or vector')
@@ -314,17 +313,17 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
         b = 6356752.31424518   # WGS84 earth flattening coefficient definition
         f = (a - b) / a
 
-    lat1 = radians(lat1)            # intial latitude in radians
-    lon1 = radians(lon1)            # intial longitude in radians
+    lat1 = np.radians(lat1)            # intial latitude in radians
+    lon1 = np.radians(lon1)            # intial longitude in radians
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
     kidx = abs(pi / 2 - abs(lat1)) < 1e-10
     lat1[kidx] = sign(lat1[kidx]) * (pi / 2 - (1e-10))
 
     if rng.size != azim.size and rng.size == 1:
-        rng = broadcast_to(rng, azim.size)
+        rng = np.broadcast_to(rng, azim.size)
 
-    alpha1 = radians(azim)  # inital azimuth in radians
+    alpha1 = np.radians(azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
     cosAlpha1 = cos(alpha1)
 
@@ -359,9 +358,9 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
             sigma = rng / (b * A) + deltaSigma
     else:
         # This part is not vectorized
-        cos2SigmaM = empty(sigma.size)
-        sinSigma = empty(sigma.size)
-        cosSigma = empty(sigma.size)
+        cos2SigmaM = np.empty(sigma.size)
+        sinSigma = np.empty(sigma.size)
+        cosSigma = np.empty(sigma.size)
 
         for k in range(sigma.size):
             while (abs(sigma[k] - sigmaP) > 1e-12).any():
@@ -391,7 +390,7 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
                             (cos2SigmaM + C * cosSigma *
                              (-1 + 2 * cos2SigmaM * cos2SigmaM))))
 
-    lon2 = degrees(lon1 + L)
+    lon2 = np.degrees(lon1 + L)
 
     # Truncates angles into the [-pi pi] range
     # if (lon2 > pi).any():
@@ -402,6 +401,77 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
 
     a21 = arctan2(sinAlpha, -tmp)
-    a21 = 180. + degrees(a21)  # note direction reversal
+    a21 = 180. + np.degrees(a21)  # note direction reversal
 
-    return degrees(lat2).squeeze()[()], lon2.squeeze()[()], a21.squeeze()[()] % 360.
+    return np.degrees(lat2).squeeze()[()], lon2.squeeze()[()], a21.squeeze()[()] % 360.
+
+
+def track2(lat1: float, lon1: float, lat2: float, lon2: float,
+           ell: Ellipsoid=None, npts: int=100, deg: bool=True):
+    """
+     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
+
+     input
+     -----
+     lat1
+     GEODETIC latitude of first point (degrees/radians)
+
+     lon1
+     longitude of first point (degrees/radians)
+
+     lat2, lon2
+     second point (degrees/radians)
+
+     ell    reference ellipsoid
+     npts   number of points (default is 100)
+     deg    degrees input/output  (False: radians in/out)
+
+     output
+     ------
+     lats, lons  latitudes and longitudes of points along great circle track
+
+     Based on code posted to the GMT mailing list in Dec 1999 by Jim Levens and by Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+     """
+
+    if ell is None:
+        ell = Ellipsoid()
+
+    if npts <= 1:
+        raise ValueError('npts must be greater than 1')
+
+    if npts == 2:
+        return [lat1, lat2], [lon1, lon2]
+
+    if deg is True:
+        rlat1, rlon1, rlat2, rlon2 = np.radians([lat1, lon1, lat2, lon2])
+    else:
+        rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
+
+    gcarclen = 2. * np.arcsin(np.sqrt((np.sin((rlat1 - rlat2) / 2))**2 +
+                                      np.cos(rlat1) * np.cos(rlat2) * (np.sin((rlon1 - rlon2) / 2))**2))
+    # check to see if points are antipodal (if so, route is undefined).
+    if np.isclose(gcarclen, pi).any():
+        raise ValueError('cannot compute intermediate points on a great circle whose endpoints are antipodal')
+
+    distance, azimuth, _ = vdist(lat1, lon1, lat2, lon2)
+    incdist = distance / (npts - 1)
+
+    latpt = lat1
+    lonpt = lon1
+    lons = [lonpt]
+    lats = [latpt]
+    for n in range(npts - 2):
+        latptnew, lonptnew, _ = vreckon(latpt, lonpt, incdist, azimuth)
+        _, azimuth, _ = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)
+        lats.append(latptnew)
+        lons.append(lonptnew)
+        latpt = latptnew
+        lonpt = lonptnew
+    lons.append(lon2)
+    lats.append(lat2)
+
+    if not deg:
+        lats = np.radians(lats)
+        lons = np.radians(lons)
+
+    return lats, lons

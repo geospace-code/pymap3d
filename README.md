@@ -103,6 +103,13 @@ converted to the desired coordinate system:
     azel2radec radec2azel
     vreckon vdist
     lookAtSpheroid
+    track2
+
+
+Additional functions:
+
+* `loxodrome_inverse`: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
+
 
 Abbreviations:
 

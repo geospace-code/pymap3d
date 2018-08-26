@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
-from pymap3d.vincenty import vreckon, vdist
-import pymap3d as pm
+from pymap3d.vincenty import vreckon, vdist, track2
 import numpy as np
 from packaging import version
 
@@ -24,6 +23,12 @@ az2 = [218.00292856, 225.00336316]
 lat3 = (10.02137267, 10.00639286)
 lon3 = (20.0168471, 20.00644951)
 az3 = (218.00292856, 225.0011203)
+
+
+def test_track2():
+    lats, lons = track2(40, 80, 65, -148, npts=3)
+    assert lats == approx([40, 69.633139886, 65])
+    assert lons == approx([80, 113.06849104, -148])
 
 
 @pytest.mark.skipif(OLD, reason='too old pytest')
@@ -54,31 +59,6 @@ def test_vdist():
 
     assert np.all(sr[0] == approx(asr))  # for older pytest
     assert aaz == approx(az)
-
-
-def test_compare_vicenty():
-    taz, tsr = az[0], sr[0]
-    pyproj = pytest.importorskip('pyproj')
-
-    lat2, lon2, a21 = vreckon(10, 20, tsr, taz)
-
-    p4lon, p4lat, p4a21 = pyproj.Geod(ellps='WGS84').fwd(lon2, lat2, taz, tsr)
-    assert (p4lon, p4lat, p4a21 % 360.) == approx((lon2, lat2, a21), rel=0.0025)
-
-    p4az, p4a21, p4sr = pyproj.Geod(ellps='WGS84').inv(20, 10, lon2, lat2)
-    assert (p4az, p4a21 % 360., p4sr) == approx((taz, a21, tsr))
-
-
-def test_compare_geodetic():
-    pyproj = pytest.importorskip('pyproj')
-
-    xyz = pm.geodetic2ecef(*lla0)
-
-    ecef = pyproj.Proj(proj='geocent', ellps='WGS84', datum='WGS84')
-    lla = pyproj.Proj(proj='latlong', ellps='WGS84', datum='WGS84')
-
-    assert pyproj.transform(lla, ecef, lla0[1], lla0[0], lla0[2]) == approx(xyz)
-    assert pyproj.transform(ecef, lla, *xyz) == approx((lla0[1], lla0[0], lla0[2]))
 
 
 if __name__ == '__main__':
