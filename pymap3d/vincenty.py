@@ -450,7 +450,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float,
     gcarclen = 2. * np.arcsin(np.sqrt((np.sin((rlat1 - rlat2) / 2))**2 +
                                       np.cos(rlat1) * np.cos(rlat2) * (np.sin((rlon1 - rlon2) / 2))**2))
     # check to see if points are antipodal (if so, route is undefined).
-    if np.isclose(gcarclen, pi).any():
+    if np.allclose(gcarclen, pi):
         raise ValueError('cannot compute intermediate points on a great circle whose endpoints are antipodal')
 
     distance, azimuth, _ = vdist(lat1, lon1, lat2, lon2)
