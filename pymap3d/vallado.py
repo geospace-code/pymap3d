@@ -10,13 +10,13 @@ Michael Hirsch implementation of algorithms from D. Vallado
 """
 from datetime import datetime
 from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
-from typing import Tuple, Union
+from typing import Tuple
 from .datetime2hourangle import datetime2sidereal
 
 
-def vazel2radec(az_deg: float, el_deg: float,
-                lat_deg: float, lon_deg: float,
-                time: Union[str, datetime]) -> Tuple[float, float]:
+def azel2radec(az_deg: float, el_deg: float,
+               lat_deg: float, lon_deg: float,
+               time: datetime) -> Tuple[float, float]:
     """
     convert azimuth, elevation to right ascension, declination
 
@@ -57,6 +57,10 @@ def vazel2radec(az_deg: float, el_deg: float,
         raise ValueError('az and el must be same shape ndarray')
     if not(lat.size == 1 and lon.size == 1):
         raise ValueError('need one observer and one or more  (az,el).')
+    if ((lat < -90) | (lat > 90)).any():
+        raise ValueError('-90 <= lat <= 90')
+    if ((lon < -180) | (lon > 360)).any():
+        raise ValueError('-180 <= lat <= 360')
 
     az = radians(az)
     el = radians(el)
@@ -74,9 +78,9 @@ def vazel2radec(az_deg: float, el_deg: float,
     return degrees(lst - lha) % 360, degrees(dec)
 
 
-def vradec2azel(ra_deg: float, dec_deg: float,
-                lat_deg: float, lon_deg: float,
-                time: Union[str, datetime]) -> Tuple[float, float]:
+def radec2azel(ra_deg: float, dec_deg: float,
+               lat_deg: float, lon_deg: float,
+               time: datetime) -> Tuple[float, float]:
     """
     convert right ascension, declination to azimuth, elevation
 
@@ -118,6 +122,10 @@ def vradec2azel(ra_deg: float, dec_deg: float,
         raise ValueError('az and el must be same shape ndarray')
     if not(lat.size == 1 and lon.size == 1):
         raise ValueError('need one observer and one or more  (az,el).')
+    if ((lat < -90) | (lat > 90)).any():
+        raise ValueError('-90 <= lat <= 90')
+    if ((lon < -180) | (lon > 360)).any():
+        raise ValueError('-180 <= lat <= 360')
 
     ra = radians(ra)
     dec = radians(dec)

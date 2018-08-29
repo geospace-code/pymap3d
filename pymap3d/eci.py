@@ -1,7 +1,5 @@
-from typing import List, Union
 from datetime import datetime
 import numpy as np
-from .timeconv import str2dt
 try:
     from astropy.time import Time
 except ImportError as e:
@@ -9,7 +7,7 @@ except ImportError as e:
 
 
 def eci2ecef(eci: np.ndarray,
-             time: Union[datetime, List[datetime], np.ndarray]) -> np.ndarray:
+             time: datetime) -> np.ndarray:
     """
      Observer => Point
 
@@ -25,36 +23,27 @@ def eci2ecef(eci: np.ndarray,
     if Time is None:
         raise ImportError('eci2ecef requires Numpy and AstroPy')
 
-    t = np.atleast_1d(str2dt(time))
-
-    if isinstance(t[0], datetime):
-        gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    elif isinstance(t[0], float):  # assuming radians
-        gst = t
-    elif t[0].dtype == 'M8[ns]':  # datetime64 from xarray
-        t = [datetime.utcfromtimestamp(T.astype(datetime) / 1e9) for T in t]
-    else:
-        raise TypeError('eci2ecef: time must be datetime or radian float')
-
-    assert isinstance(gst[0], float)  # must be in radians!
+    gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+    gst = np.atleast_1d(gst)
+    assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
 
     eci = np.atleast_2d(eci)
+    assert eci.shape[0] == gst.size, 'length of time does not match number of ECI positions'
+
     N, trip = eci.shape
     if eci.ndim > 2 or trip != 3:
         raise ValueError('eci triplets must be shape (N,3)')
-    """ported from:
-    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    """
+
     ecef = np.empty_like(eci)
 
     for i in range(N):
         ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
 
-    return ecef
+    return ecef.squeeze()
 
 
 def ecef2eci(ecef: np.ndarray,
-             time: Union[datetime, List[datetime], np.ndarray]) -> np.ndarray:
+             time: datetime) -> np.ndarray:
     """
     Point => Point
 
@@ -69,31 +58,24 @@ def ecef2eci(ecef: np.ndarray,
     eci  x,y,z (meters)
     """
     if Time is None:
-        raise ImportError('ecef2eci requires Numpy and AstroPy')
+        raise ImportError('ecef2eci requires AstroPy')
 
-    t = np.atleast_1d(str2dt(time))
-
-    if isinstance(t[0], datetime):
-        gst = Time(t).sidereal_time('apparent', 'greenwich').radian
-    elif isinstance(t[0], float):  # assuming radians
-        gst = t
-    else:
-        raise TypeError('eci2ecef: time must be datetime or radian float')
-
-    assert isinstance(gst[0], float)  # must be in radians!
+    gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+    gst = np.atleast_1d(gst)
+    assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
 
     ecef = np.atleast_2d(ecef)
+    assert ecef.shape[0] == gst.size, 'length of time does not match number of ECEF positions'
+
     N, trip = ecef.shape
     if ecef.ndim > 2 or trip != 3:
-        raise TypeError('ecef triplets must be shape (N,3)')
-    """ported from:
-    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    """
+        raise ValueError('ecef triplets must be shape (N,3)')
+
     eci = np.empty_like(ecef)
     for i in range(N):
         eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :]  # this one is transposed
 
-    return eci
+    return eci.squeeze()
 
 
 def _rottrip(ang: np.ndarray) -> np.ndarray:

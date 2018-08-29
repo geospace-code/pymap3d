@@ -1,10 +1,8 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 from math import pi
-from typing import Union, List
 from datetime import datetime
+import numpy as np
 from .timeconv import str2dt
-#
-nan = float('nan')
 try:
     from astropy.time import Time
     import astropy.units as u
@@ -18,9 +16,9 @@ However, AstroPy is more accurate.
 """
 
 
-def datetime2sidereal(time: Union[str, datetime],
+def datetime2sidereal(time: datetime,
                       lon_radians: float,
-                      usevallado: bool=True) -> Union[float, List[float]]:
+                      usevallado: bool=True) -> float:
     """
     Convert ``datetime`` to sidereal time
 
@@ -33,26 +31,21 @@ def datetime2sidereal(time: Union[str, datetime],
     lon
         longitude in RADIANS
     """
+    usevallado = usevallado or Time is None
     if usevallado:
-        jd = datetime2julian(time)
+        jd = datetime2julian(str2dt(time))
 # %% Greenwich Sidereal time RADIANS
-        gst = julian2sidereal(jd)
+        gst = np.atleast_1d(julian2sidereal(jd))
 # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
-        if isinstance(gst, float):
-            tsr = gst + lon_radians  # type:  Union[float, List[float]]
-        else:
-            tsr = [g + lon_radians for g in gst]
-    else:  # astropy
-        if Time is not None:
-            tsr = Time(time).sidereal_time(kind='apparent',
-                                           longitude=Longitude(lon_radians, unit=u.radian)).radian
-        else:
-            return datetime2sidereal(time, lon_radians, True)
+        tsr = gst + lon_radians
+    else:
+        tsr = Time(time).sidereal_time(kind='apparent',
+                                       longitude=Longitude(lon_radians, unit=u.radian)).radian
 
     return tsr
 
 
-def datetime2julian(time: Union[str, datetime, List[datetime]]) -> Union[float, List[float]]:
+def datetime2julian(time: datetime) -> float:
     """
     Python datetime to Julian time
 
@@ -60,7 +53,11 @@ def datetime2julian(time: Union[str, datetime, List[datetime]]) -> Union[float, 
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
     """
 
-    def _dt2julian(t: datetime) -> float:
+    times = np.atleast_1d(time)
+    assert times.ndim == 1
+
+    jd = np.empty(times.size)
+    for i, t in enumerate(times):
         if t.month < 3:
             year = t.year - 1
             month = t.month + 12
@@ -72,22 +69,13 @@ def datetime2julian(time: Union[str, datetime, List[datetime]]) -> Union[float, 
         B = 2 - A + int(A / 4.)
         C = ((t.second / 60. + t.minute) / 60. + t.hour) / 24.
 
-        jd = (int(365.25 * (year + 4716)) +
-              int(30.6001 * (month + 1)) + t.day + B - 1524.5 + C)
+        jd[i] = (int(365.25 * (year + 4716)) +
+                 int(30.6001 * (month + 1)) + t.day + B - 1524.5 + C)
 
-        return jd
-
-    time = str2dt(time)
-
-    assert isinstance(time, datetime) or isinstance(time[0], datetime)
-
-    if isinstance(time, datetime):
-        return _dt2julian(time)
-    else:
-        return [_dt2julian(t) for t in time]
+    return jd.squeeze()
 
 
-def julian2sidereal(juliandate: Union[float, List[float]]) -> Union[float, List[float]]:
+def julian2sidereal(juliandate: float) -> float:
     """
     Convert Julian time to sidereal time
 
@@ -100,7 +88,11 @@ def julian2sidereal(juliandate: Union[float, List[float]]) -> Union[float, List[
 
     """
 
-    def _jd2sr(jd: float):
+    jdate = np.atleast_1d(juliandate)
+    assert jdate.ndim == 1
+
+    tsr = np.empty(jdate.size)
+    for i, jd in enumerate(jdate):
         # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
         tUT1 = (jd - 2451545.0) / 36525.
 
@@ -109,11 +101,6 @@ def julian2sidereal(juliandate: Union[float, List[float]]) -> Union[float, List[
                     tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3)
 
         # 1/86400 and %(2*pi) implied by units of radians
-        tsr = gmst_sec * (2 * pi) / 86400. % (2 * pi)
+        tsr[i] = gmst_sec * (2 * pi) / 86400. % (2 * pi)
 
-        return tsr
-
-    if isinstance(juliandate, float):
-        return _jd2sr(juliandate)
-    else:
-        return [_jd2sr(jd) for jd in juliandate]
+    return tsr.squeeze()

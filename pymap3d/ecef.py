@@ -1,7 +1,7 @@
-from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt
+from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt, pi
 import numpy as np
 from copy import deepcopy
-from typing import Tuple, Sequence
+from typing import Tuple
 from datetime import datetime
 
 from .eci import eci2ecef
@@ -45,7 +45,7 @@ class Ellipsoid:
             raise NotImplementedError('{} model not implemented, let us know and we will add it (or make a pull request)'.format(model))
 
 
-def get_radius_normal(lat_radians: float, ell=None) -> float:
+def get_radius_normal(lat_radians: float, ell: Ellipsoid=None) -> float:
     """ Compute normal radius of planetary body"""
     if ell is None:
         ell = Ellipsoid()
@@ -57,7 +57,7 @@ def get_radius_normal(lat_radians: float, ell=None) -> float:
 
 
 def geodetic2ecef(lat: float, lon: float, alt: float,
-                  ell=None, deg: bool=True) -> Tuple[float, float, float]:
+                  ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     Point
 
@@ -78,6 +78,12 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         lon = radians(lon)
 
     with np.errstate(invalid='ignore'):
+        if ((lat < -pi / 2) | (lat > pi / 2)).any():
+            raise ValueError('-90 <= lat <= 90')
+
+        if ((lon < -pi) | (lon > 2 * pi)).any():
+            raise ValueError('-180 <= lat <= 360')
+
         if (np.asarray(alt) < 0).any():
             raise ValueError('altitude \in  [0, Infinity)')
     # radius of curvature of the prime vertical section
@@ -92,7 +98,7 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
 
 
 def ecef2geodetic(x: float, y: float, z: float,
-                  ell=None, deg: bool=True) -> Tuple[float, float, float]:
+                  ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -144,6 +150,13 @@ def ecef2geodetic(x: float, y: float, z: float,
     alt = (((rad - ea * cos(vnew)) * cos(lat)) +
            ((z - eb * sin(vnew)) * sin(lat)))
 
+    with np.errstate(invalid='ignore'):
+        if ((lat < -pi / 2) | (lat > pi / 2)).any():
+            raise ValueError('-90 <= lat <= 90')
+
+        if ((lon < -pi) | (lon > 2 * pi)).any():
+            raise ValueError('-180 <= lat <= 360')
+
     if deg:
         return degrees(lat), degrees(lon), alt
     else:
@@ -174,7 +187,7 @@ def ecef2enuv(u: float, v: float, w: float,
 
 def ecef2enu(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
-             ell=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
 
     input
@@ -223,7 +236,7 @@ def uvw2enu(u: float, v: float, w: float,
     return East, North, Up
 
 
-def eci2geodetic(eci: Sequence[float], t: datetime) -> Tuple[float, float, float]:
+def eci2geodetic(eci: np.ndarray, t: datetime) -> Tuple[float, float, float]:
     """
     convert ECI to geodetic coordinates
 
@@ -241,17 +254,17 @@ def eci2geodetic(eci: Sequence[float], t: datetime) -> Tuple[float, float, float
     Note: Conversion is idealized: doesn't consider nutations, perterbations,
     etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
     from ECI to ECEF
+
+    eci2geodetic() a.k.a. eci2lla()
     """
+    ecef = np.atleast_2d(eci2ecef(eci, t))
 
-    """ a.k.a. eci2lla() """
-    ecef = eci2ecef(eci, t)
-
-    return ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])
+    return np.asarray(ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])).squeeze()
 
 
 def enu2ecef(e1: float, n1: float, u1: float,
              lat0: float, lon0: float, h0: float,
-             ell=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
     """
     ENU to ECEF
 

@@ -1,4 +1,4 @@
-from typing import Tuple, Sequence
+from typing import Tuple
 from datetime import datetime
 import numpy as np
 from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
@@ -54,7 +54,8 @@ def geodetic2aer(lat: float, lon: float, h: float,
 
 
 def aer2geodetic(az: float, el: float, srange: float,
-                 lat0: float, lon0: float, h0: float, deg: bool=True) -> Tuple[float, float, float]:
+                 lat0: float, lon0: float, h0: float,
+                 deg: bool=True) -> Tuple[float, float, float]:
     """
     Input:
     -----
@@ -75,8 +76,9 @@ def aer2geodetic(az: float, el: float, srange: float,
     return ecef2geodetic(x, y, z, deg=deg)
 
 
-def eci2aer(eci: Sequence[float], lat0: float, lon0: float, h0: float,
-            t: Sequence[datetime]) -> Tuple[float, float, float]:
+def eci2aer(eci: Tuple[float, float, float],
+            lat0: float, lon0: float, h0: float,
+            t: datetime) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -93,7 +95,7 @@ def eci2aer(eci: Sequence[float], lat0: float, lon0: float, h0: float,
     azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     slant range [meters]                                             [0,Infinity)
     """
-    ecef = eci2ecef(eci, t)
+    ecef = np.atleast_2d(eci2ecef(eci, t))
 
     return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
 

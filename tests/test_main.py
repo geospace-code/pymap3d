@@ -93,11 +93,20 @@ def test_geodetic():
     with pytest.raises(ValueError):
         pm.geodetic2ecef(lla0[0], lla0[1], -1)
 
+    with pytest.raises(ValueError):
+        pm.geodetic2ecef(-100, lla0[1], lla0[2])
+
+    with pytest.raises(ValueError):
+        pm.geodetic2ecef(lla0[0], -200, lla0[2])
+
     assert pm.ecef2geodetic(*xyz) == approx(lla0)
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
 
     lla2 = pm.aer2geodetic(*aer0, *lla0)
     rlla2 = pm.aer2geodetic(*raer0, *rlla0, deg=False)
+
+    with pytest.raises(ValueError):
+        pm.aer2geodetic(aer0[0], aer0[1], -1, *lla0)
 
     assert lla2 == approx(lla1)
     assert rlla2 == approx(rlla1)
@@ -132,6 +141,9 @@ def test_aer_enu():
     assert enu == approx(enu0)
     assert pm.aer2enu(*raer0, deg=False) == approx(enu0)
 
+    with pytest.raises(ValueError):
+        pm.aer2enu(aer0[0], aer0[1], -1)
+
     assert pm.enu2ecef(*enu, *lla0) == approx(xyz)
     assert pm.enu2ecef(*enu, *rlla0, deg=False) == approx(xyz)
 
@@ -146,6 +158,9 @@ def test_ned():
     lla = pm.aer2geodetic(*aer0, *lla0)
 
     assert pm.aer2ned(*aer0) == approx(ned0)
+
+    with pytest.raises(ValueError):
+        pm.aer2ned(aer0[0], aer0[1], -1)
 
     assert pm.enu2aer(*enu) == approx(aer0)
     assert pm.enu2aer(*enu, deg=False) == approx(raer0)

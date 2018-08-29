@@ -1,34 +1,42 @@
 """
 Azimuth / elevation <==> Right ascension, declination
 """
-from typing import Tuple, Union
+from typing import Tuple
 from datetime import datetime
 import numpy as np
-from .timeconv import str2dt
+from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
 try:
     from astropy.time import Time
     from astropy import units as u
     from astropy.coordinates import Angle, SkyCoord, EarthLocation, AltAz, ICRS
 except ImportError:
-    from .vallado import vazel2radec, vradec2azel
     Time = None
 
 
 def azel2radec(az_deg: float, el_deg: float,
                lat_deg: float, lon_deg: float,
-               time: Union[str, datetime]) -> Tuple[float, float]:
-    """convert astronomical target horizontal azimuth, elevation to
-       ecliptic right ascension, declination (degrees)
+               time: datetime, usevallado: bool=False) -> Tuple[float, float]:
+    """
+    viewing angle (az, el) to sky coordinates (ra, dec)
+
+    inputs
+    ------
+    azimuth: degrees clockwize from North
+    elevation: degrees above horizon (neglecting aberration)
+    observer latitude [-90, 90], longitude [-180, 180] (degrees)
+    time: datetime of observation
+
+    Outputs
+    -------
+    ecliptic right ascension, declination (degrees)
     """
 
-    if Time is None:  # non-AstroPy method, less accurate
+    if usevallado or Time is None:  # non-AstroPy method, less accurate
         return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)
-
-    t = str2dt(time)
 
     obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    direc = AltAz(location=obs, obstime=Time(t),
+    direc = AltAz(location=obs, obstime=Time(time),
                   az=az_deg * u.deg, alt=el_deg * u.deg)
 
     sky = SkyCoord(direc.transform_to(ICRS()))
@@ -38,24 +46,29 @@ def azel2radec(az_deg: float, el_deg: float,
 
 def radec2azel(ra_deg: float, dec_deg: float,
                lat_deg: float, lon_deg: float,
-               time: Union[str, datetime]) -> Tuple[float, float]:
-    """convert astronomical target ecliptic right ascension, declination to
-       horizontal azimuth, eelvation (degrees)
+               time: datetime, usevallado: bool=False) -> Tuple[float, float]:
     """
-    if Time is None:
+    sky coordinates (ra, dec) to viewing angle (az, el)
+
+    inputs
+    ------
+    ecliptic right ascension, declination (degrees)
+    observer latitude [-90, 90], longitude [-180, 180] (degrees)
+    time: datetime of observation
+
+    Outputs
+    -------
+    azimuth: degrees clockwize from North
+    elevation: degrees above horizon (neglecting aberration)
+    """
+
+    if usevallado or Time is None:
         return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
 # %% input trapping
-    t = str2dt(time)
     lat = np.atleast_1d(lat_deg)
     lon = np.atleast_1d(lon_deg)
     ra = np.atleast_1d(ra_deg)
     dec = np.atleast_1d(dec_deg)
-
-    if not(lat.size == 1 & lon.size == 1):
-        raise ValueError('radec2azel is designed for one observer and one or more points (ra,dec).')
-
-    if ra.shape != dec.shape:
-        raise ValueError('ra and dec must be the same shape ndarray')
 
     obs = EarthLocation(lat=lat * u.deg,
                         lon=lon * u.deg)
@@ -64,6 +77,6 @@ def radec2azel(ra_deg: float, dec_deg: float,
                       Angle(dec, unit=u.deg),
                       equinox='J2000.0')
 
-    altaz = points.transform_to(AltAz(location=obs, obstime=Time(t)))
+    altaz = points.transform_to(AltAz(location=obs, obstime=Time(time)))
 
     return altaz.az.degree, altaz.alt.degree

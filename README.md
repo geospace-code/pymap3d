@@ -20,20 +20,9 @@
 
 PyMap3D is intended for non-interactive use on massively parallel (HPC) and embedded systems.
 Includes some relevant
-[Vallado's algorithms](http://www.smad.com/vallado/fortran/fortran.html).
+[Vallado algorithms](http://www.smad.com/vallado/fortran/fortran.html).
 
 [API docs](https://www.scivision.co/pymap3d)
-
-Why not [PyProj](https://github.com/jswhit/pyproj)?
-
--   PyMap3D does not require anything beyond pure Python + Numpy.
--   PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
--   PyMap3D intrinsically handles local coordinate systems such as ENU,
-    while for PyProj ENU requires some [additional
-    effort](https://github.com/jswhit/pyproj/issues/105).
--   PyProj is oriented towards points on the planet surface, while
-    PyMap3D handles points on or above the planet surface equally well,
-    particularly important for airborne vehicles and remote sensing.
 
 ## Prerequisites
 
@@ -96,7 +85,7 @@ converted to the desired coordinate system:
 
     aer2ecef  aer2enu  aer2geodetic  aer2ned
     ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
-    ecef2eci  eci2ecef
+    ecef2eci  eci2ecef  eci2aer  aer2eci
     enu2aer  enu2ecef   enu2geodetic
     geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
     ned2aer  ned2ecef   ned2geodetic
@@ -108,7 +97,7 @@ converted to the desired coordinate system:
 
 Additional functions:
 
-* `loxodrome_inverse`: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
+`loxodrome_inverse`: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
 
 
 Abbreviations:
@@ -125,4 +114,17 @@ Abbreviations:
 * Atmospheric effects neglected in all functions not invoking AstroPy.
   Would need to update code to add these input parameters (just start a GitHub Issue to request).
 * Planetary perturbations and nutation etc. not fully considered.
+
+## Notes
+
+As compared to [PyProj](https://github.com/jswhit/pyproj):
+
+-   PyMap3D does not require anything beyond pure Python + Numpy.
+-   PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
+-   PyMap3D intrinsically handles local coordinate systems such as ENU,
+    while for PyProj ENU requires some [additional
+    effort](https://github.com/jswhit/pyproj/issues/105).
+-   PyProj is oriented towards points on the planet surface, while
+    PyMap3D handles points on or above the planet surface equally well,
+    particularly important for airborne vehicles and remote sensing.
 

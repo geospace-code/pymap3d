@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from numpy.testing import assert_allclose
 from pymap3d.haversine import anglesep, anglesep_meeus
 from argparse import ArgumentParser
+from pytest import approx
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
 
     print('{:.6f} deg sep'.format(dist_deg))
 
-    assert_allclose(dist_deg, dist_deg_astropy)
+    assert dist_deg == approx(dist_deg_astropy)
 
 
 if __name__ == '__main__':
