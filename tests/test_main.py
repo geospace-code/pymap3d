@@ -10,12 +10,9 @@ from datetime import datetime
 import numpy as np
 import pymap3d as pm
 from pymap3d.timeconv import str2dt
-from packaging import version
 
 pi = np.pi
 nan = np.nan
-
-OLD = version.parse(pytest.__version__) < version.parse('3.5')
 
 lla0 = (42, -82, 200)
 rlla0 = (np.radians(lla0[0]), np.radians(lla0[1]), lla0[2])
@@ -57,11 +54,10 @@ def test_str2dt():
     to = [datetime(2014, 4, 6, 8), datetime(2014, 4, 6, 8, 1, 2)]
     assert ti == to   # even though ti is numpy array of datetime and to is list of datetime
 
-# %%
 
-
-@pytest.mark.skipif(OLD, reason='too old pytest')
 def test_losint():
+
+    pytest.importorskip('pytest', minversion='3.5')
 
     az = [0., 10., 125.]
 
