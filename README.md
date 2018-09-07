@@ -27,7 +27,8 @@ Includes some relevant
 ## Prerequisites
 
 * Python &ge; 3.5 or PyPy3
-* [AstroPy](http://www.astropy.org/) (optional, used for ECI coordinates)
+
+References to AstroPy are optional, algorithms from Vallado and Meeus are used if AstroPy is not present.
 
 
 ## Install
@@ -39,7 +40,7 @@ pip install pymap3d
 or for the latest development code:
 ```sh
 git clone https://github.com/scivision/pymap3d
-
+cd pymap3d
 pip install -e .
 ```
 

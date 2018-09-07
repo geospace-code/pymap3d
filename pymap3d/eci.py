@@ -1,5 +1,6 @@
 from datetime import datetime
 import numpy as np
+from .datetime2hourangle import datetime2sidereal
 try:
     from astropy.time import Time
 except ImportError as e:
@@ -7,7 +8,8 @@ except ImportError as e:
 
 
 def eci2ecef(eci: np.ndarray,
-             time: datetime) -> np.ndarray:
+             time: datetime,
+             useastropy: bool=True) -> np.ndarray:
     """
      Observer => Point
 
@@ -20,10 +22,13 @@ def eci2ecef(eci: np.ndarray,
     ------
     x,y,z  [meters] target ECEF location                             [0,Infinity)
     """
-    if Time is None:
-        raise ImportError('eci2ecef requires Numpy and AstroPy')
+    useastropy = useastropy and Time
 
-    gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+    if useastropy:
+        gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+    else:
+        gst = datetime2sidereal(time, 0.)
+
     gst = np.atleast_1d(gst)
     assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
 
@@ -43,7 +48,8 @@ def eci2ecef(eci: np.ndarray,
 
 
 def ecef2eci(ecef: np.ndarray,
-             time: datetime) -> np.ndarray:
+             time: datetime,
+             useastropy: bool=True) -> np.ndarray:
     """
     Point => Point
 
@@ -57,10 +63,13 @@ def ecef2eci(ecef: np.ndarray,
     ------
     eci  x,y,z (meters)
     """
-    if Time is None:
-        raise ImportError('ecef2eci requires AstroPy')
+    useastropy = useastropy and Time
 
-    gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+    if useastropy:
+        gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+    else:
+        gst = datetime2sidereal(time, 0.)
+
     gst = np.atleast_1d(gst)
     assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
 

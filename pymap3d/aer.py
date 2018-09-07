@@ -78,7 +78,8 @@ def aer2geodetic(az: float, el: float, srange: float,
 
 def eci2aer(eci: Tuple[float, float, float],
             lat0: float, lon0: float, h0: float,
-            t: datetime) -> Tuple[float, float, float]:
+            t: datetime,
+            useastropy: bool=True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -95,14 +96,15 @@ def eci2aer(eci: Tuple[float, float, float],
     azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     slant range [meters]                                             [0,Infinity)
     """
-    ecef = np.atleast_2d(eci2ecef(eci, t))
+    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy))
 
     return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
 
 
 def aer2eci(az: float, el: float, srange: float,
             lat0: float, lon0: float, h0: float, t: datetime,
-            ell=None, deg: bool=True) -> np.ndarray:
+            ell=None, deg: bool=True,
+            useastropy: bool=True) -> np.ndarray:
     """
 
     input
@@ -120,7 +122,7 @@ def aer2eci(az: float, el: float, srange: float,
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
-    return ecef2eci(np.column_stack((x, y, z)), t)
+    return ecef2eci(np.column_stack((x, y, z)), t, useastropy)
 
 
 def aer2ecef(az: float, el: float, srange: float,

@@ -5,6 +5,7 @@ from typing import Tuple
 from datetime import datetime
 import numpy as np
 from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
+from .timeconv import str2dt  # astropy can't handle xarray times (yet)
 try:
     from astropy.time import Time
     from astropy import units as u
@@ -36,7 +37,7 @@ def azel2radec(az_deg: float, el_deg: float,
 
     obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    direc = AltAz(location=obs, obstime=Time(time),
+    direc = AltAz(location=obs, obstime=Time(str2dt(time)),
                   az=az_deg * u.deg, alt=el_deg * u.deg)
 
     sky = SkyCoord(direc.transform_to(ICRS()))
@@ -77,6 +78,6 @@ def radec2azel(ra_deg: float, dec_deg: float,
                       Angle(dec, unit=u.deg),
                       equinox='J2000.0')
 
-    altaz = points.transform_to(AltAz(location=obs, obstime=Time(time)))
+    altaz = points.transform_to(AltAz(location=obs, obstime=Time(str2dt(time))))
 
     return altaz.az.degree, altaz.alt.degree

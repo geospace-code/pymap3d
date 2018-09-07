@@ -6,10 +6,8 @@ runs tests
 """
 import pytest
 from pytest import approx
-from datetime import datetime
 import numpy as np
 import pymap3d as pm
-from pymap3d.timeconv import str2dt
 
 pi = np.pi
 nan = np.nan
@@ -44,15 +42,6 @@ def test_ellipsoid():
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('mars')) == approx([41.99476, -82., 2.981169e6])
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('venus')) == approx([41.808706, -82., 3.178069e5])
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('moon')) == approx([41.808706, -82., 4.630807e6])
-
-
-def test_str2dt():
-
-    assert str2dt(datetime(2014, 4, 6, 8)) == datetime(2014, 4, 6, 8)  # passthrough
-    assert str2dt('2014-04-06T08:00:00') == datetime(2014, 4, 6, 8)
-    ti = [str2dt('2014-04-06T08:00:00'), str2dt('2014-04-06T08:01:02')]
-    to = [datetime(2014, 4, 6, 8), datetime(2014, 4, 6, 8, 1, 2)]
-    assert ti == to   # even though ti is numpy array of datetime and to is list of datetime
 
 
 def test_losint():

@@ -236,7 +236,8 @@ def uvw2enu(u: float, v: float, w: float,
     return East, North, Up
 
 
-def eci2geodetic(eci: np.ndarray, t: datetime) -> Tuple[float, float, float]:
+def eci2geodetic(eci: np.ndarray, t: datetime,
+                 useastropy: bool=True) -> Tuple[float, float, float]:
     """
     convert ECI to geodetic coordinates
 
@@ -257,7 +258,7 @@ def eci2geodetic(eci: np.ndarray, t: datetime) -> Tuple[float, float, float]:
 
     eci2geodetic() a.k.a. eci2lla()
     """
-    ecef = np.atleast_2d(eci2ecef(eci, t))
+    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy))
 
     return np.asarray(ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])).squeeze()
 

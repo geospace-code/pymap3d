@@ -8,7 +8,6 @@ git:
 python:
 - 3.6
 - 3.5
-- pypy3
 
 os:
 - linux
