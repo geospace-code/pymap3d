@@ -5,7 +5,7 @@ import numpy as np
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 
 
-def enu2aer(e: float, n: float, u: float, deg: bool=True) -> Tuple[float, float, float]:
+def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     ENU to Azimuth, Elevation, Range
 
@@ -31,7 +31,7 @@ def enu2aer(e: float, n: float, u: float, deg: bool=True) -> Tuple[float, float,
     return az, elev, slantRange
 
 
-def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float, float, float]:
+def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     input:
     ------
@@ -50,7 +50,7 @@ def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float,
 
     with np.errstate(invalid='ignore'):
         if (np.asarray(srange) < 0).any():
-            raise ValueError('Slant range \in  [0, Infinity)')
+            raise ValueError('Slant range  [0, Infinity)')
 
     r = srange * cos(el)
 
@@ -59,7 +59,7 @@ def aer2enu(az: float, el: float, srange: float, deg: bool=True) -> Tuple[float,
 
 def enu2geodetic(e: float, n: float, u: float,
                  lat0: float, lon0: float, h0: float,
-                 ell=None, deg: bool=True) -> Tuple[float, float, float]:
+                 ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
 
     input
@@ -83,7 +83,7 @@ def enu2geodetic(e: float, n: float, u: float,
 
 def geodetic2enu(lat: float, lon: float, h: float,
                  lat0: float, lon0: float, h0: float,
-                 ell=None, deg: bool=True) -> Tuple[float, float, float]:
+                 ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
     input
     -----

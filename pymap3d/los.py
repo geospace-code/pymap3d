@@ -6,7 +6,7 @@ from .ecef import enu2uvw, geodetic2ecef, Ellipsoid, ecef2geodetic
 
 
 def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
-                   ell=Ellipsoid(), deg: bool=True) -> Tuple[float, float, float]:
+                   ell=Ellipsoid(), deg: bool = True) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -22,7 +22,7 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
     if (np.asarray(h0) < 0).any():
-        raise ValueError('Altitude \in  [0, Infinity)')
+        raise ValueError('Altitude   [0, Infinity)')
 
     tilt = np.asarray(tilt)
 

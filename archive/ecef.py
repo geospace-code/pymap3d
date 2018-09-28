@@ -3,6 +3,7 @@ this is from PySatel and gives same result to EIGHT decimal places
 """
 from pymap3d.ecef import Ellipsoid
 from numpy import sqrt, arctan, arctan2, hypot, degrees
+from typing import Tuple
 
 
 def cbrt(x):
@@ -33,6 +34,73 @@ def ecef2geodetic(x, y, z, ell=Ellipsoid(), deg=True):
     alt = U * (1 - b**2 / (a * V))
     lat = arctan((z + e1sq * Z_0) / r)
     lon = arctan2(y, x)
+
+    if deg:
+        return degrees(lat), degrees(lon), alt
+    else:
+        return lat, lon, alt  # radians
+
+
+def ecef2geodetic_old(x: float, y: float, z: float,
+                      ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+    """
+    convert ECEF (meters) to geodetic coordinates
+
+    input
+    -----
+    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    ell    reference ellipsoid
+    deg    degrees input/output  (False: radians in/out)
+
+    output
+    ------
+    lat,lon   (degrees/radians)
+    alt  (meters)
+
+    Algorithm is based on
+    http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
+    This algorithm provides a converging solution to the latitude equation
+    in terms of the parametric or reduced latitude form (v)
+    This algorithm provides a uniform solution over all latitudes as it does
+    not involve division by cos(phi) or sin(phi)
+    """
+    if ell is None:
+        ell = Ellipsoid()
+
+    ea = ell.a
+    eb = ell.b
+    rad = hypot(x, y)
+# Constant required for Latitude equation
+    rho = arctan2(eb * z, ea * rad)
+# Constant required for latitude equation
+    c = (ea**2 - eb**2) / hypot(ea * rad, eb * z)
+# Starter for the Newtons Iteration Method
+    vnew = arctan2(ea * z, eb * rad)
+# Initializing the parametric latitude
+    v = 0
+    for _ in range(5):
+        v = deepcopy(vnew)
+# %% Newtons Method for computing iterations
+        vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) /
+                    (2 * (cos(v - rho) - c * cos(2 * v))))
+
+        if allclose(v, vnew):
+            break
+# %% Computing latitude from the root of the latitude equation
+    lat = arctan2(ea * tan(vnew), eb)
+    # by inspection
+    lon = arctan2(y, x)
+
+    alt = (((rad - ea * cos(vnew)) * cos(lat)) +
+           ((z - eb * sin(vnew)) * sin(lat)))
+
+    with np.errstate(invalid='ignore'):
+        # NOTE: need np.any() to handle scalar and array cases
+        if np.any((lat < -pi / 2) | (lat > pi / 2)):
+            raise ValueError('-90 <= lat <= 90')
+
+        if np.any((lon < -pi) | (lon > 2 * pi)):
+            raise ValueError('-180 <= lat <= 360')
 
     if deg:
         return degrees(lat), degrees(lon), alt

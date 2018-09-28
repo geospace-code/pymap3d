@@ -34,16 +34,6 @@ vx, vy, vz = (5, 3, 2)
 ve, vn, vu = (5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
-def test_ellipsoid():
-
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('wgs84')) == approx([42., -82., 200.24339])
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('grs80')) == approx([42., -82., 200.24344])
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('clrk66')) == approx([42.00213, -82., 237.17182])
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('mars')) == approx([41.99476, -82., 2.981169e6])
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('venus')) == approx([41.808706, -82., 3.178069e5])
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid('moon')) == approx([41.808706, -82., 4.630807e6])
-
-
 def test_losint():
 
     pytest.importorskip('pytest', minversion='3.5')
@@ -67,42 +57,6 @@ def test_losint():
                       [nan, nan, nan]])
 
     assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
-
-
-def test_geodetic():
-    xyz = pm.geodetic2ecef(*lla0)
-
-    assert xyz == approx(xyz0)
-    assert pm.geodetic2ecef(*rlla0, deg=False) == approx(xyz)
-
-    with pytest.raises(ValueError):
-        pm.geodetic2ecef(lla0[0], lla0[1], -1)
-
-    with pytest.raises(ValueError):
-        pm.geodetic2ecef(-100, lla0[1], lla0[2])
-
-    with pytest.raises(ValueError):
-        pm.geodetic2ecef(lla0[0], -200, lla0[2])
-
-    assert pm.ecef2geodetic(*xyz) == approx(lla0)
-    assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
-
-    lla2 = pm.aer2geodetic(*aer0, *lla0)
-    rlla2 = pm.aer2geodetic(*raer0, *rlla0, deg=False)
-
-    with pytest.raises(ValueError):
-        pm.aer2geodetic(aer0[0], aer0[1], -1, *lla0)
-
-    assert lla2 == approx(lla1)
-    assert rlla2 == approx(rlla1)
-
-    assert pm.geodetic2aer(*lla2, *lla0) == approx(aer0)
-    assert pm.geodetic2aer(*rlla2, *rlla0, deg=False) == approx(raer0)
-
-    anan = np.empty((10, 10))
-    anan.fill(np.nan)
-    assert np.isnan(pm.geodetic2aer(anan, anan, anan, *lla0)).all()
-    assert np.isnan(pm.aer2geodetic(anan, anan, anan, *lla0)).all()
 
 
 def test_aer_ecef():

@@ -18,7 +18,7 @@ However, AstroPy is more accurate.
 
 def datetime2sidereal(time: datetime,
                       lon_radians: float,
-                      usevallado: bool=True) -> float:
+                      usevallado: bool = True) -> float:
     """
     Convert ``datetime`` to sidereal time
 

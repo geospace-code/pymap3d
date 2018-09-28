@@ -3,7 +3,7 @@ from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
 from typing import Tuple
 
 
-def aer2ned(az: float, elev: float, slantRange: float, deg: bool=True) -> Tuple[float, float, float]:
+def aer2ned(az: float, elev: float, slantRange: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     input
     -----
@@ -20,7 +20,7 @@ def aer2ned(az: float, elev: float, slantRange: float, deg: bool=True) -> Tuple[
     return n, e, -u
 
 
-def ned2aer(n: float, e: float, d: float, deg: bool=True) -> Tuple[float, float, float]:
+def ned2aer(n: float, e: float, d: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -39,7 +39,7 @@ def ned2aer(n: float, e: float, d: float, deg: bool=True) -> Tuple[float, float,
 
 def ned2geodetic(n: float, e: float, d: float,
                  lat0: float, lon0: float, h0: float,
-                 ell=None, deg: bool=True) -> Tuple[float, float, float]:
+                 ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
 
     input
@@ -62,7 +62,7 @@ def ned2geodetic(n: float, e: float, d: float,
 
 def ned2ecef(n: float, e: float, d: float,
              lat0: float, lon0: float, h0: float,
-             ell=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
     Observer => Point
 

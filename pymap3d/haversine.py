@@ -21,7 +21,7 @@ within double precision arithmetic limitations
 
 
 def anglesep_meeus(lon0: float, lat0: float,
-                   lon1: float, lat1: float, deg: bool=True) -> float:
+                   lon1: float, lat1: float, deg: bool = True) -> float:
     """
     inputs: DEGREES  (right ascension, declination Meeus p. 109)
 
@@ -53,7 +53,7 @@ def anglesep_meeus(lon0: float, lat0: float,
 
 
 def anglesep(lon0: float, lat0: float,
-             lon1: float, lat1: float, deg: bool=True) -> float:
+             lon1: float, lat1: float, deg: bool = True) -> float:
     """
     inputs: DEGREES
 

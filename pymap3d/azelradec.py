@@ -16,7 +16,7 @@ except ImportError:
 
 def azel2radec(az_deg: float, el_deg: float,
                lat_deg: float, lon_deg: float,
-               time: datetime, usevallado: bool=False) -> Tuple[float, float]:
+               time: datetime, usevallado: bool = False) -> Tuple[float, float]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
 
@@ -47,7 +47,7 @@ def azel2radec(az_deg: float, el_deg: float,
 
 def radec2azel(ra_deg: float, dec_deg: float,
                lat_deg: float, lon_deg: float,
-               time: datetime, usevallado: bool=False) -> Tuple[float, float]:
+               time: datetime, usevallado: bool = False) -> Tuple[float, float]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
 

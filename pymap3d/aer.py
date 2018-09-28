@@ -8,7 +8,7 @@ from .eci import eci2ecef, ecef2eci
 
 def ecef2aer(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
-             ell=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -32,7 +32,7 @@ def ecef2aer(x: float, y: float, z: float,
 
 def geodetic2aer(lat: float, lon: float, h: float,
                  lat0: float, lon0: float, h0: float,
-                 ell=None, deg: bool=True) -> Tuple[float, float, float]:
+                 ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -55,7 +55,7 @@ def geodetic2aer(lat: float, lon: float, h: float,
 
 def aer2geodetic(az: float, el: float, srange: float,
                  lat0: float, lon0: float, h0: float,
-                 deg: bool=True) -> Tuple[float, float, float]:
+                 deg: bool = True) -> Tuple[float, float, float]:
     """
     Input:
     -----
@@ -79,7 +79,7 @@ def aer2geodetic(az: float, el: float, srange: float,
 def eci2aer(eci: Tuple[float, float, float],
             lat0: float, lon0: float, h0: float,
             t: datetime,
-            useastropy: bool=True) -> Tuple[float, float, float]:
+            useastropy: bool = True) -> Tuple[float, float, float]:
     """
     Observer => Point
 
@@ -103,8 +103,8 @@ def eci2aer(eci: Tuple[float, float, float],
 
 def aer2eci(az: float, el: float, srange: float,
             lat0: float, lon0: float, h0: float, t: datetime,
-            ell=None, deg: bool=True,
-            useastropy: bool=True) -> np.ndarray:
+            ell=None, deg: bool = True,
+            useastropy: bool = True) -> np.ndarray:
     """
 
     input
@@ -127,7 +127,7 @@ def aer2eci(az: float, el: float, srange: float,
 
 def aer2ecef(az: float, el: float, srange: float,
              lat0: float, lon0: float, alt0: float,
-             ell=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
     convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.
 

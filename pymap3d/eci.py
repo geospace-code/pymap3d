@@ -9,7 +9,7 @@ except ImportError as e:
 
 def eci2ecef(eci: np.ndarray,
              time: datetime,
-             useastropy: bool=True) -> np.ndarray:
+             useastropy: bool = True) -> np.ndarray:
     """
      Observer => Point
 
@@ -49,7 +49,7 @@ def eci2ecef(eci: np.ndarray,
 
 def ecef2eci(ecef: np.ndarray,
              time: datetime,
-             useastropy: bool=True) -> np.ndarray:
+             useastropy: bool = True) -> np.ndarray:
     """
     Point => Point
 

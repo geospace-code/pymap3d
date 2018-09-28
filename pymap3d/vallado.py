@@ -74,7 +74,7 @@ def azel2radec(az_deg: float, el_deg: float,
 
     lst = datetime2sidereal(time, lon)  # lon, ra in RADIANS
 
-    """ by definition right ascension \in [0,360) degrees """
+    """ by definition right ascension [0, 360) degrees """
     return degrees(lst - lha) % 360, degrees(dec)
 
 

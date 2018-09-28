@@ -2,7 +2,7 @@ import numpy as np
 from .ecef import Ellipsoid
 
 
-def isometric(lat: float, ell: Ellipsoid=None, deg: bool=True):
+def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
     """
      computes isometric latitude of a point on an ellipsoid
 
@@ -49,7 +49,7 @@ def isometric(lat: float, ell: Ellipsoid=None, deg: bool=True):
     return isolat
 
 
-def meridian_dist(lat: float, ell: Ellipsoid=None, deg: bool=True):
+def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     """
     computes the meridian distance on an ellipsoid *from the equator* to a latitude.
 
@@ -110,7 +110,7 @@ def meridian_dist(lat: float, ell: Ellipsoid=None, deg: bool=True):
 
 
 def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
-                      ell: Ellipsoid=None, deg: bool=True):
+                      ell: Ellipsoid = None, deg: bool = True):
     """
     computes the arc length and azimuth of the loxodrome
     between two points on the surface of the reference ellipsoid

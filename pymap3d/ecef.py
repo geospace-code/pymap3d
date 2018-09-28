@@ -1,6 +1,5 @@
-from numpy import radians, sin, cos, tan, allclose, hypot, degrees, arctan2, sqrt, pi
+from numpy import radians, sin, cos, tan, arctan, hypot, degrees, arctan2, sqrt, pi
 import numpy as np
-from copy import deepcopy
 from typing import Tuple
 from datetime import datetime
 
@@ -14,7 +13,7 @@ class Ellipsoid:
     https://en.wikibooks.org/wiki/PROJ.4#Spheroid
     """
 
-    def __init__(self, model: str='wgs84') -> None:
+    def __init__(self, model: str = 'wgs84') -> None:
         if model == 'wgs84':
             """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
             self.a = 6378137.  # semi-major axis [m]
@@ -45,7 +44,7 @@ class Ellipsoid:
             raise NotImplementedError('{} model not implemented, let us know and we will add it (or make a pull request)'.format(model))
 
 
-def get_radius_normal(lat_radians: float, ell: Ellipsoid=None) -> float:
+def get_radius_normal(lat_radians: float, ell: Ellipsoid = None) -> float:
     """ Compute normal radius of planetary body"""
     if ell is None:
         ell = Ellipsoid()
@@ -57,7 +56,7 @@ def get_radius_normal(lat_radians: float, ell: Ellipsoid=None) -> float:
 
 
 def geodetic2ecef(lat: float, lon: float, alt: float,
-                  ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
+                  ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     Point
 
@@ -78,14 +77,15 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         lon = radians(lon)
 
     with np.errstate(invalid='ignore'):
-        if ((lat < -pi / 2) | (lat > pi / 2)).any():
+        # need np.any() to handle scalar and array cases
+        if np.any((lat < -pi / 2) | (lat > pi / 2)):
             raise ValueError('-90 <= lat <= 90')
 
-        if ((lon < -pi) | (lon > 2 * pi)).any():
+        if np.any((lon < -pi) | (lon > 2 * pi)):
             raise ValueError('-180 <= lat <= 360')
 
-        if (np.asarray(alt) < 0).any():
-            raise ValueError('altitude \in  [0, Infinity)')
+        if np.any(np.asarray(alt) < 0):
+            raise ValueError('altitude  [0, Infinity)')
     # radius of curvature of the prime vertical section
     N = get_radius_normal(lat, ell)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
@@ -98,7 +98,7 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
 
 
 def ecef2geodetic(x: float, y: float, z: float,
-                  ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
+                  ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -113,49 +113,38 @@ def ecef2geodetic(x: float, y: float, z: float,
     lat,lon   (degrees/radians)
     alt  (meters)
 
-    Algorithm is based on
-    http://www.astro.uni.torun.pl/~kb/Papers/geod/Geod-BG.htm
-    This algorithm provides a converging solution to the latitude equation
-    in terms of the parametric or reduced latitude form (v)
-    This algorithm provides a uniform solution over all latitudes as it does
-    not involve division by cos(phi) or sin(phi)
+    based on:
+    You, Rey-Jer. (2000). Transformation of Cartesian to Geodetic Coordinates without Iterations.
+    Journal of Surveying Engineering. doi: 10.1061/(ASCE)0733-9453
     """
     if ell is None:
         ell = Ellipsoid()
 
-    ea = ell.a
-    eb = ell.b
-    rad = hypot(x, y)
-# Constant required for Latitude equation
-    rho = arctan2(eb * z, ea * rad)
-# Constant required for latitude equation
-    c = (ea**2 - eb**2) / hypot(ea * rad, eb * z)
-# Starter for the Newtons Iteration Method
-    vnew = arctan2(ea * z, eb * rad)
-# Initializing the parametric latitude
-    v = 0
-    for _ in range(5):
-        v = deepcopy(vnew)
-# %% Newtons Method for computing iterations
-        vnew = v - ((2 * sin(v - rho) - c * sin(2 * v)) /
-                    (2 * (cos(v - rho) - c * cos(2 * v))))
+    r = sqrt(x**2 + y**2 + z**2)
 
-        if allclose(v, vnew):
-            break
-# %% Computing latitude from the root of the latitude equation
-    lat = arctan2(ea * tan(vnew), eb)
-    # by inspection
+    E = sqrt(ell.a**2 - ell.b**2)
+
+    # eqn. 4a
+    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2)**2 + 4 * E**2 * z**2))
+
+    Q = hypot(x, y)
+
+    huE = hypot(u, E)
+
+    # eqn. 4b
+    Beta = arctan(huE / u * z / hypot(x, y))
+
+    # eqn. 13
+    eps = ((ell.b * u - ell.a * huE + E**2) * sin(Beta)) / (ell.a * huE * 1 / cos(Beta) - E**2 * cos(Beta))
+
+    Beta += eps
+# %% final output
+    lat = arctan(ell.a / ell.b * tan(Beta))
+
     lon = arctan2(y, x)
 
-    alt = (((rad - ea * cos(vnew)) * cos(lat)) +
-           ((z - eb * sin(vnew)) * sin(lat)))
-
-    with np.errstate(invalid='ignore'):
-        if ((lat < -pi / 2) | (lat > pi / 2)).any():
-            raise ValueError('-90 <= lat <= 90')
-
-        if ((lon < -pi) | (lon > 2 * pi)).any():
-            raise ValueError('-180 <= lat <= 360')
+    # eqn. 7
+    alt = sqrt((z - ell.b * sin(Beta))**2 + (Q - ell.a * cos(Beta))**2)
 
     if deg:
         return degrees(lat), degrees(lon), alt
@@ -164,7 +153,7 @@ def ecef2geodetic(x: float, y: float, z: float,
 
 
 def ecef2enuv(u: float, v: float, w: float,
-              lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
+              lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     for VECTOR i.e. between two points
 
@@ -187,7 +176,7 @@ def ecef2enuv(u: float, v: float, w: float,
 
 def ecef2enu(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
 
     input
@@ -208,7 +197,7 @@ def ecef2enu(x: float, y: float, z: float,
 
 
 def enu2uvw(east: float, north: float, up: float,
-            lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
+            lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -223,7 +212,7 @@ def enu2uvw(east: float, north: float, up: float,
 
 
 def uvw2enu(u: float, v: float, w: float,
-            lat0: float, lon0: float, deg: bool=True) -> Tuple[float, float, float]:
+            lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -237,7 +226,7 @@ def uvw2enu(u: float, v: float, w: float,
 
 
 def eci2geodetic(eci: np.ndarray, t: datetime,
-                 useastropy: bool=True) -> Tuple[float, float, float]:
+                 useastropy: bool = True) -> Tuple[float, float, float]:
     """
     convert ECI to geodetic coordinates
 
@@ -265,7 +254,7 @@ def eci2geodetic(eci: np.ndarray, t: datetime,
 
 def enu2ecef(e1: float, n1: float, u1: float,
              lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid=None, deg: bool=True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     ENU to ECEF
 

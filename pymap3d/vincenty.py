@@ -9,7 +9,7 @@ import numpy as np
 from .ecef import Ellipsoid
 
 
-def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=None) -> Tuple[float, float, float]:
+def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
     """
     Using the WGS-84 Earth ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -228,7 +228,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid=Non
 
 
 def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
-            ell: Ellipsoid=None) -> Tuple[float, float, float]:
+            ell: Ellipsoid = None) -> Tuple[float, float, float]:
     """
     This is the Vincenty "forward" solution.
 
@@ -407,7 +407,7 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 
 
 def track2(lat1: float, lon1: float, lat2: float, lon2: float,
-           ell: Ellipsoid=None, npts: int=100, deg: bool=True):
+           ell: Ellipsoid = None, npts: int = 100, deg: bool = True):
     """
      computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 
