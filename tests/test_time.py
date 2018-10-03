@@ -1,10 +1,16 @@
 #!/usr/bin/env python
 import pytest
+from pytest import approx
 from pymap3d.timeconv import str2dt
+import pymap3d.sidereal as pms
 from datetime import datetime
 import numpy as np
 
 t0 = datetime(2014, 4, 6, 8)
+
+
+def test_juliantime():
+    assert pms.juliandate(t0) == approx(2.456753833333e6)
 
 
 def test_types():

@@ -33,9 +33,9 @@ def datetime2sidereal(time: datetime,
     """
     usevallado = usevallado or Time is None
     if usevallado:
-        jd = datetime2julian(str2dt(time))
+        jd = juliandate(str2dt(time))
 # %% Greenwich Sidereal time RADIANS
-        gst = np.atleast_1d(julian2sidereal(jd))
+        gst = julian2sidereal(jd)
 # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
         tsr = gst + lon_radians
     else:
@@ -45,7 +45,7 @@ def datetime2sidereal(time: datetime,
     return tsr
 
 
-def datetime2julian(time: datetime) -> float:
+def juliandate(time: datetime) -> float:
     """
     Python datetime to Julian time
 
@@ -75,7 +75,7 @@ def datetime2julian(time: datetime) -> float:
     return jd.squeeze()
 
 
-def julian2sidereal(juliandate: float) -> float:
+def julian2sidereal(Jdate: float) -> float:
     """
     Convert Julian time to sidereal time
 
@@ -88,7 +88,7 @@ def julian2sidereal(juliandate: float) -> float:
 
     """
 
-    jdate = np.atleast_1d(juliandate)
+    jdate = np.atleast_1d(Jdate)
     assert jdate.ndim == 1
 
     tsr = np.empty(jdate.size)

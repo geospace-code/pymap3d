@@ -1,6 +1,6 @@
 from datetime import datetime
 import numpy as np
-from .datetime2hourangle import datetime2sidereal
+from .sidereal import datetime2sidereal
 try:
     from astropy.time import Time
 except ImportError as e:

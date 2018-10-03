@@ -3,7 +3,7 @@ import pytest
 from pytest import approx
 import numpy as np
 import pymap3d as pm
-import pymap3d.datetime2hourangle as pmd
+import pymap3d.sidereal as pmd
 import pymap3d.haversine as pmh
 
 lon = -148
@@ -14,18 +14,18 @@ ha = 45.482789587392013
 eci0 = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
 
 
-def test_datetime2sidereal():
+def test_sidereal():
     pytest.importorskip('astropy')
     # http://www.jgiesen.de/astro/astroJS/siderealClock/
     assert pmd.datetime2sidereal(t0, np.radians(lon), False) == approx(sra, rel=1e-5)
 
-    assert pmd.datetime2sidereal([t0], np.radians(lon), False) == approx([sra], rel=1e-5)
+    assert pmd.datetime2sidereal([t0], np.radians(lon), False) == approx(sra, rel=1e-5)
 
 
-def test_datetime2sidereal_vallado():
+def test_sidereal_vallado():
     assert pmd.datetime2sidereal(t0, np.radians(lon), True) == approx(sra, rel=1e-5)
 
-    assert pmd.datetime2sidereal([t0], np.radians(lon), True) == approx([sra], rel=1e-5)
+    assert pmd.datetime2sidereal([t0], np.radians(lon), True) == approx(sra, rel=1e-5)
 
 
 def test_anglesep():
