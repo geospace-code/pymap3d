@@ -35,9 +35,6 @@ ve, vn, vu = (5.368859646588048, 3.008520763668120, -0.352347711524077)
 
 
 def test_losint():
-
-    pytest.importorskip('pytest', minversion='3.5')
-
     az = [0., 10., 125.]
 
     lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt=0.)

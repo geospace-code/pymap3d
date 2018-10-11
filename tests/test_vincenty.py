@@ -30,7 +30,6 @@ def test_track2():
 
 def test_vreckon():
     """ tests scalars, vectors"""
-    pytest.importorskip('pytest', minversion='3.5')
 
     # scalar
     assert vreckon(*ll0, sr[0], az[0]) == approx((lat2[0], lon2[0], az2[0]))
@@ -47,8 +46,6 @@ def test_vreckon():
 
 
 def test_vdist():
-    pytest.importorskip('pytest', minversion='3.5')
-
     lat1, lon1, a21 = vreckon(*ll0, sr[0], az[0])
 
     assert vdist(*ll0, lat1, lon1) == approx((sr[0], az[0], a21))
