@@ -18,32 +18,32 @@ def azel2radec(az_deg: float, el_deg: float,
                lat_deg: float, lon_deg: float,
                time: datetime) -> Tuple[float, float]:
     """
-    convert azimuth, elevation to right ascension, declination
+    `azel2radec` converts azimuth, elevation to right ascension, declination
 
-    Inputs
+    ## Inputs
 
     az_deg
-        Numpy ndarray of azimuth to point [degrees]
+    : Numpy ndarray of azimuth to point [degrees]
 
     el_deg
-        Numpy ndarray of elevation to point [degrees]
+    : Numpy ndarray of elevation to point [degrees]
 
     lat_deg
-        scalar observer WGS84 latitude [degrees]
+    : scalar observer WGS84 latitude [degrees]
 
     lon_deg
-        scalar observer WGS84 longitude [degrees]
+    : scalar observer WGS84 longitude [degrees]
 
     time
-        time of observation
+    : time of observation
 
-    Outputs
+    ## Outputs
 
     ra_deg
-        Numpy ndarray of right ascension values [degrees]
+    : Numpy ndarray of right ascension values [degrees]
 
     dec_deg
-        Numpy ndarray of declination values [degrees]
+    : Numpy ndarray of declination values [degrees]
 
     from D.Vallado Fundamentals of Astrodynamics and Applications
     p.258-259
@@ -82,32 +82,32 @@ def radec2azel(ra_deg: float, dec_deg: float,
                lat_deg: float, lon_deg: float,
                time: datetime) -> Tuple[float, float]:
     """
-    convert right ascension, declination to azimuth, elevation
+    `radec2azel` converts right ascension, declination to azimuth, elevation
 
-    Inputs
+    ## Inputs
 
     ra_deg
-        Numpy ndarray of right ascension values [degrees]
+    : Numpy ndarray of right ascension values [degrees]
 
     dec_deg
-        Numpy ndarray of declination values [degrees]
+    : Numpy ndarray of declination values [degrees]
 
     lat_deg
-        scalar observer WGS84 latitude [degrees]
+    : scalar observer WGS84 latitude [degrees]
 
     lon_deg
-        scalar observer WGS84 longitude [degrees]
+    : scalar observer WGS84 longitude [degrees]
 
     time
-        time of observation
+    : time of observation
 
-    Outputs
+    ## Outputs
 
     az_deg
-        Numpy ndarray of azimuth to point [degrees]
+    : Numpy ndarray of azimuth to point [degrees]
 
     el_deg
-        Numpy ndarray of elevation to point [degrees]
+    : Numpy ndarray of elevation to point [degrees]
 
 
     from D. Vallado "Fundamentals of Astrodynamics and Applications "

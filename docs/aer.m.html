@@ -1083,20 +1083,20 @@ table {
              <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
              <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Observer =&gt; Point</span>
+<span class="sd">    `ecef2aer` gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.</span>
 
-<span class="sd">    input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    x,y,z  [meters] target ECEF location                             [0,Infinity)</span>
-<span class="sd">    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]</span>
-<span class="sd">    h0     [meters]                observer altitude                 [0,Infinity)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * x,y,z  [meters] target ECEF location                             [0,Infinity)</span>
+<span class="sd">    * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]</span>
+<span class="sd">    * h0     [meters]                observer altitude</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xEast</span><span class="p">,</span> <span class="n">yNorth</span><span class="p">,</span> <span class="n">zUp</span> <span class="o">=</span> <span class="n">ecef2enu</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
 
@@ -1107,19 +1107,20 @@ table {
                  <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Observer =&gt; Point</span>
+<span class="sd">    `geodetic2aer` gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.</span>
 
-<span class="sd">    input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    Target:   lat, lon, h (altitude, meters)</span>
-<span class="sd">    Observer: lat0, lon0, h0 (altitude, meters)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)</span>
-<span class="sd">    slant range [meters]</span>
+<span class="sd">    ## InputS</span>
+
+<span class="sd">    * Target:   lat, lon, h (altitude, meters)</span>
+<span class="sd">    * Observer: lat0, lon0, h0 (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
+
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)</span>
+<span class="sd">    * slant range [meters]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">geodetic2enu</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
 
@@ -1130,18 +1131,19 @@ table {
                  <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    az,el (degrees/radians)</span>
-<span class="sd">    srange[meters]        [0, Infinity)</span>
+<span class="sd">    `aer2geodetic` gives geodetic coordinates of a point with az, el, range from an observer</span>
+<span class="sd">    </span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * az,el (degrees/radians)</span>
+<span class="sd">    * srange[meters]        [0, Infinity)</span>
 
-<span class="sd">    Observer: lat0,lon0 [degrees]</span>
-<span class="sd">              altitude h0 [meters]</span>
+<span class="sd">    * Observer: lat0,lon0 [degrees] altitude h0 [meters]</span>
 
-<span class="sd">    deg :   degrees input/output  (False: radians in/out)</span>
+<span class="sd">    * deg :   degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output:</span>
-<span class="sd">    WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    * WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">aer2ecef</span><span class="p">(</span><span class="n">az</span><span class="p">,</span> <span class="n">el</span><span class="p">,</span> <span class="n">srange</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
@@ -1154,20 +1156,20 @@ table {
             <span class="n">t</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
             <span class="n">useastropy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Observer =&gt; Point</span>
+<span class="sd">    `eci2aer` takes ECI coordinates of point and gives az, el, slant range from Observer</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
-<span class="sd">    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)</span>
-<span class="sd">    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]</span>
-<span class="sd">    h0     [meters]                observer altitude                [0,Infinity)</span>
-<span class="sd">    t  time (datetime.datetime)   time of obsevation (UTC)</span>
+<span class="sd">    ## Inputs</span>
+
+<span class="sd">    * eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)</span>
+<span class="sd">    * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]</span>
+<span class="sd">    * h0     [meters]                observer altitude                [0,Infinity)</span>
+<span class="sd">    * t  time (datetime.datetime)   time of obsevation (UTC)</span>
 
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ecef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">eci2ecef</span><span class="p">(</span><span class="n">eci</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">useastropy</span><span class="p">))</span>
 
@@ -1179,19 +1181,20 @@ table {
             <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
             <span class="n">useastropy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    `aer2eci` gives ECI of a point from an observer at az, el, slant range</span>
+<span class="sd">    </span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    * Observer: lat0, lon0, h0 (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    * t  datetime.datetime of obseration</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
-<span class="sd">    Observer: lat0, lon0, h0 (altitude, meters)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
-<span class="sd">    t  datetime.datetime of obseration</span>
-
-<span class="sd">    output</span>
-<span class="sd">    ------</span>
-<span class="sd">    eci  x,y,z (meters)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * eci  x,y,z (meters)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">aer2ecef</span><span class="p">(</span><span class="n">az</span><span class="p">,</span> <span class="n">el</span><span class="p">,</span> <span class="n">srange</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">deg</span><span class="p">)</span>
 
@@ -1202,17 +1205,19 @@ table {
              <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alt0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
              <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</span>
+<span class="sd">    `aer2ecef` converts target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</span>
 
-<span class="sd">     Input:</span>
-<span class="sd">     -----</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
-<span class="sd">    Observer: lat0, lon0, h0 (altitude, meters)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">     </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    * Observer: lat0, lon0, h0 (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">     output: ECEF x,y,z  [meters]</span>
+<span class="sd">    ## OutputS</span>
+<span class="sd">    </span>
+<span class="sd">    ECEF x,y,z  [meters]</span>
 
 <span class="sd">    if you specify NaN for srange, return value z will be NaN</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1242,15 +1247,17 @@ table {
 
     
   
-    <div class="desc"><p>convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</p>
-<p>Input:</p>
-<hr />
-<p>azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-slant range [meters]                                             [0,Infinity)
-Observer: lat0, lon0, h0 (altitude, meters)
-ell    reference ellipsoid
-deg    degrees input/output  (False: radians in/out)</p>
-<p>output: ECEF x,y,z  [meters]</p>
+    <div class="desc"><p><code>aer2ecef</code> converts target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</p>
+<h2>Inputs</h2>
+<ul>
+<li>azimuth, elevation (degrees/radians)                             [0,360),[0,90]</li>
+<li>slant range [meters]                                             [0,Infinity)</li>
+<li>Observer: lat0, lon0, h0 (altitude, meters)</li>
+<li>ell    reference ellipsoid</li>
+<li>deg    degrees input/output  (False: radians in/out)</li>
+</ul>
+<h2>OutputS</h2>
+<p>ECEF x,y,z  [meters]</p>
 <p>if you specify NaN for srange, return value z will be NaN</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.aer.aer2ecef', this);">Show source &equiv;</a></p>
@@ -1259,17 +1266,19 @@ deg    degrees input/output  (False: radians in/out)</p>
              <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alt0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
              <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    convert target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</span>
+<span class="sd">    `aer2ecef` converts target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.</span>
 
-<span class="sd">     Input:</span>
-<span class="sd">     -----</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
-<span class="sd">    Observer: lat0, lon0, h0 (altitude, meters)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">     </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    * Observer: lat0, lon0, h0 (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">     output: ECEF x,y,z  [meters]</span>
+<span class="sd">    ## OutputS</span>
+<span class="sd">    </span>
+<span class="sd">    ECEF x,y,z  [meters]</span>
 
 <span class="sd">    if you specify NaN for srange, return value z will be NaN</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1297,15 +1306,20 @@ deg    degrees input/output  (False: radians in/out)</p>
 
     
   
-    <div class="desc"><h2>input</h2>
-<p>azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-slant range [meters]                                             [0,Infinity)
-Observer: lat0, lon0, h0 (altitude, meters)
-ell    reference ellipsoid
-deg    degrees input/output  (False: radians in/out)
-t  datetime.datetime of obseration</p>
-<h2>output</h2>
-<p>eci  x,y,z (meters)</p></div>
+    <div class="desc"><p><code>aer2eci</code> gives ECI of a point from an observer at az, el, slant range</p>
+<h2>Inputs</h2>
+<ul>
+<li>azimuth, elevation (degrees/radians)                             [0,360),[0,90]</li>
+<li>slant range [meters]                                             [0,Infinity)</li>
+<li>Observer: lat0, lon0, h0 (altitude, meters)</li>
+<li>ell    reference ellipsoid</li>
+<li>deg    degrees input/output  (False: radians in/out)</li>
+<li>t  datetime.datetime of obseration</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>eci  x,y,z (meters)</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.aer.aer2eci', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.aer.aer2eci" class="source">
@@ -1314,19 +1328,20 @@ t  datetime.datetime of obseration</p>
             <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
             <span class="n">useastropy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    `aer2eci` gives ECI of a point from an observer at az, el, slant range</span>
+<span class="sd">    </span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    * Observer: lat0, lon0, h0 (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    * t  datetime.datetime of obseration</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
-<span class="sd">    Observer: lat0, lon0, h0 (altitude, meters)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
-<span class="sd">    t  datetime.datetime of obseration</span>
-
-<span class="sd">    output</span>
-<span class="sd">    ------</span>
-<span class="sd">    eci  x,y,z (meters)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * eci  x,y,z (meters)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">aer2ecef</span><span class="p">(</span><span class="n">az</span><span class="p">,</span> <span class="n">el</span><span class="p">,</span> <span class="n">srange</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">deg</span><span class="p">)</span>
 
@@ -1347,14 +1362,24 @@ t  datetime.datetime of obseration</p>
 
     
   
-    <div class="desc"><h2>Input:</h2>
-<p>az,el (degrees/radians)
-srange[meters]        [0, Infinity)</p>
-<p>Observer: lat0,lon0 [degrees]
-          altitude h0 [meters]</p>
+    <div class="desc"><p><code>aer2geodetic</code> gives geodetic coordinates of a point with az, el, range from an observer</p>
+<h2>Inputs</h2>
+<ul>
+<li>az,el (degrees/radians)</li>
+<li>
+<p>srange[meters]        [0, Infinity)</p>
+</li>
+<li>
+<p>Observer: lat0,lon0 [degrees] altitude h0 [meters]</p>
+</li>
+<li>
 <p>deg :   degrees input/output  (False: radians in/out)</p>
-<p>output:
-WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</p></div>
+</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.aer.aer2geodetic', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.aer.aer2geodetic" class="source">
@@ -1362,18 +1387,19 @@ WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</p></div>
                  <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    az,el (degrees/radians)</span>
-<span class="sd">    srange[meters]        [0, Infinity)</span>
+<span class="sd">    `aer2geodetic` gives geodetic coordinates of a point with az, el, range from an observer</span>
+<span class="sd">    </span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * az,el (degrees/radians)</span>
+<span class="sd">    * srange[meters]        [0, Infinity)</span>
 
-<span class="sd">    Observer: lat0,lon0 [degrees]</span>
-<span class="sd">              altitude h0 [meters]</span>
+<span class="sd">    * Observer: lat0,lon0 [degrees] altitude h0 [meters]</span>
 
-<span class="sd">    deg :   degrees input/output  (False: radians in/out)</span>
+<span class="sd">    * deg :   degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output:</span>
-<span class="sd">    WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    * WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">aer2ecef</span><span class="p">(</span><span class="n">az</span><span class="p">,</span> <span class="n">el</span><span class="p">,</span> <span class="n">srange</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
@@ -1395,16 +1421,20 @@ WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]</p></div>
 
     
   
-    <div class="desc"><p>Observer =&gt; Point</p>
-<h2>input:</h2>
-<p>x,y,z  [meters] target ECEF location                             [0,Infinity)
-lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]
-h0     [meters]                observer altitude                 [0,Infinity)
-ell    reference ellipsoid
-deg    degrees input/output  (False: radians in/out)</p>
-<h2>output: AER</h2>
-<p>azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-slant range [meters]                                             [0,Infinity)</p></div>
+    <div class="desc"><p><code>ecef2aer</code> gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.</p>
+<h2>Inputs</h2>
+<ul>
+<li>x,y,z  [meters] target ECEF location                             [0,Infinity)</li>
+<li>lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]</li>
+<li>h0     [meters]                observer altitude</li>
+<li>ell    reference ellipsoid</li>
+<li>deg    degrees input/output  (False: radians in/out)</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>azimuth, elevation (degrees/radians)                             [0,360),[0,90]</li>
+<li>slant range [meters]                                             [0,Infinity)</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.aer.ecef2aer', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.aer.ecef2aer" class="source">
@@ -1412,20 +1442,20 @@ slant range [meters]                                             [0,Infinity)</p
              <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
              <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Observer =&gt; Point</span>
+<span class="sd">    `ecef2aer` gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.</span>
 
-<span class="sd">    input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    x,y,z  [meters] target ECEF location                             [0,Infinity)</span>
-<span class="sd">    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]</span>
-<span class="sd">    h0     [meters]                observer altitude                 [0,Infinity)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * x,y,z  [meters] target ECEF location                             [0,Infinity)</span>
+<span class="sd">    * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]</span>
+<span class="sd">    * h0     [meters]                observer altitude</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xEast</span><span class="p">,</span> <span class="n">yNorth</span><span class="p">,</span> <span class="n">zUp</span> <span class="o">=</span> <span class="n">ecef2enu</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
 
@@ -1446,15 +1476,19 @@ slant range [meters]                                             [0,Infinity)</p
 
     
   
-    <div class="desc"><p>Observer =&gt; Point</p>
-<h2>input</h2>
-<p>eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
-lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]
-h0     [meters]                observer altitude                [0,Infinity)
-t  time (datetime.datetime)   time of obsevation (UTC)</p>
-<h2>output: AER</h2>
-<p>azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-slant range [meters]                                             [0,Infinity)</p></div>
+    <div class="desc"><p><code>eci2aer</code> takes ECI coordinates of point and gives az, el, slant range from Observer</p>
+<h2>Inputs</h2>
+<ul>
+<li>eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)</li>
+<li>lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]</li>
+<li>h0     [meters]                observer altitude                [0,Infinity)</li>
+<li>t  time (datetime.datetime)   time of obsevation (UTC)</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>azimuth, elevation (degrees/radians)                             [0,360),[0,90]</li>
+<li>slant range [meters]                                             [0,Infinity)</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.aer.eci2aer', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.aer.eci2aer" class="source">
@@ -1463,20 +1497,20 @@ slant range [meters]                                             [0,Infinity)</p
             <span class="n">t</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
             <span class="n">useastropy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Observer =&gt; Point</span>
+<span class="sd">    `eci2aer` takes ECI coordinates of point and gives az, el, slant range from Observer</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
-<span class="sd">    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)</span>
-<span class="sd">    lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]</span>
-<span class="sd">    h0     [meters]                observer altitude                [0,Infinity)</span>
-<span class="sd">    t  time (datetime.datetime)   time of obsevation (UTC)</span>
+<span class="sd">    ## Inputs</span>
+
+<span class="sd">    * eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)</span>
+<span class="sd">    * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]</span>
+<span class="sd">    * h0     [meters]                observer altitude                [0,Infinity)</span>
+<span class="sd">    * t  time (datetime.datetime)   time of obsevation (UTC)</span>
 
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ecef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">eci2ecef</span><span class="p">(</span><span class="n">eci</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">useastropy</span><span class="p">))</span>
 
@@ -1497,15 +1531,19 @@ slant range [meters]                                             [0,Infinity)</p
 
     
   
-    <div class="desc"><p>Observer =&gt; Point</p>
-<h2>input:</h2>
-<p>Target:   lat, lon, h (altitude, meters)
-Observer: lat0, lon0, h0 (altitude, meters)
-ell    reference ellipsoid
-deg    degrees input/output  (False: radians in/out)</p>
-<h2>output: AER</h2>
-<p>azimuth, elevation (degrees/radians)
-slant range [meters]</p></div>
+    <div class="desc"><p><code>geodetic2aer</code> gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.</p>
+<h2>InputS</h2>
+<ul>
+<li>Target:   lat, lon, h (altitude, meters)</li>
+<li>Observer: lat0, lon0, h0 (altitude, meters)</li>
+<li>ell    reference ellipsoid</li>
+<li>deg    degrees input/output  (False: radians in/out)</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>azimuth, elevation (degrees/radians)</li>
+<li>slant range [meters]</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.aer.geodetic2aer', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.aer.geodetic2aer" class="source">
@@ -1513,19 +1551,20 @@ slant range [meters]</p></div>
                  <span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">ell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Observer =&gt; Point</span>
+<span class="sd">    `geodetic2aer` gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.</span>
 
-<span class="sd">    input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    Target:   lat, lon, h (altitude, meters)</span>
-<span class="sd">    Observer: lat0, lon0, h0 (altitude, meters)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)</span>
-<span class="sd">    slant range [meters]</span>
+<span class="sd">    ## InputS</span>
+
+<span class="sd">    * Target:   lat, lon, h (altitude, meters)</span>
+<span class="sd">    * Observer: lat0, lon0, h0 (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
+
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)</span>
+<span class="sd">    * slant range [meters]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">geodetic2enu</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">lat0</span><span class="p">,</span> <span class="n">lon0</span><span class="p">,</span> <span class="n">h0</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
 

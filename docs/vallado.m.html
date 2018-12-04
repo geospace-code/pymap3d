@@ -1103,32 +1103,32 @@ These functions are fallbacks for those wihtout AstroPy.</p>
                <span class="n">lat_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    convert azimuth, elevation to right ascension, declination</span>
+<span class="sd">    `azel2radec` converts azimuth, elevation to right ascension, declination</span>
 
-<span class="sd">    Inputs</span>
+<span class="sd">    ## Inputs</span>
 
 <span class="sd">    az_deg</span>
-<span class="sd">        Numpy ndarray of azimuth to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of azimuth to point [degrees]</span>
 
 <span class="sd">    el_deg</span>
-<span class="sd">        Numpy ndarray of elevation to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of elevation to point [degrees]</span>
 
 <span class="sd">    lat_deg</span>
-<span class="sd">        scalar observer WGS84 latitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 latitude [degrees]</span>
 
 <span class="sd">    lon_deg</span>
-<span class="sd">        scalar observer WGS84 longitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 longitude [degrees]</span>
 
 <span class="sd">    time</span>
-<span class="sd">        time of observation</span>
+<span class="sd">    : time of observation</span>
 
-<span class="sd">    Outputs</span>
+<span class="sd">    ## Outputs</span>
 
 <span class="sd">    ra_deg</span>
-<span class="sd">        Numpy ndarray of right ascension values [degrees]</span>
+<span class="sd">    : Numpy ndarray of right ascension values [degrees]</span>
 
 <span class="sd">    dec_deg</span>
-<span class="sd">        Numpy ndarray of declination values [degrees]</span>
+<span class="sd">    : Numpy ndarray of declination values [degrees]</span>
 
 <span class="sd">    from D.Vallado Fundamentals of Astrodynamics and Applications</span>
 <span class="sd">    p.258-259</span>
@@ -1167,32 +1167,32 @@ These functions are fallbacks for those wihtout AstroPy.</p>
                <span class="n">lat_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    convert right ascension, declination to azimuth, elevation</span>
+<span class="sd">    `radec2azel` converts right ascension, declination to azimuth, elevation</span>
 
-<span class="sd">    Inputs</span>
+<span class="sd">    ## Inputs</span>
 
 <span class="sd">    ra_deg</span>
-<span class="sd">        Numpy ndarray of right ascension values [degrees]</span>
+<span class="sd">    : Numpy ndarray of right ascension values [degrees]</span>
 
 <span class="sd">    dec_deg</span>
-<span class="sd">        Numpy ndarray of declination values [degrees]</span>
+<span class="sd">    : Numpy ndarray of declination values [degrees]</span>
 
 <span class="sd">    lat_deg</span>
-<span class="sd">        scalar observer WGS84 latitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 latitude [degrees]</span>
 
 <span class="sd">    lon_deg</span>
-<span class="sd">        scalar observer WGS84 longitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 longitude [degrees]</span>
 
 <span class="sd">    time</span>
-<span class="sd">        time of observation</span>
+<span class="sd">    : time of observation</span>
 
-<span class="sd">    Outputs</span>
+<span class="sd">    ## Outputs</span>
 
 <span class="sd">    az_deg</span>
-<span class="sd">        Numpy ndarray of azimuth to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of azimuth to point [degrees]</span>
 
 <span class="sd">    el_deg</span>
-<span class="sd">        Numpy ndarray of elevation to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of elevation to point [degrees]</span>
 
 
 <span class="sd">    from D. Vallado &quot;Fundamentals of Astrodynamics and Applications &quot;</span>
@@ -1294,23 +1294,23 @@ These functions are fallbacks for those wihtout AstroPy.</p>
 
     
   
-    <div class="desc"><p>convert azimuth, elevation to right ascension, declination</p>
-<p>Inputs</p>
+    <div class="desc"><p><code>azel2radec</code> converts azimuth, elevation to right ascension, declination</p>
+<h2>Inputs</h2>
 <p>az_deg
-    Numpy ndarray of azimuth to point [degrees]</p>
+: Numpy ndarray of azimuth to point [degrees]</p>
 <p>el_deg
-    Numpy ndarray of elevation to point [degrees]</p>
+: Numpy ndarray of elevation to point [degrees]</p>
 <p>lat_deg
-    scalar observer WGS84 latitude [degrees]</p>
+: scalar observer WGS84 latitude [degrees]</p>
 <p>lon_deg
-    scalar observer WGS84 longitude [degrees]</p>
+: scalar observer WGS84 longitude [degrees]</p>
 <p>time
-    time of observation</p>
-<p>Outputs</p>
+: time of observation</p>
+<h2>Outputs</h2>
 <p>ra_deg
-    Numpy ndarray of right ascension values [degrees]</p>
+: Numpy ndarray of right ascension values [degrees]</p>
 <p>dec_deg
-    Numpy ndarray of declination values [degrees]</p>
+: Numpy ndarray of declination values [degrees]</p>
 <p>from D.Vallado Fundamentals of Astrodynamics and Applications
 p.258-259</p></div>
   <div class="source_cont">
@@ -1320,32 +1320,32 @@ p.258-259</p></div>
                <span class="n">lat_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    convert azimuth, elevation to right ascension, declination</span>
+<span class="sd">    `azel2radec` converts azimuth, elevation to right ascension, declination</span>
 
-<span class="sd">    Inputs</span>
+<span class="sd">    ## Inputs</span>
 
 <span class="sd">    az_deg</span>
-<span class="sd">        Numpy ndarray of azimuth to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of azimuth to point [degrees]</span>
 
 <span class="sd">    el_deg</span>
-<span class="sd">        Numpy ndarray of elevation to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of elevation to point [degrees]</span>
 
 <span class="sd">    lat_deg</span>
-<span class="sd">        scalar observer WGS84 latitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 latitude [degrees]</span>
 
 <span class="sd">    lon_deg</span>
-<span class="sd">        scalar observer WGS84 longitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 longitude [degrees]</span>
 
 <span class="sd">    time</span>
-<span class="sd">        time of observation</span>
+<span class="sd">    : time of observation</span>
 
-<span class="sd">    Outputs</span>
+<span class="sd">    ## Outputs</span>
 
 <span class="sd">    ra_deg</span>
-<span class="sd">        Numpy ndarray of right ascension values [degrees]</span>
+<span class="sd">    : Numpy ndarray of right ascension values [degrees]</span>
 
 <span class="sd">    dec_deg</span>
-<span class="sd">        Numpy ndarray of declination values [degrees]</span>
+<span class="sd">    : Numpy ndarray of declination values [degrees]</span>
 
 <span class="sd">    from D.Vallado Fundamentals of Astrodynamics and Applications</span>
 <span class="sd">    p.258-259</span>
@@ -1394,23 +1394,23 @@ p.258-259</p></div>
 
     
   
-    <div class="desc"><p>convert right ascension, declination to azimuth, elevation</p>
-<p>Inputs</p>
+    <div class="desc"><p><code>radec2azel</code> converts right ascension, declination to azimuth, elevation</p>
+<h2>Inputs</h2>
 <p>ra_deg
-    Numpy ndarray of right ascension values [degrees]</p>
+: Numpy ndarray of right ascension values [degrees]</p>
 <p>dec_deg
-    Numpy ndarray of declination values [degrees]</p>
+: Numpy ndarray of declination values [degrees]</p>
 <p>lat_deg
-    scalar observer WGS84 latitude [degrees]</p>
+: scalar observer WGS84 latitude [degrees]</p>
 <p>lon_deg
-    scalar observer WGS84 longitude [degrees]</p>
+: scalar observer WGS84 longitude [degrees]</p>
 <p>time
-    time of observation</p>
-<p>Outputs</p>
+: time of observation</p>
+<h2>Outputs</h2>
 <p>az_deg
-    Numpy ndarray of azimuth to point [degrees]</p>
+: Numpy ndarray of azimuth to point [degrees]</p>
 <p>el_deg
-    Numpy ndarray of elevation to point [degrees]</p>
+: Numpy ndarray of elevation to point [degrees]</p>
 <p>from D. Vallado "Fundamentals of Astrodynamics and Applications "
    4th Edition Ch. 4.4 pg. 266-268</p></div>
   <div class="source_cont">
@@ -1420,32 +1420,32 @@ p.258-259</p></div>
                <span class="n">lat_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    convert right ascension, declination to azimuth, elevation</span>
+<span class="sd">    `radec2azel` converts right ascension, declination to azimuth, elevation</span>
 
-<span class="sd">    Inputs</span>
+<span class="sd">    ## Inputs</span>
 
 <span class="sd">    ra_deg</span>
-<span class="sd">        Numpy ndarray of right ascension values [degrees]</span>
+<span class="sd">    : Numpy ndarray of right ascension values [degrees]</span>
 
 <span class="sd">    dec_deg</span>
-<span class="sd">        Numpy ndarray of declination values [degrees]</span>
+<span class="sd">    : Numpy ndarray of declination values [degrees]</span>
 
 <span class="sd">    lat_deg</span>
-<span class="sd">        scalar observer WGS84 latitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 latitude [degrees]</span>
 
 <span class="sd">    lon_deg</span>
-<span class="sd">        scalar observer WGS84 longitude [degrees]</span>
+<span class="sd">    : scalar observer WGS84 longitude [degrees]</span>
 
 <span class="sd">    time</span>
-<span class="sd">        time of observation</span>
+<span class="sd">    : time of observation</span>
 
-<span class="sd">    Outputs</span>
+<span class="sd">    ## Outputs</span>
 
 <span class="sd">    az_deg</span>
-<span class="sd">        Numpy ndarray of azimuth to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of azimuth to point [degrees]</span>
 
 <span class="sd">    el_deg</span>
-<span class="sd">        Numpy ndarray of elevation to point [degrees]</span>
+<span class="sd">    : Numpy ndarray of elevation to point [degrees]</span>
 
 
 <span class="sd">    from D. Vallado &quot;Fundamentals of Astrodynamics and Applications &quot;</span>

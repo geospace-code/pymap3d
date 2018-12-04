@@ -1072,7 +1072,7 @@ table {
 <span class="kn">from</span> <span class="nn">.sidereal</span> <span class="kn">import</span> <span class="n">datetime2sidereal</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">astropy.time</span> <span class="kn">import</span> <span class="n">Time</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">Time</span> <span class="o">=</span> <span class="bp">None</span>
 
 

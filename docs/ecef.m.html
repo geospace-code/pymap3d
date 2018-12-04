@@ -1163,14 +1163,16 @@ table {
 <span class="k">def</span> <span class="nf">geodetic2ecef</span><span class="p">(</span><span class="n">lat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                   <span class="n">ell</span><span class="p">:</span> <span class="n">Ellipsoid</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Point</span>
+<span class="sd">    `geodetic2ecef` is a point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF</span>
 
-<span class="sd">    input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    lat, lon (degrees)</span>
-<span class="sd">    alt (altitude, meters)    [0, Infinity)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+
+<span class="sd">    * lat, lon (degrees)</span>
+<span class="sd">    * alt (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
+
+
 
 <span class="sd">    output: ECEF x,y,z (meters)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1189,8 +1191,6 @@ table {
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">lon</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">pi</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">lon</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;-180 &lt;= lat &lt;= 360&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;altitude  [0, Infinity)&#39;</span><span class="p">)</span>
     <span class="c1"># radius of curvature of the prime vertical section</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">get_radius_normal</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">ell</span><span class="p">)</span>
     <span class="c1"># Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic</span>
@@ -1783,12 +1783,14 @@ deg    degrees input/output  (False: radians in/out)</p>
 
     
   
-    <div class="desc"><p>Point</p>
-<h2>input:</h2>
-<p>lat, lon (degrees)
-alt (altitude, meters)    [0, Infinity)
-ell    reference ellipsoid
-deg    degrees input/output  (False: radians in/out)</p>
+    <div class="desc"><p><code>geodetic2ecef</code> is a point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF</p>
+<h2>Inputs</h2>
+<ul>
+<li>lat, lon (degrees)</li>
+<li>alt (altitude, meters)</li>
+<li>ell    reference ellipsoid</li>
+<li>deg    degrees input/output  (False: radians in/out)</li>
+</ul>
 <p>output: ECEF x,y,z (meters)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.ecef.geodetic2ecef', this);">Show source &equiv;</a></p>
@@ -1796,14 +1798,16 @@ deg    degrees input/output  (False: radians in/out)</p>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">geodetic2ecef</span><span class="p">(</span><span class="n">lat</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                   <span class="n">ell</span><span class="p">:</span> <span class="n">Ellipsoid</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Point</span>
+<span class="sd">    `geodetic2ecef` is a point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF</span>
 
-<span class="sd">    input:</span>
-<span class="sd">    -----</span>
-<span class="sd">    lat, lon (degrees)</span>
-<span class="sd">    alt (altitude, meters)    [0, Infinity)</span>
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+
+<span class="sd">    * lat, lon (degrees)</span>
+<span class="sd">    * alt (altitude, meters)</span>
+<span class="sd">    * ell    reference ellipsoid</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
+
+
 
 <span class="sd">    output: ECEF x,y,z (meters)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1822,8 +1826,6 @@ deg    degrees input/output  (False: radians in/out)</p>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">lon</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">pi</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">lon</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;-180 &lt;= lat &lt;= 360&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;altitude  [0, Infinity)&#39;</span><span class="p">)</span>
     <span class="c1"># radius of curvature of the prime vertical section</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">get_radius_normal</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">ell</span><span class="p">)</span>
     <span class="c1"># Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic</span>
