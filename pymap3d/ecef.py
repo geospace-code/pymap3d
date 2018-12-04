@@ -58,14 +58,16 @@ def get_radius_normal(lat_radians: float, ell: Ellipsoid = None) -> float:
 def geodetic2ecef(lat: float, lon: float, alt: float,
                   ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    Point
+    `geodetic2ecef` is a point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
-    input:
-    -----
-    lat, lon (degrees)
-    alt (altitude, meters)    [0, Infinity)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    ## Inputs
+
+    * lat, lon (degrees)
+    * alt (altitude, meters)
+    * ell    reference ellipsoid
+    * deg    degrees input/output  (False: radians in/out)
+
+
 
     output: ECEF x,y,z (meters)
     """
@@ -84,8 +86,6 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         if np.any((lon < -pi) | (lon > 2 * pi)):
             raise ValueError('-180 <= lat <= 360')
 
-        if np.any(np.asarray(alt) < 0):
-            raise ValueError('altitude  [0, Infinity)')
     # radius of curvature of the prime vertical section
     N = get_radius_normal(lat, ell)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic

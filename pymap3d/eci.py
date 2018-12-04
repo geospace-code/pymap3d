@@ -3,7 +3,7 @@ import numpy as np
 from .sidereal import datetime2sidereal
 try:
     from astropy.time import Time
-except ImportError as e:
+except ImportError:
     Time = None
 
 
