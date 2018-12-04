@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>pymap3d.timeconv API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="convert strings to datetime" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1062,21 +1062,25 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">pymap3d.timeconv</span> module</h1>
-  
+  <p>convert strings to datetime</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.timeconv', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.timeconv" class="source">
     <div class="codehilite"><pre><span></span><span class="c1"># Copyright (c) 2014-2018 Michael Hirsch, Ph.D.</span>
+<span class="sd">&quot;&quot;&quot; convert strings to datetime &quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">parse</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;str2dt&#39;</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">str2dt</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts times in string or list of strings to datetime(s)</span>
 
-<span class="sd">    output: datetime</span>
+<span class="sd">    ## Output</span>
+<span class="sd">    </span>
+<span class="sd">    datetime</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">time</span>
@@ -1117,7 +1121,8 @@ table {
     
   
     <div class="desc"><p>Converts times in string or list of strings to datetime(s)</p>
-<p>output: datetime</p></div>
+<h2>Output</h2>
+<p>datetime</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.timeconv.str2dt', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.timeconv.str2dt" class="source">
@@ -1125,7 +1130,9 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts times in string or list of strings to datetime(s)</span>
 
-<span class="sd">    output: datetime</span>
+<span class="sd">    ## Output</span>
+<span class="sd">    </span>
+<span class="sd">    datetime</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">time</span>

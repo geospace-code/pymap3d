@@ -8,6 +8,8 @@ from numpy import arctan, sqrt, tan, sign, sin, cos, arctan2, arcsin, nan, pi
 import numpy as np
 from .ecef import Ellipsoid
 
+__all__ = ['vdist', 'vreckon', 'track2']
+
 
 def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
     """
@@ -21,26 +23,27 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
         s,a12 = vdist(lat1,lon1,lat2,lon2)
         s,a12,a21 = vdist(lat1,lon1,lat2,lon2)
 
+    ## Inputs
 
     s
-         distance in meters (inputs may be scalars, vectors, or matrices)
+   : distance in meters (inputs may be scalars, vectors, or matrices)
 
     a12
-         azimuth in degrees from first point to second point (forward)
+    : azimuth in degrees from first point to second point (forward)
 
     a21
-         azimuth in degrees from second point to first point (backward)
+    : azimuth in degrees from second point to first point (backward)
 
     (Azimuths are in degrees clockwise from north.)
 
     lat1
-        GEODETIC latitude of first point (degrees)
+    : GEODETIC latitude of first point (degrees)
 
     lon1
-        longitude of first point (degrees)
+    : longitude of first point (degrees)
 
     lat2, lon2
-        second point(s) (degrees)
+    : second point(s) (degrees)
 
     Original algorithm source:
     T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid
@@ -59,15 +62,16 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
      8. The Vincenty distance algorithm was transcribed verbatim by Peter Cederholm, August 12, 2003. It was modified and translated to English by Michael Kleder. Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
      9. Distances agree with the Mapping Toolbox, version 2.2 (R14SP3) with a max relative difference of about 5e-9, except when the two points are nearly antipodal, and except when one point is near the equator and the two longitudes are nearly 180 degrees apart. This function (vdist) is more accurate in such cases.
         For example, note this difference (as of this writing)::
-
-           vdist(0.2,305,15,125)
-
+        ```python
+        vdist(0.2,305,15,125)
+        ```
+        
         > 18322827.0131551
 
-        ::
-
-            distance(0.2,305,15,125,[6378137 0.08181919])
-
+        ```python
+        distance(0.2,305,15,125,[6378137 0.08181919])
+        ```
+        
         > 0
      10. Azimuths FROM the north pole (either forward starting at the north pole or backward when ending at the north pole) are set to 180 degrees by convention.
          Azimuths FROM the south pole are set to 0 degrees by convention.
@@ -236,35 +240,40 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     Using the WGS-84 Earth ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
     and return the endpoint within a few millimeters of accuracy, using Vincenty's algorithm.
 
-    USAGE::
-
-        lat2,lon2 = vreckon(lat1, lon1, rng, azim)
-
+    ## Usage
+    
+    ```python
+    lat2,lon2 = vreckon(lat1, lon1, rng, azim)
+    ```
+    
     Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth argument ELLIPSOID
 
 
-    VARIABLES
+    ## Inputs
 
     lat1
-        inital latitude (degrees)
+    : inital latitude (degrees)
 
     lon1
-        initial longitude (degrees)
+    : initial longitude (degrees)
 
     rng
-        distance (meters). Scalar or a vector. Latter case computes a series of circles (or arc circles, see azim) centered on X,Y (which are scalars)
+    : distance (meters). Scalar or a vector. Latter case computes a series of circles (or arc circles, see azim) centered on X,Y (which are scalars)
 
     azim
-        intial azimuth (degrees). "azim" is a scalar or vector
+    : intial azimuth (degrees). "azim" is a scalar or vector
 
     ellipsoid
-        two-element ellipsoid vector. Either [a b] or [a f] If omitted, defaults to WGS-84
+    : two-element ellipsoid vector. Either [a b] or [a f] If omitted, defaults to WGS-84
 
+
+    ## Outputs
+    
     lat2, lon2
-        second point (degrees)
+    : second point (degrees)
 
     a21
-        reverse azimuth (degrees), at final point facing back toward the intial point
+    : reverse azimuth (degrees), at final point facing back toward the intial point
 
     :Original algorithm: T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations", Survey Review, vol. 23, no. 176, April 1975, pp 88-93. http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
 

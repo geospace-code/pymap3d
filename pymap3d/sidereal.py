@@ -1,4 +1,5 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
+""" manipulations of sidereal time """
 from math import pi
 from datetime import datetime
 import numpy as np
@@ -14,6 +15,8 @@ except ImportError:
 The "usevallado" datetime to julian runs 4 times faster than astropy.
 However, AstroPy is more accurate.
 """
+
+__all__ = ['datetime2sidereal', 'juliandate', 'julian2sidereal']
 
 
 def datetime2sidereal(time: datetime,

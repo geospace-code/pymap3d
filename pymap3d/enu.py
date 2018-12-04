@@ -1,3 +1,4 @@
+""" transforms involving ENU East North Up """
 from typing import Tuple
 from numpy import radians, sin, cos, hypot, arctan2, degrees
 import numpy as np
@@ -5,19 +6,21 @@ import numpy as np
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 
 
+__all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']
+
 def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     ENU to Azimuth, Elevation, Range
 
-    input
-    -----
-    e,n,u  [meters]  East, north, up                                [0,Infinity)
-    deg    degrees input/output  (False: radians in/out)
+    ## Inputs
+    
+    * e,n,u  [meters]  East, north, up                                [0,Infinity)
+    * deg    degrees input/output  (False: radians in/out)
 
-    output: AER
-    ------
-    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    slant range [meters]                                             [0,Infinity)
+    ## Outputs
+    
+    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
+    * slant range [meters]                                             [0,Infinity)
     """
     r = hypot(e, n)
     slantRange = hypot(r, u)

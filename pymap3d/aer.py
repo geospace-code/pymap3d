@@ -1,3 +1,4 @@
+""" transforms involving AER: azimuth, elevation, slant range"""
 from typing import Tuple
 from datetime import datetime
 import numpy as np

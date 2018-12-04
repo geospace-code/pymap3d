@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>pymap3d.enu API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="transforms involving ENU East North Up" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1040,18 +1040,6 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#pymap3d.enu.arctan2">arctan2</a></li>
-    <li class="mono"><a href="#pymap3d.enu.cos">cos</a></li>
-    <li class="mono"><a href="#pymap3d.enu.degrees">degrees</a></li>
-    <li class="mono"><a href="#pymap3d.enu.hypot">hypot</a></li>
-    <li class="mono"><a href="#pymap3d.enu.radians">radians</a></li>
-    <li class="mono"><a href="#pymap3d.enu.sin">sin</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
@@ -1077,30 +1065,33 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">pymap3d.enu</span> module</h1>
-  
+  <p>transforms involving ENU East North Up</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.enu', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.enu" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot; transforms involving ENU East North Up &quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">radians</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">hypot</span><span class="p">,</span> <span class="n">arctan2</span><span class="p">,</span> <span class="n">degrees</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">.ecef</span> <span class="kn">import</span> <span class="n">geodetic2ecef</span><span class="p">,</span> <span class="n">ecef2geodetic</span><span class="p">,</span> <span class="n">enu2ecef</span><span class="p">,</span> <span class="n">uvw2enu</span>
 
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;enu2aer&#39;</span><span class="p">,</span> <span class="s1">&#39;aer2enu&#39;</span><span class="p">,</span> <span class="s1">&#39;enu2geodetic&#39;</span><span class="p">,</span> <span class="s1">&#39;geodetic2enu&#39;</span><span class="p">]</span>
+
 <span class="k">def</span> <span class="nf">enu2aer</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ENU to Azimuth, Elevation, Range</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
-<span class="sd">    e,n,u  [meters]  East, north, up                                [0,Infinity)</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * e,n,u  [meters]  East, north, up                                [0,Infinity)</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">hypot</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="n">slantRange</span> <span class="o">=</span> <span class="n">hypot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
@@ -1194,55 +1185,6 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="pymap3d.enu.arctan2" class="name">var <span class="ident">arctan2</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.enu.cos" class="name">var <span class="ident">cos</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.enu.degrees" class="name">var <span class="ident">degrees</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.enu.hypot" class="name">var <span class="ident">hypot</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.enu.radians" class="name">var <span class="ident">radians</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.enu.sin" class="name">var <span class="ident">sin</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       
@@ -1304,12 +1246,16 @@ deg    degrees input/output  (False: radians in/out)</p>
     
   
     <div class="desc"><p>ENU to Azimuth, Elevation, Range</p>
-<h2>input</h2>
-<p>e,n,u  [meters]  East, north, up                                [0,Infinity)
-deg    degrees input/output  (False: radians in/out)</p>
-<h2>output: AER</h2>
-<p>azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-slant range [meters]                                             [0,Infinity)</p></div>
+<h2>Inputs</h2>
+<ul>
+<li>e,n,u  [meters]  East, north, up                                [0,Infinity)</li>
+<li>deg    degrees input/output  (False: radians in/out)</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>azimuth, elevation (degrees/radians)                             [0,360),[0,90]</li>
+<li>slant range [meters]                                             [0,Infinity)</li>
+</ul></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.enu.enu2aer', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.enu.enu2aer" class="source">
@@ -1317,15 +1263,15 @@ slant range [meters]                                             [0,Infinity)</p
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ENU to Azimuth, Elevation, Range</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
-<span class="sd">    e,n,u  [meters]  East, north, up                                [0,Infinity)</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    * e,n,u  [meters]  East, north, up                                [0,Infinity)</span>
+<span class="sd">    * deg    degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output: AER</span>
-<span class="sd">    ------</span>
-<span class="sd">    azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
-<span class="sd">    slant range [meters]                                             [0,Infinity)</span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]</span>
+<span class="sd">    * slant range [meters]                                             [0,Infinity)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">hypot</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="n">slantRange</span> <span class="o">=</span> <span class="n">hypot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>

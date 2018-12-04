@@ -1,24 +1,41 @@
+""" Line of sight intersection of space observer to ellipsoid """
 from typing import Tuple
 import numpy as np
 from math import pi
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, Ellipsoid, ecef2geodetic
 
+__all__ = ['lookAtSpheroid']
 
 def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
                    ell=Ellipsoid(), deg: bool = True) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
-    Args:
-        lat0, lon0: latitude and longitude of starting point
-        h0: altitude of starting point in meters
-        az: azimuth angle of line-of-sight, clockwise from North
-        tilt: tilt angle of line-of-sight with respect to local vertical (nadir = 0)
-    Returns:
-        lat, lon: latitude and longitude where the line-of-sight intersects with the Earth ellipsoid
-        d: slant range in meters from the starting point to the intersect point
-        Values will be NaN if the line of sight does not intersect.
+    ## Inputs
+    
+    lat0, lon0
+    : latitude and longitude of starting point
+    
+    h0
+    : altitude of starting point in meters
+    
+    az
+    : azimuth angle of line-of-sight, clockwise from North
+    
+    tilt
+    : tilt angle of line-of-sight with respect to local vertical (nadir = 0)
+    
+    ## Outputs
+    
+    lat, lon
+    : latitude and longitude where the line-of-sight intersects with the Earth ellipsoid
+    
+    d
+    : slant range in meters from the starting point to the intersect point
+    
+    Values will be NaN if the line of sight does not intersect.
+    
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
     if (np.asarray(h0) < 0).any():

@@ -1041,18 +1041,6 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#pymap3d.vallado.arcsin">arcsin</a></li>
-    <li class="mono"><a href="#pymap3d.vallado.arctan2">arctan2</a></li>
-    <li class="mono"><a href="#pymap3d.vallado.cos">cos</a></li>
-    <li class="mono"><a href="#pymap3d.vallado.degrees">degrees</a></li>
-    <li class="mono"><a href="#pymap3d.vallado.radians">radians</a></li>
-    <li class="mono"><a href="#pymap3d.vallado.sin">sin</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
@@ -1097,6 +1085,8 @@ These functions are fallbacks for those wihtout AstroPy.</p>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">radians</span><span class="p">,</span> <span class="n">arcsin</span><span class="p">,</span> <span class="n">arctan2</span><span class="p">,</span> <span class="n">atleast_1d</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">.sidereal</span> <span class="kn">import</span> <span class="n">datetime2sidereal</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;azel2radec&#39;</span><span class="p">,</span> <span class="s1">&#39;radec2azel&#39;</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">azel2radec</span><span class="p">(</span><span class="n">az_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">el_deg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1234,55 +1224,6 @@ These functions are fallbacks for those wihtout AstroPy.</p>
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="pymap3d.vallado.arcsin" class="name">var <span class="ident">arcsin</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.vallado.arctan2" class="name">var <span class="ident">arctan2</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.vallado.cos" class="name">var <span class="ident">cos</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.vallado.degrees" class="name">var <span class="ident">degrees</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.vallado.radians" class="name">var <span class="ident">radians</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.vallado.sin" class="name">var <span class="ident">sin</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       

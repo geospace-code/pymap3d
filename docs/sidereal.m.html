@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>pymap3d.sidereal API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="manipulations of sidereal time" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1040,13 +1040,6 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#pymap3d.sidereal.pi">pi</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
@@ -1071,11 +1064,12 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">pymap3d.sidereal</span> module</h1>
-  
+  <p>manipulations of sidereal time</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.sidereal', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.sidereal" class="source">
     <div class="codehilite"><pre><span></span><span class="c1"># Copyright (c) 2014-2018 Michael Hirsch, Ph.D.</span>
+<span class="sd">&quot;&quot;&quot; manipulations of sidereal time &quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -1091,6 +1085,8 @@ table {
 <span class="sd">The &quot;usevallado&quot; datetime to julian runs 4 times faster than astropy.</span>
 <span class="sd">However, AstroPy is more accurate.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime2sidereal&#39;</span><span class="p">,</span> <span class="s1">&#39;juliandate&#39;</span><span class="p">,</span> <span class="s1">&#39;julian2sidereal&#39;</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">datetime2sidereal</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
@@ -1188,15 +1184,6 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="pymap3d.sidereal.pi" class="name">var <span class="ident">pi</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       

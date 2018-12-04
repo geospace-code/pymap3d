@@ -1,3 +1,5 @@
+""" transforms involving ECI earth-centered inertial """
+
 from datetime import datetime
 import numpy as np
 from .sidereal import datetime2sidereal

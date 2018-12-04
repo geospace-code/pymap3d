@@ -1,3 +1,4 @@
+""" isometric latitude, meridian distance """
 import numpy as np
 from .ecef import Ellipsoid
 
@@ -6,18 +7,25 @@ def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
     """
      computes isometric latitude of a point on an ellipsoid
 
-      input
-      -----
-      lat    latitude (degrees/radians)
-      ell    reference ellipsoid
-      deg    degrees input/output  (False: radians in/out)
+     ## Inputs
 
-      output
-      ------
-      isolat  isometric latiude (degrees/radians)
+     lat
+     : latitude (degrees/radians)
+     
+     ell
+     :reference ellipsoid
+     
+     deg
+     : degrees input/output  (False: radians in/out)
 
-     notes:
-     isometric latitude is an auxiliary latitude proportional to the spacing
+     ## Outputs
+     
+     isolat
+     : isometric latiude (degrees/radians)
+
+     ## Notes
+     
+     Isometric latitude is an auxiliary latitude proportional to the spacing
      of parallels of latitude on an ellipsoidal mercator projection.
 
      Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
@@ -53,17 +61,24 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     """
     computes the meridian distance on an ellipsoid *from the equator* to a latitude.
 
-     input
-     -----
-     lat    latitude (degrees/radians)
-     ell    reference ellipsoid
-     deg    degrees input/output  (False: radians in/out)
+    ## Inputs
 
-     output
-     ------
-     mdist  meridian distance (degrees/radians)
+    lat
+    : latitude (degrees/radians)
+    
+    ell
+    : reference ellipsoid
+    
+    deg
+    : degrees input/output  (False: radians in/out)
 
-    notes:
+    ## Outputs
+
+    mdist
+    : meridian distance (degrees/radians)
+
+    ## Notes
+    
     Formula given Baeschlin, C.F., 1948,
     "Lehrbuch Der Geodasie", Orell Fussli Verlag, Zurich, pp.47-50.
 
@@ -115,24 +130,30 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
     computes the arc length and azimuth of the loxodrome
     between two points on the surface of the reference ellipsoid
 
-    input
-    -----
+    ## Inputs
+
     lat1
-     GEODETIC latitude of first point (degrees/radians)
+    : GEODETIC latitude of first point (degrees/radians)
 
     lon1
-     longitude of first point (degrees/radians)
+    : longitude of first point (degrees/radians)
 
     lat2, lon2
-     second point (degrees/radians)
+    : second point (degrees/radians)
 
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    ell
+    : reference ellipsoid
+    
+    deg
+    : degrees input/output  (False: radians in/out)
 
-    output
-    ------
-    lox_s  distance along loxodrome
-    az12   azimuth of loxodrome (degrees/radians)
+    ## Outputs
+
+    lox_s
+    : distance along loxodrome
+    
+    az12
+    : azimuth of loxodrome (degrees/radians)
 
     Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
     School of Mathematical and Geospatial Sciences, RMIT University, January 2010

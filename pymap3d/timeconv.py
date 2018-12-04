@@ -1,14 +1,18 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
+""" convert strings to datetime """
 from datetime import datetime
 from dateutil.parser import parse
 import numpy as np
 
+__all__ = ['str2dt']
 
 def str2dt(time: datetime) -> np.ndarray:
     """
     Converts times in string or list of strings to datetime(s)
 
-    output: datetime
+    ## Output
+    
+    datetime
     """
     if isinstance(time, datetime):
         return time

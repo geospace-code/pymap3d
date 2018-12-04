@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>pymap3d.lox API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="isometric latitude, meridian distance" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1064,11 +1064,12 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">pymap3d.lox</span> module</h1>
-  
+  <p>isometric latitude, meridian distance</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.lox', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.lox" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot; isometric latitude, meridian distance &quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.ecef</span> <span class="kn">import</span> <span class="n">Ellipsoid</span>
 
 
@@ -1076,18 +1077,25 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">     computes isometric latitude of a point on an ellipsoid</span>
 
-<span class="sd">      input</span>
-<span class="sd">      -----</span>
-<span class="sd">      lat    latitude (degrees/radians)</span>
-<span class="sd">      ell    reference ellipsoid</span>
-<span class="sd">      deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">     ## Inputs</span>
 
-<span class="sd">      output</span>
-<span class="sd">      ------</span>
-<span class="sd">      isolat  isometric latiude (degrees/radians)</span>
+<span class="sd">     lat</span>
+<span class="sd">     : latitude (degrees/radians)</span>
+<span class="sd">     </span>
+<span class="sd">     ell</span>
+<span class="sd">     :reference ellipsoid</span>
+<span class="sd">     </span>
+<span class="sd">     deg</span>
+<span class="sd">     : degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">     notes:</span>
-<span class="sd">     isometric latitude is an auxiliary latitude proportional to the spacing</span>
+<span class="sd">     ## Outputs</span>
+<span class="sd">     </span>
+<span class="sd">     isolat</span>
+<span class="sd">     : isometric latiude (degrees/radians)</span>
+
+<span class="sd">     ## Notes</span>
+<span class="sd">     </span>
+<span class="sd">     Isometric latitude is an auxiliary latitude proportional to the spacing</span>
 <span class="sd">     of parallels of latitude on an ellipsoidal mercator projection.</span>
 
 <span class="sd">     Based on Deakin, R.E., 2010, &#39;The Loxodrome on an Ellipsoid&#39;, Lecture Notes,</span>
@@ -1123,17 +1131,24 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    computes the meridian distance on an ellipsoid *from the equator* to a latitude.</span>
 
-<span class="sd">     input</span>
-<span class="sd">     -----</span>
-<span class="sd">     lat    latitude (degrees/radians)</span>
-<span class="sd">     ell    reference ellipsoid</span>
-<span class="sd">     deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
 
-<span class="sd">     output</span>
-<span class="sd">     ------</span>
-<span class="sd">     mdist  meridian distance (degrees/radians)</span>
+<span class="sd">    lat</span>
+<span class="sd">    : latitude (degrees/radians)</span>
+<span class="sd">    </span>
+<span class="sd">    ell</span>
+<span class="sd">    : reference ellipsoid</span>
+<span class="sd">    </span>
+<span class="sd">    deg</span>
+<span class="sd">    : degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    notes:</span>
+<span class="sd">    ## Outputs</span>
+
+<span class="sd">    mdist</span>
+<span class="sd">    : meridian distance (degrees/radians)</span>
+
+<span class="sd">    ## Notes</span>
+<span class="sd">    </span>
 <span class="sd">    Formula given Baeschlin, C.F., 1948,</span>
 <span class="sd">    &quot;Lehrbuch Der Geodasie&quot;, Orell Fussli Verlag, Zurich, pp.47-50.</span>
 
@@ -1185,24 +1200,30 @@ table {
 <span class="sd">    computes the arc length and azimuth of the loxodrome</span>
 <span class="sd">    between two points on the surface of the reference ellipsoid</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
+<span class="sd">    ## Inputs</span>
+
 <span class="sd">    lat1</span>
-<span class="sd">     GEODETIC latitude of first point (degrees/radians)</span>
+<span class="sd">    : GEODETIC latitude of first point (degrees/radians)</span>
 
 <span class="sd">    lon1</span>
-<span class="sd">     longitude of first point (degrees/radians)</span>
+<span class="sd">    : longitude of first point (degrees/radians)</span>
 
 <span class="sd">    lat2, lon2</span>
-<span class="sd">     second point (degrees/radians)</span>
+<span class="sd">    : second point (degrees/radians)</span>
 
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ell</span>
+<span class="sd">    : reference ellipsoid</span>
+<span class="sd">    </span>
+<span class="sd">    deg</span>
+<span class="sd">    : degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output</span>
-<span class="sd">    ------</span>
-<span class="sd">    lox_s  distance along loxodrome</span>
-<span class="sd">    az12   azimuth of loxodrome (degrees/radians)</span>
+<span class="sd">    ## Outputs</span>
+
+<span class="sd">    lox_s</span>
+<span class="sd">    : distance along loxodrome</span>
+<span class="sd">    </span>
+<span class="sd">    az12</span>
+<span class="sd">    : azimuth of loxodrome (degrees/radians)</span>
 
 <span class="sd">    Based on Deakin, R.E., 2010, &#39;The Loxodrome on an Ellipsoid&#39;, Lecture Notes,</span>
 <span class="sd">    School of Mathematical and Geospatial Sciences, RMIT University, January 2010</span>
@@ -1266,16 +1287,18 @@ table {
     
   
     <div class="desc"><p>computes isometric latitude of a point on an ellipsoid</p>
-<p>input</p>
-<hr />
-<p>lat    latitude (degrees/radians)
- ell    reference ellipsoid
- deg    degrees input/output  (False: radians in/out)</p>
-<p>output</p>
-<hr />
-<p>isolat  isometric latiude (degrees/radians)</p>
-<p>notes:
-isometric latitude is an auxiliary latitude proportional to the spacing
+<h2>Inputs</h2>
+<p>lat
+: latitude (degrees/radians)</p>
+<p>ell
+:reference ellipsoid</p>
+<p>deg
+: degrees input/output  (False: radians in/out)</p>
+<h2>Outputs</h2>
+<p>isolat
+: isometric latiude (degrees/radians)</p>
+<h2>Notes</h2>
+<p>Isometric latitude is an auxiliary latitude proportional to the spacing
 of parallels of latitude on an ellipsoidal mercator projection.</p>
 <p>Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
 School of Mathematical and Geospatial Sciences, RMIT University,
@@ -1287,18 +1310,25 @@ January 2010</p></div>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">     computes isometric latitude of a point on an ellipsoid</span>
 
-<span class="sd">      input</span>
-<span class="sd">      -----</span>
-<span class="sd">      lat    latitude (degrees/radians)</span>
-<span class="sd">      ell    reference ellipsoid</span>
-<span class="sd">      deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">     ## Inputs</span>
 
-<span class="sd">      output</span>
-<span class="sd">      ------</span>
-<span class="sd">      isolat  isometric latiude (degrees/radians)</span>
+<span class="sd">     lat</span>
+<span class="sd">     : latitude (degrees/radians)</span>
+<span class="sd">     </span>
+<span class="sd">     ell</span>
+<span class="sd">     :reference ellipsoid</span>
+<span class="sd">     </span>
+<span class="sd">     deg</span>
+<span class="sd">     : degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">     notes:</span>
-<span class="sd">     isometric latitude is an auxiliary latitude proportional to the spacing</span>
+<span class="sd">     ## Outputs</span>
+<span class="sd">     </span>
+<span class="sd">     isolat</span>
+<span class="sd">     : isometric latiude (degrees/radians)</span>
+
+<span class="sd">     ## Notes</span>
+<span class="sd">     </span>
+<span class="sd">     Isometric latitude is an auxiliary latitude proportional to the spacing</span>
 <span class="sd">     of parallels of latitude on an ellipsoidal mercator projection.</span>
 
 <span class="sd">     Based on Deakin, R.E., 2010, &#39;The Loxodrome on an Ellipsoid&#39;, Lecture Notes,</span>
@@ -1346,18 +1376,22 @@ January 2010</p></div>
   
     <div class="desc"><p>computes the arc length and azimuth of the loxodrome
 between two points on the surface of the reference ellipsoid</p>
-<h2>input</h2>
+<h2>Inputs</h2>
 <p>lat1
- GEODETIC latitude of first point (degrees/radians)</p>
+: GEODETIC latitude of first point (degrees/radians)</p>
 <p>lon1
- longitude of first point (degrees/radians)</p>
+: longitude of first point (degrees/radians)</p>
 <p>lat2, lon2
- second point (degrees/radians)</p>
-<p>ell    reference ellipsoid
-deg    degrees input/output  (False: radians in/out)</p>
-<h2>output</h2>
-<p>lox_s  distance along loxodrome
-az12   azimuth of loxodrome (degrees/radians)</p>
+: second point (degrees/radians)</p>
+<p>ell
+: reference ellipsoid</p>
+<p>deg
+: degrees input/output  (False: radians in/out)</p>
+<h2>Outputs</h2>
+<p>lox_s
+: distance along loxodrome</p>
+<p>az12
+: azimuth of loxodrome (degrees/radians)</p>
 <p>Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
 School of Mathematical and Geospatial Sciences, RMIT University, January 2010</p>
 <p>[1] Bowring, B.R., 1985, 'The geometry of the loxodrome on the
@@ -1379,24 +1413,30 @@ Government Printing Office, p. 66.</p></div>
 <span class="sd">    computes the arc length and azimuth of the loxodrome</span>
 <span class="sd">    between two points on the surface of the reference ellipsoid</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
+<span class="sd">    ## Inputs</span>
+
 <span class="sd">    lat1</span>
-<span class="sd">     GEODETIC latitude of first point (degrees/radians)</span>
+<span class="sd">    : GEODETIC latitude of first point (degrees/radians)</span>
 
 <span class="sd">    lon1</span>
-<span class="sd">     longitude of first point (degrees/radians)</span>
+<span class="sd">    : longitude of first point (degrees/radians)</span>
 
 <span class="sd">    lat2, lon2</span>
-<span class="sd">     second point (degrees/radians)</span>
+<span class="sd">    : second point (degrees/radians)</span>
 
-<span class="sd">    ell    reference ellipsoid</span>
-<span class="sd">    deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ell</span>
+<span class="sd">    : reference ellipsoid</span>
+<span class="sd">    </span>
+<span class="sd">    deg</span>
+<span class="sd">    : degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    output</span>
-<span class="sd">    ------</span>
-<span class="sd">    lox_s  distance along loxodrome</span>
-<span class="sd">    az12   azimuth of loxodrome (degrees/radians)</span>
+<span class="sd">    ## Outputs</span>
+
+<span class="sd">    lox_s</span>
+<span class="sd">    : distance along loxodrome</span>
+<span class="sd">    </span>
+<span class="sd">    az12</span>
+<span class="sd">    : azimuth of loxodrome (degrees/radians)</span>
 
 <span class="sd">    Based on Deakin, R.E., 2010, &#39;The Loxodrome on an Ellipsoid&#39;, Lecture Notes,</span>
 <span class="sd">    School of Mathematical and Geospatial Sciences, RMIT University, January 2010</span>
@@ -1458,16 +1498,18 @@ Government Printing Office, p. 66.</p></div>
     
   
     <div class="desc"><p>computes the meridian distance on an ellipsoid <em>from the equator</em> to a latitude.</p>
-<p>input</p>
-<hr />
-<p>lat    latitude (degrees/radians)
- ell    reference ellipsoid
- deg    degrees input/output  (False: radians in/out)</p>
-<p>output</p>
-<hr />
-<p>mdist  meridian distance (degrees/radians)</p>
-<p>notes:
-Formula given Baeschlin, C.F., 1948,
+<h2>Inputs</h2>
+<p>lat
+: latitude (degrees/radians)</p>
+<p>ell
+: reference ellipsoid</p>
+<p>deg
+: degrees input/output  (False: radians in/out)</p>
+<h2>Outputs</h2>
+<p>mdist
+: meridian distance (degrees/radians)</p>
+<h2>Notes</h2>
+<p>Formula given Baeschlin, C.F., 1948,
 "Lehrbuch Der Geodasie", Orell Fussli Verlag, Zurich, pp.47-50.</p>
 <p>Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
 School of Mathematical and Geospatial Sciences, RMIT University, January 2010</p></div>
@@ -1478,17 +1520,24 @@ School of Mathematical and Geospatial Sciences, RMIT University, January 2010</p
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    computes the meridian distance on an ellipsoid *from the equator* to a latitude.</span>
 
-<span class="sd">     input</span>
-<span class="sd">     -----</span>
-<span class="sd">     lat    latitude (degrees/radians)</span>
-<span class="sd">     ell    reference ellipsoid</span>
-<span class="sd">     deg    degrees input/output  (False: radians in/out)</span>
+<span class="sd">    ## Inputs</span>
 
-<span class="sd">     output</span>
-<span class="sd">     ------</span>
-<span class="sd">     mdist  meridian distance (degrees/radians)</span>
+<span class="sd">    lat</span>
+<span class="sd">    : latitude (degrees/radians)</span>
+<span class="sd">    </span>
+<span class="sd">    ell</span>
+<span class="sd">    : reference ellipsoid</span>
+<span class="sd">    </span>
+<span class="sd">    deg</span>
+<span class="sd">    : degrees input/output  (False: radians in/out)</span>
 
-<span class="sd">    notes:</span>
+<span class="sd">    ## Outputs</span>
+
+<span class="sd">    mdist</span>
+<span class="sd">    : meridian distance (degrees/radians)</span>
+
+<span class="sd">    ## Notes</span>
+<span class="sd">    </span>
 <span class="sd">    Formula given Baeschlin, C.F., 1948,</span>
 <span class="sd">    &quot;Lehrbuch Der Geodasie&quot;, Orell Fussli Verlag, Zurich, pp.47-50.</span>
 

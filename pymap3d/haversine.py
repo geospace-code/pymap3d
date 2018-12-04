@@ -1,14 +1,4 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
-
-try:
-    from numpy import cos, arcsin, sqrt, radians, degrees
-except ImportError:
-    from math import cos, sqrt, radians, degrees
-    from math import asin as arcsin
-try:
-    from astropy.coordinates.angle_utilities import angular_separation
-except ImportError:
-    angular_separation = None
 """
 Michael Hirsch
 
@@ -19,6 +9,17 @@ and gives virtually identical result
 within double precision arithmetic limitations
 """
 
+try:
+    from numpy import cos, arcsin, sqrt, radians, degrees
+except ImportError:
+    from math import cos, sqrt, radians, degrees
+    from math import asin as arcsin
+try:
+    from astropy.coordinates.angle_utilities import angular_separation
+except ImportError:
+    angular_separation = None
+
+__all__ = ['anglesep', 'anglesep_meeus', 'haversine']
 
 def anglesep_meeus(lon0: float, lat0: float,
                    lon1: float, lat1: float, deg: bool = True) -> float:

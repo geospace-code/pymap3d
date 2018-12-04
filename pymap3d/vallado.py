@@ -13,6 +13,8 @@ from numpy import sin, cos, degrees, radians, arcsin, arctan2, atleast_1d
 from typing import Tuple
 from .sidereal import datetime2sidereal
 
+__all__ = ['azel2radec', 'radec2azel']
+
 
 def azel2radec(az_deg: float, el_deg: float,
                lat_deg: float, lon_deg: float,

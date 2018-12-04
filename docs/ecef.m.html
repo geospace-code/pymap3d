@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>pymap3d.ecef API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Transforms involving ECEF: earth-centered, earth-fixed frame" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1040,22 +1040,6 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#pymap3d.ecef.arctan">arctan</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.arctan2">arctan2</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.cos">cos</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.degrees">degrees</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.hypot">hypot</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.pi">pi</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.radians">radians</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.sin">sin</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.sqrt">sqrt</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.tan">tan</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
@@ -1067,7 +1051,6 @@ table {
     <li class="mono"><a href="#pymap3d.ecef.enu2ecef">enu2ecef</a></li>
     <li class="mono"><a href="#pymap3d.ecef.enu2uvw">enu2uvw</a></li>
     <li class="mono"><a href="#pymap3d.ecef.geodetic2ecef">geodetic2ecef</a></li>
-    <li class="mono"><a href="#pymap3d.ecef.get_radius_normal">get_radius_normal</a></li>
     <li class="mono"><a href="#pymap3d.ecef.uvw2enu">uvw2enu</a></li>
   </ul>
 
@@ -1099,17 +1082,19 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">pymap3d.ecef</span> module</h1>
-  
+  <p>Transforms involving ECEF: earth-centered, earth-fixed frame</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.ecef', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.ecef" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">radians</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span><span class="p">,</span> <span class="n">arctan</span><span class="p">,</span> <span class="n">hypot</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">arctan2</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">pi</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot; Transforms involving ECEF: earth-centered, earth-fixed frame &quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">radians</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span><span class="p">,</span> <span class="n">arctan</span><span class="p">,</span> <span class="n">hypot</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">arctan2</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">pi</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
 <span class="kn">from</span> <span class="nn">.eci</span> <span class="kn">import</span> <span class="n">eci2ecef</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ellipsoid&#39;</span><span class="p">,</span> <span class="s1">&#39;geodetic2ecef&#39;</span><span class="p">,</span> <span class="s1">&#39;ecef2geodetic&#39;</span><span class="p">,</span> <span class="s1">&#39;ecef2enuv&#39;</span><span class="p">,</span> <span class="s1">&#39;ecef2enu&#39;</span><span class="p">,</span> <span class="s1">&#39;enu2uvw&#39;</span><span class="p">,</span> <span class="s1">&#39;uvw2enu&#39;</span><span class="p">,</span> <span class="s1">&#39;eci2geodetic&#39;</span> <span class="p">,</span><span class="s1">&#39;enu2ecef&#39;</span><span class="p">]</span>
 
 <span class="k">class</span> <span class="nc">Ellipsoid</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1174,7 +1159,9 @@ table {
 
 
 
-<span class="sd">    output: ECEF x,y,z (meters)</span>
+<span class="sd">    ## OutputS</span>
+<span class="sd">    </span>
+<span class="sd">     ECEF x,y,z (meters)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ell</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">ell</span> <span class="o">=</span> <span class="n">Ellipsoid</span><span class="p">()</span>
@@ -1262,8 +1249,8 @@ table {
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    for VECTOR i.e. between two points</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
+<span class="sd">    ## Inputs</span>
+
 <span class="sd">    x,y,z  [meters] target ECEF location                             [0,Infinity)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1385,87 +1372,6 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="pymap3d.ecef.arctan" class="name">var <span class="ident">arctan</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.arctan2" class="name">var <span class="ident">arctan2</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.cos" class="name">var <span class="ident">cos</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.degrees" class="name">var <span class="ident">degrees</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.hypot" class="name">var <span class="ident">hypot</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.pi" class="name">var <span class="ident">pi</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.radians" class="name">var <span class="ident">radians</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.sin" class="name">var <span class="ident">sin</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.sqrt" class="name">var <span class="ident">sqrt</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
-      <div class="item">
-      <p id="pymap3d.ecef.tan" class="name">var <span class="ident">tan</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       
@@ -1524,7 +1430,7 @@ deg    degrees input/output  (False: radians in/out)</p>
     
   
     <div class="desc"><p>for VECTOR i.e. between two points</p>
-<h2>input</h2>
+<h2>Inputs</h2>
 <p>x,y,z  [meters] target ECEF location                             [0,Infinity)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.ecef.ecef2enuv', this);">Show source &equiv;</a></p>
@@ -1534,8 +1440,8 @@ deg    degrees input/output  (False: radians in/out)</p>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    for VECTOR i.e. between two points</span>
 
-<span class="sd">    input</span>
-<span class="sd">    -----</span>
+<span class="sd">    ## Inputs</span>
+
 <span class="sd">    x,y,z  [meters] target ECEF location                             [0,Infinity)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1791,7 +1697,8 @@ deg    degrees input/output  (False: radians in/out)</p>
 <li>ell    reference ellipsoid</li>
 <li>deg    degrees input/output  (False: radians in/out)</li>
 </ul>
-<p>output: ECEF x,y,z (meters)</p></div>
+<h2>OutputS</h2>
+<p>ECEF x,y,z (meters)</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.ecef.geodetic2ecef', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.ecef.geodetic2ecef" class="source">
@@ -1809,7 +1716,9 @@ deg    degrees input/output  (False: radians in/out)</p>
 
 
 
-<span class="sd">    output: ECEF x,y,z (meters)</span>
+<span class="sd">    ## OutputS</span>
+<span class="sd">    </span>
+<span class="sd">     ECEF x,y,z (meters)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ell</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">ell</span> <span class="o">=</span> <span class="n">Ellipsoid</span><span class="p">()</span>
@@ -1835,35 +1744,6 @@ deg    degrees input/output  (False: radians in/out)</p>
     <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span><span class="o">.</span><span class="n">b</span> <span class="o">/</span> <span class="n">ell</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">alt</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="pymap3d.ecef.get_radius_normal">
-    <p>def <span class="ident">get_radius_normal</span>(</p><p>lat_radians, ell=None)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Compute normal radius of planetary body</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.ecef.get_radius_normal', this);">Show source &equiv;</a></p>
-  <div id="source-pymap3d.ecef.get_radius_normal" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_radius_normal</span><span class="p">(</span><span class="n">lat_radians</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ell</span><span class="p">:</span> <span class="n">Ellipsoid</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Compute normal radius of planetary body&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">ell</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">ell</span> <span class="o">=</span> <span class="n">Ellipsoid</span><span class="p">()</span>
-
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ell</span><span class="o">.</span><span class="n">a</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">ell</span><span class="o">.</span><span class="n">b</span>
-
-    <span class="k">return</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat_radians</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">lat_radians</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
   </div>

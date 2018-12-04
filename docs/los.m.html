@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>pymap3d.los API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Line of sight intersection of space observer to ellipsoid" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1040,13 +1040,6 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#pymap3d.los.pi">pi</a></li>
-  </ul>
-
-    </li>
 
     <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
@@ -1069,31 +1062,48 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">pymap3d.los</span> module</h1>
-  
+  <p>Line of sight intersection of space observer to ellipsoid</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.los', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.los" class="source">
-    <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot; Line of sight intersection of space observer to ellipsoid &quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">.aer</span> <span class="kn">import</span> <span class="n">aer2enu</span>
 <span class="kn">from</span> <span class="nn">.ecef</span> <span class="kn">import</span> <span class="n">enu2uvw</span><span class="p">,</span> <span class="n">geodetic2ecef</span><span class="p">,</span> <span class="n">Ellipsoid</span><span class="p">,</span> <span class="n">ecef2geodetic</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lookAtSpheroid&#39;</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">lookAtSpheroid</span><span class="p">(</span><span class="n">lat0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lon0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">az</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tilt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                    <span class="n">ell</span><span class="o">=</span><span class="n">Ellipsoid</span><span class="p">(),</span> <span class="n">deg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        lat0, lon0: latitude and longitude of starting point</span>
-<span class="sd">        h0: altitude of starting point in meters</span>
-<span class="sd">        az: azimuth angle of line-of-sight, clockwise from North</span>
-<span class="sd">        tilt: tilt angle of line-of-sight with respect to local vertical (nadir = 0)</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        lat, lon: latitude and longitude where the line-of-sight intersects with the Earth ellipsoid</span>
-<span class="sd">        d: slant range in meters from the starting point to the intersect point</span>
-<span class="sd">        Values will be NaN if the line of sight does not intersect.</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    lat0, lon0</span>
+<span class="sd">    : latitude and longitude of starting point</span>
+<span class="sd">    </span>
+<span class="sd">    h0</span>
+<span class="sd">    : altitude of starting point in meters</span>
+<span class="sd">    </span>
+<span class="sd">    az</span>
+<span class="sd">    : azimuth angle of line-of-sight, clockwise from North</span>
+<span class="sd">    </span>
+<span class="sd">    tilt</span>
+<span class="sd">    : tilt angle of line-of-sight with respect to local vertical (nadir = 0)</span>
+<span class="sd">    </span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    lat, lon</span>
+<span class="sd">    : latitude and longitude where the line-of-sight intersects with the Earth ellipsoid</span>
+<span class="sd">    </span>
+<span class="sd">    d</span>
+<span class="sd">    : slant range in meters from the starting point to the intersect point</span>
+<span class="sd">    </span>
+<span class="sd">    Values will be NaN if the line of sight does not intersect.</span>
+<span class="sd">    </span>
 <span class="sd">    Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
@@ -1135,37 +1145,34 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="pymap3d.los.pi" class="name">var <span class="ident">pi</span></p>
-      
-  
-  <div class="source_cont">
-</div>
-
-      </div>
 
     <h2 class="section-title" id="header-functions">Functions</h2>
       
   <div class="item">
     <div class="name def" id="pymap3d.los.lookAtSpheroid">
-    <p>def <span class="ident">lookAtSpheroid</span>(</p><p>lat0, lon0, h0, az, tilt, ell=&lt;pymap3d.ecef.Ellipsoid object at 0x7f0f58128a20&gt;, deg=True)</p>
+    <p>def <span class="ident">lookAtSpheroid</span>(</p><p>lat0, lon0, h0, az, tilt, ell=&lt;pymap3d.ecef.Ellipsoid object at 0x7f0d27c4c9e8&gt;, deg=True)</p>
     </div>
     
 
     
   
     <div class="desc"><p>Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit</p>
-<p>Args:
-    lat0, lon0: latitude and longitude of starting point
-    h0: altitude of starting point in meters
-    az: azimuth angle of line-of-sight, clockwise from North
-    tilt: tilt angle of line-of-sight with respect to local vertical (nadir = 0)
-Returns:
-    lat, lon: latitude and longitude where the line-of-sight intersects with the Earth ellipsoid
-    d: slant range in meters from the starting point to the intersect point
-    Values will be NaN if the line of sight does not intersect.
-Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell</p></div>
+<h2>Inputs</h2>
+<p>lat0, lon0
+: latitude and longitude of starting point</p>
+<p>h0
+: altitude of starting point in meters</p>
+<p>az
+: azimuth angle of line-of-sight, clockwise from North</p>
+<p>tilt
+: tilt angle of line-of-sight with respect to local vertical (nadir = 0)</p>
+<h2>Outputs</h2>
+<p>lat, lon
+: latitude and longitude where the line-of-sight intersects with the Earth ellipsoid</p>
+<p>d
+: slant range in meters from the starting point to the intersect point</p>
+<p>Values will be NaN if the line of sight does not intersect.</p>
+<p>Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-pymap3d.los.lookAtSpheroid', this);">Show source &equiv;</a></p>
   <div id="source-pymap3d.los.lookAtSpheroid" class="source">
@@ -1174,15 +1181,30 @@ Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-i
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        lat0, lon0: latitude and longitude of starting point</span>
-<span class="sd">        h0: altitude of starting point in meters</span>
-<span class="sd">        az: azimuth angle of line-of-sight, clockwise from North</span>
-<span class="sd">        tilt: tilt angle of line-of-sight with respect to local vertical (nadir = 0)</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        lat, lon: latitude and longitude where the line-of-sight intersects with the Earth ellipsoid</span>
-<span class="sd">        d: slant range in meters from the starting point to the intersect point</span>
-<span class="sd">        Values will be NaN if the line of sight does not intersect.</span>
+<span class="sd">    ## Inputs</span>
+<span class="sd">    </span>
+<span class="sd">    lat0, lon0</span>
+<span class="sd">    : latitude and longitude of starting point</span>
+<span class="sd">    </span>
+<span class="sd">    h0</span>
+<span class="sd">    : altitude of starting point in meters</span>
+<span class="sd">    </span>
+<span class="sd">    az</span>
+<span class="sd">    : azimuth angle of line-of-sight, clockwise from North</span>
+<span class="sd">    </span>
+<span class="sd">    tilt</span>
+<span class="sd">    : tilt angle of line-of-sight with respect to local vertical (nadir = 0)</span>
+<span class="sd">    </span>
+<span class="sd">    ## Outputs</span>
+<span class="sd">    </span>
+<span class="sd">    lat, lon</span>
+<span class="sd">    : latitude and longitude where the line-of-sight intersects with the Earth ellipsoid</span>
+<span class="sd">    </span>
+<span class="sd">    d</span>
+<span class="sd">    : slant range in meters from the starting point to the intersect point</span>
+<span class="sd">    </span>
+<span class="sd">    Values will be NaN if the line of sight does not intersect.</span>
+<span class="sd">    </span>
 <span class="sd">    Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>

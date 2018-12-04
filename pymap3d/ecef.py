@@ -1,3 +1,4 @@
+""" Transforms involving ECEF: earth-centered, earth-fixed frame """
 from numpy import radians, sin, cos, tan, arctan, hypot, degrees, arctan2, sqrt, pi
 import numpy as np
 from typing import Tuple
@@ -5,6 +6,7 @@ from datetime import datetime
 
 from .eci import eci2ecef
 
+__all__ = ['Ellipsoid', 'geodetic2ecef', 'ecef2geodetic', 'ecef2enuv', 'ecef2enu', 'enu2uvw', 'uvw2enu', 'eci2geodetic' ,'enu2ecef']
 
 class Ellipsoid:
     """
@@ -69,7 +71,9 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
 
 
 
-    output: ECEF x,y,z (meters)
+    ## OutputS
+    
+     ECEF x,y,z (meters)
     """
     if ell is None:
         ell = Ellipsoid()
@@ -157,8 +161,8 @@ def ecef2enuv(u: float, v: float, w: float,
     """
     for VECTOR i.e. between two points
 
-    input
-    -----
+    ## Inputs
+
     x,y,z  [meters] target ECEF location                             [0,Infinity)
 
     """
