@@ -13,7 +13,7 @@ def ecef2aer(x: float, y: float, z: float,
     `ecef2aer` gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
     ## Inputs
-    
+
     * x,y,z  [meters] target ECEF location                             [0,Infinity)
     * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]
     * h0     [meters]                observer altitude
@@ -21,7 +21,7 @@ def ecef2aer(x: float, y: float, z: float,
     * deg    degrees input/output  (False: radians in/out)
 
     ## Outputs
-    
+
     * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     * slant range [meters]                                             [0,Infinity)
     """
@@ -45,7 +45,7 @@ def geodetic2aer(lat: float, lon: float, h: float,
     * deg    degrees input/output  (False: radians in/out)
 
     ## Outputs
-    
+
     * azimuth, elevation (degrees/radians)
     * slant range [meters]
     """
@@ -59,9 +59,9 @@ def aer2geodetic(az: float, el: float, srange: float,
                  deg: bool = True) -> Tuple[float, float, float]:
     """
     `aer2geodetic` gives geodetic coordinates of a point with az, el, range from an observer
-    
+
     ## Inputs
-    
+
     * az,el (degrees/radians)
     * srange[meters]        [0, Infinity)
 
@@ -94,7 +94,7 @@ def eci2aer(eci: Tuple[float, float, float],
 
 
     ## Outputs
-    
+
     * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     * slant range [meters]                                             [0,Infinity)
     """
@@ -109,9 +109,9 @@ def aer2eci(az: float, el: float, srange: float,
             useastropy: bool = True) -> np.ndarray:
     """
     `aer2eci` gives ECI of a point from an observer at az, el, slant range
-    
+
     ## Inputs
-    
+
     * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     * slant range [meters]                                             [0,Infinity)
     * Observer: lat0, lon0, h0 (altitude, meters)
@@ -120,7 +120,7 @@ def aer2eci(az: float, el: float, srange: float,
     * t  datetime.datetime of obseration
 
     ## Outputs
-    
+
     * eci  x,y,z (meters)
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
@@ -135,7 +135,7 @@ def aer2ecef(az: float, el: float, srange: float,
     `aer2ecef` converts target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.
 
     ## Inputs
-     
+
     * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     * slant range [meters]                                             [0,Infinity)
     * Observer: lat0, lon0, h0 (altitude, meters)
@@ -143,7 +143,7 @@ def aer2ecef(az: float, el: float, srange: float,
     * deg    degrees input/output  (False: radians in/out)
 
     ## OutputS
-    
+
     ECEF x,y,z  [meters]
 
     if you specify NaN for srange, return value z will be NaN
