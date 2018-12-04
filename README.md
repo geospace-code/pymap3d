@@ -21,6 +21,8 @@ PyMap3D is intended for non-interactive use on massively parallel (HPC) and embe
 Includes some relevant
 [Vallado algorithms](http://www.smad.com/vallado/fortran/fortran.html).
 
+[API docs](https://scivision.github.io/pymap3d/)
+
 ## Prerequisites
 
 * Python &ge; 3.5 or PyPy3
