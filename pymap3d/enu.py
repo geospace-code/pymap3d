@@ -8,17 +8,18 @@ from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 
 __all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']
 
+
 def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     ENU to Azimuth, Elevation, Range
 
     ## Inputs
-    
+
     * e,n,u  [meters]  East, north, up                                [0,Infinity)
     * deg    degrees input/output  (False: radians in/out)
 
     ## Outputs
-    
+
     * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     * slant range [meters]                                             [0,Infinity)
     """

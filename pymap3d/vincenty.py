@@ -65,13 +65,13 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
         ```python
         vdist(0.2,305,15,125)
         ```
-        
+
         > 18322827.0131551
 
         ```python
         distance(0.2,305,15,125,[6378137 0.08181919])
         ```
-        
+
         > 0
      10. Azimuths FROM the north pole (either forward starting at the north pole or backward when ending at the north pole) are set to 180 degrees by convention.
          Azimuths FROM the south pole are set to 0 degrees by convention.
@@ -241,11 +241,11 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     and return the endpoint within a few millimeters of accuracy, using Vincenty's algorithm.
 
     ## Usage
-    
+
     ```python
     lat2,lon2 = vreckon(lat1, lon1, rng, azim)
     ```
-    
+
     Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth argument ELLIPSOID
 
 
@@ -268,7 +268,7 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 
 
     ## Outputs
-    
+
     lat2, lon2
     : second point (degrees)
 

@@ -11,20 +11,20 @@ def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
 
      lat
      : latitude (degrees/radians)
-     
+
      ell
      :reference ellipsoid
-     
+
      deg
      : degrees input/output  (False: radians in/out)
 
      ## Outputs
-     
+
      isolat
      : isometric latiude (degrees/radians)
 
      ## Notes
-     
+
      Isometric latitude is an auxiliary latitude proportional to the spacing
      of parallels of latitude on an ellipsoidal mercator projection.
 
@@ -65,10 +65,10 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
 
     lat
     : latitude (degrees/radians)
-    
+
     ell
     : reference ellipsoid
-    
+
     deg
     : degrees input/output  (False: radians in/out)
 
@@ -78,7 +78,7 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     : meridian distance (degrees/radians)
 
     ## Notes
-    
+
     Formula given Baeschlin, C.F., 1948,
     "Lehrbuch Der Geodasie", Orell Fussli Verlag, Zurich, pp.47-50.
 
@@ -143,7 +143,7 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
 
     ell
     : reference ellipsoid
-    
+
     deg
     : degrees input/output  (False: radians in/out)
 
@@ -151,7 +151,7 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
 
     lox_s
     : distance along loxodrome
-    
+
     az12
     : azimuth of loxodrome (degrees/radians)
 

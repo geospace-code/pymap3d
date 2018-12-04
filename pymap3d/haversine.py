@@ -21,6 +21,7 @@ except ImportError:
 
 __all__ = ['anglesep', 'anglesep_meeus', 'haversine']
 
+
 def anglesep_meeus(lon0: float, lat0: float,
                    lon1: float, lat1: float, deg: bool = True) -> float:
     """

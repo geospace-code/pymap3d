@@ -6,12 +6,13 @@ import numpy as np
 
 __all__ = ['str2dt']
 
+
 def str2dt(time: datetime) -> np.ndarray:
     """
     Converts times in string or list of strings to datetime(s)
 
     ## Output
-    
+
     datetime
     """
     if isinstance(time, datetime):
