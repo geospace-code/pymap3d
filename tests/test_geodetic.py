@@ -25,9 +25,6 @@ def test_ecef():
     assert pm.geodetic2ecef(*rlla0, deg=False) == approx(xyz)
 
     with pytest.raises(ValueError):
-        pm.geodetic2ecef(lla0[0], lla0[1], -1)
-
-    with pytest.raises(ValueError):
         pm.geodetic2ecef(-100, lla0[1], lla0[2])
 
     with pytest.raises(ValueError):
