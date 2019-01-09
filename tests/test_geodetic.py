@@ -17,6 +17,8 @@ xyz0 = (660675.2518247,
 aer0 = (33, 70, 1000)
 raer0 = (np.radians(aer0[0]), np.radians(aer0[1]), aer0[2])
 
+E = pm.Ellipsoid()
+
 
 def test_ecef():
     xyz = pm.geodetic2ecef(*lla0)
@@ -32,6 +34,9 @@ def test_ecef():
 
     assert pm.ecef2geodetic(*xyz) == approx(lla0)
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
+
+    assert pm.ecef2geodetic((E.a - 1) / np.sqrt(2),
+                            (E.a - 1) / np.sqrt(2), 0)
 
 
 def test_aer():

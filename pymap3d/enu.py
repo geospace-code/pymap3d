@@ -2,6 +2,10 @@
 from typing import Tuple
 from numpy import radians, sin, cos, hypot, arctan2, degrees
 import numpy as np
+try:
+    from math import tau
+except ImportError:
+    tau = 2 * np.pi
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 
@@ -26,7 +30,7 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
     r = hypot(e, n)
     slantRange = hypot(r, u)
     elev = arctan2(u, r)
-    az = arctan2(e, n) % (2 * arctan2(0, -1))
+    az = arctan2(e, n) % tau
 
     if deg:
         az = degrees(az)

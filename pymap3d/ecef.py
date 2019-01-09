@@ -3,6 +3,10 @@ from numpy import radians, sin, cos, tan, arctan, hypot, degrees, arctan2, sqrt,
 import numpy as np
 from typing import Tuple
 from datetime import datetime
+try:
+    from math import tau  # py >= 3.6
+except ImportError:
+    tau = 2 * np.pi
 
 from .eci import eci2ecef
 
@@ -88,7 +92,7 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         if np.any((lat < -pi / 2) | (lat > pi / 2)):
             raise ValueError('-90 <= lat <= 90')
 
-        if np.any((lon < -pi) | (lon > 2 * pi)):
+        if np.any((lon < -pi) | (lon > tau)):
             raise ValueError('-180 <= lat <= 360')
 
     # radius of curvature of the prime vertical section
@@ -149,12 +153,20 @@ def ecef2geodetic(x: float, y: float, z: float,
     lon = arctan2(y, x)
 
     # eqn. 7
-    alt = sqrt((z - ell.b * sin(Beta))**2 + (Q - ell.a * cos(Beta))**2)
+    alt = hypot(z - ell.b * sin(Beta),
+                Q - ell.a * cos(Beta))
+
+    alt = np.atleast_1d(alt)
+
+    # inside ellipsoid?
+    with np.errstate(invalid='ignore'):
+        inside = x**2 / ell.a**2 + y**2 / ell.a**2 + z**2 / ell.b**2 < 1
+    alt[inside] = -alt[inside]
 
     if deg:
-        return degrees(lat), degrees(lon), alt
+        return degrees(lat), degrees(lon), alt.squeeze()[()]
     else:
-        return lat, lon, alt  # radians
+        return lat, lon, alt.squeeze()[()]  # radians
 
 
 def ecef2enuv(u: float, v: float, w: float,
