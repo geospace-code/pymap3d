@@ -33,6 +33,8 @@ ned0 = (enu0[1], enu0[0], -enu0[2])
 vx, vy, vz = (5, 3, 2)
 ve, vn, vu = (5.368859646588048, 3.008520763668120, -0.352347711524077)
 
+E = pm.Ellipsoid()
+
 
 def test_losint():
     az = [0., 10., 125.]
@@ -67,6 +69,16 @@ def test_aer_ecef():
 
     assert pm.ecef2aer(*xyz, *lla0) == approx(aer0)
     assert pm.ecef2aer(*xyz, *rlla0, deg=False) == approx(raer0)
+
+
+@pytest.mark.parametrize('xyz, lla, aer', [((E.a - 1, 0, 0), (0, 0, 0), (0, -90, 1)),
+                                           ((-E.a + 1, 0, 0), (0, 180, 0), (0, -90, 1)),
+                                           ((0, E.a - 1, 0), (0, 90, 0), (0, -90, 1)),
+                                           ((0, -E.a + 1, 0), (0, -90, 0), (0, -90, 1)),
+                                           ((0, 0, E.b - 1), (90, 0, 0), (0, -90, 1)),
+                                           ((0, 0, -E.b + 1), (-90, 0, 0), (0, -90, 1)), ])
+def test_ecef2aer(xyz, lla, aer):
+    assert pm.ecef2aer(*xyz, *lla) == approx(aer)
 
 
 def test_aer_enu():

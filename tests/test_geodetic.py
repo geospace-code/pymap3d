@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
-import pymap3d as pm
 from math import radians, nan
 import numpy as np
+
+import pymap3d as pm
 
 lla0 = (42, -82, 200)
 rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
@@ -18,6 +19,8 @@ aer0 = (33, 70, 1000)
 raer0 = (np.radians(aer0[0]), np.radians(aer0[1]), aer0[2])
 
 E = pm.Ellipsoid()
+
+atol_dist = 1e-6  # 1 micrometer
 
 
 def test_ecef():
@@ -36,7 +39,28 @@ def test_ecef():
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
 
     assert pm.ecef2geodetic((E.a - 1) / np.sqrt(2),
-                            (E.a - 1) / np.sqrt(2), 0)
+                            (E.a - 1) / np.sqrt(2), 0) == approx([0, 45, -1])
+
+
+@pytest.mark.parametrize('lla, xyz', [((0, 0, -1), (E.a - 1, 0, 0)),
+                                      ((0, 90, -1), (0, E.a - 1, 0)),
+                                      ((0, -90, -1), (0, -E.a + 1, 0)),
+                                      ((90, 0, -1), (0, 0, E.b - 1)),
+                                      ((90, 15, -1), (0, 0, E.b - 1)),
+                                      ((-90, 0, -1), (0, 0, -E.b + 1))
+                                      ])
+def test_geodetic2ecef(lla, xyz):
+    assert pm.geodetic2ecef(*lla) == approx(xyz, abs=atol_dist)
+
+
+@pytest.mark.parametrize('xyz, lla', [((E.a - 1, 0, 0), (0, 0, -1)),
+                                      ((0, E.a - 1, 0), (0, 90, -1)),
+                                      ((0, 0, E.b - 1), (90, 0, -1)),
+                                      ((0, 0, -E.b + 1), (-90, 0, -1)),
+                                      ((-E.a + 1, 0, 0), (0, 180, -1)),
+                                      ])
+def test_ecef2geodetic(xyz, lla):
+    assert pm.ecef2geodetic(*xyz) == approx(lla)
 
 
 def test_aer():

@@ -20,7 +20,7 @@ matrix:
     - flake8
     - mypy . --ignore-missing-imports
     after_success:
-    - pytest --cov --cov-config=setup.cfg
+    - pytest --cov
     - coveralls
   - os: osx
     language: sh

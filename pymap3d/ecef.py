@@ -141,7 +141,8 @@ def ecef2geodetic(x: float, y: float, z: float,
     huE = hypot(u, E)
 
     # eqn. 4b
-    Beta = arctan(huE / u * z / hypot(x, y))
+    with np.errstate(divide='ignore'):
+        Beta = arctan(huE / u * z / hypot(x, y))
 
     # eqn. 13
     eps = ((ell.b * u - ell.a * huE + E**2) * sin(Beta)) / (ell.a * huE * 1 / cos(Beta) - E**2 * cos(Beta))

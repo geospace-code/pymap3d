@@ -1,6 +1,6 @@
 image:
 - Visual Studio 2017
-- ubuntu1804
+- Ubuntu1804
 
 stack: python 3
 

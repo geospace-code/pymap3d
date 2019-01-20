@@ -13,7 +13,7 @@ from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 __all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']
 
 
-def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
+def enu2aer(e: np.ndarray, n: np.ndarray, u: np.ndarray, deg: bool = True) -> Tuple[float, float, float]:
     """
     ENU to Azimuth, Elevation, Range
 
@@ -27,6 +27,17 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
     * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
     * slant range [meters]                                             [0,Infinity)
     """
+    # 1 millimeter precision for singularity
+
+    e = np.atleast_1d(e)
+    n = np.atleast_1d(n)
+    u = np.atleast_1d(u)
+
+    with np.errstate(invalid='ignore'):
+        e[abs(e) < 1e-3] = 0.
+        n[abs(n) < 1e-3] = 0.
+        u[abs(u) < 1e-3] = 0.
+
     r = hypot(e, n)
     slantRange = hypot(r, u)
     elev = arctan2(u, r)
@@ -36,7 +47,7 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
         az = degrees(az)
         elev = degrees(elev)
 
-    return az, elev, slantRange
+    return az[()].squeeze(), elev[()].squeeze(), slantRange[()].squeeze()
 
 
 def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
