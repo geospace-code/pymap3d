@@ -11,7 +11,7 @@ def ecef2aer(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
              ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    `ecef2aer` gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
+    gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
     ECEF input location is with units of meters
 
@@ -50,7 +50,7 @@ def geodetic2aer(lat: float, lon: float, h: float,
                  lat0: float, lon0: float, h0: float,
                  ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    `geodetic2aer` gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
+    gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
 
 
     Parameters
@@ -92,7 +92,7 @@ def aer2geodetic(az: float, el: float, srange: float,
                  ell=None,
                  deg: bool = True) -> Tuple[float, float, float]:
     """
-    `aer2geodetic` gives geodetic coordinates of a point with az, el, range
+    gives geodetic coordinates of a point with az, el, range
     from an observer at lat0, lon0, h0
 
 
@@ -137,7 +137,7 @@ def eci2aer(eci: Tuple[float, float, float],
             t: datetime,
             useastropy: bool = True) -> Tuple[float, float, float]:
     """
-    `eci2aer` takes ECI coordinates of point and gives az, el, slant range from Observer
+    takes ECI coordinates of point and gives az, el, slant range from Observer
 
     ## Inputs
 
@@ -172,7 +172,7 @@ def aer2eci(az: float, el: float, srange: float,
             ell=None, deg: bool = True,
             useastropy: bool = True) -> np.ndarray:
     """
-    `aer2eci` gives ECI of a point from an observer at az, el, slant range
+    gives ECI of a point from an observer at az, el, slant range
 
     Parameters
     ----------
@@ -213,7 +213,7 @@ def aer2ecef(az: float, el: float, srange: float,
              lat0: float, lon0: float, alt0: float,
              ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    `aer2ecef` converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
+    converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
 
     Parameters
     ----------

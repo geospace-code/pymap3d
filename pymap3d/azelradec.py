@@ -20,16 +20,27 @@ def azel2radec(az_deg: float, el_deg: float,
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
 
-    inputs
-    ------
-    azimuth: degrees clockwize from North
-    elevation: degrees above horizon (neglecting aberration)
-    observer latitude [-90, 90], longitude [-180, 180] (degrees)
-    time: datetime of observation
+    Parameters
+    ----------
+    az_deg : float
+         azimuth [degrees clockwize from North]
+    el_deg : float
+             elevation [degrees above horizon (neglecting aberration)]
+    lat_deg : float
+              observer latitude [-90, 90]
+    lon_deg : float
+              observer longitude [-180, 180] (degrees)
+    time : datetime.datetime
+           time of observation
+    usevallado : bool, optional
+                 default use astropy. If true, use Vallado algorithm
 
-    Outputs
+    Returns
     -------
-    ecliptic right ascension, declination (degrees)
+    ra_deg : float
+         ecliptic right ascension (degress)
+    dec_deg : float
+         ecliptic declination (degrees)
     """
 
     if usevallado or Time is None:  # non-AstroPy method, less accurate
@@ -51,16 +62,27 @@ def radec2azel(ra_deg: float, dec_deg: float,
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
 
-    inputs
-    ------
-    ecliptic right ascension, declination (degrees)
-    observer latitude [-90, 90], longitude [-180, 180] (degrees)
-    time: datetime of observation
+    Parameters
+    ----------
+    ra_deg : float
+         ecliptic right ascension (degress)
+    dec_deg : float
+         ecliptic declination (degrees)
+    lat_deg : float
+              observer latitude [-90, 90]
+    lon_deg : float
+              observer longitude [-180, 180] (degrees)
+    time : datetime.datetime
+           time of observation
+    usevallado : bool, optional
+                 default use astropy. If true, use Vallado algorithm
 
-    Outputs
+    Returns
     -------
-    azimuth: degrees clockwize from North
-    elevation: degrees above horizon (neglecting aberration)
+    az_deg : float
+             azimuth [degrees clockwize from North]
+    el_deg : float
+             elevation [degrees above horizon (neglecting aberration)]
     """
 
     if usevallado or Time is None:
