@@ -13,18 +13,33 @@ def ecef2aer(x: float, y: float, z: float,
     """
     `ecef2aer` gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
-    ## Inputs
+    ECEF input location is with units of meters
 
-    * x,y,z  [meters] target ECEF location                             [0,Infinity)
-    * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid  [-90,90],[-180,180]
-    * h0     [meters]                observer altitude
-    * ell    reference ellipsoid
-    * deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
 
-    ## Outputs
+    x : float
+    y : float
+    z : float
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    * slant range [meters]                                             [0,Infinity)
+    Returns
+    -------
+    az : float
+         azimuth (degrees)  [0,360)
+    el : float
+         elevation (degrees/radians)  [0,90]
+    srange : float
+         slant range [meters] [0,Infinity)
     """
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
@@ -38,17 +53,34 @@ def geodetic2aer(lat: float, lon: float, h: float,
     `geodetic2aer` gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
 
 
-    ## InputS
+    Parameters
+    ----------
 
-    * Target:   lat, lon, h (altitude, meters)
-    * Observer: lat0, lon0, h0 (altitude, meters)
-    * ell    reference ellipsoid
-    * deg    degrees input/output  (False: radians in/out)
+    lat : float
+           target geodetic latitude
+    lon : float
+           target geodetic longitude
+    h : float
+         target altitude above geodetic ellipsoid (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    ## Outputs
-
-    * azimuth, elevation (degrees/radians)
-    * slant range [meters]
+    Returns
+    -------
+    az : float
+         azimuth (degrees)  [0,360)
+    el : float
+         elevation (degrees/radians)  [0,90]
+    srange : float
+         slant range [meters] [0,Infinity)
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
 
@@ -57,26 +89,47 @@ def geodetic2aer(lat: float, lon: float, h: float,
 
 def aer2geodetic(az: float, el: float, srange: float,
                  lat0: float, lon0: float, h0: float,
+                 ell=None,
                  deg: bool = True) -> Tuple[float, float, float]:
     """
-    `aer2geodetic` gives geodetic coordinates of a point with az, el, range from an observer
+    `aer2geodetic` gives geodetic coordinates of a point with az, el, range
+    from an observer at lat0, lon0, h0
 
-    ## Inputs
 
-    * az,el (degrees/radians)
-    * srange[meters]        [0, Infinity)
+    Parameters
+    ----------
+    az : float
+         azimuth (degrees)  [0,360)
+    el : float
+         elevation (degrees/radians)  [0,90]
+    srange : float
+         slant range [meters] [0,Infinity)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    * Observer: lat0,lon0 [degrees] altitude h0 [meters]
+    Returns
+    -------
 
-    * deg :   degrees input/output  (False: radians in/out)
+    In reference ellipsoid system:
 
-    ## Outputs
-    * WGS84 lat,lon [degrees]  h0altitude above spheroid  [meters]
-
+    lat : float
+          geodetic latitude
+    lon : float
+          geodetic longitude
+    alt : float
+          altitude above ellipsoid  (meters)
     """
-    x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, deg=deg)
+    x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell=ell, deg=deg)
 
-    return ecef2geodetic(x, y, z, deg=deg)
+    return ecef2geodetic(x, y, z, ell=ell, deg=deg)
 
 
 def eci2aer(eci: Tuple[float, float, float],
@@ -88,16 +141,26 @@ def eci2aer(eci: Tuple[float, float, float],
 
     ## Inputs
 
-    * eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
-    * lat0, lon0 (degrees/radians)  Observer coordinates on ellipsoid [-90,90],[-180,180]
-    * h0     [meters]                observer altitude                [0,Infinity)
-    * t  time (datetime.datetime)   time of obsevation (UTC)
+    eci : tuple
+          [meters] Nx3 target ECI location (x,y,z)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    t : datetime.datetime
+        Observation time
 
 
-    ## Outputs
-
-    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    * slant range [meters]                                             [0,Infinity)
+    Returns
+    -------
+    az : float
+         azimuth (degrees)  [0,360)
+    el : float
+         elevation (degrees/radians)  [0,90]
+    srange : float
+         slant range [meters] [0,Infinity)
     """
     ecef = np.atleast_2d(eci2ecef(eci, t, useastropy))
 
@@ -111,18 +174,35 @@ def aer2eci(az: float, el: float, srange: float,
     """
     `aer2eci` gives ECI of a point from an observer at az, el, slant range
 
-    ## Inputs
+    Parameters
+    ----------
+    az : float
+         azimuth (degrees)  [0,360)
+    el : float
+         elevation (degrees/radians)  [0,90]
+    srange : float
+         slant range [meters] [0,Infinity)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+    t : datetime.datetime
+        Observation time
 
-    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    * slant range [meters]                                             [0,Infinity)
-    * Observer: lat0, lon0, h0 (altitude, meters)
-    * ell    reference ellipsoid
-    * deg    degrees input/output  (False: radians in/out)
-    * t  datetime.datetime of obseration
+    Returns
+    -------
 
-    ## Outputs
+    Earth Centered Inertial x,y,z
 
-    * eci  x,y,z (meters)
+    x : float
+    y : float
+    z : float
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
@@ -133,21 +213,39 @@ def aer2ecef(az: float, el: float, srange: float,
              lat0: float, lon0: float, alt0: float,
              ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    `aer2ecef` converts target azimuth, elevation, range (meters) from observer at lat0,lon0,alt0 to ECEF coordinates.
+    `aer2ecef` converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
 
-    ## Inputs
+    Parameters
+    ----------
+    az : float
+         azimuth (degrees)  [0,360)
+    el : float
+         elevation (degrees/radians)  [0,90]
+    srange : float
+         slant range [meters] [0,Infinity)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    * slant range [meters]                                             [0,Infinity)
-    * Observer: lat0, lon0, h0 (altitude, meters)
-    * ell    reference ellipsoid
-    * deg    degrees input/output  (False: radians in/out)
+    Returns
+    -------
 
-    ## OutputS
+    ECEF (Earth centered, Earth fixed)  x,y,z
 
-    ECEF x,y,z  [meters]
+    x : float
+    y : float
+    z : float
 
-    if you specify NaN for srange, return value z will be NaN
+    Notes
+    ------
+    if srange==NaN, z=NaN
     """
     # Origin of the local system in geocentric coordinates.
     x0, y0, z0 = geodetic2ecef(lat0, lon0, alt0, ell, deg=deg)

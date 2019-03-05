@@ -1,10 +1,24 @@
 #!/usr/bin/env python
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """
-Input/output: default units are METERS and DEGREES.
-boolean deg=True means degrees
+PyMap3D provides coordinate transforms and geodesy functions with a similar API
+to the Matlab Mapping Toolbox, but was of course independently derived.
 
-Most functions accept Numpy arrays of any shape
+For all functions, the default units are:
+
+distance : float
+    METERS
+angles : float
+    DEGREES
+time : datetime.datetime
+    UTC time of observation
+
+These functions may be used with any planetary body, provided the appropriate
+reference ellipsoid is defined. The default ellipsoid is WGS-84
+
+deg : bool = True means degrees. False = radians.
+
+Most functions accept NumPy arrays of any shape.
 """
 from .timeconv import str2dt  # noqa: F401
 from .azelradec import radec2azel, azel2radec  # noqa: F401
