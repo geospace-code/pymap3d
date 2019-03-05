@@ -18,9 +18,16 @@ class Ellipsoid:
     generate reference ellipsoid parameters
 
     https://en.wikibooks.org/wiki/PROJ.4#Spheroid
+
+    https://tharsis.gsfc.nasa.gov/geodesy.html
+
+    https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
     """
 
     def __init__(self, model: str = 'wgs84') -> None:
+        """
+        feel free to suggest additional ellipsoids
+        """
         if model == 'wgs84':
             """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
             self.a = 6378137.  # semi-major axis [m]
@@ -41,11 +48,15 @@ class Ellipsoid:
             self.f = 1 / 163.295274386012
         elif model == 'moon':
             self.a = 1738000.
-            self.b = 1738000.
+            self.b = self.a
             self.f = 0.
         elif model == 'venus':
             self.a = 6051000.
-            self.b = 6051000.
+            self.b = self.a
+            self.f = 0.
+        elif model == 'pluto':
+            self.a = 1187000.
+            self.b = self.a
             self.f = 0.
         else:
             raise NotImplementedError('{} model not implemented, let us know and we will add it (or make a pull request)'.format(model))
@@ -65,20 +76,34 @@ def get_radius_normal(lat_radians: float, ell: Ellipsoid = None) -> float:
 def geodetic2ecef(lat: float, lon: float, alt: float,
                   ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    `geodetic2ecef` is a point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
+    point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
-    ## Inputs
+    Parameters
+    ----------
 
-    * lat, lon (degrees)
-    * alt (altitude, meters)
-    * ell    reference ellipsoid
-    * deg    degrees input/output  (False: radians in/out)
+    lat : float
+           target geodetic latitude
+    lon : float
+           target geodetic longitude
+    h : float
+         target altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
 
+    Returns
+    -------
 
-    ## OutputS
+    ECEF (Earth centered, Earth fixed)  x,y,z
 
-     ECEF x,y,z (meters)
+    x : float
+        target x ECEF coordinate
+    y : float
+        target y ECEF coordinate
+    z : float
+        target z ECEF coordinate
     """
     if ell is None:
         ell = Ellipsoid()
@@ -111,16 +136,27 @@ def ecef2geodetic(x: float, y: float, z: float,
     """
     convert ECEF (meters) to geodetic coordinates
 
-    input
-    -----
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
+    x : float
+        target x ECEF coordinate
+    y : float
+        target y ECEF coordinate
+    z : float
+        target z ECEF coordinate
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    output
-    ------
-    lat,lon   (degrees/radians)
-    alt  (meters)
+    Returns
+    -------
+    lat : float
+           target geodetic latitude
+    lon : float
+           target geodetic longitude
+    h : float
+         target altitude above geodetic ellipsoid (meters)
 
     based on:
     You, Rey-Jer. (2000). Transformation of Cartesian to Geodetic Coordinates without Iterations.
@@ -173,11 +209,33 @@ def ecef2geodetic(x: float, y: float, z: float,
 def ecef2enuv(u: float, v: float, w: float,
               lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     """
-    for VECTOR i.e. between two points
+    VECTOR from observer to target  ECEF => ENU
 
-    ## Inputs
+    Parameters
+    ----------
+    u : float
+        target x ECEF coordinate
+    v : float
+        target y ECEF coordinate
+    w : float
+        target z ECEF coordinate
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    Returns
+    -------
+    uEast : float
+        target east ENU coordinate
+    vNorth : float
+        target north ENU coordinate
+    wUp : float
+        target up ENU coordinate
 
     """
     if deg:
@@ -196,17 +254,35 @@ def ecef2enu(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
              ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
+    from observer to target, ECEF => ENU
 
-    input
-    -----
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
+    x : float
+        target x ECEF coordinate
+    y : float
+        target y ECEF coordinate
+    z : float
+        target z ECEF coordinate
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    output:
+    Returns
     -------
-    e,n,u   East, North, Up [m]
+    East : float
+        target east ENU coordinate
+    North : float
+        target north ENU coordinate
+    Up : float
+        target up ENU coordinate
 
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
@@ -248,24 +324,32 @@ def eci2geodetic(eci: np.ndarray, t: datetime,
     """
     convert ECI to geodetic coordinates
 
-    inputs:
+    Parameters
+    ----------
+    eci : tuple
+          [meters] Nx3 target ECI location (x,y,z)
+    t : datetime.datetime, float
+          length N vector of datetime OR greenwich sidereal time angle [radians].
 
-    eci/ecef: Nx3 vector of x,y,z triplets in the eci or ecef system [meters]
-    t : length N vector of datetime OR greenwich sidereal time angle [radians].
+    Results
+    -------
+    lat : float
+          geodetic latitude
+    lon : float
+          geodetic longitude
+    alt : float
+          altitude above ellipsoid  (meters)
 
+    Notes
+    -----
 
-    output
-    ------
-    lat,lon   (degrees/radians)
-    alt  (meters)
-
-    Note: Conversion is idealized: doesn't consider nutations, perterbations,
+    Conversion is idealized: doesn't consider nutations, perterbations,
     etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
     from ECI to ECEF
 
     eci2geodetic() a.k.a. eci2lla()
     """
-    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy))
+    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy=useastropy))
 
     return np.asarray(ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])).squeeze()
 

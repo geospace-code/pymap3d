@@ -139,7 +139,8 @@ def eci2aer(eci: Tuple[float, float, float],
     """
     takes ECI coordinates of point and gives az, el, slant range from Observer
 
-    ## Inputs
+    Parameters
+    ----------
 
     eci : tuple
           [meters] Nx3 target ECI location (x,y,z)
