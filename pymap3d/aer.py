@@ -18,28 +18,31 @@ def ecef2aer(x: float, y: float, z: float,
     Parameters
     ----------
 
-    x : float
-    y : float
-    z : float
+    x : float or numpy.ndarray of float
+        ECEF x coordinate (meters)
+    y : float or numpy.ndarray of float
+        ECEF y coordinate (meters)
+    z : float or numpy.ndarray of float
+        ECEF z coordinate (meters)
     lat0 : float
-           Observer geodetic latitude
+        Observer geodetic latitude
     lon0 : float
-           Observer geodetic longitude
+        Observer geodetic longitude
     h0 : float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
-          reference ellipsoid
+        reference ellipsoid
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
     Returns
     -------
-    az : float
-         azimuth (degrees)  [0,360)
-    el : float
-         elevation (degrees/radians)  [0,90]
-    srange : float
-         slant range [meters] [0,Infinity)
+    az : float or numpy.ndarray of float
+         azimuth to target
+    el : float or numpy.ndarray of float
+         elevation to target
+    srange : float or numpy.ndarray of float
+         slant range [meters]
     """
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
@@ -56,16 +59,16 @@ def geodetic2aer(lat: float, lon: float, h: float,
     Parameters
     ----------
 
-    lat : float
-           target geodetic latitude
-    lon : float
-           target geodetic longitude
-    h : float
-         target altitude above geodetic ellipsoid (meters)
+    lat : float or numpy.ndarray of float
+        target geodetic latitude
+    lon : float or numpy.ndarray of float
+        target geodetic longitude
+    h : float or numpy.ndarray of float
+        target altitude above geodetic ellipsoid (meters)
     lat0 : float
-           Observer geodetic latitude
+        Observer geodetic latitude
     lon0 : float
-           Observer geodetic longitude
+        Observer geodetic longitude
     h0 : float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
@@ -75,12 +78,12 @@ def geodetic2aer(lat: float, lon: float, h: float,
 
     Returns
     -------
-    az : float
-         azimuth (degrees)  [0,360)
-    el : float
-         elevation (degrees/radians)  [0,90]
-    srange : float
-         slant range [meters] [0,Infinity)
+    az : float or numpy.ndarray of float
+         azimuth
+    el : float or numpy.ndarray of float
+         elevation
+    srange : float or numpy.ndarray of float
+         slant range [meters]
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
 
@@ -95,15 +98,14 @@ def aer2geodetic(az: float, el: float, srange: float,
     gives geodetic coordinates of a point with az, el, range
     from an observer at lat0, lon0, h0
 
-
     Parameters
     ----------
-    az : float
-         azimuth (degrees)  [0,360)
-    el : float
-         elevation (degrees/radians)  [0,90]
-    srange : float
-         slant range [meters] [0,Infinity)
+    az : float or numpy.ndarray of float
+         azimuth to target
+    el : float or numpy.ndarray of float
+         elevation to target
+    srange : float or numpy.ndarray of float
+         slant range [meters]
     lat0 : float
            Observer geodetic latitude
     lon0 : float
@@ -120,11 +122,11 @@ def aer2geodetic(az: float, el: float, srange: float,
 
     In reference ellipsoid system:
 
-    lat : float
+    lat : float or numpy.ndarray of float
           geodetic latitude
-    lon : float
+    lon : float or numpy.ndarray of float
           geodetic longitude
-    alt : float
+    alt : float or numpy.ndarray of float
           altitude above ellipsoid  (meters)
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell=ell, deg=deg)
@@ -157,11 +159,11 @@ def eci2aer(eci: Tuple[float, float, float],
     Returns
     -------
     az : float
-         azimuth (degrees)  [0,360)
+         azimuth to target
     el : float
-         elevation (degrees/radians)  [0,90]
+         elevation to target
     srange : float
-         slant range [meters] [0,Infinity)
+         slant range [meters]
     """
     ecef = np.atleast_2d(eci2ecef(eci, t, useastropy))
 
@@ -177,12 +179,12 @@ def aer2eci(az: float, el: float, srange: float,
 
     Parameters
     ----------
-    az : float
-         azimuth (degrees)  [0,360)
-    el : float
-         elevation (degrees/radians)  [0,90]
-    srange : float
-         slant range [meters] [0,Infinity)
+    az : float or numpy.ndarray of float
+         azimuth to target
+    el : float or numpy.ndarray of float
+         elevation to target
+    srange : float or numpy.ndarray of float
+         slant range [meters]
     lat0 : float
            Observer geodetic latitude
     lon0 : float
@@ -201,9 +203,12 @@ def aer2eci(az: float, el: float, srange: float,
 
     Earth Centered Inertial x,y,z
 
-    x : float
-    y : float
-    z : float
+    x : float or numpy.ndarray of float
+        ECEF x coordinate (meters)
+    y : float or numpy.ndarray of float
+        ECEF y coordinate (meters)
+    z : float or numpy.ndarray of float
+        ECEF z coordinate (meters)
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
@@ -218,12 +223,12 @@ def aer2ecef(az: float, el: float, srange: float,
 
     Parameters
     ----------
-    az : float
-         azimuth (degrees)  [0,360)
-    el : float
-         elevation (degrees/radians)  [0,90]
-    srange : float
-         slant range [meters] [0,Infinity)
+    az : float or numpy.ndarray of float
+         azimuth to target
+    el : float or numpy.ndarray of float
+         elevation to target
+    srange : float or numpy.ndarray of float
+         slant range [meters]
     lat0 : float
            Observer geodetic latitude
     lon0 : float
@@ -240,9 +245,13 @@ def aer2ecef(az: float, el: float, srange: float,
 
     ECEF (Earth centered, Earth fixed)  x,y,z
 
-    x : float
-    y : float
-    z : float
+    x : float or numpy.ndarray of float
+        ECEF x coordinate (meters)
+    y : float or numpy.ndarray of float
+        ECEF y coordinate (meters)
+    z : float or numpy.ndarray of float
+        ECEF z coordinate (meters)
+
 
     Notes
     ------

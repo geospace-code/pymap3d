@@ -22,9 +22,9 @@ def azel2radec(az_deg: float, el_deg: float,
 
     Parameters
     ----------
-    az_deg : float
+    az_deg : float or numpy.ndarray of float
          azimuth [degrees clockwize from North]
-    el_deg : float
+    el_deg : float or numpy.ndarray of float
              elevation [degrees above horizon (neglecting aberration)]
     lat_deg : float
               observer latitude [-90, 90]
@@ -37,9 +37,9 @@ def azel2radec(az_deg: float, el_deg: float,
 
     Returns
     -------
-    ra_deg : float
+    ra_deg : float or numpy.ndarray of float
          ecliptic right ascension (degress)
-    dec_deg : float
+    dec_deg : float or numpy.ndarray of float
          ecliptic declination (degrees)
     """
 
@@ -64,9 +64,9 @@ def radec2azel(ra_deg: float, dec_deg: float,
 
     Parameters
     ----------
-    ra_deg : float
+    ra_deg : float or numpy.ndarray of float
          ecliptic right ascension (degress)
-    dec_deg : float
+    dec_deg : float or numpy.ndarray of float
          ecliptic declination (degrees)
     lat_deg : float
               observer latitude [-90, 90]
@@ -79,9 +79,9 @@ def radec2azel(ra_deg: float, dec_deg: float,
 
     Returns
     -------
-    az_deg : float
+    az_deg : float or numpy.ndarray of float
              azimuth [degrees clockwize from North]
-    el_deg : float
+    el_deg : float or numpy.ndarray of float
              elevation [degrees above horizon (neglecting aberration)]
     """
 

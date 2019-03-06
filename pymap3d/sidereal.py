@@ -25,14 +25,21 @@ def datetime2sidereal(time: datetime,
     """
     Convert ``datetime`` to sidereal time
 
-    :algorithm: D. Vallado Fundamentals of Astrodynamics and Applications
+    from D. Vallado "Fundamentals of Astrodynamics and Applications"
 
 
-    time
-        Python datetime
+    time : datetime.datetime
+        time to convert
+    lon_radians : float
+        longitude (radians)
+    usevallado : bool, optional
+        use vallado instead of AstroPy (default is Vallado)
 
-    lon
-        longitude in RADIANS
+    Results
+    -------
+
+    tsr : float
+        Sidereal time
     """
     usevallado = usevallado or Time is None
     if usevallado:
@@ -54,6 +61,18 @@ def juliandate(time: datetime) -> float:
 
     from D.Vallado Fundamentals of Astrodynamics and Applications p.187
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
+
+    Parameters
+    ----------
+
+    time : datetime.datetime
+        time to convert
+
+    Results
+    -------
+
+    jd : float
+        Julian date
     """
 
     times = np.atleast_1d(time)
@@ -84,10 +103,17 @@ def julian2sidereal(Jdate: float) -> float:
 
     D. Vallado Ed. 4
 
-    input:
+    Parameters
+    ----------
 
-    juliandate
+    Jdate: float
         Julian centuries from J2000.0
+
+    Results
+    -------
+
+    tsr : float
+        Sidereal time
 
     """
 

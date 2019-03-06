@@ -1,59 +1,105 @@
 """ Transforms involving NED North East Down """
 from .enu import geodetic2enu, aer2enu, enu2aer
-from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
+from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef, Ellipsoid
 from typing import Tuple
 
 
-def aer2ned(az: float, elev: float, slantRange: float, deg: bool = True) -> Tuple[float, float, float]:
+def aer2ned(az: float, elev: float, slantRange: float,
+            deg: bool = True) -> Tuple[float, float, float]:
     """
-    input
-    -----
-    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    slant range [meters]                                             [0,Infinity)
-    deg    degrees input/output  (False: radians in/out)
+    converts azimuth, elevation, range to target from observer to North, East, Down
 
-    output:
+    Parameters
+    -----------
+
+    az : float or numpy.ndarray of float
+         azimuth
+    elev : float or numpy.ndarray of float
+         elevation
+    slantRange : float or numpy.ndarray of float
+         slant range [meters]
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Results
     -------
-    n,e,d  North,east, down [m]
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
     """
     e, n, u = aer2enu(az, elev, slantRange, deg=deg)
 
     return n, e, -u
 
 
-def ned2aer(n: float, e: float, d: float, deg: bool = True) -> Tuple[float, float, float]:
+def ned2aer(n: float, e: float, d: float,
+            deg: bool = True) -> Tuple[float, float, float]:
     """
-    Observer => Point
+    converts North, East, Down to azimuth, elevation, range
 
-    input
-    -----
-    n,e,d  [meters]  North,east, down                                [0,Infinity)
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
 
-    output: AER
-    ------
-    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    slant range [meters]                                             [0,Infinity)
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
+
+    Results
+    -------
+
+    az : float or numpy.ndarray of float
+         azimuth
+    elev : float or numpy.ndarray of float
+         elevation
+    slantRange : float or numpy.ndarray of float
+         slant range [meters]
     """
     return enu2aer(e, n, -d, deg=deg)
 
 
 def ned2geodetic(n: float, e: float, d: float,
                  lat0: float, lon0: float, h0: float,
-                 ell=None, deg: bool = True) -> Tuple[float, float, float]:
+                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
+    Converts North, East, Down to target latitude, longitude, altitude
 
-    input
-    -----
-    n,e,d   North, east, down (meters)
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
 
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
+    lat0 : float
+        Observer geodetic latitude
+    lon0 : float
+        Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    output:
+    Results
     -------
-    target: lat,lon, h  (degrees/radians,degrees/radians, meters)
+
+    lat : float
+        target geodetic latitude
+    lon : float
+        target geodetic longitude
+    h : float
+        target altitude above geodetic ellipsoid (meters)
 
     """
     x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
@@ -63,36 +109,78 @@ def ned2geodetic(n: float, e: float, d: float,
 
 def ned2ecef(n: float, e: float, d: float,
              lat0: float, lon0: float, h0: float,
-             ell=None, deg: bool = True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    Observer => Point
+    North, East, Down to target ECEF coordinates
 
-    input
-    -----
-    n,e,d  [meters]  North,east, down                                [0,Infinity)
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
 
-    output:
-    ------
-    ECEF  x,y,z  (meters)
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
+    lat0 : float
+        Observer geodetic latitude
+    lon0 : float
+        Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Results
+    -------
+
+    x : float or numpy.ndarray of float
+        ECEF x coordinate (meters)
+    y : float or numpy.ndarray of float
+        ECEF y coordinate (meters)
+    z : float or numpy.ndarray of float
+        ECEF z coordinate (meters)
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
 
-def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True) -> Tuple[float, float, float]:
+def ecef2ned(x: float, y: float, z: float,
+             lat0: float, lon0: float, h0: float,
+             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    input
-    -----
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Convert ECEF x,y,z to North, East, Down
 
-    output:
+    Parameters
+    ----------
+
+    x : float or numpy.ndarray of float
+        ECEF x coordinate (meters)
+    y : float or numpy.ndarray of float
+        ECEF y coordinate (meters)
+    z : float or numpy.ndarray of float
+        ECEF z coordinate (meters)
+    lat0 : float
+        Observer geodetic latitude
+    lon0 : float
+        Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Results
     -------
-    n,e,d  North,east, down [m]
+
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
 
     """
     e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
@@ -100,31 +188,81 @@ def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True) -> Tuple[float, float,
     return n, e, -u
 
 
-def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True) -> Tuple[float, float, float]:
+def geodetic2ned(lat: float, lon: float, h: float,
+                 lat0: float, lon0: float, h0: float,
+                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    input
-    -----
-    target: lat,lon  (degrees/radians)
-    h (altitude, meters)
-    Observer: lat0, lon0 (degrees/radians)
-    h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    convert latitude, longitude, altitude of target to North, East, Down from observer
+
+    Parameters
+    ----------
+
+    lat : float
+        target geodetic latitude
+    lon : float
+        target geodetic longitude
+    h : float
+        target altitude above geodetic ellipsoid (meters)
+    lat0 : float
+        Observer geodetic latitude
+    lon0 : float
+        Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
 
-    output:
+    Results
     -------
-    n,e,d  North,east, down [m]
+
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
 
     return n, e, -u
 
 
-def ecef2nedv(u, v, w, lat0, lon0, deg=True) -> Tuple[float, float, float]:
+def ecef2nedv(x: float, y: float, z: float,
+              lat0: float, lon0: float,
+              deg: bool = True) -> Tuple[float, float, float]:
     """
     for VECTOR between two points
+
+    Parameters
+    ----------
+    x : float or numpy.ndarray of float
+        ECEF x coordinate (meters)
+    y : float or numpy.ndarray of float
+        ECEF y coordinate (meters)
+    z : float or numpy.ndarray of float
+        ECEF z coordinate (meters)
+    lat0 : float
+        Observer geodetic latitude
+    lon0 : float
+        Observer geodetic longitude
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Results
+    -------
+
+    (Vector)
+
+    n : float or numpy.ndarray of float
+        North NED coordinate (meters)
+    e : float or numpy.ndarray of float
+        East NED coordinate (meters)
+    d : float or numpy.ndarray of float
+        Down NED coordinate (meters)
     """
-    e, n, u = ecef2enuv(u, v, w, lat0, lon0, deg=deg)
+    e, n, u = ecef2enuv(x, y, z, lat0, lon0, deg=deg)
 
     return n, e, -u

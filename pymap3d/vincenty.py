@@ -13,37 +13,40 @@ __all__ = ['vdist', 'vreckon', 'track2']
 
 def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
     """
-    Using the WGS-84 Earth ellipsoid, compute the distance between two points
+    Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
     and compute backward azimuth, all using a vectorized version of
+    Vincenty's algorithm:
 
-    Vincenty's algorithm::
+    ```python
+    s,a12,a21 = vdist(lat1, lon1, lat2, lon2, ell)
+    ```
 
-        s = vdist(lat1,lon1,lat2,lon2)
-        s,a12 = vdist(lat1,lon1,lat2,lon2)
-        s,a12,a21 = vdist(lat1,lon1,lat2,lon2)
+    Parameters
+    ----------
 
-    ## Inputs
+    Lat1 : float or numpy.ndarray of float
+        Geodetic latitude of first point (degrees)
+    Lon1 : float or numpy.ndarray of float
+        Geodetic longitude of first point (degrees)
+    Lat2 : float or numpy.ndarray of float
+        Geodetic latitude of second point (degrees)
+    Lon2 : float or numpy.ndarray of float
+        Geodetic longitude of second point (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
 
-    s
-   : distance in meters (inputs may be scalars, vectors, or matrices)
+    Results
+    -------
 
-    a12
-    : azimuth in degrees from first point to second point (forward)
+    s : float or numpy.ndarray of float
+        distance (meters)
+    a12 : float or numpy.ndarray of float
+        azimuth (degrees) clockwise from first point to second point (forward)
+    a21 : float or numpy.ndarray of float
+        azimuth (degrees) clockwise from second point to first point (backward)
 
-    a21
-    : azimuth in degrees from second point to first point (backward)
 
-    (Azimuths are in degrees clockwise from north.)
-
-    lat1
-    : GEODETIC latitude of first point (degrees)
-
-    lon1
-    : longitude of first point (degrees)
-
-    lat2, lon2
-    : second point(s) (degrees)
 
     Original algorithm source:
     T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid
@@ -52,7 +55,8 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     Available at: http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
 
     Notes:
-     1. lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs  will have the same size and shape.
+
+     1. lat1,lon1,lat2,lon2 can be any (identical) size/shape. Outputs will have the same size and shape.
      2. Error correcting code, convergence failure traps, antipodal corrections, polar error corrections, WGS84 ellipsoid parameters, testing, and comments: Michael Kleder, 2004.
      3. Azimuth implementation (including quadrant abiguity resolution) and code vectorization, Michael Kleder, Sep 2005.
      4. Vectorization is convergence sensitive; that is, quantities which have already converged to within tolerance are not recomputed during subsequent iterations (while other quantities are still converging).
@@ -61,7 +65,8 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
      7. Distance failures for points exactly at the poles are eliminated by moving the points by 0.6 millimeters.
      8. The Vincenty distance algorithm was transcribed verbatim by Peter Cederholm, August 12, 2003. It was modified and translated to English by Michael Kleder. Mr. Cederholm's website is http://www.plan.aau.dk/~pce/
      9. Distances agree with the Mapping Toolbox, version 2.2 (R14SP3) with a max relative difference of about 5e-9, except when the two points are nearly antipodal, and except when one point is near the equator and the two longitudes are nearly 180 degrees apart. This function (vdist) is more accurate in such cases.
-        For example, note this difference (as of this writing)::
+        For example, note this difference (as of this writing):
+
         ```python
         vdist(0.2,305,15,125)
         ```
@@ -73,11 +78,11 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
         ```
 
         > 0
+
      10. Azimuths FROM the north pole (either forward starting at the north pole or backward when ending at the north pole) are set to 180 degrees by convention.
          Azimuths FROM the south pole are set to 0 degrees by convention.
      11. Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3) to within about a hundred-thousandth of a degree, except when traversing to or from a pole, where the convention for this function is described in (10), and except in the cases noted above in (9).
      12. No warranties; use at your own risk.
-
     """
     if ell is None:
         ell = Ellipsoid()
@@ -237,45 +242,39 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
     This is the Vincenty "forward" solution.
 
     Computes points at a specified azimuth and range in an ellipsoidal earth.
-    Using the WGS-84 Earth ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
+    Using the reference ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
     and return the endpoint within a few millimeters of accuracy, using Vincenty's algorithm.
 
-    ## Usage
-
     ```python
-    lat2,lon2 = vreckon(lat1, lon1, rng, azim)
+    lat2, lon2 = vreckon(lat1, lon1, rng, azim)
     ```
 
-    Transmits ellipsoid definition (either as [a,b] or [a,f]) as fifth argument ELLIPSOID
+    Parameters
+    ----------
+
+    Lat1 : float
+        inital geodetic latitude (degrees)
+    Lon1 : float
+        initial geodetic longitude (degrees)
+    Rng : float
+        ground distance (meters)
+    Azim : float
+        intial azimuth (degrees) clockwide from north.
+    ell : Ellipsoid, optional
+          reference ellipsoid
+
+    Results
+    -------
+
+    Lat2 : float
+        final geodetic latitude (degrees)
+    Lon2 : float
+        final geodetic longitude (degrees)
+    a21 : float
+        reverse azimuth (degrees), at final point facing back toward the intial point
 
 
-    ## Inputs
-
-    lat1
-    : inital latitude (degrees)
-
-    lon1
-    : initial longitude (degrees)
-
-    rng
-    : distance (meters). Scalar or a vector. Latter case computes a series of circles (or arc circles, see azim) centered on X,Y (which are scalars)
-
-    azim
-    : intial azimuth (degrees). "azim" is a scalar or vector
-
-    ellipsoid
-    : two-element ellipsoid vector. Either [a b] or [a f] If omitted, defaults to WGS-84
-
-
-    ## Outputs
-
-    lat2, lon2
-    : second point (degrees)
-
-    a21
-    : reverse azimuth (degrees), at final point facing back toward the intial point
-
-    :Original algorithm: T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations", Survey Review, vol. 23, no. 176, April 1975, pp 88-93. http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+    Original algorithm: T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations", Survey Review, vol. 23, no. 176, April 1975, pp 88-93. http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
 
     Notes:
 
@@ -296,7 +295,6 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 
     Added ellipsoid and vectorized whenever possible. Also, lon2 is always converted to the [-180 180] interval.
     Joaquim Luis
-
     """
 
     lat1 = np.atleast_1d(Lat1)
@@ -418,29 +416,36 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
 def track2(lat1: float, lon1: float, lat2: float, lon2: float,
            ell: Ellipsoid = None, npts: int = 100, deg: bool = True):
     """
-     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
+    computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 
-     input
-     -----
-     lat1
-     GEODETIC latitude of first point (degrees/radians)
+    Parameters
+    ----------
 
-     lon1
-     longitude of first point (degrees/radians)
+    Lat1 : float or numpy.ndarray of float
+        Geodetic latitude of first point (degrees)
+    Lon1 : float or numpy.ndarray of float
+        Geodetic longitude of first point (degrees)
+    Lat2 : float or numpy.ndarray of float
+        Geodetic latitude of second point (degrees)
+    Lon2 : float or numpy.ndarray of float
+        Geodetic longitude of second point (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    npts : int, optional
+        number of points (default is 100)
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
 
-     lat2, lon2
-     second point (degrees/radians)
+    Results
+    -------
 
-     ell    reference ellipsoid
-     npts   number of points (default is 100)
-     deg    degrees input/output  (False: radians in/out)
+    lats : numpy.ndarray of float
+        latitudes of points along track
+    lons : numpy.ndarray of float
+        longitudes of points along track
 
-     output
-     ------
-     lats, lons  latitudes and longitudes of points along great circle track
-
-     Based on code posted to the GMT mailing list in Dec 1999 by Jim Levens and by Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
-     """
+    Based on code posted to the GMT mailing list in Dec 1999 by Jim Levens and by Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+    """
 
     if ell is None:
         ell = Ellipsoid()

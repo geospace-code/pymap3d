@@ -13,16 +13,25 @@ def eci2ecef(eci: np.ndarray,
              time: datetime,
              useastropy: bool = True) -> np.ndarray:
     """
-     Observer => Point
+    Observer => Point  ECI  =>  ECEF
 
-    input
-    -----
-    eci [meters] Nx3 target ECI location (x,y,z)                    [0,Infinity)
-    t  time (datetime.datetime)   time of obsevation (UTC)
+    Parameters
+    ----------
+    eci : tuple of float
+        Nx3 target ECI location (x,y,z) [meters]
+    time : datetime.datetime
+        time of obsevation (UTC)
+    useastropy : bool, optional
+        use AstroPy for conversion
 
-    output
-    ------
-    x,y,z  [meters] target ECEF location                             [0,Infinity)
+    Results
+    -------
+    x : float
+        target x ECEF coordinate
+    y : float
+        target y ECEF coordinate
+    z : float
+        target z ECEF coordinate
     """
     useastropy = useastropy and Time
 
@@ -53,17 +62,26 @@ def ecef2eci(ecef: np.ndarray,
              time: datetime,
              useastropy: bool = True) -> np.ndarray:
     """
-    Point => Point
+    Point => Point   ECEF => ECI
 
     input
     -----
-    ecef:  Nx3  x,y,z  (meters)
-    time:  datetime.datetime
+    ecef : tuple of float
+        Nx3 target ECEF location (x,y,z) [meters]
+    time : datetime.datetime
+        time of observation
+    useastropy : bool, optional
+        use AstroPy for conversion
 
 
-    output
-    ------
-    eci  x,y,z (meters)
+    Results
+    -------
+    x : float
+        target x ECI coordinate
+    y : float
+        target y ECI coordinate
+    z : float
+        target z ECI coordinate
     """
     useastropy = useastropy and Time
 
@@ -90,12 +108,19 @@ def ecef2eci(ecef: np.ndarray,
 
 
 def _rottrip(ang: np.ndarray) -> np.ndarray:
+    """
+    transformation matrix
+
+    Parameters
+    ----------
+
+    ang : N x 3 numpy.ndarray
+        angle to transform (radians)
+    """
     ang = ang.squeeze()
     if ang.size > 1:
         raise ValueError('only one angle allowed at a time')
-    """ported from:
-    https://github.com/dinkelk/astrodynamics/blob/master/rot3.m
-    """
+
     return np.array([[np.cos(ang), np.sin(ang), 0],
                      [-np.sin(ang), np.cos(ang), 0],
                      [0, 0, 1]])

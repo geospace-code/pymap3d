@@ -17,15 +17,27 @@ def enu2aer(e: np.ndarray, n: np.ndarray, u: np.ndarray, deg: bool = True) -> Tu
     """
     ENU to Azimuth, Elevation, Range
 
-    ## Inputs
+    Parameters
+    ----------
 
-    * e,n,u  [meters]  East, north, up                                [0,Infinity)
-    * deg    degrees input/output  (False: radians in/out)
+    e : float or np.ndarray of float
+        ENU East coordinate (meters)
+    n : float or np.ndarray of float
+        ENU North coordinate (meters)
+    u : float or np.ndarray of float
+        ENU Up coordinate (meters)
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
 
-    ## Outputs
+    Results
+    -------
 
-    * azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    * slant range [meters]                                             [0,Infinity)
+    azimuth : float or np.ndarray of float
+        azimuth to rarget
+    elevation : float or np.ndarray of float
+        elevation to target
+    srange : float or np.ndarray of float
+        slant range [meters]
     """
     # 1 millimeter precision for singularity
 
@@ -52,16 +64,27 @@ def enu2aer(e: np.ndarray, n: np.ndarray, u: np.ndarray, deg: bool = True) -> Tu
 
 def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
     """
-    input:
-    ------
-    azimuth, elevation (degrees/radians)                             [0,360),[0,90]
-    slant range [meters]                                             [0,Infinity)
-    deg    degrees input/output  (False: radians in/out)
+    Azimuth, Elevation, Slant range to target to East, north, Up
 
-    output:
-    -------
-    e,n,u   East, North, Up [m]
+    Parameters
+    ----------
+    azimuth : float or np.ndarray of float
+            azimuth clockwise from north (degrees)
+    elevation : float or np.ndarray of float
+        elevation angle above horizon, neglecting aberattions (degrees)
+    srange : float or np.ndarray of float
+        slant range [meters]
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
 
+    Returns
+    --------
+    e : float or np.ndarray of float
+        East ENU coordinate (meters)
+    n : float or np.ndarray of float
+        North ENU coordinate (meters)
+    u : float or np.ndarray of float
+        Up ENU coordinate (meters)
     """
     if deg:
         el = radians(el)
@@ -80,19 +103,36 @@ def enu2geodetic(e: float, n: float, u: float,
                  lat0: float, lon0: float, h0: float,
                  ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
+    East, North, Up to target to geodetic coordinates
 
-    input
-    -----
-    e,n,u   East, North, Up [m]
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
+    e : float or np.ndarray of float
+        East ENU coordinate (meters)
+    n : float or np.ndarray of float
+        North ENU coordinate (meters)
+    u : float or np.ndarray of float
+        Up ENU coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
 
-    output:
+    Results
     -------
-    target: lat,lon, h  (degrees/radians,degrees/radians, meters)
-
+    lat : float or np.ndarray of float
+          geodetic latitude
+    lon : float or np.ndarray of float
+          geodetic longitude
+    alt : float or np.ndarray of float
+          altitude above ellipsoid  (meters)
     """
 
     x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell, deg=deg)
@@ -104,17 +144,34 @@ def geodetic2enu(lat: float, lon: float, h: float,
                  lat0: float, lon0: float, h0: float,
                  ell=None, deg: bool = True) -> Tuple[float, float, float]:
     """
-    input
-    -----
-    target: lat,lon, h
-    Observer: lat0, lon0, h0 (altitude, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
+    lat : float or np.ndarray of float
+          target geodetic latitude
+    lon : float or np.ndarray of float
+          target geodetic longitude
+    h : float or np.ndarray of float
+          target altitude above ellipsoid  (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
 
-    output:
+    Results
     -------
-    e,n,u   East, North, Up [m]
+    e : float or np.ndarray of float
+        East ENU
+    n : float or np.ndarray of float
+        North ENU
+    u : float or np.ndarray of float
+        Up ENU
     """
     x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)
     x2, y2, z2 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)

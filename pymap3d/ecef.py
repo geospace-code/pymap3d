@@ -24,9 +24,14 @@ class Ellipsoid:
     https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
     """
 
-    def __init__(self, model: str = 'wgs84') -> None:
+    def __init__(self, model: str = 'wgs84'):
         """
         feel free to suggest additional ellipsoids
+
+        Parameters
+        ----------
+        model : str
+                name of ellipsoid
         """
         if model == 'wgs84':
             """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
@@ -63,7 +68,23 @@ class Ellipsoid:
 
 
 def get_radius_normal(lat_radians: float, ell: Ellipsoid = None) -> float:
-    """ Compute normal radius of planetary body"""
+    """
+    Compute normal radius of planetary body
+
+    Parameters
+    ----------
+
+    lat_radians : float
+        latitude in radians
+    ell : Ellipsoid, optional
+        reference ellipsoid
+
+    Returns
+    -------
+
+    radius : float
+        normal radius (meters)
+    """
     if ell is None:
         ell = Ellipsoid()
 
@@ -81,11 +102,11 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
     Parameters
     ----------
 
-    lat : float
+    lat : float or numpy.ndarray of float
            target geodetic latitude
-    lon : float
+    lon : float or numpy.ndarray of float
            target geodetic longitude
-    h : float
+    h : float or numpy.ndarray of float
          target altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -98,12 +119,12 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
 
     ECEF (Earth centered, Earth fixed)  x,y,z
 
-    x : float
-        target x ECEF coordinate
-    y : float
-        target y ECEF coordinate
-    z : float
-        target z ECEF coordinate
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
     """
     if ell is None:
         ell = Ellipsoid()
@@ -138,12 +159,12 @@ def ecef2geodetic(x: float, y: float, z: float,
 
     Parameters
     ----------
-    x : float
-        target x ECEF coordinate
-    y : float
-        target y ECEF coordinate
-    z : float
-        target z ECEF coordinate
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
     deg : bool, optional
@@ -151,11 +172,11 @@ def ecef2geodetic(x: float, y: float, z: float,
 
     Returns
     -------
-    lat : float
+    lat : float or numpy.ndarray of float
            target geodetic latitude
-    lon : float
+    lon : float or numpy.ndarray of float
            target geodetic longitude
-    h : float
+    h : float or numpy.ndarray of float
          target altitude above geodetic ellipsoid (meters)
 
     based on:
@@ -213,12 +234,12 @@ def ecef2enuv(u: float, v: float, w: float,
 
     Parameters
     ----------
-    u : float
-        target x ECEF coordinate
-    v : float
-        target y ECEF coordinate
-    w : float
-        target z ECEF coordinate
+    u : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    v : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    w : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
     lat0 : float
            Observer geodetic latitude
     lon0 : float
@@ -230,12 +251,12 @@ def ecef2enuv(u: float, v: float, w: float,
 
     Returns
     -------
-    uEast : float
-        target east ENU coordinate
-    vNorth : float
-        target north ENU coordinate
-    wUp : float
-        target up ENU coordinate
+    uEast : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    vNorth : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    wUp : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
 
     """
     if deg:
@@ -258,12 +279,12 @@ def ecef2enu(x: float, y: float, z: float,
 
     Parameters
     ----------
-    x : float
-        target x ECEF coordinate
-    y : float
-        target y ECEF coordinate
-    z : float
-        target z ECEF coordinate
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
     lat0 : float
            Observer geodetic latitude
     lon0 : float
@@ -277,12 +298,12 @@ def ecef2enu(x: float, y: float, z: float,
 
     Returns
     -------
-    East : float
-        target east ENU coordinate
-    North : float
-        target north ENU coordinate
-    Up : float
-        target up ENU coordinate
+    East : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    North : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    Up : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
 
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
@@ -292,6 +313,25 @@ def ecef2enu(x: float, y: float, z: float,
 
 def enu2uvw(east: float, north: float, up: float,
             lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
+    """
+    Parameters
+    ----------
+
+    e1 : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    n1 : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    u1 : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    Results
+    -------
+
+    u : float or numpy.ndarray of float
+    v : float or numpy.ndarray of float
+    w : float or numpy.ndarray of float
+    """
+
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -307,6 +347,25 @@ def enu2uvw(east: float, north: float, up: float,
 
 def uvw2enu(u: float, v: float, w: float,
             lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
+    """
+    Parameters
+    ----------
+
+    u : float or numpy.ndarray of float
+    v : float or numpy.ndarray of float
+    w : float or numpy.ndarray of float
+
+
+    Results
+    -------
+
+    East : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    North : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    Up : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+    """
     if deg:
         lat0 = radians(lat0)
         lon0 = radians(lon0)
@@ -326,7 +385,7 @@ def eci2geodetic(eci: np.ndarray, t: datetime,
 
     Parameters
     ----------
-    eci : tuple
+    eci : tuple of float
           [meters] Nx3 target ECI location (x,y,z)
     t : datetime.datetime, float
           length N vector of datetime OR greenwich sidereal time angle [radians].
@@ -360,16 +419,35 @@ def enu2ecef(e1: float, n1: float, u1: float,
     """
     ENU to ECEF
 
-    inputs:
-     e1, n1, u1 (meters)   east, north, up
-     observer: lat0, lon0, h0 (degrees/radians,degrees/radians, meters)
-    ell    reference ellipsoid
-    deg    degrees input/output  (False: radians in/out)
+    Parameters
+    ----------
+
+    e1 : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    n1 : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    u1 : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
 
-    output
-    ------
-    x,y,z  [meters] target ECEF location                         [0,Infinity)
+    Results
+    -------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
     dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)

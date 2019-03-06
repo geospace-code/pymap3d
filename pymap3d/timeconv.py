@@ -11,9 +11,16 @@ def str2dt(time: datetime) -> np.ndarray:
     """
     Converts times in string or list of strings to datetime(s)
 
-    ## Output
+    Parameters
+    ----------
 
-    datetime
+    time : str or datetime.datetime or numpy.datetime64
+
+    Results
+    -------
+
+    t : datetime.datetime
+
     """
     if isinstance(time, datetime):
         return time

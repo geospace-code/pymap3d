@@ -18,7 +18,17 @@ reference ellipsoid is defined. The default ellipsoid is WGS-84
 
 deg : bool = True means degrees. False = radians.
 
-Most functions accept NumPy arrays of any shape.
+Most functions accept NumPy arrays of any shape, as well as compatible data types
+including AstroPy, Pandas and Xarray that have Numpy-like data properties.
+For clarity, we omit all these types in the docs, and just specify the scalar type.
+
+Other languages
+---------------
+
+Companion packages exist for:
+
+* Matlab / GNU Octave: [Matmap3D](https://github.com/scivision/matmap3d)
+* Fortran: [Maptran3D](https://github.com/scivision/maptran3d)
 """
 from .timeconv import str2dt  # noqa: F401
 from .azelradec import radec2azel, azel2radec  # noqa: F401

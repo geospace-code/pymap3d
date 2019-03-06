@@ -20,32 +20,34 @@ def azel2radec(az_deg: float, el_deg: float,
                lat_deg: float, lon_deg: float,
                time: datetime) -> Tuple[float, float]:
     """
-    `azel2radec` converts azimuth, elevation to right ascension, declination
+    converts azimuth, elevation to right ascension, declination
 
-    ## Inputs
+    Parameters
+    ----------
 
-    az_deg
-    : Numpy ndarray of azimuth to point [degrees]
+    az_deg : float or numpy.ndarray of float
+        azimuth (clockwise) to point [degrees]
 
-    el_deg
-    : Numpy ndarray of elevation to point [degrees]
+    el_deg : float or numpy.ndarray of float
+        elevation above horizon to point [degrees]
 
-    lat_deg
-    : scalar observer WGS84 latitude [degrees]
+    lat_deg : float
+        observer WGS84 latitude [degrees]
 
-    lon_deg
-    : scalar observer WGS84 longitude [degrees]
+    lon_deg : float
+        observer WGS84 longitude [degrees]
 
-    time
-    : time of observation
+    time : datetime.datetime
+        time of observation
 
-    ## Outputs
+    Results
+    -------
 
-    ra_deg
-    : Numpy ndarray of right ascension values [degrees]
+    ra_deg : float or numpy.ndarray of float
+        right ascension to target [degrees]
 
-    dec_deg
-    : Numpy ndarray of declination values [degrees]
+    dec_deg : float or numpy.ndarray of float
+        declination of target [degrees]
 
     from D.Vallado Fundamentals of Astrodynamics and Applications
     p.258-259
@@ -84,32 +86,34 @@ def radec2azel(ra_deg: float, dec_deg: float,
                lat_deg: float, lon_deg: float,
                time: datetime) -> Tuple[float, float]:
     """
-    `radec2azel` converts right ascension, declination to azimuth, elevation
+    converts right ascension, declination to azimuth, elevation
 
-    ## Inputs
+    Parameters
+    ----------
 
-    ra_deg
-    : Numpy ndarray of right ascension values [degrees]
+    ra_deg : float or numpy.ndarray of float
+        right ascension to target [degrees]
 
-    dec_deg
-    : Numpy ndarray of declination values [degrees]
+    dec_deg : float or numpy.ndarray of float
+        declination to target [degrees]
 
-    lat_deg
-    : scalar observer WGS84 latitude [degrees]
+    lat_deg : float
+        observer WGS84 latitude [degrees]
 
-    lon_deg
-    : scalar observer WGS84 longitude [degrees]
+    lon_deg : float
+        observer WGS84 longitude [degrees]
 
-    time
-    : time of observation
+    time : datetime.datetime
+        time of observation
 
-    ## Outputs
+    Results
+    -------
 
-    az_deg
-    : Numpy ndarray of azimuth to point [degrees]
+    az_deg : float or numpy.ndarray of float
+        azimuth clockwise from north to point [degrees]
 
-    el_deg
-    : Numpy ndarray of elevation to point [degrees]
+    el_deg : float or numpy.ndarray of float
+        elevation above horizon to point [degrees]
 
 
     from D. Vallado "Fundamentals of Astrodynamics and Applications "

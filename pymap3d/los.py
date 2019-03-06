@@ -9,38 +9,48 @@ __all__ = ['lookAtSpheroid']
 
 
 def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
-                   ell=Ellipsoid(), deg: bool = True) -> Tuple[float, float, float]:
+                   ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
-    ## Inputs
+    Parameters
+    ----------
 
-    lat0, lon0
-    : latitude and longitude of starting point
+    lat0 : float
+           observer geodetic latitude
+    lon0 : float
+           observer geodetic longitude
+    h0 : float
+        observer altitude (meters)  Must be non-negative since this function doesn't consider terrain
+    az : float or numpy.ndarray of float
+        azimuth angle of line-of-sight, clockwise from North
+    tilt : float or numpy.ndarray of float
+        tilt angle of line-of-sight with respect to local vertical (nadir = 0)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
-    h0
-    : altitude of starting point in meters
+    Results
+    -------
 
-    az
-    : azimuth angle of line-of-sight, clockwise from North
-
-    tilt
-    : tilt angle of line-of-sight with respect to local vertical (nadir = 0)
-
-    ## Outputs
-
-    lat, lon
-    : latitude and longitude where the line-of-sight intersects with the Earth ellipsoid
-
-    d
-    : slant range in meters from the starting point to the intersect point
+    lat0 : float or numpy.ndarray of float
+           geodetic latitude where the line-of-sight intersects with the Earth ellipsoid
+    lon0 : float or numpy.ndarray of float
+           geodetic longitude where the line-of-sight intersects with the Earth ellipsoid
+    d : float or numpy.ndarray of float
+        slant range (meters) from starting point to intersect point
 
     Values will be NaN if the line of sight does not intersect.
 
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
+
     if (np.asarray(h0) < 0).any():
-        raise ValueError('Altitude   [0, Infinity)')
+        raise ValueError('Intersection calculation requires altitude  [0, Infinity)')
+
+    if ell is None:
+        ell = Ellipsoid()
 
     tilt = np.asarray(tilt)
 
@@ -61,13 +71,13 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
 
     magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
 
-#   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
+# %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     with np.errstate(invalid='ignore'):
         d = np.where(radical > 0,
                      (value - a * b * c * np.sqrt(radical)) / magnitude,
                      np.nan)
         d[d < 0] = np.nan
-
+# %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
     return lat, lon, d
