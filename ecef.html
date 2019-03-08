@@ -1,0 +1,1272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.3" />
+<title>pymap3d.ecef API documentation</title>
+<meta name="description" content="Transforms involving ECEF: earth-centered, earth-fixed frame" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>pymap3d.ecef</code> module</h1>
+</header>
+<section id="section-intro">
+<p>Transforms involving ECEF: earth-centered, earth-fixed frame</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">&#34;&#34;&#34; Transforms involving ECEF: earth-centered, earth-fixed frame &#34;&#34;&#34;
+from numpy import radians, sin, cos, tan, arctan, hypot, degrees, arctan2, sqrt, pi
+import numpy as np
+from typing import Tuple
+from datetime import datetime
+try:
+    from math import tau  # py &gt;= 3.6
+except ImportError:
+    tau = 2 * np.pi
+
+from .eci import eci2ecef
+
+__all__ = [&#39;Ellipsoid&#39;, &#39;geodetic2ecef&#39;, &#39;ecef2geodetic&#39;, &#39;ecef2enuv&#39;, &#39;ecef2enu&#39;, &#39;enu2uvw&#39;, &#39;uvw2enu&#39;, &#39;eci2geodetic&#39;, &#39;enu2ecef&#39;]
+
+
+class Ellipsoid:
+    &#34;&#34;&#34;
+    generate reference ellipsoid parameters
+
+    https://en.wikibooks.org/wiki/PROJ.4#Spheroid
+
+    https://tharsis.gsfc.nasa.gov/geodesy.html
+
+    https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+    &#34;&#34;&#34;
+
+    def __init__(self, model: str = &#39;wgs84&#39;):
+        &#34;&#34;&#34;
+        feel free to suggest additional ellipsoids
+
+        Parameters
+        ----------
+        model : str
+                name of ellipsoid
+        &#34;&#34;&#34;
+        if model == &#39;wgs84&#39;:
+            &#34;&#34;&#34;https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84&#34;&#34;&#34;
+            self.a = 6378137.  # semi-major axis [m]
+            self.f = 1 / 298.2572235630  # flattening
+            self.b = self.a * (1 - self.f)  # semi-minor axis
+        elif model == &#39;grs80&#39;:
+            &#34;&#34;&#34;https://en.wikipedia.org/wiki/GRS_80&#34;&#34;&#34;
+            self.a = 6378137.  # semi-major axis [m]
+            self.f = 1 / 298.257222100882711243  # flattening
+            self.b = self.a * (1 - self.f)  # semi-minor axis
+        elif model == &#39;clrk66&#39;:  # Clarke 1866
+            self.a = 6378206.4  # semi-major axis [m]
+            self.b = 6356583.8  # semi-minor axis
+            self.f = -(self.b / self.a - 1)
+        elif model == &#39;mars&#39;:  # https://tharsis.gsfc.nasa.gov/geodesy.html
+            self.a = 3396900
+            self.b = 3376097.80585952
+            self.f = 1 / 163.295274386012
+        elif model == &#39;moon&#39;:
+            self.a = 1738000.
+            self.b = self.a
+            self.f = 0.
+        elif model == &#39;venus&#39;:
+            self.a = 6051000.
+            self.b = self.a
+            self.f = 0.
+        elif model == &#39;pluto&#39;:
+            self.a = 1187000.
+            self.b = self.a
+            self.f = 0.
+        else:
+            raise NotImplementedError(&#39;{} model not implemented, let us know and we will add it (or make a pull request)&#39;.format(model))
+
+
+def get_radius_normal(lat_radians: float, ell: Ellipsoid = None) -&gt; float:
+    &#34;&#34;&#34;
+    Compute normal radius of planetary body
+
+    Parameters
+    ----------
+
+    lat_radians : float
+        latitude in radians
+    ell : Ellipsoid, optional
+        reference ellipsoid
+
+    Returns
+    -------
+
+    radius : float
+        normal radius (meters)
+    &#34;&#34;&#34;
+    if ell is None:
+        ell = Ellipsoid()
+
+    a = ell.a
+    b = ell.b
+
+    return a**2 / sqrt(a**2 * cos(lat_radians)**2 + b**2 * sin(lat_radians)**2)
+
+
+def geodetic2ecef(lat: float, lon: float, alt: float,
+                  ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
+
+    Parameters
+    ----------
+
+    lat : float or numpy.ndarray of float
+           target geodetic latitude
+    lon : float or numpy.ndarray of float
+           target geodetic longitude
+    h : float or numpy.ndarray of float
+         target altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+
+    Returns
+    -------
+
+    ECEF (Earth centered, Earth fixed)  x,y,z
+
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    &#34;&#34;&#34;
+    if ell is None:
+        ell = Ellipsoid()
+
+    if deg:
+        lat = radians(lat)
+        lon = radians(lon)
+
+    with np.errstate(invalid=&#39;ignore&#39;):
+        # need np.any() to handle scalar and array cases
+        if np.any((lat &lt; -pi / 2) | (lat &gt; pi / 2)):
+            raise ValueError(&#39;-90 &lt;= lat &lt;= 90&#39;)
+
+        if np.any((lon &lt; -pi) | (lon &gt; tau)):
+            raise ValueError(&#39;-180 &lt;= lat &lt;= 360&#39;)
+
+    # radius of curvature of the prime vertical section
+    N = get_radius_normal(lat, ell)
+    # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
+    # coordinates.
+    x = (N + alt) * cos(lat) * cos(lon)
+    y = (N + alt) * cos(lat) * sin(lon)
+    z = (N * (ell.b / ell.a)**2 + alt) * sin(lat)
+
+    return x, y, z
+
+
+def ecef2geodetic(x: float, y: float, z: float,
+                  ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    convert ECEF (meters) to geodetic coordinates
+
+    Parameters
+    ----------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    lat : float or numpy.ndarray of float
+           target geodetic latitude
+    lon : float or numpy.ndarray of float
+           target geodetic longitude
+    h : float or numpy.ndarray of float
+         target altitude above geodetic ellipsoid (meters)
+
+    based on:
+    You, Rey-Jer. (2000). Transformation of Cartesian to Geodetic Coordinates without Iterations.
+    Journal of Surveying Engineering. doi: 10.1061/(ASCE)0733-9453
+    &#34;&#34;&#34;
+    if ell is None:
+        ell = Ellipsoid()
+
+    r = sqrt(x**2 + y**2 + z**2)
+
+    E = sqrt(ell.a**2 - ell.b**2)
+
+    # eqn. 4a
+    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2)**2 + 4 * E**2 * z**2))
+
+    Q = hypot(x, y)
+
+    huE = hypot(u, E)
+
+    # eqn. 4b
+    with np.errstate(divide=&#39;ignore&#39;):
+        Beta = arctan(huE / u * z / hypot(x, y))
+
+    # eqn. 13
+    eps = ((ell.b * u - ell.a * huE + E**2) * sin(Beta)) / (ell.a * huE * 1 / cos(Beta) - E**2 * cos(Beta))
+
+    Beta += eps
+# %% final output
+    lat = arctan(ell.a / ell.b * tan(Beta))
+
+    lon = arctan2(y, x)
+
+    # eqn. 7
+    alt = hypot(z - ell.b * sin(Beta),
+                Q - ell.a * cos(Beta))
+
+    alt = np.atleast_1d(alt)
+
+    # inside ellipsoid?
+    with np.errstate(invalid=&#39;ignore&#39;):
+        inside = x**2 / ell.a**2 + y**2 / ell.a**2 + z**2 / ell.b**2 &lt; 1
+    alt[inside] = -alt[inside]
+
+    if deg:
+        return degrees(lat), degrees(lon), alt.squeeze()[()]
+    else:
+        return lat, lon, alt.squeeze()[()]  # radians
+
+
+def ecef2enuv(u: float, v: float, w: float,
+              lat0: float, lon0: float, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    VECTOR from observer to target  ECEF =&gt; ENU
+
+    Parameters
+    ----------
+    u : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    v : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    w : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    uEast : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    vNorth : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    wUp : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    &#34;&#34;&#34;
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t = cos(lon0) * u + sin(lon0) * v
+    uEast = -sin(lon0) * u + cos(lon0) * v
+    wUp = cos(lat0) * t + sin(lat0) * w
+    vNorth = -sin(lat0) * t + cos(lat0) * w
+
+    return uEast, vNorth, wUp
+
+
+def ecef2enu(x: float, y: float, z: float,
+             lat0: float, lon0: float, h0: float,
+             ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    from observer to target, ECEF =&gt; ENU
+
+    Parameters
+    ----------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    East : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    North : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    Up : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    &#34;&#34;&#34;
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+
+    return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
+
+
+def enu2uvw(east: float, north: float, up: float,
+            lat0: float, lon0: float, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    Parameters
+    ----------
+
+    e1 : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    n1 : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    u1 : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    Results
+    -------
+
+    u : float or numpy.ndarray of float
+    v : float or numpy.ndarray of float
+    w : float or numpy.ndarray of float
+    &#34;&#34;&#34;
+
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t = cos(lat0) * up - sin(lat0) * north
+    w = sin(lat0) * up + cos(lat0) * north
+
+    u = cos(lon0) * t - sin(lon0) * east
+    v = sin(lon0) * t + cos(lon0) * east
+
+    return u, v, w
+
+
+def uvw2enu(u: float, v: float, w: float,
+            lat0: float, lon0: float, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    Parameters
+    ----------
+
+    u : float or numpy.ndarray of float
+    v : float or numpy.ndarray of float
+    w : float or numpy.ndarray of float
+
+
+    Results
+    -------
+
+    East : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    North : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    Up : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+    &#34;&#34;&#34;
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t = cos(lon0) * u + sin(lon0) * v
+    East = -sin(lon0) * u + cos(lon0) * v
+    Up = cos(lat0) * t + sin(lat0) * w
+    North = -sin(lat0) * t + cos(lat0) * w
+
+    return East, North, Up
+
+
+def eci2geodetic(eci: np.ndarray, t: datetime,
+                 useastropy: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    convert ECI to geodetic coordinates
+
+    Parameters
+    ----------
+    eci : tuple of float
+          [meters] Nx3 target ECI location (x,y,z)
+    t : datetime.datetime, float
+          length N vector of datetime OR greenwich sidereal time angle [radians].
+
+    Results
+    -------
+    lat : float
+          geodetic latitude
+    lon : float
+          geodetic longitude
+    alt : float
+          altitude above ellipsoid  (meters)
+
+    Notes
+    -----
+
+    Conversion is idealized: doesn&#39;t consider nutations, perterbations,
+    etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
+    from ECI to ECEF
+
+    eci2geodetic() a.k.a. eci2lla()
+    &#34;&#34;&#34;
+    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy=useastropy))
+
+    return np.asarray(ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])).squeeze()
+
+
+def enu2ecef(e1: float, n1: float, u1: float,
+             lat0: float, lon0: float, h0: float,
+             ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    ENU to ECEF
+
+    Parameters
+    ----------
+
+    e1 : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    n1 : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    u1 : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+
+    Results
+    -------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    &#34;&#34;&#34;
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+    dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
+
+    return x0 + dx, y0 + dy, z0 + dz</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="pymap3d.ecef.ecef2enu"><code class="name flex">
+<span>def <span class="ident">ecef2enu</span></span>(<span>x, y, z, lat0, lon0, h0, ell=None, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>from observer to target, ECEF =&gt; ENU</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target x ECEF coordinate (meters)</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target y ECEF coordinate (meters)</dd>
+<dt><strong><code>z</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target z ECEF coordinate (meters)</dd>
+<dt><strong><code>lat0</code></strong> :&ensp;<code>float</code></dt>
+<dd>Observer geodetic latitude</dd>
+<dt><strong><code>lon0</code></strong> :&ensp;<code>float</code></dt>
+<dd>Observer geodetic longitude</dd>
+<dt><strong><code>h0</code></strong> :&ensp;<code>float</code></dt>
+<dd>observer altitude above geodetic ellipsoid (meters)</dd>
+<dt><strong><code>ell</code></strong> :&ensp;<a title="pymap3d.ecef.Ellipsoid" href="#pymap3d.ecef.Ellipsoid"><code>Ellipsoid</code></a>, optional</dt>
+<dd>reference ellipsoid</dd>
+<dt><strong><code>deg</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>degrees input/output
+(False: radians in/out)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>East</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target east ENU coordinate (meters)</dd>
+<dt><strong><code>North</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target north ENU coordinate (meters)</dd>
+<dt><strong><code>Up</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target up ENU coordinate (meters)</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def ecef2enu(x: float, y: float, z: float,
+             lat0: float, lon0: float, h0: float,
+             ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    from observer to target, ECEF =&gt; ENU
+
+    Parameters
+    ----------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    East : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    North : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    Up : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    &#34;&#34;&#34;
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+
+    return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.ecef2enuv"><code class="name flex">
+<span>def <span class="ident">ecef2enuv</span></span>(<span>u, v, w, lat0, lon0, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>VECTOR from observer to target
+ECEF =&gt; ENU</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>u</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target x ECEF coordinate (meters)</dd>
+<dt><strong><code>v</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target y ECEF coordinate (meters)</dd>
+<dt><strong><code>w</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target z ECEF coordinate (meters)</dd>
+<dt><strong><code>lat0</code></strong> :&ensp;<code>float</code></dt>
+<dd>Observer geodetic latitude</dd>
+<dt><strong><code>lon0</code></strong> :&ensp;<code>float</code></dt>
+<dd>Observer geodetic longitude</dd>
+<dt><strong><code>h0</code></strong> :&ensp;<code>float</code></dt>
+<dd>observer altitude above geodetic ellipsoid (meters)</dd>
+<dt><strong><code>deg</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>degrees input/output
+(False: radians in/out)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>uEast</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target east ENU coordinate (meters)</dd>
+<dt><strong><code>vNorth</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target north ENU coordinate (meters)</dd>
+<dt><strong><code>wUp</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target up ENU coordinate (meters)</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def ecef2enuv(u: float, v: float, w: float,
+              lat0: float, lon0: float, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    VECTOR from observer to target  ECEF =&gt; ENU
+
+    Parameters
+    ----------
+    u : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    v : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    w : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    uEast : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    vNorth : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    wUp : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    &#34;&#34;&#34;
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t = cos(lon0) * u + sin(lon0) * v
+    uEast = -sin(lon0) * u + cos(lon0) * v
+    wUp = cos(lat0) * t + sin(lat0) * w
+    vNorth = -sin(lat0) * t + cos(lat0) * w
+
+    return uEast, vNorth, wUp</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.ecef2geodetic"><code class="name flex">
+<span>def <span class="ident">ecef2geodetic</span></span>(<span>x, y, z, ell=None, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>convert ECEF (meters) to geodetic coordinates</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target x ECEF coordinate (meters)</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target y ECEF coordinate (meters)</dd>
+<dt><strong><code>z</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target z ECEF coordinate (meters)</dd>
+<dt><strong><code>ell</code></strong> :&ensp;<a title="pymap3d.ecef.Ellipsoid" href="#pymap3d.ecef.Ellipsoid"><code>Ellipsoid</code></a>, optional</dt>
+<dd>reference ellipsoid</dd>
+<dt><strong><code>deg</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>degrees input/output
+(False: radians in/out)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>lat</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target geodetic latitude</dd>
+<dt><strong><code>lon</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target geodetic longitude</dd>
+<dt><strong><code>h</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target altitude above geodetic ellipsoid (meters)</dd>
+</dl>
+<p>based on:
+You, Rey-Jer. (2000). Transformation of Cartesian to Geodetic Coordinates without Iterations.
+Journal of Surveying Engineering. doi: 10.1061/(ASCE)0733-9453</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def ecef2geodetic(x: float, y: float, z: float,
+                  ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    convert ECEF (meters) to geodetic coordinates
+
+    Parameters
+    ----------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    lat : float or numpy.ndarray of float
+           target geodetic latitude
+    lon : float or numpy.ndarray of float
+           target geodetic longitude
+    h : float or numpy.ndarray of float
+         target altitude above geodetic ellipsoid (meters)
+
+    based on:
+    You, Rey-Jer. (2000). Transformation of Cartesian to Geodetic Coordinates without Iterations.
+    Journal of Surveying Engineering. doi: 10.1061/(ASCE)0733-9453
+    &#34;&#34;&#34;
+    if ell is None:
+        ell = Ellipsoid()
+
+    r = sqrt(x**2 + y**2 + z**2)
+
+    E = sqrt(ell.a**2 - ell.b**2)
+
+    # eqn. 4a
+    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2)**2 + 4 * E**2 * z**2))
+
+    Q = hypot(x, y)
+
+    huE = hypot(u, E)
+
+    # eqn. 4b
+    with np.errstate(divide=&#39;ignore&#39;):
+        Beta = arctan(huE / u * z / hypot(x, y))
+
+    # eqn. 13
+    eps = ((ell.b * u - ell.a * huE + E**2) * sin(Beta)) / (ell.a * huE * 1 / cos(Beta) - E**2 * cos(Beta))
+
+    Beta += eps
+# %% final output
+    lat = arctan(ell.a / ell.b * tan(Beta))
+
+    lon = arctan2(y, x)
+
+    # eqn. 7
+    alt = hypot(z - ell.b * sin(Beta),
+                Q - ell.a * cos(Beta))
+
+    alt = np.atleast_1d(alt)
+
+    # inside ellipsoid?
+    with np.errstate(invalid=&#39;ignore&#39;):
+        inside = x**2 / ell.a**2 + y**2 / ell.a**2 + z**2 / ell.b**2 &lt; 1
+    alt[inside] = -alt[inside]
+
+    if deg:
+        return degrees(lat), degrees(lon), alt.squeeze()[()]
+    else:
+        return lat, lon, alt.squeeze()[()]  # radians</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.eci2geodetic"><code class="name flex">
+<span>def <span class="ident">eci2geodetic</span></span>(<span>eci, t, useastropy=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>convert ECI to geodetic coordinates</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>eci</code></strong> :&ensp;<code>tuple</code> of <code>float</code></dt>
+<dd>[meters] Nx3 target ECI location (x,y,z)</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>datetime.datetime</code>, <code>float</code></dt>
+<dd>length N vector of datetime OR greenwich sidereal time angle [radians].</dd>
+</dl>
+<h2 id="results">Results</h2>
+<dl>
+<dt><strong><code>lat</code></strong> :&ensp;<code>float</code></dt>
+<dd>geodetic latitude</dd>
+<dt><strong><code>lon</code></strong> :&ensp;<code>float</code></dt>
+<dd>geodetic longitude</dd>
+<dt><strong><code>alt</code></strong> :&ensp;<code>float</code></dt>
+<dd>altitude above ellipsoid
+(meters)</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Conversion is idealized: doesn't consider nutations, perterbations,
+etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
+from ECI to ECEF</p>
+<p>eci2geodetic() a.k.a. eci2lla()</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def eci2geodetic(eci: np.ndarray, t: datetime,
+                 useastropy: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    convert ECI to geodetic coordinates
+
+    Parameters
+    ----------
+    eci : tuple of float
+          [meters] Nx3 target ECI location (x,y,z)
+    t : datetime.datetime, float
+          length N vector of datetime OR greenwich sidereal time angle [radians].
+
+    Results
+    -------
+    lat : float
+          geodetic latitude
+    lon : float
+          geodetic longitude
+    alt : float
+          altitude above ellipsoid  (meters)
+
+    Notes
+    -----
+
+    Conversion is idealized: doesn&#39;t consider nutations, perterbations,
+    etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
+    from ECI to ECEF
+
+    eci2geodetic() a.k.a. eci2lla()
+    &#34;&#34;&#34;
+    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy=useastropy))
+
+    return np.asarray(ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])).squeeze()</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.enu2ecef"><code class="name flex">
+<span>def <span class="ident">enu2ecef</span></span>(<span>e1, n1, u1, lat0, lon0, h0, ell=None, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>ENU to ECEF</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>e1</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target east ENU coordinate (meters)</dd>
+<dt><strong><code>n1</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target north ENU coordinate (meters)</dd>
+<dt><strong><code>u1</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target up ENU coordinate (meters)</dd>
+<dt><strong><code>lat0</code></strong> :&ensp;<code>float</code></dt>
+<dd>Observer geodetic latitude</dd>
+<dt><strong><code>lon0</code></strong> :&ensp;<code>float</code></dt>
+<dd>Observer geodetic longitude</dd>
+<dt><strong><code>h0</code></strong> :&ensp;<code>float</code></dt>
+<dd>observer altitude above geodetic ellipsoid (meters)</dd>
+<dt><strong><code>ell</code></strong> :&ensp;<a title="pymap3d.ecef.Ellipsoid" href="#pymap3d.ecef.Ellipsoid"><code>Ellipsoid</code></a>, optional</dt>
+<dd>reference ellipsoid</dd>
+<dt><strong><code>deg</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>degrees input/output
+(False: radians in/out)</dd>
+</dl>
+<h2 id="results">Results</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target x ECEF coordinate (meters)</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target y ECEF coordinate (meters)</dd>
+<dt><strong><code>z</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target z ECEF coordinate (meters)</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def enu2ecef(e1: float, n1: float, u1: float,
+             lat0: float, lon0: float, h0: float,
+             ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    ENU to ECEF
+
+    Parameters
+    ----------
+
+    e1 : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    n1 : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    u1 : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+    lat0 : float
+           Observer geodetic latitude
+    lon0 : float
+           Observer geodetic longitude
+    h0 : float
+         observer altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+
+    Results
+    -------
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    &#34;&#34;&#34;
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+    dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
+
+    return x0 + dx, y0 + dy, z0 + dz</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.enu2uvw"><code class="name flex">
+<span>def <span class="ident">enu2uvw</span></span>(<span>east, north, up, lat0, lon0, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>e1</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target east ENU coordinate (meters)</dd>
+<dt><strong><code>n1</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target north ENU coordinate (meters)</dd>
+<dt><strong><code>u1</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target up ENU coordinate (meters)</dd>
+</dl>
+<h2 id="results">Results</h2>
+<dl>
+<dt><strong><code>u</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>v</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>w</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>&nbsp;</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def enu2uvw(east: float, north: float, up: float,
+            lat0: float, lon0: float, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    Parameters
+    ----------
+
+    e1 : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    n1 : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    u1 : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+
+    Results
+    -------
+
+    u : float or numpy.ndarray of float
+    v : float or numpy.ndarray of float
+    w : float or numpy.ndarray of float
+    &#34;&#34;&#34;
+
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t = cos(lat0) * up - sin(lat0) * north
+    w = sin(lat0) * up + cos(lat0) * north
+
+    u = cos(lon0) * t - sin(lon0) * east
+    v = sin(lon0) * t + cos(lon0) * east
+
+    return u, v, w</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.geodetic2ecef"><code class="name flex">
+<span>def <span class="ident">geodetic2ecef</span></span>(<span>lat, lon, alt, ell=None, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>lat</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target geodetic latitude</dd>
+<dt><strong><code>lon</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target geodetic longitude</dd>
+<dt><strong><code>h</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target altitude above geodetic ellipsoid (meters)</dd>
+<dt><strong><code>ell</code></strong> :&ensp;<a title="pymap3d.ecef.Ellipsoid" href="#pymap3d.ecef.Ellipsoid"><code>Ellipsoid</code></a>, optional</dt>
+<dd>reference ellipsoid</dd>
+<dt><strong><code>deg</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>degrees input/output
+(False: radians in/out)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>ECEF (Earth centered, Earth fixed)
+x,y,z</p>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target x ECEF coordinate (meters)</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target y ECEF coordinate (meters)</dd>
+<dt><strong><code>z</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target z ECEF coordinate (meters)</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def geodetic2ecef(lat: float, lon: float, alt: float,
+                  ell: Ellipsoid = None, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
+
+    Parameters
+    ----------
+
+    lat : float or numpy.ndarray of float
+           target geodetic latitude
+    lon : float or numpy.ndarray of float
+           target geodetic longitude
+    h : float or numpy.ndarray of float
+         target altitude above geodetic ellipsoid (meters)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+
+    Returns
+    -------
+
+    ECEF (Earth centered, Earth fixed)  x,y,z
+
+    x : float or numpy.ndarray of float
+        target x ECEF coordinate (meters)
+    y : float or numpy.ndarray of float
+        target y ECEF coordinate (meters)
+    z : float or numpy.ndarray of float
+        target z ECEF coordinate (meters)
+    &#34;&#34;&#34;
+    if ell is None:
+        ell = Ellipsoid()
+
+    if deg:
+        lat = radians(lat)
+        lon = radians(lon)
+
+    with np.errstate(invalid=&#39;ignore&#39;):
+        # need np.any() to handle scalar and array cases
+        if np.any((lat &lt; -pi / 2) | (lat &gt; pi / 2)):
+            raise ValueError(&#39;-90 &lt;= lat &lt;= 90&#39;)
+
+        if np.any((lon &lt; -pi) | (lon &gt; tau)):
+            raise ValueError(&#39;-180 &lt;= lat &lt;= 360&#39;)
+
+    # radius of curvature of the prime vertical section
+    N = get_radius_normal(lat, ell)
+    # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
+    # coordinates.
+    x = (N + alt) * cos(lat) * cos(lon)
+    y = (N + alt) * cos(lat) * sin(lon)
+    z = (N * (ell.b / ell.a)**2 + alt) * sin(lat)
+
+    return x, y, z</code></pre>
+</details>
+</dd>
+<dt id="pymap3d.ecef.uvw2enu"><code class="name flex">
+<span>def <span class="ident">uvw2enu</span></span>(<span>u, v, w, lat0, lon0, deg=True)</span>
+</code></dt>
+<dd>
+<section class="desc"><h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>u</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>v</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>w</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="results">Results</h2>
+<dl>
+<dt><strong><code>East</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target east ENU coordinate (meters)</dd>
+<dt><strong><code>North</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target north ENU coordinate (meters)</dd>
+<dt><strong><code>Up</code></strong> :&ensp;<code>float</code> or <code>numpy.ndarray</code> of <code>float</code></dt>
+<dd>target up ENU coordinate (meters)</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def uvw2enu(u: float, v: float, w: float,
+            lat0: float, lon0: float, deg: bool = True) -&gt; Tuple[float, float, float]:
+    &#34;&#34;&#34;
+    Parameters
+    ----------
+
+    u : float or numpy.ndarray of float
+    v : float or numpy.ndarray of float
+    w : float or numpy.ndarray of float
+
+
+    Results
+    -------
+
+    East : float or numpy.ndarray of float
+        target east ENU coordinate (meters)
+    North : float or numpy.ndarray of float
+        target north ENU coordinate (meters)
+    Up : float or numpy.ndarray of float
+        target up ENU coordinate (meters)
+    &#34;&#34;&#34;
+    if deg:
+        lat0 = radians(lat0)
+        lon0 = radians(lon0)
+
+    t = cos(lon0) * u + sin(lon0) * v
+    East = -sin(lon0) * u + cos(lon0) * v
+    Up = cos(lat0) * t + sin(lat0) * w
+    North = -sin(lat0) * t + cos(lat0) * w
+
+    return East, North, Up</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="pymap3d.ecef.Ellipsoid"><code class="flex name class">
+<span>class <span class="ident">Ellipsoid</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>generate reference ellipsoid parameters</p>
+<p><a href="https://en.wikibooks.org/wiki/PROJ.4#Spheroid">https://en.wikibooks.org/wiki/PROJ.4#Spheroid</a></p>
+<p><a href="https://tharsis.gsfc.nasa.gov/geodesy.html">https://tharsis.gsfc.nasa.gov/geodesy.html</a></p>
+<p><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html">https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html</a></p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Ellipsoid:
+    &#34;&#34;&#34;
+    generate reference ellipsoid parameters
+
+    https://en.wikibooks.org/wiki/PROJ.4#Spheroid
+
+    https://tharsis.gsfc.nasa.gov/geodesy.html
+
+    https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+    &#34;&#34;&#34;
+
+    def __init__(self, model: str = &#39;wgs84&#39;):
+        &#34;&#34;&#34;
+        feel free to suggest additional ellipsoids
+
+        Parameters
+        ----------
+        model : str
+                name of ellipsoid
+        &#34;&#34;&#34;
+        if model == &#39;wgs84&#39;:
+            &#34;&#34;&#34;https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84&#34;&#34;&#34;
+            self.a = 6378137.  # semi-major axis [m]
+            self.f = 1 / 298.2572235630  # flattening
+            self.b = self.a * (1 - self.f)  # semi-minor axis
+        elif model == &#39;grs80&#39;:
+            &#34;&#34;&#34;https://en.wikipedia.org/wiki/GRS_80&#34;&#34;&#34;
+            self.a = 6378137.  # semi-major axis [m]
+            self.f = 1 / 298.257222100882711243  # flattening
+            self.b = self.a * (1 - self.f)  # semi-minor axis
+        elif model == &#39;clrk66&#39;:  # Clarke 1866
+            self.a = 6378206.4  # semi-major axis [m]
+            self.b = 6356583.8  # semi-minor axis
+            self.f = -(self.b / self.a - 1)
+        elif model == &#39;mars&#39;:  # https://tharsis.gsfc.nasa.gov/geodesy.html
+            self.a = 3396900
+            self.b = 3376097.80585952
+            self.f = 1 / 163.295274386012
+        elif model == &#39;moon&#39;:
+            self.a = 1738000.
+            self.b = self.a
+            self.f = 0.
+        elif model == &#39;venus&#39;:
+            self.a = 6051000.
+            self.b = self.a
+            self.f = 0.
+        elif model == &#39;pluto&#39;:
+            self.a = 1187000.
+            self.b = self.a
+            self.f = 0.
+        else:
+            raise NotImplementedError(&#39;{} model not implemented, let us know and we will add it (or make a pull request)&#39;.format(model))</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="pymap3d.ecef.Ellipsoid.__init__"><code class="name flex">
+<span>def <span class="ident">__init__</span></span>(<span>self, model=&#39;wgs84&#39;)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>feel free to suggest additional ellipsoids</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>model</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of ellipsoid</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def __init__(self, model: str = &#39;wgs84&#39;):
+    &#34;&#34;&#34;
+    feel free to suggest additional ellipsoids
+
+    Parameters
+    ----------
+    model : str
+            name of ellipsoid
+    &#34;&#34;&#34;
+    if model == &#39;wgs84&#39;:
+        &#34;&#34;&#34;https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84&#34;&#34;&#34;
+        self.a = 6378137.  # semi-major axis [m]
+        self.f = 1 / 298.2572235630  # flattening
+        self.b = self.a * (1 - self.f)  # semi-minor axis
+    elif model == &#39;grs80&#39;:
+        &#34;&#34;&#34;https://en.wikipedia.org/wiki/GRS_80&#34;&#34;&#34;
+        self.a = 6378137.  # semi-major axis [m]
+        self.f = 1 / 298.257222100882711243  # flattening
+        self.b = self.a * (1 - self.f)  # semi-minor axis
+    elif model == &#39;clrk66&#39;:  # Clarke 1866
+        self.a = 6378206.4  # semi-major axis [m]
+        self.b = 6356583.8  # semi-minor axis
+        self.f = -(self.b / self.a - 1)
+    elif model == &#39;mars&#39;:  # https://tharsis.gsfc.nasa.gov/geodesy.html
+        self.a = 3396900
+        self.b = 3376097.80585952
+        self.f = 1 / 163.295274386012
+    elif model == &#39;moon&#39;:
+        self.a = 1738000.
+        self.b = self.a
+        self.f = 0.
+    elif model == &#39;venus&#39;:
+        self.a = 6051000.
+        self.b = self.a
+        self.f = 0.
+    elif model == &#39;pluto&#39;:
+        self.a = 1187000.
+        self.b = self.a
+        self.f = 0.
+    else:
+        raise NotImplementedError(&#39;{} model not implemented, let us know and we will add it (or make a pull request)&#39;.format(model))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pymap3d" href="index.html">pymap3d</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="pymap3d.ecef.ecef2enu" href="#pymap3d.ecef.ecef2enu">ecef2enu</a></code></li>
+<li><code><a title="pymap3d.ecef.ecef2enuv" href="#pymap3d.ecef.ecef2enuv">ecef2enuv</a></code></li>
+<li><code><a title="pymap3d.ecef.ecef2geodetic" href="#pymap3d.ecef.ecef2geodetic">ecef2geodetic</a></code></li>
+<li><code><a title="pymap3d.ecef.eci2geodetic" href="#pymap3d.ecef.eci2geodetic">eci2geodetic</a></code></li>
+<li><code><a title="pymap3d.ecef.enu2ecef" href="#pymap3d.ecef.enu2ecef">enu2ecef</a></code></li>
+<li><code><a title="pymap3d.ecef.enu2uvw" href="#pymap3d.ecef.enu2uvw">enu2uvw</a></code></li>
+<li><code><a title="pymap3d.ecef.geodetic2ecef" href="#pymap3d.ecef.geodetic2ecef">geodetic2ecef</a></code></li>
+<li><code><a title="pymap3d.ecef.uvw2enu" href="#pymap3d.ecef.uvw2enu">uvw2enu</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="pymap3d.ecef.Ellipsoid" href="#pymap3d.ecef.Ellipsoid">Ellipsoid</a></code></h4>
+<ul class="">
+<li><code><a title="pymap3d.ecef.Ellipsoid.__init__" href="#pymap3d.ecef.Ellipsoid.__init__">__init__</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
