@@ -219,6 +219,7 @@ def ecef2geodetic(x: float, y: float, z: float,
     # inside ellipsoid?
     with np.errstate(invalid='ignore'):
         inside = x**2 / ell.a**2 + y**2 / ell.a**2 + z**2 / ell.b**2 < 1
+    inside = np.atleast_1d(inside)
     alt[inside] = -alt[inside]
 
     if deg:
