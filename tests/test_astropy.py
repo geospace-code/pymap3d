@@ -14,18 +14,16 @@ ha = 45.482789587392013
 eci0 = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
 
 
-def test_sidereal():
+@pytest.mark.parametrize('time', [t0, [t0]], ids=('scalar', 'list'))
+def test_sidereal(time):
     pytest.importorskip('astropy')
     # http://www.jgiesen.de/astro/astroJS/siderealClock/
-    assert pmd.datetime2sidereal(t0, np.radians(lon), False) == approx(sra, rel=1e-5)
-
-    assert pmd.datetime2sidereal([t0], np.radians(lon), False) == approx(sra, rel=1e-5)
+    assert pmd.datetime2sidereal(time, np.radians(lon), False) == approx(sra, rel=1e-5)
 
 
-def test_sidereal_vallado():
-    assert pmd.datetime2sidereal(t0, np.radians(lon), True) == approx(sra, rel=1e-5)
-
-    assert pmd.datetime2sidereal([t0], np.radians(lon), True) == approx(sra, rel=1e-5)
+@pytest.mark.parametrize('time', [t0, [t0]], ids=('scalar', 'list'))
+def test_sidereal_vallado(time):
+    assert pmd.datetime2sidereal(time, np.radians(lon), True) == approx(sra, rel=1e-5)
 
 
 def test_anglesep():

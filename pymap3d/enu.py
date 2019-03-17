@@ -41,25 +41,25 @@ def enu2aer(e: np.ndarray, n: np.ndarray, u: np.ndarray, deg: bool = True) -> Tu
     """
     # 1 millimeter precision for singularity
 
-    e = np.atleast_1d(e)
-    n = np.atleast_1d(n)
-    u = np.atleast_1d(u)
+    e = np.asarray(e)
+    n = np.asarray(n)
+    u = np.asarray(u)
 
     with np.errstate(invalid='ignore'):
         e[abs(e) < 1e-3] = 0.
         n[abs(n) < 1e-3] = 0.
         u[abs(u) < 1e-3] = 0.
 
-    r = hypot(e, n)
-    slantRange = hypot(r, u)
-    elev = arctan2(u, r)
-    az = arctan2(e, n) % tau
+        r = hypot(e, n)
+        slantRange = hypot(r, u)
+        elev = arctan2(u, r)
+        az = arctan2(e, n) % tau
 
     if deg:
         az = degrees(az)
         elev = degrees(elev)
 
-    return az[()].squeeze(), elev[()].squeeze(), slantRange[()].squeeze()
+    return az, elev, slantRange
 
 
 def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:

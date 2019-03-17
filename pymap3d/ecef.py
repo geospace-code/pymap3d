@@ -6,7 +6,7 @@ from datetime import datetime
 try:
     from math import tau  # py >= 3.6
 except ImportError:
-    tau = 2 * np.pi
+    tau = 2 * pi
 
 from .eci import eci2ecef
 
@@ -138,9 +138,6 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         if np.any((lat < -pi / 2) | (lat > pi / 2)):
             raise ValueError('-90 <= lat <= 90')
 
-        if np.any((lon < -pi) | (lon > tau)):
-            raise ValueError('-180 <= lat <= 360')
-
     # radius of curvature of the prime vertical section
     N = get_radius_normal(lat, ell)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
@@ -186,6 +183,10 @@ def ecef2geodetic(x: float, y: float, z: float,
     if ell is None:
         ell = Ellipsoid()
 
+    x = np.asarray(x)
+    y = np.asarray(y)
+    z = np.asarray(z)
+
     r = sqrt(x**2 + y**2 + z**2)
 
     E = sqrt(ell.a**2 - ell.b**2)
@@ -214,17 +215,19 @@ def ecef2geodetic(x: float, y: float, z: float,
     alt = hypot(z - ell.b * sin(Beta),
                 Q - ell.a * cos(Beta))
 
-    alt = np.atleast_1d(alt)
-
     # inside ellipsoid?
     with np.errstate(invalid='ignore'):
         inside = x**2 / ell.a**2 + y**2 / ell.a**2 + z**2 / ell.b**2 < 1
-    alt[inside] = -alt[inside]
+    if isinstance(inside, np.ndarray):
+        alt[inside] = -alt[inside]
+    elif inside:
+        alt = -alt
 
     if deg:
-        return degrees(lat), degrees(lon), alt.squeeze()[()]
-    else:
-        return lat, lon, alt.squeeze()[()]  # radians
+        lat = degrees(lat)
+        lon = degrees(lon)
+
+    return lat, lon, alt
 
 
 def ecef2enuv(u: float, v: float, w: float,

@@ -27,7 +27,7 @@ Includes some relevant
 
 * Python &ge; 3.5 or PyPy3
 
-References to AstroPy are optional, algorithms from Vallado and Meeus are used if AstroPy is not present.
+References to AstroPy are *optional*, algorithms from Vallado and Meeus are used if AstroPy is not present.
 
 
 ## Install
@@ -128,3 +128,11 @@ As compared to [PyProj](https://github.com/jswhit/pyproj):
     PyMap3D handles points on or above the planet surface equally well,
     particularly important for airborne vehicles and remote sensing.
 
+### AstroPy.Units.Quantity
+
+At this time,
+[AstroPy.Units.Quantity](http://docs.astropy.org/en/stable/units/)
+is not supported.
+Let us know if this is of interest.
+Impacts on performance would have to be considered before making Quantity a first-class citizen.
+For now, you can workaround by passing in the `.value` of the variable.

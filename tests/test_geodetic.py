@@ -23,6 +23,89 @@ E = pm.Ellipsoid()
 atol_dist = 1e-6  # 1 micrometer
 
 
+@pytest.mark.parametrize('lla',
+                         [(42, -82, 200),
+                          ([42], [-82], [200]),
+                          (np.array(42), np.array(-82), np.array(200)),
+                          (np.array([42]), np.array([-82]), np.array([200])),
+                          (np.atleast_3d(42), np.atleast_3d(-82), np.atleast_3d(200))],
+                         ids=('scalar', 'list', '0d', '1d', '3d'))
+def test_scalar_geodetic2ecef(lla):
+    """
+    verify we can handle the wide variety of input data type users might use
+    """
+    x0, y0, z0 = pm.geodetic2ecef(*lla)
+
+    assert (x0, y0, z0) == approx(xyz0)
+
+
+@pytest.mark.parametrize('xyz',
+                         [(xyz0[0], xyz0[1], xyz0[2]),
+                          ([xyz0[0]], [xyz0[1]], [xyz0[2]]),
+                          (np.array(xyz0[0]), np.array(xyz0[1]), np.array(xyz0[2])),
+                          (np.array([xyz0[0]]), np.array([xyz0[1]]), np.array([xyz0[2]])),
+                          (np.atleast_3d(xyz0[0]), np.atleast_3d(xyz0[1]), np.atleast_3d(xyz0[2]))],
+                         ids=('scalar', 'list', '0d', '1d', '3d'))
+def test_scalar_ecef2geodetic(xyz):
+    """
+    verify we can handle the wide variety of input data type users might use
+    """
+    lat, lon, alt = pm.ecef2geodetic(*xyz)
+
+    assert [lat, lon, alt] == approx(lla0, rel=1e-4)
+
+
+@pytest.mark.parametrize('xyz',
+                         [(0, E.a, 50),
+                          ([0], [E.a], [50]),
+                          (np.array(0), np.array(E.a), np.array(50)),
+                          (np.array([0]), np.array([E.a]), np.array([50])),
+                          (np.atleast_3d(0), np.atleast_3d(E.a), np.atleast_3d(50))],
+                         ids=('scalar', 'list', '0d', '1d', '3d'))
+def test_scalar_aer_enu(xyz):
+    """
+    verify we can handle the wide variety of input data type users might use
+    """
+    enu = pm.ecef2enu(*xyz, 0, 90, -100)
+
+    assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, E.a, 50])
+
+
+def test_xarray():
+    xarray = pytest.importorskip('xarray')
+    xr_lla = xarray.DataArray(list(lla0))
+
+    xyz = pm.geodetic2ecef(*xr_lla)
+
+    assert xyz == approx(xyz0)
+    assert isinstance(xyz[0], xarray.DataArray)
+# %%
+    xr_xyz = xarray.DataArray(list(xyz0))
+
+    lla = pm.ecef2geodetic(*xr_xyz)
+
+    assert lla == approx(lla0)
+    assert isinstance(lla[0], float)  # xarrayness is lost, possibly expensive to keep due to isinstance()
+
+
+def test_pandas():
+    pandas = pytest.importorskip('pandas')
+    pd_lla = pandas.Series(lla0)
+
+    xyz = pm.geodetic2ecef(*pd_lla)
+
+    assert xyz == approx(xyz0)
+    assert isinstance(xyz[0], float)  # series degenerates to scalars by pandas itself
+# %% dataframe degenerates to series
+    pd_lla = pandas.DataFrame([[*lla0], [*lla0]], columns=['lat', 'lon', 'alt_m'])
+    xyz = pm.geodetic2ecef(pd_lla['lat'], pd_lla['lon'], pd_lla['alt_m'])
+
+    assert xyz[0].values == approx(xyz0[0])
+    assert xyz[1].values == approx(xyz0[1])
+    assert xyz[2].values == approx(xyz0[2])
+    assert isinstance(xyz[0], pandas.Series)
+
+
 def test_ecef():
     xyz = pm.geodetic2ecef(*lla0)
 
@@ -31,9 +114,6 @@ def test_ecef():
 
     with pytest.raises(ValueError):
         pm.geodetic2ecef(-100, lla0[1], lla0[2])
-
-    with pytest.raises(ValueError):
-        pm.geodetic2ecef(lla0[0], -200, lla0[2])
 
     assert pm.ecef2geodetic(*xyz) == approx(lla0)
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
@@ -93,4 +173,4 @@ def test_somenan():
 
 
 if __name__ == '__main__':
-    pytest.main([__file__])
+    pytest.main(['-x', __file__])
