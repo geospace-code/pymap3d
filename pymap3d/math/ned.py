@@ -1,13 +1,12 @@
 """ Transforms involving NED North East Down """
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef, Ellipsoid
-from typing import Tuple
 
 __all__ = ['aer2ned', 'ned2aer', 'ned2geodetic', 'ned2ecef', 'ecef2ned', 'geodetic2ned', 'ecef2nedv']
 
 
 def aer2ned(az: float, elev: float, slantRange: float,
-            deg: bool = True) -> Tuple[float, float, float]:
+            deg: bool = True):
     """
     converts azimuth, elevation, range to target from observer to North, East, Down
 
@@ -38,7 +37,7 @@ def aer2ned(az: float, elev: float, slantRange: float,
 
 
 def ned2aer(n: float, e: float, d: float,
-            deg: bool = True) -> Tuple[float, float, float]:
+            deg: bool = True):
     """
     converts North, East, Down to azimuth, elevation, range
 
@@ -69,7 +68,7 @@ def ned2aer(n: float, e: float, d: float,
 
 def ned2geodetic(n: float, e: float, d: float,
                  lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+                 ell: Ellipsoid = None, deg: bool = True):
     """
     Converts North, East, Down to target latitude, longitude, altitude
 
@@ -111,7 +110,7 @@ def ned2geodetic(n: float, e: float, d: float,
 
 def ned2ecef(n: float, e: float, d: float,
              lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True):
     """
     North, East, Down to target ECEF coordinates
 
@@ -150,7 +149,7 @@ def ned2ecef(n: float, e: float, d: float,
 
 def ecef2ned(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True):
     """
     Convert ECEF x,y,z to North, East, Down
 
@@ -192,7 +191,7 @@ def ecef2ned(x: float, y: float, z: float,
 
 def geodetic2ned(lat: float, lon: float, h: float,
                  lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+                 ell: Ellipsoid = None, deg: bool = True):
     """
     convert latitude, longitude, altitude of target to North, East, Down from observer
 
@@ -234,7 +233,7 @@ def geodetic2ned(lat: float, lon: float, h: float,
 
 def ecef2nedv(x: float, y: float, z: float,
               lat0: float, lon0: float,
-              deg: bool = True) -> Tuple[float, float, float]:
+              deg: bool = True):
     """
     for VECTOR between two points
 

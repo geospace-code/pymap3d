@@ -1,5 +1,4 @@
 """ transforms involving AER: azimuth, elevation, slant range"""
-from typing import Tuple
 
 from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw, Ellipsoid
 from .enu import geodetic2enu, aer2enu, enu2aer
@@ -9,7 +8,7 @@ __all__ = ['aer2ecef', 'ecef2aer', 'geodetic2aer', 'aer2geodetic']
 
 def ecef2aer(x: float, y: float, z: float,
              lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True):
     """
     gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
@@ -51,7 +50,7 @@ def ecef2aer(x: float, y: float, z: float,
 
 def geodetic2aer(lat: float, lon: float, h: float,
                  lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+                 ell: Ellipsoid = None, deg: bool = True):
     """
     gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
 
@@ -93,7 +92,7 @@ def geodetic2aer(lat: float, lon: float, h: float,
 def aer2geodetic(az: float, el: float, srange: float,
                  lat0: float, lon0: float, h0: float,
                  ell: Ellipsoid = None,
-                 deg: bool = True) -> Tuple[float, float, float]:
+                 deg: bool = True):
     """
     gives geodetic coordinates of a point with az, el, range
     from an observer at lat0, lon0, h0
@@ -136,7 +135,7 @@ def aer2geodetic(az: float, el: float, srange: float,
 
 def aer2ecef(az: float, el: float, srange: float,
              lat0: float, lon0: float, alt0: float,
-             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+             ell: Ellipsoid = None, deg: bool = True):
     """
     converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
 

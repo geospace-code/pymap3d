@@ -26,9 +26,15 @@ Includes some relevant
 
 ## Prerequisites
 
-* Python &ge; 3.5 or PyPy3
+Python &ge; 3.4
+
+or
+
+PyPy3
 
 References to Numpy and AstroPy are *optional*, algorithms from Vallado and Meeus are used if AstroPy is not present.
+PyMap3D is regularly tested with Python &ge; 3.5.
+Limited Python 3.4 support is available for systems using MicroPython or other cases where a current Python version isn't available.
 
 
 ## Install
