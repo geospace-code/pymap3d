@@ -11,7 +11,8 @@
 
 # Python 3-D coordinate conversions
 
-3-D geographic coordinate conversions, with API similar to popular $1000 Matlab Mapping Toolbox routines for:
+Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions.
+API similar to popular $1000 Matlab Mapping Toolbox routines for:
 
 * Python
 * [Matlab, GNU Octave](https://github.com/scivision/matmap3d)
@@ -27,7 +28,7 @@ Includes some relevant
 
 * Python &ge; 3.5 or PyPy3
 
-References to AstroPy are *optional*, algorithms from Vallado and Meeus are used if AstroPy is not present.
+References to Numpy and AstroPy are *optional*, algorithms from Vallado and Meeus are used if AstroPy is not present.
 
 
 ## Install

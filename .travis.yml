@@ -9,13 +9,15 @@ git:
 python:
 - 3.7
 - 3.6
-- 3.5
 
 matrix:
   include:
   - os: linux
+    python: 3.5
+    install: pip install -e .[tests]
+  - os: linux
     python: 3.7
-    install: pip install -e .[tests,cov]
+    install: pip install -e .[tests,full,cov]
     script:
     - flake8
     - mypy .
@@ -33,7 +35,7 @@ matrix:
 #    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
 
-install: pip install -e .[tests]
+install: pip install -e .[tests,full]
 
 script: pytest -rsv
 

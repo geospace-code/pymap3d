@@ -3,7 +3,6 @@ Azimuth / elevation <==> Right ascension, declination
 """
 from typing import Tuple
 from datetime import datetime
-import numpy as np
 from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
 from .timeconv import str2dt  # astropy can't handle xarray times (yet)
 try:
@@ -30,7 +29,7 @@ def azel2radec(az_deg: float, el_deg: float,
               observer latitude [-90, 90]
     lon_deg : float
               observer longitude [-180, 180] (degrees)
-    time : datetime.datetime
+    time : datetime.datetime or str
            time of observation
     usevallado : bool, optional
                  default use astropy. If true, use Vallado algorithm
@@ -72,7 +71,7 @@ def radec2azel(ra_deg: float, dec_deg: float,
               observer latitude [-90, 90]
     lon_deg : float
               observer longitude [-180, 180] (degrees)
-    time : datetime.datetime
+    time : datetime.datetime or str
            time of observation
     usevallado : bool, optional
                  default use astropy. If true, use Vallado algorithm
@@ -87,17 +86,12 @@ def radec2azel(ra_deg: float, dec_deg: float,
 
     if usevallado or Time is None:
         return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
-# %% input trapping
-    lat = np.atleast_1d(lat_deg)
-    lon = np.atleast_1d(lon_deg)
-    ra = np.atleast_1d(ra_deg)
-    dec = np.atleast_1d(dec_deg)
 
-    obs = EarthLocation(lat=lat * u.deg,
-                        lon=lon * u.deg)
+    obs = EarthLocation(lat=lat_deg * u.deg,
+                        lon=lon_deg * u.deg)
 
-    points = SkyCoord(Angle(ra, unit=u.deg),
-                      Angle(dec, unit=u.deg),
+    points = SkyCoord(Angle(ra_deg, unit=u.deg),
+                      Angle(dec_deg, unit=u.deg),
                       equinox='J2000.0')
 
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(str2dt(time))))
