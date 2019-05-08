@@ -37,34 +37,24 @@ def test_anglesep_meeus():
     assert pmh.anglesep_meeus(35, 23, 84, 20) == approx(ha)
 
 
-def test_eci_astropy():
-    pytest.importorskip('astropy')
-
+@pytest.mark.parametrize('useastropy', [True, False])
+def test_eci_geodetic(useastropy):
     t = '2013-01-15T12:00:05'
-    lla = pm.eci2geodetic(*eci0, t)
+    lla = pm.eci2geodetic(*eci0, t, useastropy=useastropy)
     assert lla == approx(lla0, rel=0.2)
 
-    aer1 = pm.eci2aer(*eci0, 42, -100, 0, t)
-    assert aer1 == approx([83.73050, -6.614478, 1.473510e6])
 
-    assert pm.aer2eci(*aer1, 42, -100, 0, t) == approx(eci0)
-
-    with pytest.raises(ValueError):
-        pm.aer2eci(aer1[0], aer1[1], -1, 42, -100, 0, t)
-
-
-def test_eci_vallado():
+@pytest.mark.parametrize('useastropy', [True, False])
+def test_eci_aer(useastropy):
     t = '2013-01-15T12:00:05'
-    lla = pm.eci2geodetic(*eci0, t, useastropy=False)
-    assert lla == approx(lla0, rel=0.2)
 
-    aer1 = pm.eci2aer(*eci0, 42, -100, 0, t, useastropy=False)
+    aer1 = pm.eci2aer(*eci0, 42, -100, 0, t, useastropy=useastropy)
     assert aer1 == approx([83.73050, -6.614478, 1.473510e6], rel=0.001)
 
-    assert pm.aer2eci(*aer1, 42, -100, 0, t, useastropy=False) == approx(eci0, rel=0.001)
+    assert pm.aer2eci(*aer1, 42, -100, 0, t, useastropy=useastropy) == approx(eci0, rel=0.001)
 
     with pytest.raises(ValueError):
-        pm.aer2eci(aer1[0], aer1[1], -1, 42, -100, 0, t, useastropy=False)
+        pm.aer2eci(aer1[0], aer1[1], -1, 42, -100, 0, t, useastropy=useastropy)
 
 
 if __name__ == '__main__':
