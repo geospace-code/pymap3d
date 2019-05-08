@@ -1,7 +1,6 @@
 """ transforms involving AER: azimuth, elevation, slant range"""
 from typing import Tuple
 from datetime import datetime
-import numpy as np
 from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .eci import eci2ecef, ecef2eci
@@ -134,7 +133,7 @@ def aer2geodetic(az: float, el: float, srange: float,
     return ecef2geodetic(x, y, z, ell=ell, deg=deg)
 
 
-def eci2aer(eci: Tuple[float, float, float],
+def eci2aer(x: float, y: float, z: float,
             lat0: float, lon0: float, h0: float,
             t: datetime,
             useastropy: bool = True) -> Tuple[float, float, float]:
@@ -144,8 +143,12 @@ def eci2aer(eci: Tuple[float, float, float],
     Parameters
     ----------
 
-    eci : tuple
-          [meters] Nx3 target ECI location (x,y,z)
+    x : float
+        ECI x-location [meters]
+    y : float
+        ECI y-location [meters]
+    z : float
+        ECI z-location [meters]
     lat0 : float
            Observer geodetic latitude
     lon0 : float
@@ -165,15 +168,15 @@ def eci2aer(eci: Tuple[float, float, float],
     srange : float
          slant range [meters]
     """
-    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy))
+    xecef, yecef, zecef = eci2ecef(x, y, z, t, useastropy=useastropy)
 
-    return ecef2aer(ecef[:, 0], ecef[:, 1], ecef[:, 2], lat0, lon0, h0)
+    return ecef2aer(xecef, yecef, zecef, lat0, lon0, h0)
 
 
 def aer2eci(az: float, el: float, srange: float,
             lat0: float, lon0: float, h0: float, t: datetime,
             ell=None, deg: bool = True,
-            useastropy: bool = True) -> np.ndarray:
+            useastropy: bool = True) -> Tuple[float, float, float]:
     """
     gives ECI of a point from an observer at az, el, slant range
 
@@ -212,7 +215,7 @@ def aer2eci(az: float, el: float, srange: float,
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
-    return ecef2eci(np.column_stack((x, y, z)), t, useastropy)
+    return ecef2eci(x, y, z, t, useastropy=useastropy)
 
 
 def aer2ecef(az: float, el: float, srange: float,

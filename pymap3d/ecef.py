@@ -381,15 +381,19 @@ def uvw2enu(u: float, v: float, w: float,
     return East, North, Up
 
 
-def eci2geodetic(eci: np.ndarray, t: datetime,
+def eci2geodetic(x: float, y: float, z: float, t: datetime,
                  useastropy: bool = True) -> Tuple[float, float, float]:
     """
     convert ECI to geodetic coordinates
 
     Parameters
     ----------
-    eci : tuple of float
-          [meters] Nx3 target ECI location (x,y,z)
+    x : float
+        ECI x-location [meters]
+    y : float
+        ECI y-location [meters]
+    z : float
+        ECI z-location [meters]
     t : datetime.datetime, float
           length N vector of datetime OR greenwich sidereal time angle [radians].
 
@@ -411,9 +415,9 @@ def eci2geodetic(eci: np.ndarray, t: datetime,
 
     eci2geodetic() a.k.a. eci2lla()
     """
-    ecef = np.atleast_2d(eci2ecef(eci, t, useastropy=useastropy))
+    xecef, yecef, zecef = eci2ecef(x, y, z, t, useastropy=useastropy)
 
-    return np.asarray(ecef2geodetic(ecef[:, 0], ecef[:, 1], ecef[:, 2])).squeeze()
+    return ecef2geodetic(xecef, yecef, zecef)
 
 
 def enu2ecef(e1: float, n1: float, u1: float,
