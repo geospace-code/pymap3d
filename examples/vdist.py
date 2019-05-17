@@ -12,7 +12,8 @@ def main():
     P = p.parse_args()
 
     dist_m = vdist(P.lat1, P.lon1, P.lat2, P.lon2)
-    print('distance between WGS-84 points: {} m'.format(dist_m))
+
+    print('{:.3f} {:.3f} {:.3f}'.format(*dist_m))
 
 
 if __name__ == '__main__':  # pragma: no cover

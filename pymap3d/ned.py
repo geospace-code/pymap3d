@@ -1,6 +1,7 @@
 """ Transforms involving NED North East Down """
 from .enu import geodetic2enu, aer2enu, enu2aer
-from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef, Ellipsoid
+from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
+from .ellipsoid import Ellipsoid
 from typing import Tuple
 
 

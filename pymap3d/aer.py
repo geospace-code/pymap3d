@@ -1,9 +1,10 @@
 """ transforms involving AER: azimuth, elevation, slant range"""
 from typing import Tuple
 from datetime import datetime
-from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw, Ellipsoid
+from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .eci import eci2ecef, ecef2eci
+from .ellipsoid import Ellipsoid
 
 __all__ = ['aer2ecef', 'ecef2aer', 'geodetic2aer', 'aer2geodetic']
 

@@ -3,7 +3,8 @@ from typing import Tuple
 import numpy as np
 from math import pi
 from .aer import aer2enu
-from .ecef import enu2uvw, geodetic2ecef, Ellipsoid, ecef2geodetic
+from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
+from .ellipsoid import Ellipsoid
 
 __all__ = ['lookAtSpheroid']
 

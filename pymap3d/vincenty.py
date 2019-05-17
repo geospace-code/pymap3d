@@ -6,7 +6,7 @@ from typing import Tuple
 import logging
 from numpy import arctan, sqrt, tan, sign, sin, cos, arctan2, arcsin, nan, pi
 import numpy as np
-from .ecef import Ellipsoid
+from .ellipsoid import Ellipsoid
 
 __all__ = ['vdist', 'vreckon', 'track2']
 

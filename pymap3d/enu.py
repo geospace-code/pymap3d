@@ -7,7 +7,8 @@ try:
 except ImportError:
     tau = 2 * np.pi
 
-from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu, Ellipsoid
+from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
+from .ellipsoid import Ellipsoid
 
 
 __all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']

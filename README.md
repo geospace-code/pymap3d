@@ -1,4 +1,5 @@
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
+
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
 [![image](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
 [![image](https://travis-ci.org/scivision/pymap3d.svg?branch=master)](https://travis-ci.org/scivision/pymap3d)
@@ -84,6 +85,8 @@ lla = pm.aer2geodetic(*aer,*obslla)
 where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
 
 
+Example scripts are in the [examples](./examples) directory.
+
 ### Functions
 
 Popular mapping toolbox functions ported to Python include the
@@ -109,12 +112,12 @@ Additional functions:
 
 Abbreviations:
 
--   [AER: Azimuth, Elevation, Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
--   [ECEF: Earth-centered, Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
--   [ECI: Earth-centered Inertial](https://en.wikipedia.org/wiki/Earth-centered_inertial)
--   [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
--   [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
--   [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
+* [AER: Azimuth, Elevation, Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
+* [ECEF: Earth-centered, Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
+* [ECI: Earth-centered Inertial](https://en.wikipedia.org/wiki/Earth-centered_inertial)
+* [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
+* [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
+* [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
 
 ### Caveats
 
@@ -126,14 +129,11 @@ Abbreviations:
 
 As compared to [PyProj](https://github.com/jswhit/pyproj):
 
--   PyMap3D does not require anything beyond pure Python + Numpy.
--   PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
--   PyMap3D intrinsically handles local coordinate systems such as ENU,
-    while for PyProj ENU requires some [additional
-    effort](https://github.com/jswhit/pyproj/issues/105).
--   PyProj is oriented towards points on the planet surface, while
-    PyMap3D handles points on or above the planet surface equally well,
-    particularly important for airborne vehicles and remote sensing.
+* PyMap3D does not require anything beyond pure Python -- not even Numpy is required for basic functions.
+* PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
+* PyMap3D intrinsically handles local coordinate systems such as ENU,
+  while PyProj ENU requires some [additional effort](https://github.com/jswhit/pyproj/issues/105).
+* PyProj is oriented towards points on the planet surface, while PyMap3D handles points on or above the planet surface equally well, particularly important for airborne vehicles and remote sensing.
 
 ### AstroPy.Units.Quantity
 
