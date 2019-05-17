@@ -106,8 +106,8 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     if ((abs(lat1) > 90) | (abs(lat2) > 90)).any():
         raise ValueError('Input latitudes must be in [-90, 90] degrees.')
 # %% Supply WGS84 earth ellipsoid axis lengths in meters:
-    a = ell.a
-    b = ell.b
+    a = ell.semimajor_axis
+    b = ell.semiminor_axis
 # %% preserve true input latitudes:
     lat1tr = lat1.copy()
     lat2tr = lat2.copy()
@@ -312,9 +312,9 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float,
         raise ValueError('VRECKON: Variable ranges are only allowed for a single point.')
 
     if ell is not None:
-        a = ell.a
-        b = ell.b
-        f = ell.f
+        a = ell.semimajor_axis
+        b = ell.semiminor_axis
+        f = ell.flattening
     else:   # Supply WGS84 earth ellipsoid axis lengths in meters:
         a = 6378137                 # semimajor axis
         b = 6356752.31424518   # WGS84 earth flattening coefficient definition

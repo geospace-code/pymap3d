@@ -54,9 +54,9 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
 
     tilt = np.asarray(tilt)
 
-    a = ell.a
-    b = ell.a
-    c = ell.b
+    a = ell.semimajor_axis
+    b = ell.semimajor_axis
+    c = ell.semiminor_axis
 
     el = tilt - 90. if deg else tilt - pi / 2
 

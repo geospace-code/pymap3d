@@ -18,7 +18,9 @@ xyz0 = (660675.2518247,
 aer0 = (33, 70, 1000)
 raer0 = (np.radians(aer0[0]), np.radians(aer0[1]), aer0[2])
 
-E = pm.Ellipsoid()
+ELL = pm.Ellipsoid()
+A = ELL.semimajor_axis
+B = ELL.semiminor_axis
 
 atol_dist = 1e-6  # 1 micrometer
 
@@ -56,11 +58,11 @@ def test_scalar_ecef2geodetic(xyz):
 
 
 @pytest.mark.parametrize('xyz',
-                         [(0, E.a, 50),
-                          ([0], [E.a], [50]),
-                          (np.array(0), np.array(E.a), np.array(50)),
-                          (np.array([0]), np.array([E.a]), np.array([50])),
-                          (np.atleast_3d(0), np.atleast_3d(E.a), np.atleast_3d(50))],
+                         [(0, A, 50),
+                          ([0], [A], [50]),
+                          (np.array(0), np.array(A), np.array(50)),
+                          (np.array([0]), np.array([A]), np.array([50])),
+                          (np.atleast_3d(0), np.atleast_3d(A), np.atleast_3d(50))],
                          ids=('scalar', 'list', '0d', '1d', '3d'))
 def test_scalar_aer_enu(xyz):
     """
@@ -68,7 +70,7 @@ def test_scalar_aer_enu(xyz):
     """
     enu = pm.ecef2enu(*xyz, 0, 90, -100)
 
-    assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, E.a, 50])
+    assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])
 
 
 def test_xarray():
@@ -118,26 +120,26 @@ def test_ecef():
     assert pm.ecef2geodetic(*xyz) == approx(lla0)
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
 
-    assert pm.ecef2geodetic((E.a - 1) / np.sqrt(2),
-                            (E.a - 1) / np.sqrt(2), 0) == approx([0, 45, -1])
+    assert pm.ecef2geodetic((A - 1) / np.sqrt(2),
+                            (A - 1) / np.sqrt(2), 0) == approx([0, 45, -1])
 
 
-@pytest.mark.parametrize('lla, xyz', [((0, 0, -1), (E.a - 1, 0, 0)),
-                                      ((0, 90, -1), (0, E.a - 1, 0)),
-                                      ((0, -90, -1), (0, -E.a + 1, 0)),
-                                      ((90, 0, -1), (0, 0, E.b - 1)),
-                                      ((90, 15, -1), (0, 0, E.b - 1)),
-                                      ((-90, 0, -1), (0, 0, -E.b + 1))
+@pytest.mark.parametrize('lla, xyz', [((0, 0, -1), (A - 1, 0, 0)),
+                                      ((0, 90, -1), (0, A - 1, 0)),
+                                      ((0, -90, -1), (0, -A + 1, 0)),
+                                      ((90, 0, -1), (0, 0, B - 1)),
+                                      ((90, 15, -1), (0, 0, B - 1)),
+                                      ((-90, 0, -1), (0, 0, -B + 1))
                                       ])
 def test_geodetic2ecef(lla, xyz):
     assert pm.geodetic2ecef(*lla) == approx(xyz, abs=atol_dist)
 
 
-@pytest.mark.parametrize('xyz, lla', [((E.a - 1, 0, 0), (0, 0, -1)),
-                                      ((0, E.a - 1, 0), (0, 90, -1)),
-                                      ((0, 0, E.b - 1), (90, 0, -1)),
-                                      ((0, 0, -E.b + 1), (-90, 0, -1)),
-                                      ((-E.a + 1, 0, 0), (0, 180, -1)),
+@pytest.mark.parametrize('xyz, lla', [((A - 1, 0, 0), (0, 0, -1)),
+                                      ((0, A - 1, 0), (0, 90, -1)),
+                                      ((0, 0, B - 1), (90, 0, -1)),
+                                      ((0, 0, -B + 1), (-90, 0, -1)),
+                                      ((-A + 1, 0, 0), (0, 180, -1)),
                                       ])
 def test_ecef2geodetic(xyz, lla):
     assert pm.ecef2geodetic(*xyz) == approx(lla)

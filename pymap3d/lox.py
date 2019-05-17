@@ -37,7 +37,7 @@ def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
     if ell is None:
         ell = Ellipsoid()
 
-    f = ell.f  # flattening of ellipsoid
+    f = ell.flattening  # flattening of ellipsoid
 
     if deg is True:
         lat = np.deg2rad(lat)
@@ -96,8 +96,8 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     if ell is None:
         ell = Ellipsoid()
 
-    a = ell.a
-    f = ell.f  # flattening of ellipsoid
+    a = ell.semimajor_axis
+    f = ell.flattening  # flattening of ellipsoid
 
     e2 = f * (2 - f)  # eccentricity-squared
 

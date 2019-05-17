@@ -1,5 +1,6 @@
 """
 for strictly pure Python (no Numpy) only modules
+Python >= 3.4
 """
 import pytest
 from pytest import approx

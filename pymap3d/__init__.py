@@ -30,7 +30,18 @@ Companion packages exist for:
 * Matlab / GNU Octave: [Matmap3D](https://github.com/scivision/matmap3d)
 * Fortran: [Maptran3D](https://github.com/scivision/maptran3d)
 """
-try:
+import sys
+
+if sys.version_info >= (3, 5):
+    try:
+        import numpy
+        import dateutil  # noqa: F401
+    except ImportError:
+        numpy = None
+else:
+    numpy = None
+
+if numpy is not None:
     from .timeconv import str2dt  # noqa: F401
     from .azelradec import radec2azel, azel2radec  # noqa: F401
     from .eci import eci2ecef, ecef2eci  # noqa: F401
@@ -41,5 +52,5 @@ try:
     from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic, eci2aer, aer2eci  # noqa: F401
     from .los import lookAtSpheroid  # noqa: F401
     from .lox import isometric, meridian_dist, loxodrome_inverse  # noqa: F401
-except ImportError:  # pure Python only
+else:  # pure Python only
     from .math import *  # type: ignore  # noqa: F401, F403

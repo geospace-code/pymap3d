@@ -1,95 +1,15 @@
 """ Transforms involving ECEF: earth-centered, earth-fixed frame """
 from math import radians, sin, cos, tan, hypot, degrees, sqrt, pi
 from math import atan as arctan, atan2 as arctan2
+from ..ellipsoid import Ellipsoid
 
 tau = 2 * pi
 
-__all__ = ['Ellipsoid', 'geodetic2ecef', 'ecef2geodetic', 'ecef2enuv', 'ecef2enu', 'enu2uvw', 'uvw2enu', 'enu2ecef']
+__all__ = ['geodetic2ecef', 'ecef2geodetic', 'ecef2enuv', 'ecef2enu', 'enu2uvw', 'uvw2enu', 'enu2ecef']
 
 
-class Ellipsoid:
-    """
-    generate reference ellipsoid parameters
-
-    https://en.wikibooks.org/wiki/PROJ.4#Spheroid
-
-    https://tharsis.gsfc.nasa.gov/geodesy.html
-
-    https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
-    """
-
-    def __init__(self, model: str = 'wgs84'):
-        """
-        feel free to suggest additional ellipsoids
-
-        Parameters
-        ----------
-        model : str
-                name of ellipsoid
-        """
-        if model == 'wgs84':
-            """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
-            self.a = 6378137.  # semi-major axis [m]
-            self.f = 1 / 298.2572235630  # flattening
-            self.b = self.a * (1 - self.f)  # semi-minor axis
-        elif model == 'grs80':
-            """https://en.wikipedia.org/wiki/GRS_80"""
-            self.a = 6378137.  # semi-major axis [m]
-            self.f = 1 / 298.257222100882711243  # flattening
-            self.b = self.a * (1 - self.f)  # semi-minor axis
-        elif model == 'clrk66':  # Clarke 1866
-            self.a = 6378206.4  # semi-major axis [m]
-            self.b = 6356583.8  # semi-minor axis
-            self.f = -(self.b / self.a - 1)
-        elif model == 'mars':  # https://tharsis.gsfc.nasa.gov/geodesy.html
-            self.a = 3396900
-            self.b = 3376097.80585952
-            self.f = 1 / 163.295274386012
-        elif model == 'moon':
-            self.a = 1738000.
-            self.b = self.a
-            self.f = 0.
-        elif model == 'venus':
-            self.a = 6051000.
-            self.b = self.a
-            self.f = 0.
-        elif model == 'pluto':
-            self.a = 1187000.
-            self.b = self.a
-            self.f = 0.
-        else:
-            raise NotImplementedError('{} model not implemented, let us know and we will add it (or make a pull request)'.format(model))
-
-
-def get_radius_normal(lat_radians: float, ell: Ellipsoid = None) -> float:
-    """
-    Compute normal radius of planetary body
-
-    Parameters
-    ----------
-
-    lat_radians : float
-        latitude in radians
-    ell : Ellipsoid, optional
-        reference ellipsoid
-
-    Returns
-    -------
-
-    radius : float
-        normal radius (meters)
-    """
-    if ell is None:
-        ell = Ellipsoid()
-
-    a = ell.a
-    b = ell.b
-
-    return a**2 / sqrt(a**2 * cos(lat_radians)**2 + b**2 * sin(lat_radians)**2)
-
-
-def geodetic2ecef(lat: float, lon: float, alt: float,
-                  ell: Ellipsoid = None, deg: bool = True):
+# def geodetic2ecef(lat: float, lon: float, alt: float, ell: Ellipsoid = None, deg: bool = True):
+def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
@@ -131,18 +51,18 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         raise ValueError('-90 <= lat <= 90')
 
     # radius of curvature of the prime vertical section
-    N = get_radius_normal(lat, ell)
+    N = ell.semimajor_axis**2 / sqrt(ell.semimajor_axis**2 * cos(lat)**2 + ell.semiminor_axis**2 * sin(lat)**2)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
     # coordinates.
     x = (N + alt) * cos(lat) * cos(lon)
     y = (N + alt) * cos(lat) * sin(lon)
-    z = (N * (ell.b / ell.a)**2 + alt) * sin(lat)
+    z = (N * (ell.semiminor_axis / ell.semimajor_axis)**2 + alt) * sin(lat)
 
     return x, y, z
 
 
-def ecef2geodetic(x: float, y: float, z: float,
-                  ell: Ellipsoid = None, deg: bool = True):
+# def ecef2geodetic(x: float, y: float, z: float, ell: Ellipsoid = None, deg: bool = True):
+def ecef2geodetic(x, y, z, ell=None, deg=True):
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -177,7 +97,7 @@ def ecef2geodetic(x: float, y: float, z: float,
 
     r = sqrt(x**2 + y**2 + z**2)
 
-    E = sqrt(ell.a**2 - ell.b**2)
+    E = sqrt(ell.semimajor_axis**2 - ell.semiminor_axis**2)
 
     # eqn. 4a
     u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2)**2 + 4 * E**2 * z**2))
@@ -190,20 +110,20 @@ def ecef2geodetic(x: float, y: float, z: float,
     Beta = arctan(huE / u * z / hypot(x, y))
 
     # eqn. 13
-    eps = ((ell.b * u - ell.a * huE + E**2) * sin(Beta)) / (ell.a * huE * 1 / cos(Beta) - E**2 * cos(Beta))
+    eps = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)) / (ell.semimajor_axis * huE * 1 / cos(Beta) - E**2 * cos(Beta))
 
     Beta += eps
 # %% final output
-    lat = arctan(ell.a / ell.b * tan(Beta))
+    lat = arctan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
 
     lon = arctan2(y, x)
 
     # eqn. 7
-    alt = hypot(z - ell.b * sin(Beta),
-                Q - ell.a * cos(Beta))
+    alt = hypot(z - ell.semiminor_axis * sin(Beta),
+                Q - ell.semimajor_axis * cos(Beta))
 
     # inside ellipsoid?
-    inside = x**2 / ell.a**2 + y**2 / ell.a**2 + z**2 / ell.b**2 < 1
+    inside = x**2 / ell.semimajor_axis**2 + y**2 / ell.semimajor_axis**2 + z**2 / ell.semiminor_axis**2 < 1
     if inside:
         alt = -alt
 
@@ -214,8 +134,8 @@ def ecef2geodetic(x: float, y: float, z: float,
     return lat, lon, alt
 
 
-def ecef2enuv(u: float, v: float, w: float,
-              lat0: float, lon0: float, deg: bool = True):
+# def ecef2enuv(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True):
+def ecef2enuv(u, v, w, lat0, lon0, deg=True):
     """
     VECTOR from observer to target  ECEF => ENU
 
@@ -258,9 +178,8 @@ def ecef2enuv(u: float, v: float, w: float,
     return uEast, vNorth, wUp
 
 
-def ecef2enu(x: float, y: float, z: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True):
+# def ecef2enu(x: float, y: float, z: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
     from observer to target, ECEF => ENU
 
@@ -298,8 +217,8 @@ def ecef2enu(x: float, y: float, z: float,
     return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
 
-def enu2uvw(east: float, north: float, up: float,
-            lat0: float, lon0: float, deg: bool = True):
+# def enu2uvw(east: float, north: float, up: float, lat0: float, lon0: float, deg: bool = True):
+def enu2uvw(east, north, up, lat0, lon0, deg=True):
     """
     Parameters
     ----------
@@ -332,8 +251,8 @@ def enu2uvw(east: float, north: float, up: float,
     return u, v, w
 
 
-def uvw2enu(u: float, v: float, w: float,
-            lat0: float, lon0: float, deg: bool = True):
+# def uvw2enu(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True):
+def uvw2enu(u, v, w, lat0, lon0, deg=True):
     """
     Parameters
     ----------
@@ -365,9 +284,8 @@ def uvw2enu(u: float, v: float, w: float,
     return East, North, Up
 
 
-def enu2ecef(e1: float, n1: float, u1: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True):
+# def enu2ecef(e1: float, n1: float, u1: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def enu2ecef(e1, n1, u1, lat0, lon0, h0, ell=None, deg=True):
     """
     ENU to ECEF
 

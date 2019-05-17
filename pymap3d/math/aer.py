@@ -1,14 +1,13 @@
 """ transforms involving AER: azimuth, elevation, slant range"""
 
-from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw, Ellipsoid
+from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
 from .enu import geodetic2enu, aer2enu, enu2aer
 
 __all__ = ['aer2ecef', 'ecef2aer', 'geodetic2aer', 'aer2geodetic']
 
 
-def ecef2aer(x: float, y: float, z: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True):
+# def ecef2aer(x: float, y: float, z: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def ecef2aer(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
     gives azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
@@ -48,9 +47,8 @@ def ecef2aer(x: float, y: float, z: float,
     return enu2aer(xEast, yNorth, zUp, deg=deg)
 
 
-def geodetic2aer(lat: float, lon: float, h: float,
-                 lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True):
+# def geodetic2aer(lat: float, lon: float, h: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def geodetic2aer(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
     """
     gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
 
@@ -89,10 +87,8 @@ def geodetic2aer(lat: float, lon: float, h: float,
     return enu2aer(e, n, u, deg=deg)
 
 
-def aer2geodetic(az: float, el: float, srange: float,
-                 lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None,
-                 deg: bool = True):
+# def aer2geodetic(az: float, el: float, srange: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def aer2geodetic(az, el, srange, lat0, lon0, h0, ell=None, deg=True):
     """
     gives geodetic coordinates of a point with az, el, range
     from an observer at lat0, lon0, h0
@@ -133,9 +129,8 @@ def aer2geodetic(az: float, el: float, srange: float,
     return ecef2geodetic(x, y, z, ell=ell, deg=deg)
 
 
-def aer2ecef(az: float, el: float, srange: float,
-             lat0: float, lon0: float, alt0: float,
-             ell: Ellipsoid = None, deg: bool = True):
+# def aer2ecef(az: float, el: float, srange: float, lat0: float, lon0: float, alt0: float, ell: Ellipsoid = None, deg: bool = True):
+def aer2ecef(az, el, srange, lat0, lon0, alt0, ell=None, deg=True):
     """
     converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
 

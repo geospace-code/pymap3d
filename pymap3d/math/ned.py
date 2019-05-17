@@ -1,12 +1,12 @@
 """ Transforms involving NED North East Down """
 from .enu import geodetic2enu, aer2enu, enu2aer
-from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef, Ellipsoid
+from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
 
 __all__ = ['aer2ned', 'ned2aer', 'ned2geodetic', 'ned2ecef', 'ecef2ned', 'geodetic2ned', 'ecef2nedv']
 
 
-def aer2ned(az: float, elev: float, slantRange: float,
-            deg: bool = True):
+# def aer2ned(az: float, elev: float, slantRange: float, deg: bool = True):
+def aer2ned(az, elev, slantRange, deg=True):
     """
     converts azimuth, elevation, range to target from observer to North, East, Down
 
@@ -36,8 +36,8 @@ def aer2ned(az: float, elev: float, slantRange: float,
     return n, e, -u
 
 
-def ned2aer(n: float, e: float, d: float,
-            deg: bool = True):
+# def ned2aer(n: float, e: float, d: float, deg: bool = True):
+def ned2aer(n, e, d, deg=True):
     """
     converts North, East, Down to azimuth, elevation, range
 
@@ -66,9 +66,8 @@ def ned2aer(n: float, e: float, d: float,
     return enu2aer(e, n, -d, deg=deg)
 
 
-def ned2geodetic(n: float, e: float, d: float,
-                 lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True):
+# def ned2geodetic(n: float, e: float, d: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def ned2geodetic(n, e, d, lat0, lon0, h0, ell=None, deg=True):
     """
     Converts North, East, Down to target latitude, longitude, altitude
 
@@ -108,9 +107,8 @@ def ned2geodetic(n: float, e: float, d: float,
     return ecef2geodetic(x, y, z, ell, deg=deg)
 
 
-def ned2ecef(n: float, e: float, d: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True):
+# def ned2ecef(n: float, e: float, d: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def ned2ecef(n, e, d, lat0, lon0, h0, ell=None, deg=True):
     """
     North, East, Down to target ECEF coordinates
 
@@ -147,9 +145,8 @@ def ned2ecef(n: float, e: float, d: float,
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
 
-def ecef2ned(x: float, y: float, z: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True):
+# def ecef2ned(x: float, y: float, z: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def ecef2ned(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     """
     Convert ECEF x,y,z to North, East, Down
 
@@ -189,9 +186,8 @@ def ecef2ned(x: float, y: float, z: float,
     return n, e, -u
 
 
-def geodetic2ned(lat: float, lon: float, h: float,
-                 lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True):
+# def geodetic2ned(lat: float, lon: float, h: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
+def geodetic2ned(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
     """
     convert latitude, longitude, altitude of target to North, East, Down from observer
 
@@ -231,9 +227,8 @@ def geodetic2ned(lat: float, lon: float, h: float,
     return n, e, -u
 
 
-def ecef2nedv(x: float, y: float, z: float,
-              lat0: float, lon0: float,
-              deg: bool = True):
+# def ecef2nedv(x: float, y: float, z: float, lat0: float, lon0: float, deg: bool = True):
+def ecef2nedv(x, y, z, lat0, lon0, deg=True):
     """
     for VECTOR between two points
 
