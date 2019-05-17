@@ -1,6 +1,6 @@
 """ isometric latitude, meridian distance """
 import numpy as np
-from .ecef import Ellipsoid
+from .ellipsoid import Ellipsoid
 
 
 def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
