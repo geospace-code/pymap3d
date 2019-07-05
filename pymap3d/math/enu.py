@@ -3,14 +3,15 @@ from math import radians, sin, cos, hypot, degrees, pi
 from math import atan2 as arctan2
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
+from ..ellipsoid import Ellipsoid  # noqa: F401
 
 tau = 2 * pi
 
 __all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']
 
 
-# def enu2aer(e: float, n: float, u: float, deg: bool = True):
 def enu2aer(e, n, u, deg=True):
+    # type: (float, float, float, bool) -> tuple
     """
     ENU to Azimuth, Elevation, Range
 
@@ -57,8 +58,8 @@ def enu2aer(e, n, u, deg=True):
     return az, elev, slantRange
 
 
-# def aer2enu(az: float, el: float, srange: float, deg: bool = True):
 def aer2enu(az, el, srange, deg=True):
+    # type: (float, float, float, bool) -> tuple
     """
     Azimuth, Elevation, Slant range to target to East, north, Up
 
@@ -94,8 +95,8 @@ def aer2enu(az, el, srange, deg=True):
     return r * sin(az), r * cos(az), srange * sin(el)
 
 
-# def enu2geodetic(e: float, n: float, u: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
 def enu2geodetic(e, n, u, lat0, lon0, h0, ell=None, deg=True):
+    # type: (float, float, float, float, float, float, Ellipsoid, bool) -> tuple
     """
     East, North, Up to target to geodetic coordinates
 
@@ -134,8 +135,8 @@ def enu2geodetic(e, n, u, lat0, lon0, h0, ell=None, deg=True):
     return ecef2geodetic(x, y, z, ell, deg=deg)
 
 
-# def geodetic2enu(lat: float, lon: float, h: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
 def geodetic2enu(lat, lon, h, lat0, lon0, h0, ell=None, deg=True):
+    # type: (float, float, float, float, float, float, Ellipsoid, bool) -> tuple
     """
     Parameters
     ----------

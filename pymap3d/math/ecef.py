@@ -8,8 +8,8 @@ tau = 2 * pi
 __all__ = ['geodetic2ecef', 'ecef2geodetic', 'ecef2enuv', 'ecef2enu', 'enu2uvw', 'uvw2enu', 'enu2ecef']
 
 
-# def geodetic2ecef(lat: float, lon: float, alt: float, ell: Ellipsoid = None, deg: bool = True):
 def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
+    # type: (float, float, float, Ellipsoid, bool) -> tuple
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
@@ -61,8 +61,8 @@ def geodetic2ecef(lat, lon, alt, ell=None, deg=True):
     return x, y, z
 
 
-# def ecef2geodetic(x: float, y: float, z: float, ell: Ellipsoid = None, deg: bool = True):
 def ecef2geodetic(x, y, z, ell=None, deg=True):
+    # type: (float, float, float, Ellipsoid, bool) -> tuple
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -134,8 +134,8 @@ def ecef2geodetic(x, y, z, ell=None, deg=True):
     return lat, lon, alt
 
 
-# def ecef2enuv(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True):
 def ecef2enuv(u, v, w, lat0, lon0, deg=True):
+    # type: (float, float, float, float, float, bool) -> tuple
     """
     VECTOR from observer to target  ECEF => ENU
 
@@ -178,8 +178,8 @@ def ecef2enuv(u, v, w, lat0, lon0, deg=True):
     return uEast, vNorth, wUp
 
 
-# def ecef2enu(x: float, y: float, z: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
 def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
+    # type: (float, float, float, float, float, float, Ellipsoid, bool) -> tuple
     """
     from observer to target, ECEF => ENU
 
@@ -217,8 +217,8 @@ def ecef2enu(x, y, z, lat0, lon0, h0, ell=None, deg=True):
     return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
 
-# def enu2uvw(east: float, north: float, up: float, lat0: float, lon0: float, deg: bool = True):
 def enu2uvw(east, north, up, lat0, lon0, deg=True):
+    # type: (float, float, float, float, float, bool) -> tuple
     """
     Parameters
     ----------
@@ -251,8 +251,8 @@ def enu2uvw(east, north, up, lat0, lon0, deg=True):
     return u, v, w
 
 
-# def uvw2enu(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True):
 def uvw2enu(u, v, w, lat0, lon0, deg=True):
+    # type: (float, float, float, float, float, bool) -> tuple
     """
     Parameters
     ----------
@@ -284,8 +284,8 @@ def uvw2enu(u, v, w, lat0, lon0, deg=True):
     return East, North, Up
 
 
-# def enu2ecef(e1: float, n1: float, u1: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True):
 def enu2ecef(e1, n1, u1, lat0, lon0, h0, ell=None, deg=True):
+    # type: (float, float, float, float, float, float, Ellipsoid, bool) -> tuple
     """
     ENU to ECEF
 
