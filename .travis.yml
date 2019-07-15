@@ -41,6 +41,7 @@ matrix:
     script:
     - flake8
     - mypy .
+    - pytest -r a -v
     after_success:
     - pytest --cov
     - coveralls
@@ -57,5 +58,5 @@ matrix:
 
 install: pip install -e .[tests,full]
 
-script: pytest -rsv
+script: pytest -r a -v
 

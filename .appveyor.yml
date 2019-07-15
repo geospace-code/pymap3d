@@ -18,5 +18,5 @@ install:
 - python --version
 - python -m pip install -e .[tests,full]
 
-test_script: python -m pytest -rsv
+test_script: python -m pytest -r a -v
 
