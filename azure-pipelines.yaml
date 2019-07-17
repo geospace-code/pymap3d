@@ -1,0 +1,50 @@
+strategy:
+  matrix:
+    linux_py37:
+      imageName: 'ubuntu-latest'
+      python.version: '3.7'
+    linux_py36:
+      imageName: 'ubuntu-latest'
+      python.version: '3.6'
+    mac:
+      imageName: 'macos-10.14'
+      python.version: '3.7'
+    windows:
+      imageName: 'windows-2019'
+      python.version: '3.7'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: $(python.version)
+
+- script: pip install -e .[tests,full,cov]
+  displayName: Dev install
+- script: flake8
+  displayName: PEP8
+- script: mypy .
+  displayName: Type Check
+- script: pytest -r a -v
+  condition: ne(variables['Agent.JobName'], 'Job linux_py37')
+  displayName: Pytest
+
+- script: pytest --junitxml=junit/test-results.xml --cov --cov-report=xml --cov-report=html
+  condition: eq(variables['Agent.JobName'], 'Job linux_py37')
+  displayName: PytestCoverage
+
+- task: PublishTestResults@2
+  condition: and(succeededOrFailed(), eq(variables['Agent.JobName'], 'Job linux_py37'))
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    testRunTitle: 'Publish test results for Python $(python.version)'
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/python?view=azure-devops#publish-code-coverage-results
+- task: PublishCodeCoverageResults@1
+  condition: and(succeeded(), eq(variables['Agent.JobName'], 'Job linux_py37'))
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'

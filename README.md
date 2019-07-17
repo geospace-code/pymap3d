@@ -1,6 +1,7 @@
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
-
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
+
+[![Build Status](https://dev.azure.com/mhirsch0512/PyMap3d/_apis/build/status/scivision.pymap3d?branchName=master)](https://dev.azure.com/mhirsch0512/PyMap3d/_build/latest?definitionId=3&branchName=master)
 [![image](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
 [![image](https://travis-ci.org/scivision/pymap3d.svg?branch=master)](https://travis-ci.org/scivision/pymap3d)
 [![image](https://coveralls.io/repos/github/scivision/pymap3d/badge.svg?branch=master)](https://coveralls.io/github/scivision/pymap3d?branch=master)
