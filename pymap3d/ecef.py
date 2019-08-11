@@ -126,7 +126,7 @@ def ecef2geodetic(x: float, y: float, z: float,
     eps = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)) / (ell.semimajor_axis * huE * 1 / cos(Beta) - E**2 * cos(Beta))
 
     Beta += eps
-# %% final output
+#  final output
     lat = arctan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
 
     lon = arctan2(y, x)

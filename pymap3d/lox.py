@@ -1,134 +1,16 @@
-""" isometric latitude, meridian distance """
 import numpy as np
 from .ellipsoid import Ellipsoid
+from typing import Tuple
+from .latitude import geodetic2isometric, geodetic2rectifying, rectifying2geodetic, geodetic2authalic, authalic2geodetic
+from .rsphere import rsphere_rectifying
+from .rcurve import rcurve_parallel
+from .util import wrapToPi, sph2cart, cart2sph
+from numpy import arctan, sqrt, tan, sign, sin, cos, arctan2, arcsin, nan, pi, radians, degrees
 
-
-def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
-    """
-     computes isometric latitude of a point on an ellipsoid
-
-     Parameters
-     ----------
-
-     lat : float or numpy.ndarray of float
-         geodetic latitude
-     ell : Ellipsoid, optional
-         reference ellipsoid (default WGS84)
-     deg : bool, optional
-         degrees input/output  (False: radians in/out)
-
-     Returns
-     -------
-
-     isolat : float or numpy.ndarray of float
-         isometric latiude
-
-     Notes
-     -----
-
-     Isometric latitude is an auxiliary latitude proportional to the spacing
-     of parallels of latitude on an ellipsoidal mercator projection.
-
-     Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
-     School of Mathematical and Geospatial Sciences, RMIT University,
-     January 2010
-    """
-
-    if ell is None:
-        ell = Ellipsoid()
-
-    f = ell.flattening  # flattening of ellipsoid
-
-    if deg is True:
-        lat = np.deg2rad(lat)
-
-    e2 = f * (2 - f)  # eccentricity-squared
-    e = np.sqrt(e2)  # eccentricity of ellipsoid
-
-    x = e * np.sin(lat)
-    y = (1 - x) / (1 + x)
-    z = np.pi / 4 + lat / 2
-
-#   calculate the isometric latitude
-    isolat = np.log(np.tan(z) * (y**(e / 2)))
-
-    if deg is True:
-        isolat = np.degrees(isolat)
-
-    return isolat
-
-
-def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
-    """
-    computes the meridian distance on an ellipsoid *from the equator* to a latitude.
-
-    Parameters
-    ----------
-
-    lat : float or numpy.ndarray of float
-        geodetic latitude
-    ell : Ellipsoid, optional
-         reference ellipsoid (default WGS84)
-    deg : bool, optional
-         degrees input/output  (False: radians in/out)
-
-    Results
-    -------
-
-    mdist : float or numpy.ndarray of float
-         meridian distance (degrees/radians)
-
-
-    Notes
-    -----
-
-    Formula given Baeschlin, C.F., 1948,
-    "Lehrbuch Der Geodasie", Orell Fussli Verlag, Zurich, pp.47-50.
-
-    Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
-    School of Mathematical and Geospatial Sciences, RMIT University, January 2010
-    """
-
-    if deg is True:
-        lat = np.radians(lat)
-
-    #   set ellipsoid parameters
-    if ell is None:
-        ell = Ellipsoid()
-
-    a = ell.semimajor_axis
-    f = ell.flattening  # flattening of ellipsoid
-
-    e2 = f * (2 - f)  # eccentricity-squared
-
-    # powers of eccentricity
-    e4 = e2 * e2
-    e6 = e4 * e2
-    e8 = e6 * e2
-    e10 = e8 * e2
-
-    # coefficients of series expansion for meridian distance
-    A = 1 + (3 / 4) * e2 + (45 / 64) * e4 + (175 / 256) * e6 + (11025 / 16384) * e8 + (43659 / 65536) * e10
-    B = (3 / 4) * e2 + (15 / 16) * e4 + (525 / 512) * e6 + (2205 / 2048) * e8 + (72765 / 65536) * e10
-    C = (15 / 64) * e4 + (105 / 256) * e6 + (2205 / 4096) * e8 + (10395 / 16384) * e10
-    D = (35 / 512) * e6 + (315 / 2048) * e8 + (31185 / 131072) * e10
-    E = (315 / 16384) * e8 + (3465 / 65536) * e10
-    F = (693 / 131072) * e10
-
-    term1 = A * lat
-    term2 = (B / 2) * np.sin(2 * lat)
-    term3 = (C / 4) * np.sin(4 * lat)
-    term4 = (D / 6) * np.sin(6 * lat)
-    term5 = (E / 8) * np.sin(8 * lat)
-    term6 = (F / 10) * np.sin(10 * lat)
-
-    mdist = a * (1 - e2) * (term1 - term2 + term3 - term4 + term5 - term6)
-
-    return mdist
-
+__all__ = ['loxodrome_inverse', 'loxodrome_direct', 'medianarc', 'departure', 'meanm']
 
 def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
-                      ell: Ellipsoid = None, deg: bool = True):
+                      ell: Ellipsoid = None, deg: bool = True)  -> Tuple[float, float]:
     """
     computes the arc length and azimuth of the loxodrome
     between two points on the surface of the reference ellipsoid
@@ -152,9 +34,9 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
     Results
     -------
 
-    lox_s : float or numpy.ndarray of float
+    dist : float or numpy.ndarray of float
         distance along loxodrome
-    az12 : float or numpy.ndarray of float
+    a12 : float or numpy.ndarray of float
         azimuth of loxodrome (degrees/radians)
 
     Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
@@ -180,23 +62,182 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
         lat1, lon1, lat2, lon2 = np.radians([lat1, lon1, lat2, lon2])
 
     # compute isometric latitude of P1 and P2
-    isolat1 = isometric(lat1, deg=False, ell=ell)
-    isolat2 = isometric(lat2, deg=False, ell=ell)
+    isolat1 = geodetic2isometric(lat1, deg=False, ell=ell)
+    isolat2 = geodetic2isometric(lat2, deg=False, ell=ell)
 
     # compute changes in isometric latitude and longitude between points
     disolat = isolat2 - isolat1
-    dlon = lon2 - lon1
+
+    dlon = abs(wrapToPi(lon2-lon1))
 
     # compute azimuth
-    az12 = np.arctan2(dlon, disolat)
+    a12 = np.arctan2(dlon, disolat)
+    cosaz = abs(cos(a12))
 
     # compute distance along loxodromic curve
-    m1 = meridian_dist(lat1, deg=False, ell=ell)
-    m2 = meridian_dist(lat2, deg=False, ell=ell)
-    dm = m2 - m1
-    lox_s = dm / np.cos(az12)
+    dist = meridianarc(lat2, lat1, deg=False, ell=ell) / cosaz
+
+    # consider degenerate case (directly east/west)
+    epsilon = 1e-10 
+    dist =  np.where(cosaz < epsilon,departure(lon1, lon2, (lat1+lat2)/2, ell, deg=False), dist)
 
     if deg is True:
-        az12 = np.degrees(az12) % 360.
+        a12 = np.degrees(a12) % 360.
 
-    return lox_s, az12
+    return dist, a12
+
+
+def loxodrome_direct(lat1: float, lon1: float, rng: float, a12: float,
+            ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+    """
+
+    Parameters
+    ----------
+
+    lat1 : float
+        inital geodetic latitude (degrees)
+    lon1 : float
+        initial geodetic longitude (degrees)
+    rng : float
+        ground distance (meters)
+    a12 : float
+        azimuth (degrees) clockwide from north.
+    ell : Ellipsoid, optional
+          reference ellipsoid
+
+    Results
+    -------
+
+    lat2 : float
+        final geodetic latitude (degrees)
+    lon2 : float
+        final geodetic longitude (degrees)
+    a21 : float
+        reverse azimuth (degrees), at final point facing back toward the intial point
+
+"""
+    if ell is None:
+        ell = Ellipsoid()
+
+    lat1 = np.atleast_1d(lat1)
+    lon1 = np.atleast_1d(lon1)
+    rng = np.atleast_1d(rng)
+    a12 = np.atleast_1d(a12)
+
+    if rng.ndim != 1 or a12.ndim != 1:
+        raise ValueError('Range and azimuth must be scalar or vector')
+
+    if lat1.size > 1 and rng.size > 1:
+        raise ValueError('LOXODROME_DIRECT: Variable ranges are only allowed for a single point.')
+
+    if rng.size != a12.size and rng.size == 1:
+        rng = np.broadcast_to(rng, a12.size)
+
+    if deg is True:
+        lat1, lon1, a12 = radians([lat1, lon1, a12])
+    
+    if abs(lat1) > (pi/2):
+        raise ValueError('LOXODROME_DIRECT: Input lat. must be between -90 and 90 deg., inclusive.')
+
+    # if range is negative, use inverse bearing
+    a12 = np.where(sign(rng) == -1, (a12 + pi) % (2*pi), a12)
+    rng = abs(rng)
+
+    #   compute rectifying sphere latitude and radius
+    reclat = geodetic2rectifying(lat1, ell, deg=False)
+
+    lat2  = np.zeros_like(lat1)    
+    lon2  = np.zeros_like(lon1)
+    epsilon = 1e-10     # Set tolerance (should set this for specific machine)
+
+    # correct azimuths at either pole.
+    a12 = np.where(lat1 >= (pi/2) - epsilon, pi, a12)
+    a12 = np.where(lat1 <= (-pi/2) + epsilon, 0,  a12)
+
+    # compute the new points
+    cosaz  = cos(a12)
+    lat2 = reclat + (rng/rsphere_rectifying(ell))*cosaz # compute rectifying latitude
+    lat2 = rectifying2geodetic(lat2,ell,deg=False) #  transform to geodetic latitude
+
+    # nudge latitudes near either pole
+    lat2 = np.where(lat2 >=  (pi/2) - epsilon, (pi/2) - epsilon, lat2)
+    lat2 = np.where(lat2 <=  (-pi/2) + epsilon, (-pi/2) + epsilon , lat2)
+    lat2 = np.where(abs(cosaz)<=epsilon, lat1, lat2)
+
+    newiso = geodetic2isometric(lat2,ell,deg=False)
+    iso    = geodetic2isometric(lat1,ell,deg=False)
+    
+    dlon = np.where(abs(cosaz)<=epsilon, sign(sin(a12)) * rng/rcurve_parallel(lat1, ell, deg=False), tan(a12) * (newiso - iso))
+    lon2 = lon1 + dlon
+
+    lon2 = wrapToPi(lon2)
+    a21 = (a12 + pi)%(2*pi)
+
+    if deg is True:
+        lat2, lon2, a21 = degrees([lat2, lon2, a21])
+
+    return lat2, lon2, a21
+
+def meridianarc(lat1: float, lat2: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    '''
+    Computes the meridian distance on an ellipsoid between two latitudes.
+
+    Parameters
+    ----------
+
+    lat1, lat2 : float or numpy.ndarray of float
+        geodetic latitudes
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Results
+    -------
+
+    dist : float or numpy.ndarray of float
+         distance (units same as ellipsoid)
+    '''
+
+    if deg is True:
+        lat1, lat2 = np.radians([lat1, lat2])
+
+    #   set ellipsoid parameters
+    if ell is None:
+        ell = Ellipsoid()
+    
+    rlat1 = geodetic2rectifying(lat1, ell, deg=False)
+    rlat2 = geodetic2rectifying(lat2, ell, deg=False)
+
+    return rsphere_rectifying(ell) * abs(rlat2 - rlat1)
+
+def departure(lon1: float, lon2: float, lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    '''
+    Computes is the distance along a specific parallel between two meridians.
+    '''
+
+    if ell is None:
+        ell = Ellipsoid()
+
+    if deg is True:
+        lon1, lon2, lat = np.radians([lon1, lon2, lat])
+    
+    return rcurve_parallel(lat, ell, deg=False) * abs(wrapToPi(lon2-lon1))
+
+
+def meanm(lat: float, lon: float, ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float]:
+    '''Computes geographic mean for geographic points on an ellipsoid'''
+    
+    if ell is None:
+        ell = Ellipsoid()
+
+    if deg is True:
+        lon, lat = radians([lon, lat])
+
+    lat = geodetic2authalic(lat)
+    x,y,z = sph2cart(lon,lat,np.ones_like(lat))
+    latbar, lonbar, _ =cart2sph(np.sum(x),np.sum(y),np.sum(z))
+    latbar = authalic2geodetic(latbar, ell, deg=False)
+    lonbar = wrapToPi(lonbar)
+
+    return latbar, lonbar

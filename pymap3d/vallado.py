@@ -68,7 +68,7 @@ def azel2radec(az_deg: float, el_deg: float,
     el = radians(el)
     lat = radians(lat)
     lon = radians(lon)
-# %% Vallado "algorithm 28" p 268
+#  Vallado "algorithm 28" p 268
     dec = arcsin(sin(el) * sin(lat) + cos(el) * cos(lat) * cos(az))
 
     lha = arctan2(-(sin(az) * cos(el)) / cos(dec),
@@ -135,11 +135,11 @@ def radec2azel(ra_deg: float, dec_deg: float,
     lon = radians(lon)
 
     lst = datetime2sidereal(time, lon)  # RADIANS
-# %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
+#  Eq. 4-11 p. 267 LOCAL HOUR ANGLE
     lha = lst - ra
-# %% #Eq. 4-12 p. 267
+#  #Eq. 4-12 p. 267
     el = arcsin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(lha))
-# %% combine Eq. 4-13 and 4-14 p. 268
+#  combine Eq. 4-13 and 4-14 p. 268
     az = arctan2(-sin(lha) * cos(dec) / cos(el),
                  (sin(dec) - sin(el) * sin(lat)) / (cos(el) * cos(lat)))
 

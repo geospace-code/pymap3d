@@ -86,7 +86,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     """
     if ell is None:
         ell = Ellipsoid()
-# %% prepare inputs
+#  prepare inputs
     lat1 = np.atleast_1d(Lat1)
     lat2 = np.atleast_1d(Lat2)
     lon1 = np.atleast_1d(Lon1)
@@ -102,21 +102,21 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
         if lat2.size == 1:
             lat2 = np.broadcast_to(lat2, lat1.shape)
             lon2 = np.broadcast_to(lon2, lon1.shape)
-# %% Input check:
+#  Input check:
     if ((abs(lat1) > 90) | (abs(lat2) > 90)).any():
         raise ValueError('Input latitudes must be in [-90, 90] degrees.')
-# %% Supply WGS84 earth ellipsoid axis lengths in meters:
+#  Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
     b = ell.semiminor_axis
-# %% preserve true input latitudes:
+#  preserve true input latitudes:
     lat1tr = lat1.copy()
     lat2tr = lat2.copy()
-# %% convert inputs in degrees to np.radians:
+#  convert inputs in degrees to np.radians:
     lat1 = np.radians(lat1)
     lon1 = np.radians(lon1)
     lat2 = np.radians(lat2)
     lon2 = np.radians(lon2)
-# %% correct for errors at exact poles by adjusting 0.6 millimeters:
+#  correct for errors at exact poles by adjusting 0.6 millimeters:
     kidx = abs(pi / 2 - abs(lat1)) < 1e-10
     if kidx.any():
         lat1[kidx] = sign(lat1[kidx]) * (pi / 2 - (1e-10))
@@ -203,7 +203,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
 
     dist_m = (b * A * (sigma - deltasigma))
 
-# %% From point #1 to point #2
+#  From point #1 to point #2
     # correct sign of lambda for azimuth calcs:
     lamb = abs(lamb)
     kidx = sign(sin(lon2 - lon1)) * sign(sin(lamb)) < 0
@@ -213,12 +213,12 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     a12 = arctan2(numer, denom)
     kidx = a12 < 0
     a12[kidx] = a12[kidx] + 2 * pi
-    # %% from poles
+    #  from poles
     a12[lat1tr <= -90] = 0
     a12[lat1tr >= 90] = pi
     az = np.degrees(a12)
 
-# %% From point #2 to point #1
+#  From point #2 to point #1
     # correct sign of lambda for azimuth calcs:
     lamb = abs(lamb)
     kidx = sign(sin(lon1 - lon2)) * sign(sin(lamb)) < 0
@@ -228,7 +228,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     a21 = arctan2(numer, denom)
     kidx = a21 < 0
     a21[kidx] = a21[kidx] + 2 * pi
-    # %% backwards from poles:
+    #  backwards from poles:
     a21[lat2tr >= 90] = pi
     a21[lat2tr <= -90] = 0.
     backaz = np.degrees(a21)
