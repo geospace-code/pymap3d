@@ -72,13 +72,13 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
 
     magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
 
-# %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
+#    Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     with np.errstate(invalid='ignore'):
         d = np.where(radical > 0,
                      (value - a * b * c * np.sqrt(radical)) / magnitude,
                      np.nan)
         d[d < 0] = np.nan
-# %% cartesian to ellipsodal
+#  cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
     return lat, lon, d

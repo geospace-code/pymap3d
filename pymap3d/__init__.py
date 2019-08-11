@@ -52,6 +52,10 @@ if numpy is not None:
     from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer  # noqa: F401
     from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic, eci2aer, aer2eci  # noqa: F401
     from .los import lookAtSpheroid  # noqa: F401
-    from .lox import isometric, meridian_dist, loxodrome_inverse  # noqa: F401
+    from .lox import loxodrome_direct, loxodrome_inverse, meridianarc, departure, meanm
+    from .latitude import geodetic2isometric, isometric2geodetic, geodetic2rectifying, rectifying2geodetic, geodetic2conformal, conformal2geodetic, geodetic2parametric, parametric2geodetic, geodetic2geocentric, geocentric2geodetic, geodetic2authalic, authalic2geodetic
+    from .rcurve import rcurve_meridian, rcurve_parallel, rcurve_transverse
+    from .rsphere import rsphere_authalic, rsphere_biaxial, rsphere_curve, rsphere_eqavol, rsphere_euler, rsphere_rectifying, rsphere_triaxial
+    from .util import wrapToPi, wrapTo2Pi, sph2cart, cart2sph, pol2cart, cart2pol
 else:  # pure Python only
     from .math import *  # type: ignore  # noqa: F401, F403

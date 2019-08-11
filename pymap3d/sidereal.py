@@ -44,9 +44,9 @@ def datetime2sidereal(time: datetime,
     usevallado = usevallado or Time is None
     if usevallado:
         jd = juliandate(str2dt(time))
-# %% Greenwich Sidereal time RADIANS
+#  Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
-# %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
+#  Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
         tsr = gst + lon_radians
     else:
         tsr = Time(time).sidereal_time(kind='apparent',
@@ -122,7 +122,7 @@ def julian2sidereal(Jdate: float) -> float:
 
     tsr = np.empty(jdate.size)
     for i, jd in enumerate(jdate):
-        # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+        #  Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
         tUT1 = (jd - 2451545.0) / 36525.
 
         # Eqn. 3-47 p. 188
