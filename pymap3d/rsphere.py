@@ -1,6 +1,6 @@
 """ compute radii of auxiliary spheres"""
 from .ellipsoid import Ellipsoid
-from numpy import radians, sin, cos, tan,  log, degrees, sqrt
+from numpy import radians, sin, cos, log, degrees, sqrt
 from .rcurve import rcurve_meridian, rcurve_transverse
 
 __all__ = ['rsphere_eqavol', 'rsphere_authalic', 'rsphere_rectifying', 'rsphere_euler', 'rsphere_curve', 'rsphere_triaxial', 'rsphere_biaxial']
