@@ -85,12 +85,6 @@ def isometric2geodetic(isolat, ell: Ellipsoid = None, deg: bool = True) -> float
     if ell is None:
         ell = Ellipsoid()
 
-    n = ell.thirdflattening
-    f1 = 3*n/2 - 27*n**3/32
-    f2 = 21*n**2/16 - 55*n**4/32
-    f3 = 151*n**3/96
-    f4 = 1097*n**4/512
-
     if deg is True:
         isolat = radians(isolat)
 
