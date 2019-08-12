@@ -456,7 +456,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float,
     if npts == 2:
         return [lat1, lat2], [lon1, lon2]
 
-    if deg is True:
+    if deg:
         rlat1, rlon1, rlat2, rlon2 = np.radians([lat1, lon1, lat2, lon2])
     else:
         rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
@@ -474,7 +474,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float,
     lonpt = lon1
     lons = [lonpt]
     lats = [latpt]
-    for n in range(npts - 2):
+    for _ in range(npts - 2):
         latptnew, lonptnew, _ = vreckon(latpt, lonpt, incdist, azimuth)
         _, azimuth, _ = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)
         lats.append(latptnew)
