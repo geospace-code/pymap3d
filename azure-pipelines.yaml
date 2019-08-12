@@ -60,18 +60,6 @@ stages:
 
 - stage: FallbackTests
   jobs:
-  - job: Py26fallback
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '2.6'
-        addToPath: true
-    - script: pip install -e .[tests]
-      displayName: 'Dev install'
-    - script: pytest tests/test_py27.py
-      displayName: PyTest
 
   - job: Py27fallback
     pool:
