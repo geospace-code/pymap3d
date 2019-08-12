@@ -35,6 +35,9 @@ Limited Python 2.6, 2.7 and 3.4 support is available for systems using MicroPyth
 
 ## Install
 
+If you choose to do the hard install as below, you will need Numpy.
+Only the development install allows missing Numpy.
+
 ```sh
 python3 -m pip install pymap3d
 ```

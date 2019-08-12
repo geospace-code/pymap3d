@@ -51,7 +51,7 @@ stages:
         addToPath: true
     - script: |
         python setup.py install
-        pip install $(project_name)[tests]
+        pip install $(project_name)[full,tests]
       displayName: hard install
     - script: |
         cd $HOME
