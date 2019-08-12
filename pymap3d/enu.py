@@ -1,15 +1,13 @@
 """ transforms involving ENU East North Up """
 from typing import Tuple
-from numpy import radians, sin, cos, hypot, arctan2, degrees
+from numpy import radians, sin, cos, hypot, arctan2, degrees, pi
 import numpy as np
-try:
-    from math import tau  # Python >= 3.6
-except ImportError:
-    tau = 2 * np.pi
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
 
+# py < 3.6 compatible
+tau = 2 * pi
 
 __all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']
 

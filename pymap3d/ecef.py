@@ -3,13 +3,12 @@ from numpy import radians, sin, cos, tan, arctan, hypot, degrees, arctan2, sqrt,
 import numpy as np
 from typing import Tuple
 from datetime import datetime
-try:
-    from math import tau  # py >= 3.6
-except ImportError:
-    tau = 2 * pi
 
 from .eci import eci2ecef
 from .ellipsoid import Ellipsoid
+
+# py < 3.6 compatible
+tau = 2 * pi
 
 __all__ = ['geodetic2ecef', 'ecef2geodetic', 'ecef2enuv', 'ecef2enu', 'enu2uvw', 'uvw2enu', 'eci2geodetic', 'enu2ecef']
 
