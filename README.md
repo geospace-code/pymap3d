@@ -2,10 +2,6 @@
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
 
 [![Build Status](https://dev.azure.com/mhirsch0512/PyMap3d/_apis/build/status/scivision.pymap3d?branchName=master)](https://dev.azure.com/mhirsch0512/PyMap3d/_build/latest?definitionId=3&branchName=master)
-[![image](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
-[![image](https://travis-ci.org/scivision/pymap3d.svg?branch=master)](https://travis-ci.org/scivision/pymap3d)
-[![image](https://coveralls.io/repos/github/scivision/pymap3d/badge.svg?branch=master)](https://coveralls.io/github/scivision/pymap3d?branch=master)
-[![image](https://ci.appveyor.com/api/projects/status/af479t19j66t8x5n?svg=true)](https://ci.appveyor.com/project/scivision/pymap3d)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability)](https://codeclimate.com/github/scivision/pymap3d/maintainability)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
@@ -26,15 +22,13 @@ Includes some relevant
 
 [API docs](https://scivision.github.io/pymap3d/)
 
+Thanks to our [contributors](./contributors.md).
+
 ## Prerequisites
 
-Python &ge; 2.6  (full features require Python &ge; 3.5)
-
-or
-
-PyPy3
-
-References to Numpy and AstroPy are *optional*, algorithms from Vallado and Meeus are used if AstroPy is not present.
+Python &ge; 2.6 is the bare minimum requirement to use core functions of PyMap3d.
+Full features require {Python &ge; 3.5, PyPy} and Numpy.
+AstroPy is optional; algorithms from Vallado and Meeus are used if AstroPy is not present.
 PyMap3D is regularly tested with Python &ge; 3.5.
 Limited Python 2.6, 2.7 and 3.4 support is available for systems using MicroPython or other cases where a current Python version isn't available.
 
@@ -42,20 +36,20 @@ Limited Python 2.6, 2.7 and 3.4 support is available for systems using MicroPyth
 ## Install
 
 ```sh
-pip install pymap3d
+python3 -m pip install pymap3d
 ```
 
 or for the latest development code:
+
 ```sh
 git clone https://github.com/scivision/pymap3d
-cd pymap3d
-pip install -e .
+
+pip install -e pymap3d
 ```
 
 One can verify Python functionality after installation by:
 ```sh
-pip install -e .[tests]
-pytest -rsv
+pytest -r a -v
 ```
 
 ## Usage

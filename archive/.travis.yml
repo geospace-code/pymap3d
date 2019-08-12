@@ -59,4 +59,3 @@ matrix:
 install: pip install -e .[tests,full]
 
 script: pytest -r a -v
-
