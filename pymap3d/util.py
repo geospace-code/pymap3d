@@ -25,7 +25,7 @@ def sph2cart(az: float, el: float, r: float) -> Tuple[float, float, float]:
     x = rcos_theta * cos(az)
     y = rcos_theta * sin(az)
     z = r * sin(el)
- return x, y, z
+    return x, y, z
 
 def wrapToPi(x: float) -> float:
     '''wraps angles to [-pi, pi)'''
