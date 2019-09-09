@@ -7,6 +7,7 @@ from datetime import datetime
 from .ellipsoid import Ellipsoid
 
 try:
+    import numpy
     from .eci import eci2ecef
 except ImportError:
     numpy = eci2ecef = None

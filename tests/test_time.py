@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
+from datetime import datetime
+
 from pymap3d.timeconv import str2dt
 import pymap3d.sidereal as pms
-from datetime import datetime
-import numpy as np
 
 t0 = datetime(2014, 4, 6, 8)
 
@@ -14,6 +14,7 @@ def test_juliantime():
 
 
 def test_types():
+    np = pytest.importorskip("numpy")
     assert str2dt(t0) == t0  # passthrough
     assert str2dt('2014-04-06T08:00:00') == t0
     ti = [str2dt('2014-04-06T08:00:00'), str2dt('2014-04-06T08:01:02')]
@@ -25,6 +26,7 @@ def test_types():
 
 
 def test_datetime64():
+    np = pytest.importorskip("numpy")
     t1 = np.datetime64(t0)
     assert str2dt(t1) == t0
 

@@ -1,23 +1,20 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
-import numpy as np
+from math import radians
 import pymap3d as pm
 
-pi = np.pi
-nan = np.nan
-
 lla0 = (42, -82, 200)
-rlla0 = (np.radians(lla0[0]), np.radians(lla0[1]), lla0[2])
+rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
 
 aer0 = (33, 70, 1000)
-raer0 = (np.radians(aer0[0]), np.radians(aer0[1]), aer0[2])
+raer0 = (radians(aer0[0]), radians(aer0[1]), aer0[2])
 
 # %% outcomes from matlab
 xyz0 = (660.6753e3, -4700.9487e3, 4245.738e3)  # geodetic2ecef
 
 lla1 = (42.002582, -81.997752, 1.1397018e3)  # aer2geodetic
-rlla1 = (np.radians(lla1[0]), np.radians(lla1[1]), lla1[2])
+rlla1 = (radians(lla1[0]), radians(lla1[1]), lla1[2])
 
 axyz0 = 660930.2, -4701424, 4246579.6  # aer2ecef
 

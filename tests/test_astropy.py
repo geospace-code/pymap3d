@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
-import numpy as np
+from math import radians
 import pymap3d as pm
 import pymap3d.sidereal as pmd
 import pymap3d.haversine as pmh
@@ -18,12 +18,18 @@ eci0 = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
 def test_sidereal(time):
     pytest.importorskip('astropy')
     # http://www.jgiesen.de/astro/astroJS/siderealClock/
-    assert pmd.datetime2sidereal(time, np.radians(lon), False) == approx(sra, rel=1e-5)
+    tsr = pmd.datetime2sidereal(time, radians(lon), False)
+    if isinstance(tsr, list):
+        tsr = tsr[0]
+    assert tsr == approx(sra, rel=1e-5)
 
 
 @pytest.mark.parametrize('time', [t0, [t0]], ids=('scalar', 'list'))
 def test_sidereal_vallado(time):
-    assert pmd.datetime2sidereal(time, np.radians(lon), True) == approx(sra, rel=1e-5)
+    tsr = pmd.datetime2sidereal(time, radians(lon), True)
+    if isinstance(tsr, list):
+        tsr = tsr[0]
+    assert tsr == approx(sra, rel=1e-5)
 
 
 def test_anglesep():
@@ -58,4 +64,4 @@ def test_eci_aer(useastropy):
 
 
 if __name__ == '__main__':
-    pytest.main(['-xrsv', __file__])
+    pytest.main(['-v', __file__])

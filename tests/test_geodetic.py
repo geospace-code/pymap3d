@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
-from math import radians, nan
-import numpy as np
+from math import radians, nan, sqrt, isnan
 
 import pymap3d as pm
 
 lla0 = (42, -82, 200)
 rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
 lla1 = (42.002582, -81.997752, 1.1397018e3)
-rlla1 = (np.radians(lla1[0]), np.radians(lla1[1]), lla1[2])
+rlla1 = (radians(lla1[0]), radians(lla1[1]), lla1[2])
 
 xyz0 = (660675.2518247,
         -4700948.68316,
         4245737.66222)
 
 aer0 = (33, 70, 1000)
-raer0 = (np.radians(aer0[0]), np.radians(aer0[1]), aer0[2])
+raer0 = (radians(aer0[0]), radians(aer0[1]), aer0[2])
 
 ELL = pm.Ellipsoid()
 A = ELL.semimajor_axis
@@ -27,11 +26,8 @@ atol_dist = 1e-6  # 1 micrometer
 
 @pytest.mark.parametrize('lla',
                          [(42, -82, 200),
-                          ([42], [-82], [200]),
-                          (np.array(42), np.array(-82), np.array(200)),
-                          (np.array([42]), np.array([-82]), np.array([200])),
-                          (np.atleast_3d(42), np.atleast_3d(-82), np.atleast_3d(200))],
-                         ids=('scalar', 'list', '0d', '1d', '3d'))
+                          ([42], [-82], [200])],
+                         ids=('scalar', 'list'))
 def test_scalar_geodetic2ecef(lla):
     """
     verify we can handle the wide variety of input data type users might use
@@ -41,13 +37,18 @@ def test_scalar_geodetic2ecef(lla):
     assert (x0, y0, z0) == approx(xyz0)
 
 
+def test_3d_geodetic2ecef():
+    np = pytest.importorskip("numpy")
+    lla = (np.atleast_3d(42), np.atleast_3d(-82), np.atleast_3d(200))
+    x0, y0, z0 = pm.geodetic2ecef(*lla)
+
+    assert (x0, y0, z0) == approx(xyz0)
+
+
 @pytest.mark.parametrize('xyz',
                          [(xyz0[0], xyz0[1], xyz0[2]),
-                          ([xyz0[0]], [xyz0[1]], [xyz0[2]]),
-                          (np.array(xyz0[0]), np.array(xyz0[1]), np.array(xyz0[2])),
-                          (np.array([xyz0[0]]), np.array([xyz0[1]]), np.array([xyz0[2]])),
-                          (np.atleast_3d(xyz0[0]), np.atleast_3d(xyz0[1]), np.atleast_3d(xyz0[2]))],
-                         ids=('scalar', 'list', '0d', '1d', '3d'))
+                          ([xyz0[0]], [xyz0[1]], [xyz0[2]])],
+                         ids=('scalar', 'list'))
 def test_scalar_ecef2geodetic(xyz):
     """
     verify we can handle the wide variety of input data type users might use
@@ -57,19 +58,33 @@ def test_scalar_ecef2geodetic(xyz):
     assert [lat, lon, alt] == approx(lla0, rel=1e-4)
 
 
+def test_3d_ecef2geodetic():
+    np = pytest.importorskip("numpy")
+    xyz = (np.atleast_3d(xyz0[0]), np.atleast_3d(xyz0[1]), np.atleast_3d(xyz0[2]))
+
+    lat, lon, alt = pm.ecef2geodetic(*xyz)
+
+    assert [lat, lon, alt] == approx(lla0, rel=1e-4)
+
+
 @pytest.mark.parametrize('xyz',
                          [(0, A, 50),
-                          ([0], [A], [50]),
-                          (np.array(0), np.array(A), np.array(50)),
-                          (np.array([0]), np.array([A]), np.array([50])),
-                          (np.atleast_3d(0), np.atleast_3d(A), np.atleast_3d(50))],
-                         ids=('scalar', 'list', '0d', '1d', '3d'))
+                          ([0], [A], [50])],
+                         ids=('scalar', 'list'))
 def test_scalar_aer_enu(xyz):
     """
     verify we can handle the wide variety of input data type users might use
     """
     enu = pm.ecef2enu(*xyz, 0, 90, -100)
 
+    assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])
+
+
+def test_3d_aer_enu():
+    np = pytest.importorskip("numpy")
+    xyz = (np.atleast_3d(0), np.atleast_3d(A), np.atleast_3d(50))
+
+    enu = pm.ecef2enu(*xyz, 0, 90, -100)
     assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])
 
 
@@ -119,8 +134,8 @@ def test_ecef():
     assert pm.ecef2geodetic(*xyz) == approx(lla0)
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
 
-    assert pm.ecef2geodetic((A - 1) / np.sqrt(2),
-                            (A - 1) / np.sqrt(2), 0) == approx([0, 45, -1])
+    assert pm.ecef2geodetic((A - 1) / sqrt(2),
+                            (A - 1) / sqrt(2), 0) == approx([0, 45, -1])
 
 
 @pytest.mark.parametrize('lla, xyz', [((0, 0, -1), (A - 1, 0, 0)),
@@ -161,8 +176,16 @@ def test_aer():
     assert pm.geodetic2aer(*rlla2, *rlla0, deg=False) == approx(raer0)
 
 
-def test_allnan():
+def test_scalar_nan():
+    a, e, r = pm.geodetic2aer(nan, nan, nan, *lla0)
+    assert isnan(a) and isnan(e) and isnan(r)
 
+    lat, lon, alt = pm.aer2geodetic(nan, nan, nan, *lla0)
+    assert isnan(lat) and isnan(lon) and isnan(alt)
+
+
+def test_allnan():
+    np = pytest.importorskip("numpy")
     anan = np.empty((10, 10))
     anan.fill(nan)
     assert np.isnan(pm.geodetic2aer(anan, anan, anan, *lla0)).all()
@@ -170,6 +193,7 @@ def test_allnan():
 
 
 def test_somenan():
+    np = pytest.importorskip("numpy")
     xyz = np.stack((xyz0, (nan, nan, nan)))
 
     lat, lon, alt = pm.ecef2geodetic(xyz[:, 0], xyz[:, 1], xyz[:, 2])

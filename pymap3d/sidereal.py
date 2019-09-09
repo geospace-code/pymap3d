@@ -2,7 +2,7 @@
 """ manipulations of sidereal time """
 from math import pi
 from datetime import datetime
-import numpy as np
+
 from .timeconv import str2dt
 try:
     from astropy.time import Time
@@ -41,6 +41,9 @@ def datetime2sidereal(time: datetime,
     tsr : float
         Sidereal time
     """
+    if isinstance(time, (tuple, list)):
+        return [datetime2sidereal(t, lon_radians) for t in time]
+
     usevallado = usevallado or Time is None
     if usevallado:
         jd = juliandate(str2dt(time))
@@ -74,27 +77,21 @@ def juliandate(time: datetime) -> float:
     jd : float
         Julian date
     """
+    if isinstance(time, (tuple, list)):
+        return list(map(juliandate, time))
 
-    times = np.atleast_1d(time)
-    assert times.ndim == 1
+    if time.month < 3:
+        year = time.year - 1
+        month = time.month + 12
+    else:
+        year = time.year
+        month = time.month
 
-    jd = np.empty(times.size)
-    for i, t in enumerate(times):
-        if t.month < 3:
-            year = t.year - 1
-            month = t.month + 12
-        else:
-            year = t.year
-            month = t.month
+    A = int(year / 100.0)
+    B = 2 - A + int(A / 4.)
+    C = ((time.second / 60. + time.minute) / 60. + time.hour) / 24.
 
-        A = int(year / 100.0)
-        B = 2 - A + int(A / 4.)
-        C = ((t.second / 60. + t.minute) / 60. + t.hour) / 24.
-
-        jd[i] = (int(365.25 * (year + 4716)) +
-                 int(30.6001 * (month + 1)) + t.day + B - 1524.5 + C)
-
-    return jd.squeeze()
+    return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
 
 def julian2sidereal(Jdate: float) -> float:
@@ -114,22 +111,16 @@ def julian2sidereal(Jdate: float) -> float:
 
     tsr : float
         Sidereal time
-
     """
+    if isinstance(Jdate, (tuple, list)):
+        return list(map(julian2sidereal, Jdate))
 
-    jdate = np.atleast_1d(Jdate)
-    assert jdate.ndim == 1
+    # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+    tUT1 = (Jdate - 2451545.0) / 36525.
 
-    tsr = np.empty(jdate.size)
-    for i, jd in enumerate(jdate):
-        # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
-        tUT1 = (jd - 2451545.0) / 36525.
+    # Eqn. 3-47 p. 188
+    gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
+                tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3)
 
-        # Eqn. 3-47 p. 188
-        gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
-                    tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3)
-
-        # 1/86400 and %(2*pi) implied by units of radians
-        tsr[i] = gmst_sec * (2 * pi) / 86400. % (2 * pi)
-
-    return tsr.squeeze()
+    # 1/86400 and %(2*pi) implied by units of radians
+    return gmst_sec * (2 * pi) / 86400. % (2 * pi)
