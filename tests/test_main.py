@@ -1,9 +1,4 @@
 #!/usr/bin/env python
-# Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
-
-"""
-runs tests
-"""
 import pytest
 from pytest import approx
 import numpy as np
@@ -36,28 +31,6 @@ ve, vn, vu = (5.368859646588048, 3.008520763668120, -0.352347711524077)
 ELL = pm.Ellipsoid()
 A = ELL.semimajor_axis
 B = ELL.semiminor_axis
-
-
-def test_losint():
-    az = [0., 10., 125.]
-
-    lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt=0.)
-    assert (lat[0] == lat).all() and (lon[0] == lon).all() and (sr[0] == sr).all()
-
-    assert (lat[0], lon[0], sr[0]) == approx(lla0)
-
-    with pytest.raises(ValueError):
-        pm.lookAtSpheroid(lla0[0], lla0[1], -1, az, 0)
-
-# %%
-    tilt = [30., 45., 90.]
-    lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt)
-
-    truth = np.array([[42.00103959, lla0[1], 230.9413173],
-                      [42.00177328, -81.9995808, 282.84715651],
-                      [nan, nan, nan]])
-
-    assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
 
 
 def test_aer_ecef():
@@ -97,8 +70,15 @@ def test_aer_enu():
     assert pm.enu2ecef(*enu, *lla0) == approx(xyz)
     assert pm.enu2ecef(*enu, *rlla0, deg=False) == approx(xyz)
 
-    assert pm.ecef2enu(*xyz, *lla0) == approx(enu)
-    assert pm.ecef2enu(*xyz, *rlla0, deg=False) == approx(enu)
+    e, n, u = pm.ecef2enu(*xyz, *lla0)
+    assert e == approx(enu[0])
+    assert n == approx(enu[1])
+    assert u == approx(enu[2])
+
+    e, n, u = pm.ecef2enu(*xyz, *rlla0, deg=False)
+    assert e == approx(enu[0])
+    assert n == approx(enu[1])
+    assert u == approx(enu[2])
 
 
 def test_ned():
@@ -117,7 +97,10 @@ def test_ned():
 
     assert pm.ned2aer(*ned) == approx(aer0)
 
-    assert pm.ecef2ned(*xyz, *lla0) == approx(ned)
+    n, e, d = pm.ecef2ned(*xyz, *lla0)
+    assert n == approx(ned[0])
+    assert e == approx(ned[1])
+    assert d == approx(ned[2])
 
     assert pm.ned2ecef(*ned, *lla0) == approx(xyz)
 # %%
@@ -131,9 +114,15 @@ def test_ned():
 
     assert pm.geodetic2ned(*lla, *lla0) == approx(ned3)
 
-    assert pm.enu2geodetic(*enu3, *lla0) == approx(lla)
+    lat, lon, alt = pm.enu2geodetic(*enu3, *lla0)
+    assert lat == approx(lla[0])
+    assert lon == approx(lla[1])
+    assert alt == approx(lla[2])
 
-    assert pm.ned2geodetic(*ned3, *lla0) == approx(lla)
+    lat, lon, alt = pm.ned2geodetic(*ned3, *lla0)
+    assert lat == approx(lla[0])
+    assert lon == approx(lla[1])
+    assert alt == approx(lla[2])
 
 
 if __name__ == '__main__':

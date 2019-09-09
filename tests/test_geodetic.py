@@ -80,14 +80,12 @@ def test_xarray():
     xyz = pm.geodetic2ecef(*xr_lla)
 
     assert xyz == approx(xyz0)
-    assert isinstance(xyz[0], xarray.DataArray)
 # %%
     xr_xyz = xarray.DataArray(list(xyz0))
 
     lla = pm.ecef2geodetic(*xr_xyz)
 
     assert lla == approx(lla0)
-    assert isinstance(lla[0], float)  # xarrayness is lost, possibly expensive to keep due to isinstance()
 
 
 def test_pandas():
@@ -97,22 +95,23 @@ def test_pandas():
     xyz = pm.geodetic2ecef(*pd_lla)
 
     assert xyz == approx(xyz0)
-    assert isinstance(xyz[0], float)  # series degenerates to scalars by pandas itself
 # %% dataframe degenerates to series
     pd_lla = pandas.DataFrame([[*lla0], [*lla0]], columns=['lat', 'lon', 'alt_m'])
     xyz = pm.geodetic2ecef(pd_lla['lat'], pd_lla['lon'], pd_lla['alt_m'])
 
-    assert xyz[0].values == approx(xyz0[0])
-    assert xyz[1].values == approx(xyz0[1])
-    assert xyz[2].values == approx(xyz0[2])
-    assert isinstance(xyz[0], pandas.Series)
+    assert xyz[0] == approx(xyz0[0])
+    assert xyz[1] == approx(xyz0[1])
+    assert xyz[2] == approx(xyz0[2])
 
 
 def test_ecef():
     xyz = pm.geodetic2ecef(*lla0)
 
     assert xyz == approx(xyz0)
-    assert pm.geodetic2ecef(*rlla0, deg=False) == approx(xyz)
+    x, y, z = pm.geodetic2ecef(*rlla0, deg=False)
+    assert x == approx(xyz[0])
+    assert y == approx(xyz[1])
+    assert z == approx(xyz[2])
 
     with pytest.raises(ValueError):
         pm.geodetic2ecef(-100, lla0[1], lla0[2])
@@ -142,7 +141,10 @@ def test_geodetic2ecef(lla, xyz):
                                       ((-A + 1, 0, 0), (0, 180, -1)),
                                       ])
 def test_ecef2geodetic(xyz, lla):
-    assert pm.ecef2geodetic(*xyz) == approx(lla)
+    lat, lon, alt = pm.ecef2geodetic(*xyz)
+    assert lat == approx(lla[0])
+    assert lon == approx(lla[1])
+    assert alt == approx(lla[2])
 
 
 def test_aer():

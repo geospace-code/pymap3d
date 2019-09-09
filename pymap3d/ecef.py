@@ -1,20 +1,32 @@
 """ Transforms involving ECEF: earth-centered, earth-fixed frame """
-from numpy import radians, sin, cos, tan, arctan, hypot, degrees, arctan2, sqrt, pi
-import numpy as np
+from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi
 from typing import Tuple
 from datetime import datetime
 
 from .eci import eci2ecef
 from .ellipsoid import Ellipsoid
 
+try:
+    import numpy
+except ImportError:
+    numpy = None
+
+
 # py < 3.6 compatible
 tau = 2 * pi
 
-__all__ = ['geodetic2ecef', 'ecef2geodetic', 'ecef2enuv', 'ecef2enu', 'enu2uvw', 'uvw2enu', 'eci2geodetic', 'enu2ecef']
+__all__ = ["geodetic2ecef", "ecef2geodetic", "ecef2enuv", "ecef2enu", "enu2uvw", "uvw2enu", "eci2geodetic", "enu2ecef"]
 
 
-def geodetic2ecef(lat: float, lon: float, alt: float,
-                  ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def geodetic2ecef(lat: float, lon: float, alt: float, ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+    if numpy is not None:
+        fun = numpy.vectorize(geodetic2ecef_point)
+        return fun(lat, lon, alt, ell, deg)
+    else:
+        return geodetic2ecef_point(lat, lon, alt, ell, deg)
+
+
+def geodetic2ecef_point(lat: float, lon: float, alt: float, ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
@@ -52,24 +64,29 @@ def geodetic2ecef(lat: float, lon: float, alt: float,
         lat = radians(lat)
         lon = radians(lon)
 
-    with np.errstate(invalid='ignore'):
-        # need np.any() to handle scalar and array cases
-        if np.any((lat < -pi / 2) | (lat > pi / 2)):
-            raise ValueError('-90 <= lat <= 90')
+    if (lat < -pi / 2) | (lat > pi / 2):
+        raise ValueError("-90 <= lat <= 90")
 
     # radius of curvature of the prime vertical section
-    N = ell.semimajor_axis**2 / sqrt(ell.semimajor_axis**2 * cos(lat)**2 + ell.semiminor_axis**2 * sin(lat)**2)
+    N = ell.semimajor_axis ** 2 / sqrt(ell.semimajor_axis ** 2 * cos(lat) ** 2 + ell.semiminor_axis ** 2 * sin(lat) ** 2)
     # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
     # coordinates.
     x = (N + alt) * cos(lat) * cos(lon)
     y = (N + alt) * cos(lat) * sin(lon)
-    z = (N * (ell.semiminor_axis / ell.semimajor_axis)**2 + alt) * sin(lat)
+    z = (N * (ell.semiminor_axis / ell.semimajor_axis) ** 2 + alt) * sin(lat)
 
     return x, y, z
 
 
-def ecef2geodetic(x: float, y: float, z: float,
-                  ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def ecef2geodetic(x: float, y: float, z: float, ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+    if numpy is not None:
+        fun = numpy.vectorize(ecef2geodetic_point)
+        return fun(x, y, z, ell, deg)
+    else:
+        return ecef2geodetic_point(x, y, z, ell, deg)
+
+
+def ecef2geodetic_point(x: float, y: float, z: float, ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -102,44 +119,43 @@ def ecef2geodetic(x: float, y: float, z: float,
     if ell is None:
         ell = Ellipsoid()
 
-    x = np.asarray(x)
-    y = np.asarray(y)
-    z = np.asarray(z)
+    r = sqrt(x ** 2 + y ** 2 + z ** 2)
 
-    r = sqrt(x**2 + y**2 + z**2)
-
-    E = sqrt(ell.semimajor_axis**2 - ell.semiminor_axis**2)
+    E = sqrt(ell.semimajor_axis ** 2 - ell.semiminor_axis ** 2)
 
     # eqn. 4a
-    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2)**2 + 4 * E**2 * z**2))
+    u = sqrt(0.5 * (r ** 2 - E ** 2) + 0.5 * sqrt((r ** 2 - E ** 2) ** 2 + 4 * E ** 2 * z ** 2))
 
     Q = hypot(x, y)
 
     huE = hypot(u, E)
 
     # eqn. 4b
-    with np.errstate(divide='ignore'):
-        Beta = arctan(huE / u * z / hypot(x, y))
+    try:
+        Beta = atan(huE / u * z / hypot(x, y))
+    except ZeroDivisionError:
+        if z >= 0:
+            Beta = pi / 2
+        else:
+            Beta = -pi / 2
 
     # eqn. 13
-    eps = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)) / (ell.semimajor_axis * huE * 1 / cos(Beta) - E**2 * cos(Beta))
+    eps = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E ** 2) * sin(Beta)) / (
+        ell.semimajor_axis * huE * 1 / cos(Beta) - E ** 2 * cos(Beta)
+    )
 
     Beta += eps
-# %% final output
-    lat = arctan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
+    # %% final output
+    lat = atan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
 
-    lon = arctan2(y, x)
+    lon = atan2(y, x)
 
     # eqn. 7
-    alt = hypot(z - ell.semiminor_axis * sin(Beta),
-                Q - ell.semimajor_axis * cos(Beta))
+    alt = hypot(z - ell.semiminor_axis * sin(Beta), Q - ell.semimajor_axis * cos(Beta))
 
     # inside ellipsoid?
-    with np.errstate(invalid='ignore'):
-        inside = x**2 / ell.semimajor_axis**2 + y**2 / ell.semimajor_axis**2 + z**2 / ell.semiminor_axis**2 < 1
-    if isinstance(inside, np.ndarray):
-        alt[inside] = -alt[inside]
-    elif inside:
+    inside = x ** 2 / ell.semimajor_axis ** 2 + y ** 2 / ell.semimajor_axis ** 2 + z ** 2 / ell.semiminor_axis ** 2 < 1
+    if inside:
         alt = -alt
 
     if deg:
@@ -149,8 +165,7 @@ def ecef2geodetic(x: float, y: float, z: float,
     return lat, lon, alt
 
 
-def ecef2enuv(u: float, v: float, w: float,
-              lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
+def ecef2enuv(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     VECTOR from observer to target  ECEF => ENU
 
@@ -193,9 +208,9 @@ def ecef2enuv(u: float, v: float, w: float,
     return uEast, vNorth, wUp
 
 
-def ecef2enu(x: float, y: float, z: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def ecef2enu(
+    x: float, y: float, z: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
     """
     from observer to target, ECEF => ENU
 
@@ -233,8 +248,7 @@ def ecef2enu(x: float, y: float, z: float,
     return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
 
 
-def enu2uvw(east: float, north: float, up: float,
-            lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
+def enu2uvw(east: float, north: float, up: float, lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     Parameters
     ----------
@@ -267,8 +281,7 @@ def enu2uvw(east: float, north: float, up: float,
     return u, v, w
 
 
-def uvw2enu(u: float, v: float, w: float,
-            lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
+def uvw2enu(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     Parameters
     ----------
@@ -300,8 +313,7 @@ def uvw2enu(u: float, v: float, w: float,
     return East, North, Up
 
 
-def eci2geodetic(x: float, y: float, z: float, t: datetime,
-                 useastropy: bool = True) -> Tuple[float, float, float]:
+def eci2geodetic(x: float, y: float, z: float, t: datetime, useastropy: bool = True) -> Tuple[float, float, float]:
     """
     convert ECI to geodetic coordinates
 
@@ -339,9 +351,9 @@ def eci2geodetic(x: float, y: float, z: float, t: datetime,
     return ecef2geodetic(xecef, yecef, zecef)
 
 
-def enu2ecef(e1: float, n1: float, u1: float,
-             lat0: float, lon0: float, h0: float,
-             ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def enu2ecef(
+    e1: float, n1: float, u1: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
     """
     ENU to ECEF
 
