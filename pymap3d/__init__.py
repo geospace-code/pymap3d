@@ -30,28 +30,19 @@ Companion packages exist for:
 * Matlab / GNU Octave: [Matmap3D](https://github.com/scivision/matmap3d)
 * Fortran: [Maptran3D](https://github.com/scivision/maptran3d)
 """
-import sys
 
-if sys.version_info >= (3, 5):
-    try:
-        import numpy
-        import dateutil
-    except ImportError:
-        numpy = None
-else:
-    numpy = None
+from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic, eci2aer, aer2eci
+from .ellipsoid import Ellipsoid
+from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
+from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
+from .ecef import geodetic2ecef, ecef2geodetic, eci2geodetic, ecef2enuv, enu2ecef, ecef2enu, enu2uvw, uvw2enu
 
-if numpy is not None:
+try:
     from .timeconv import str2dt
     from .azelradec import radec2azel, azel2radec
     from .eci import eci2ecef, ecef2eci
     from .sidereal import datetime2sidereal
-    from .ecef import geodetic2ecef, ecef2geodetic, eci2geodetic, ecef2enuv, enu2ecef, ecef2enu, enu2uvw, uvw2enu
-    from .ellipsoid import Ellipsoid
-    from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
-    from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
-    from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic, eci2aer, aer2eci
     from .los import lookAtSpheroid
     from .lox import isometric, meridian_dist, loxodrome_inverse
-else:  # pure Python only
-    from .math import *  # type: ignore
+except ImportError:
+    pass

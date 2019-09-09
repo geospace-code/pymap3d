@@ -1,10 +1,14 @@
 """ transforms involving AER: azimuth, elevation, slant range"""
 from typing import Tuple
 from datetime import datetime
+
 from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
 from .enu import geodetic2enu, aer2enu, enu2aer
-from .eci import eci2ecef, ecef2eci
 from .ellipsoid import Ellipsoid
+try:
+    from .eci import eci2ecef, ecef2eci
+except ImportError:
+    eci2ecef = ecef2eci = None
 
 __all__ = ['aer2ecef', 'ecef2aer', 'geodetic2aer', 'aer2geodetic']
 
@@ -171,6 +175,9 @@ def eci2aer(x: float, y: float, z: float,
     srange : float
          slant range [meters]
     """
+    if eci2ecef is None:
+        raise ImportError("pip install numpy")
+
     xecef, yecef, zecef = eci2ecef(x, y, z, t, useastropy=useastropy)
 
     return ecef2aer(xecef, yecef, zecef, lat0, lon0, h0)
@@ -216,6 +223,9 @@ def aer2eci(az: float, el: float, srange: float,
     z : float or numpy.ndarray of float
         ECEF z coordinate (meters)
     """
+    if ecef2eci is None:
+        raise ImportError("pip install numpy")
+
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
     return ecef2eci(x, y, z, t, useastropy=useastropy)

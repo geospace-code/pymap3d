@@ -3,13 +3,13 @@ from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi
 from typing import Tuple
 from datetime import datetime
 
-from .eci import eci2ecef
+
 from .ellipsoid import Ellipsoid
 
 try:
-    import numpy
+    from .eci import eci2ecef
 except ImportError:
-    numpy = None
+    numpy = eci2ecef = None
 
 
 # py < 3.6 compatible
@@ -346,6 +346,9 @@ def eci2geodetic(x: float, y: float, z: float, t: datetime, useastropy: bool = T
 
     eci2geodetic() a.k.a. eci2lla()
     """
+    if eci2ecef is None:
+        raise ImportError("pip install numpy")
+
     xecef, yecef, zecef = eci2ecef(x, y, z, t, useastropy=useastropy)
 
     return ecef2geodetic(xecef, yecef, zecef)
