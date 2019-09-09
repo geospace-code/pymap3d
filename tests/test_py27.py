@@ -27,4 +27,4 @@ def test_aer_enu():
 
 
 if __name__ == '__main__':
-    pytest.main([__file__])
+    pytest.main(["-v", __file__])

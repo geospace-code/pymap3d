@@ -4,18 +4,35 @@
 """
 from typing import Tuple
 import logging
-from numpy import arctan, sqrt, tan, sign, sin, cos, arctan2, arcsin, nan, pi
-import numpy as np
+from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, nan, pi, radians, degrees
+from copy import copy
+try:
+    import numpy
+except ImportError:
+    numpy = None
+
 from .ellipsoid import Ellipsoid
 
 __all__ = ["vdist", "vreckon", "track2"]
 
 
+def sign(x: float) -> float:
+    if x < 0:
+        y = -1.
+    elif x > 0:
+        y = 1.
+    else:
+        y = 0.
+
+    return y
+
+
 def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
-
-    fun = np.vectorize(vdist_point)
-
-    return fun(Lat1, Lon1, Lat2, Lon2, ell)
+    if numpy is not None:
+        fun = numpy.vectorize(vdist_point)
+        return fun(Lat1, Lon1, Lat2, Lon2, ell)
+    else:
+        return vdist_point(Lat1, Lon1, Lat2, Lon2, ell)
 
 
 def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
@@ -99,11 +116,11 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
     b = ell.semiminor_axis
-    # %% convert inputs in degrees to np.radians:
-    lat1 = np.radians(Lat1)
-    lon1 = np.radians(Lon1)
-    lat2 = np.radians(Lat2)
-    lon2 = np.radians(Lon2)
+    # %% convert inputs in degrees to radians:
+    lat1 = radians(Lat1)
+    lon1 = radians(Lon1)
+    lat2 = radians(Lat2)
+    lon2 = radians(Lon2)
     # %% correct for errors at exact poles by adjusting 0.6 millimeters:
     if abs(pi / 2 - abs(lat1)) < 1e-10:
         lat1 = sign(lat1) * (pi / 2 - (1e-10))
@@ -112,17 +129,16 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         lat2 = sign(lat2) * (pi / 2 - (1e-10))
 
     f = (a - b) / a
-    U1 = arctan((1 - f) * tan(lat1))
-    U2 = arctan((1 - f) * tan(lat2))
+    U1 = atan((1 - f) * tan(lat1))
+    U2 = atan((1 - f) * tan(lat2))
     lon1 = lon1 % (2 * pi)
     lon2 = lon2 % (2 * pi)
     L = abs(lon2 - lon1)
     if L > pi:
         L = 2 * pi - L
 
-    lamb = L.copy()  # NOTE: program will fail without copy!
+    lamb = copy(L)  # NOTE: program will fail without copy!
     itercount = 0
-    C = np.zeros(lat1.shape)
     warninggiven = False
     notdone = True
     while notdone:  # force at least one execution
@@ -134,7 +150,7 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
             lamb = pi
             break
 
-        lambdaold = lamb.copy()
+        lambdaold = copy(lamb)
 
         sinsigma = sqrt((cos(U2) * sin(lamb)) ** 2 + (cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)) ** 2)
 
@@ -143,13 +159,17 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         sinsigma = sinsigma.real
         cossigma = cossigma.real
 
-        sigma = arctan2(sinsigma, cossigma)
+        sigma = atan2(sinsigma, cossigma)
 
-        sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
-        if np.isnan(sinAlpha) or abs(sinAlpha - 1) < 1e-16:
-            alpha = 0
+        try:
+            sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
+        except ZeroDivisionError:
+            sinAlpha = 0.
+
+        if isnan(sinAlpha) or abs(sinAlpha - 1) < 1e-16:
+            alpha = 0.
         else:
-            alpha = arcsin(sinAlpha)
+            alpha = asin(sinAlpha)
 
         cos2sigmam = cos(sigma) - 2 * sin(U1) * sin(U2) / cos(alpha) ** 2
 
@@ -185,7 +205,7 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         lamb = -lamb
     numer = cos(U2) * sin(lamb)
     denom = cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)
-    a12 = arctan2(numer, denom)
+    a12 = atan2(numer, denom)
     if a12 < 0:
         a12 += 2 * pi
     # %% from poles
@@ -193,7 +213,7 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         a12 = 0
     elif Lat1 >= 90:
         a12 = pi
-    az = np.degrees(a12)
+    az = degrees(a12)
 
     # %% From point #2 to point #1
     # correct sign of lambda for azimuth calcs:
@@ -202,7 +222,7 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         lamb = -lamb
     numer = cos(U1) * sin(lamb)
     denom = sin(U1) * cos(U2) - cos(U1) * sin(U2) * cos(lamb)
-    a21 = arctan2(numer, denom)
+    a21 = atan2(numer, denom)
     if a21 < 0:
         a21 += 2 * pi
     # %% backwards from poles:
@@ -210,16 +230,17 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         a21 = pi
     elif Lat2 <= -90:
         a21 = 0
-    backaz = np.degrees(a21)
+    backaz = degrees(a21)
 
     return dist_m, az, backaz
 
 
 def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
-
-    fun = np.vectorize(vreckon_point)
-
-    return fun(Lat1, Lon1, Rng, Azim, ell)
+    if numpy is not None:
+        fun = numpy.vectorize(vreckon_point)
+        return fun(Lat1, Lon1, Rng, Azim, ell)
+    else:
+        return vreckon_point(Lat1, Lon1, Rng, Azim, ell)
 
 
 def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
@@ -296,21 +317,21 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
         b = 6356752.31424518  # WGS84 earth flattening coefficient definition
         f = (a - b) / a
 
-    lat1 = np.radians(Lat1)  # intial latitude in radians
-    lon1 = np.radians(Lon1)  # intial longitude in radians
+    lat1 = radians(Lat1)  # intial latitude in radians
+    lon1 = radians(Lon1)  # intial longitude in radians
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
     if abs(pi / 2 - abs(lat1)) < 1e-10:
         lat1 = sign(lat1) * (pi / 2 - (1e-10))
 
-    alpha1 = np.radians(Azim)  # inital azimuth in radians
+    alpha1 = radians(Azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
     cosAlpha1 = cos(alpha1)
 
     tanU1 = (1 - f) * tan(lat1)
     cosU1 = 1 / sqrt(1 + tanU1 ** 2)
     sinU1 = tanU1 * cosU1
-    sigma1 = arctan2(tanU1, cosAlpha1)
+    sigma1 = atan2(tanU1, cosAlpha1)
     sinAlpha = cosU1 * sinAlpha1
     cosSqAlpha = 1 - sinAlpha * sinAlpha
     uSq = cosSqAlpha * (a ** 2 - b ** 2) / b ** 2
@@ -336,14 +357,14 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
         sigma = Rng / (b * A) + deltaSigma
 
     tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1
-    lat2 = arctan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1, (1 - f) * sqrt(sinAlpha * sinAlpha + tmp ** 2))
+    lat2 = atan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1, (1 - f) * sqrt(sinAlpha * sinAlpha + tmp ** 2))
 
-    lamb = arctan2(sinSigma * sinAlpha1, cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1)
+    lamb = atan2(sinSigma * sinAlpha1, cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1)
 
     C = f / 16 * cosSqAlpha * (4 + f * (4 - 3 * cosSqAlpha))
     L = lamb - (f * (1 - C) * sinAlpha * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM))))
 
-    lon2 = np.degrees(lon1 + L)
+    lon2 = degrees(lon1 + L)
 
     # Truncates angles into the [-pi pi] range
     # if lon2 > pi:
@@ -353,10 +374,10 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
     lon2 = lon2 % 360  # follow [0, 360) convention
     # lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
 
-    a21 = arctan2(sinAlpha, -tmp)
-    a21 = 180.0 + np.degrees(a21)  # note direction reversal
+    a21 = atan2(sinAlpha, -tmp)
+    a21 = 180.0 + degrees(a21)  # note direction reversal
 
-    return np.degrees(lat2), lon2, a21 % 360.0
+    return degrees(lat2), lon2, a21 % 360.0
 
 
 def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True):
@@ -402,15 +423,18 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = 
         return [lat1, lat2], [lon1, lon2]
 
     if deg:
-        rlat1, rlon1, rlat2, rlon2 = np.radians([lat1, lon1, lat2, lon2])
+        rlat1 = radians(lat1)
+        rlon1 = radians(lon1)
+        rlat2 = radians(lat2)
+        rlon2 = radians(lon2)
     else:
         rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
 
-    gcarclen = 2.0 * np.arcsin(
-        np.sqrt((np.sin((rlat1 - rlat2) / 2)) ** 2 + np.cos(rlat1) * np.cos(rlat2) * (np.sin((rlon1 - rlon2) / 2)) ** 2)
+    gcarclen = 2.0 * asin(
+        sqrt((sin((rlat1 - rlat2) / 2)) ** 2 + cos(rlat1) * cos(rlat2) * (sin((rlon1 - rlon2) / 2)) ** 2)
     )
     # check to see if points are antipodal (if so, route is undefined).
-    if np.allclose(gcarclen, pi):
+    if abs(gcarclen - pi) < 1e-12:
         raise ValueError("cannot compute intermediate points on a great circle whose endpoints are antipodal")
 
     distance, azimuth, _ = vdist(lat1, lon1, lat2, lon2)
@@ -431,7 +455,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = 
     lats.append(lat2)
 
     if not deg:
-        lats = np.radians(lats)
-        lons = np.radians(lons)
+        lats = list(map(radians, lats))
+        lons = list(map(radians, lons))
 
     return lats, lons

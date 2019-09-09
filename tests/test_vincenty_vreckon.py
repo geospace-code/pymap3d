@@ -36,6 +36,7 @@ def test_unit(lat, lon, srange, az, lato, lono, baz):
 
 
 def test_az_vector():
+    pytest.importorskip("numpy")
     a, b, c = vincenty.vreckon(*ll0, sr1[0], az1)
     assert a == approx(lat2)
     assert b == approx(lon2)
@@ -43,6 +44,7 @@ def test_az_vector():
 
 
 def test_both_vector():
+    pytest.importorskip("numpy")
     a, b, c = vincenty.vreckon(10, 20, sr1, az1)
     assert a == approx(lat3)
     assert b == approx(lon3)

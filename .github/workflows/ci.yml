@@ -92,3 +92,20 @@ jobs:
       run: pip install -e .[tests]
     - name: run Pytest
       run: pytest tests/test_py27.py
+
+  linuxPy35Math:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.5
+    - name: Install dependencies
+      run: pip install -e .[tests]
+    - name: run Pytest
+      run: |
+        pytest tests/test_py27.py
+        pytest tests/test_vincenty_vdist.py
+        pytest tests/test_vincenty_vreckon.py
+        pytest tests/test_vincenty.py

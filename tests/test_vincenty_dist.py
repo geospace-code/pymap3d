@@ -2,7 +2,6 @@
 import pytest
 from pytest import approx
 import pymap3d.vincenty as vincenty
-import numpy as np
 
 
 @pytest.mark.parametrize(
@@ -31,9 +30,10 @@ def test_unit(lat, lon, lat1, lon1, srange, az, backaz):
 
 
 def test_vector():
+    pytest.importorskip("numpy")
     asr, aaz, aa21 = vincenty.vdist(10, 20, [10.02137267, 10.01917819], [20.0168471, 20.0193493])
 
-    assert np.all(3e3 == approx(asr))  # for older pytest
+    assert 3e3 == approx(asr)
     assert aaz == approx([38, 45])
 
 
