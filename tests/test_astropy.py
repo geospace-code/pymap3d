@@ -2,12 +2,13 @@
 import pytest
 from pytest import approx
 from math import radians
+from datetime import datetime
 import pymap3d as pm
 import pymap3d.sidereal as pmd
 import pymap3d.haversine as pmh
 
 lon = -148
-t0 = '2014-04-06T08:00:00'
+t0 = datetime(2014, 4, 6, 8)
 lla0 = (42, -82, 200)
 sra = 2.90658
 ha = 45.482789587392013
@@ -45,6 +46,7 @@ def test_anglesep_meeus():
 
 @pytest.mark.parametrize('useastropy', [True, False])
 def test_eci_geodetic(useastropy):
+    pytest.importorskip("numpy")
     t = '2013-01-15T12:00:05'
     lla = pm.eci2geodetic(*eci0, t, useastropy=useastropy)
     assert lla == approx(lla0, rel=0.2)
@@ -52,6 +54,7 @@ def test_eci_geodetic(useastropy):
 
 @pytest.mark.parametrize('useastropy', [True, False])
 def test_eci_aer(useastropy):
+    pytest.importorskip("numpy")
     t = '2013-01-15T12:00:05'
 
     aer1 = pm.eci2aer(*eci0, 42, -100, 0, t, useastropy=useastropy)

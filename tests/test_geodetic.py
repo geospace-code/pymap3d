@@ -2,6 +2,10 @@
 import pytest
 from pytest import approx
 from math import radians, nan, sqrt, isnan
+try:
+    import numpy
+except ImportError:
+    numpy = None
 
 import pymap3d as pm
 
@@ -32,6 +36,9 @@ def test_scalar_geodetic2ecef(lla):
     """
     verify we can handle the wide variety of input data type users might use
     """
+    if numpy is None and isinstance(lla[0], list):
+        pytest.skip("non-numpy scalar only")
+
     x0, y0, z0 = pm.geodetic2ecef(*lla)
 
     assert (x0, y0, z0) == approx(xyz0)
@@ -53,6 +60,9 @@ def test_scalar_ecef2geodetic(xyz):
     """
     verify we can handle the wide variety of input data type users might use
     """
+    if numpy is None and isinstance(xyz[0], list):
+        pytest.skip("non-numpy scalar only")
+
     lat, lon, alt = pm.ecef2geodetic(*xyz)
 
     assert [lat, lon, alt] == approx(lla0, rel=1e-4)
@@ -75,6 +85,9 @@ def test_scalar_aer_enu(xyz):
     """
     verify we can handle the wide variety of input data type users might use
     """
+    if numpy is None and isinstance(xyz[0], list):
+        pytest.skip("non-numpy scalar only")
+
     enu = pm.ecef2enu(*xyz, 0, 90, -100)
 
     assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])

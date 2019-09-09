@@ -1,11 +1,12 @@
 import pytest
 from pytest import approx
+from datetime import datetime
 import pymap3d as pm
 
 lat, lon = (65, -148)
 lla0 = (42, -82, 200)
 azel = (180.1, 80)
-t0 = '2014-04-06T08:00:00'
+t0 = datetime(2014, 4, 6, 8)
 radec = (166.5032081149338, 55.000011165405752)
 
 
