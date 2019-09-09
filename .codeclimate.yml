@@ -1,8 +1,0 @@
-languages:
-  python: true
-
-exclude_patterns:
-  - "doc/"
-  - "docs/"
-  - "paper/"
-  - "archive/"
