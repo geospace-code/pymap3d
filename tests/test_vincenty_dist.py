@@ -33,7 +33,10 @@ def test_vector():
 def test_identity(lat, lon, slantrange, az):
     lat1, lon1, a21 = vincenty.vreckon(lat, lon, slantrange, az)
 
-    assert vincenty.vdist(lat, lon, lat1, lon1) == approx([slantrange, az, a21])
+    dist, az1, backaz1 = vincenty.vdist(lat, lon, lat1, lon1)
+
+    assert dist == approx(slantrange)
+    assert az1 == approx(az)
 
 
 if __name__ == "__main__":

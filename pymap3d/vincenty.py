@@ -215,6 +215,13 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
 
 
 def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
+
+    fun = np.vectorize(vreckon_point)
+
+    return fun(Lat1, Lon1, Rng, Azim, ell)
+
+
+def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
     """
     This is the Vincenty "forward" solution.
 
@@ -274,19 +281,10 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
     Joaquim Luis
     """
 
-    lat1 = np.atleast_1d(Lat1)
-    lon1 = np.atleast_1d(Lon1)
-    rng = np.atleast_1d(Rng)
-    azim = np.atleast_1d(Azim)
-
-    if rng.ndim != 1 or azim.ndim != 1:
-        raise ValueError("Range and azimuth must be scalar or vector")
-
-    if abs(lat1) > 90:
-        raise ValueError("VRECKON: Input lat. must be between -90 and 90 deg., inclusive.")
-
-    if lat1.size > 1 and rng.size > 1:
-        raise ValueError("VRECKON: Variable ranges are only allowed for a single point.")
+    if abs(Lat1) > 90:
+        raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
+    if Rng < 0:
+        raise ValueError("Ground distance must be positive")
 
     if ell is not None:
         a = ell.semimajor_axis
@@ -297,17 +295,14 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
         b = 6356752.31424518  # WGS84 earth flattening coefficient definition
         f = (a - b) / a
 
-    lat1 = np.radians(lat1)  # intial latitude in radians
-    lon1 = np.radians(lon1)  # intial longitude in radians
+    lat1 = np.radians(Lat1)  # intial latitude in radians
+    lon1 = np.radians(Lon1)  # intial longitude in radians
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
-    kidx = abs(pi / 2 - abs(lat1)) < 1e-10
-    lat1[kidx] = sign(lat1[kidx]) * (pi / 2 - (1e-10))
+    if abs(pi / 2 - abs(lat1)) < 1e-10:
+        lat1 = sign(lat1) * (pi / 2 - (1e-10))
 
-    if rng.size != azim.size and rng.size == 1:
-        rng = np.broadcast_to(rng, azim.size)
-
-    alpha1 = np.radians(azim)  # inital azimuth in radians
+    alpha1 = np.radians(Azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
     cosAlpha1 = cos(alpha1)
 
@@ -321,43 +316,23 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
     A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
     B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
 
-    sigma = rng / (b * A)
+    sigma = Rng / (b * A)
     sigmaP = 2 * pi
 
-    if sigma.size == 1:
-        sinSigma = nan
-        cosSigma = nan
-        cos2SigmaM = nan
-        while abs(sigma - sigmaP) > 1e-12:
-            cos2SigmaM = cos(2 * sigma1 + sigma)
-            sinSigma = sin(sigma)
-            cosSigma = cos(sigma)
-            deltaSigma = (
-                B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)
-                                                      )
-                                )
-            )
-            sigmaP = sigma
-            sigma = rng / (b * A) + deltaSigma
-    else:
-        # This part is not vectorized
-        cos2SigmaM = np.empty(sigma.size)
-        sinSigma = np.empty(sigma.size)
-        cosSigma = np.empty(sigma.size)
-
-        for k in range(sigma.size):
-            while (abs(sigma[k] - sigmaP) > 1e-12).any():
-                cos2SigmaM[k] = cos(2 * sigma1[k] + sigma[k])
-                sinSigma[k] = sin(sigma[k])
-                cosSigma[k] = cos(sigma[k])
-                tmp = 2 * cos2SigmaM[k] * cos2SigmaM[k]
-                deltaSigma = (
-                    B[k] * sinSigma[k] * (cos2SigmaM[k] + B[k] / 4 * (cosSigma[k] * (-1 + tmp) - B[k] / 6 * cos2SigmaM[k] * (-3 + 4 * sinSigma[k] * sinSigma[k]) * (-3 + 2 * tmp)
-                                                                      )
-                                          )
-                )
-                sigmaP = sigma[k]
-                sigma[k] = rng[k] / (b * A[k]) + deltaSigma
+    sinSigma = nan
+    cosSigma = nan
+    cos2SigmaM = nan
+    while abs(sigma - sigmaP) > 1e-12:
+        cos2SigmaM = cos(2 * sigma1 + sigma)
+        sinSigma = sin(sigma)
+        cosSigma = cos(sigma)
+        deltaSigma = (
+            B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)
+                                                  )
+                            )
+        )
+        sigmaP = sigma
+        sigma = Rng / (b * A) + deltaSigma
 
     tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1
     lat2 = arctan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1, (1 - f) * sqrt(sinAlpha * sinAlpha + tmp ** 2))
@@ -370,17 +345,17 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
     lon2 = np.degrees(lon1 + L)
 
     # Truncates angles into the [-pi pi] range
-    # if (lon2 > pi).any():
+    # if lon2 > pi:
     #    lon2 = pi*((absolute(lon2)/pi) -
     #       2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
-    # lon2 = mod(lon2,360); % follow [0,360] convention
-    lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
+    lon2 = lon2 % 360  # follow [0, 360) convention
+    # lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
 
     a21 = arctan2(sinAlpha, -tmp)
     a21 = 180.0 + np.degrees(a21)  # note direction reversal
 
-    return np.degrees(lat2).squeeze()[()], lon2.squeeze()[()], a21.squeeze()[()] % 360.0
+    return np.degrees(lat2), lon2, a21 % 360.0
 
 
 def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True):
