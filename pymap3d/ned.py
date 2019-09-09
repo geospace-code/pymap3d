@@ -13,22 +13,22 @@ def aer2ned(az: float, elev: float, slantRange: float,
     Parameters
     -----------
 
-    az : float or numpy.ndarray of float
+    az : float
          azimuth
-    elev : float or numpy.ndarray of float
+    elev : float
          elevation
-    slantRange : float or numpy.ndarray of float
+    slantRange : float
          slant range [meters]
     deg : bool, optional
           degrees input/output  (False: radians in/out)
 
     Results
     -------
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
     """
     e, n, u = aer2enu(az, elev, slantRange, deg=deg)
@@ -44,11 +44,11 @@ def ned2aer(n: float, e: float, d: float,
     Parameters
     ----------
 
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
     deg : bool, optional
         degrees input/output  (False: radians in/out)
@@ -56,11 +56,11 @@ def ned2aer(n: float, e: float, d: float,
     Results
     -------
 
-    az : float or numpy.ndarray of float
+    az : float
          azimuth
-    elev : float or numpy.ndarray of float
+    elev : float
          elevation
-    slantRange : float or numpy.ndarray of float
+    slantRange : float
          slant range [meters]
     """
     return enu2aer(e, n, -d, deg=deg)
@@ -75,11 +75,11 @@ def ned2geodetic(n: float, e: float, d: float,
     Parameters
     ----------
 
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
     lat0 : float
         Observer geodetic latitude
@@ -117,11 +117,11 @@ def ned2ecef(n: float, e: float, d: float,
     Parameters
     ----------
 
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
     lat0 : float
         Observer geodetic latitude
@@ -137,11 +137,11 @@ def ned2ecef(n: float, e: float, d: float,
     Results
     -------
 
-    x : float or numpy.ndarray of float
+    x : float
         ECEF x coordinate (meters)
-    y : float or numpy.ndarray of float
+    y : float
         ECEF y coordinate (meters)
-    z : float or numpy.ndarray of float
+    z : float
         ECEF z coordinate (meters)
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
@@ -156,11 +156,11 @@ def ecef2ned(x: float, y: float, z: float,
     Parameters
     ----------
 
-    x : float or numpy.ndarray of float
+    x : float
         ECEF x coordinate (meters)
-    y : float or numpy.ndarray of float
+    y : float
         ECEF y coordinate (meters)
-    z : float or numpy.ndarray of float
+    z : float
         ECEF z coordinate (meters)
     lat0 : float
         Observer geodetic latitude
@@ -176,11 +176,11 @@ def ecef2ned(x: float, y: float, z: float,
     Results
     -------
 
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
 
     """
@@ -219,11 +219,11 @@ def geodetic2ned(lat: float, lon: float, h: float,
     Results
     -------
 
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
@@ -239,11 +239,11 @@ def ecef2nedv(x: float, y: float, z: float,
 
     Parameters
     ----------
-    x : float or numpy.ndarray of float
+    x : float
         ECEF x coordinate (meters)
-    y : float or numpy.ndarray of float
+    y : float
         ECEF y coordinate (meters)
-    z : float or numpy.ndarray of float
+    z : float
         ECEF z coordinate (meters)
     lat0 : float
         Observer geodetic latitude
@@ -257,11 +257,11 @@ def ecef2nedv(x: float, y: float, z: float,
 
     (Vector)
 
-    n : float or numpy.ndarray of float
+    n : float
         North NED coordinate (meters)
-    e : float or numpy.ndarray of float
+    e : float
         East NED coordinate (meters)
-    d : float or numpy.ndarray of float
+    d : float
         Down NED coordinate (meters)
     """
     e, n, u = ecef2enuv(x, y, z, lat0, lon0, deg=deg)

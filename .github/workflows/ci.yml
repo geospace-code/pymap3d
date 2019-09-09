@@ -106,6 +106,6 @@ jobs:
     - name: run Pytest
       run: |
         pytest tests/test_py27.py
-        pytest tests/test_vincenty_vdist.py
+        pytest tests/test_vincenty_dist.py
         pytest tests/test_vincenty_vreckon.py
         pytest tests/test_vincenty.py

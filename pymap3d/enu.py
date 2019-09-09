@@ -1,29 +1,41 @@
 """ transforms involving ENU East North Up """
 from typing import Tuple
-from numpy import radians, sin, cos, hypot, arctan2, degrees, pi
-import numpy as np
+from math import radians, sin, cos, hypot, atan2, degrees, pi
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
 
+try:
+    import numpy
+except ImportError:
+    numpy = None
+
 # py < 3.6 compatible
 tau = 2 * pi
 
-__all__ = ['enu2aer', 'aer2enu', 'enu2geodetic', 'geodetic2enu']
+__all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
 
 def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
+    if numpy is not None:
+        fun = numpy.vectorize(enu2aer_point)
+        return fun(e, n, u, deg)
+    else:
+        return enu2aer_point(e, n, u, deg)
+
+
+def enu2aer_point(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     ENU to Azimuth, Elevation, Range
 
     Parameters
     ----------
 
-    e : float or np.ndarray of float
+    e : float
         ENU East coordinate (meters)
-    n : float or np.ndarray of float
+    n : float
         ENU North coordinate (meters)
-    u : float or np.ndarray of float
+    u : float
         ENU Up coordinate (meters)
     deg : bool, optional
         degrees input/output  (False: radians in/out)
@@ -31,28 +43,26 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
     Results
     -------
 
-    azimuth : float or np.ndarray of float
+    azimuth : float
         azimuth to rarget
-    elevation : float or np.ndarray of float
+    elevation : float
         elevation to target
-    srange : float or np.ndarray of float
+    srange : float
         slant range [meters]
     """
     # 1 millimeter precision for singularity
 
-    e = np.asarray(e)
-    n = np.asarray(n)
-    u = np.asarray(u)
+    if abs(e) < 1e-3:
+        e = 0.0
+    if abs(n) < 1e-3:
+        n = 0.0
+    if abs(u) < 1e-3:
+        u = 0.0
 
-    with np.errstate(invalid='ignore'):
-        e[abs(e) < 1e-3] = 0.
-        n[abs(n) < 1e-3] = 0.
-        u[abs(u) < 1e-3] = 0.
-
-        r = hypot(e, n)
-        slantRange = hypot(r, u)
-        elev = arctan2(u, r)
-        az = arctan2(e, n) % tau
+    r = hypot(e, n)
+    slantRange = hypot(r, u)
+    elev = atan2(u, r)
+    az = atan2(e, n) % tau
 
     if deg:
         az = degrees(az)
@@ -61,57 +71,63 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
     return az, elev, slantRange
 
 
-def aer2enu(az: float, el: float, srange: float,
-            deg: bool = True) -> Tuple[float, float, float]:
+def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
+    if numpy is not None:
+        fun = numpy.vectorize(aer2enu_point)
+        return fun(az, el, srange, deg)
+    else:
+        return aer2enu_point(az, el, srange, deg)
+
+
+def aer2enu_point(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
     """
     Azimuth, Elevation, Slant range to target to East, north, Up
 
     Parameters
     ----------
-    azimuth : float or np.ndarray of float
+    azimuth : float
             azimuth clockwise from north (degrees)
-    elevation : float or np.ndarray of float
+    elevation : float
         elevation angle above horizon, neglecting aberattions (degrees)
-    srange : float or np.ndarray of float
+    srange : float
         slant range [meters]
     deg : bool, optional
         degrees input/output  (False: radians in/out)
 
     Returns
     --------
-    e : float or np.ndarray of float
+    e : float
         East ENU coordinate (meters)
-    n : float or np.ndarray of float
+    n : float
         North ENU coordinate (meters)
-    u : float or np.ndarray of float
+    u : float
         Up ENU coordinate (meters)
     """
     if deg:
         el = radians(el)
         az = radians(az)
 
-    with np.errstate(invalid='ignore'):
-        if (np.asarray(srange) < 0).any():
-            raise ValueError('Slant range  [0, Infinity)')
+    if srange < 0:
+        raise ValueError("Slant range  [0, Infinity)")
 
     r = srange * cos(el)
 
     return r * sin(az), r * cos(az), srange * sin(el)
 
 
-def enu2geodetic(e: float, n: float, u: float,
-                 lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def enu2geodetic(
+    e: float, n: float, u: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
     """
     East, North, Up to target to geodetic coordinates
 
     Parameters
     ----------
-    e : float or np.ndarray of float
+    e : float
         East ENU coordinate (meters)
-    n : float or np.ndarray of float
+    n : float
         North ENU coordinate (meters)
-    u : float or np.ndarray of float
+    u : float
         Up ENU coordinate (meters)
     lat0 : float
            Observer geodetic latitude
@@ -127,11 +143,11 @@ def enu2geodetic(e: float, n: float, u: float,
 
     Results
     -------
-    lat : float or np.ndarray of float
+    lat : float
           geodetic latitude
-    lon : float or np.ndarray of float
+    lon : float
           geodetic longitude
-    alt : float or np.ndarray of float
+    alt : float
           altitude above ellipsoid  (meters)
     """
 
@@ -140,17 +156,17 @@ def enu2geodetic(e: float, n: float, u: float,
     return ecef2geodetic(x, y, z, ell, deg=deg)
 
 
-def geodetic2enu(lat: float, lon: float, h: float,
-                 lat0: float, lon0: float, h0: float,
-                 ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def geodetic2enu(
+    lat: float, lon: float, h: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
     """
     Parameters
     ----------
-    lat : float or np.ndarray of float
+    lat : float
           target geodetic latitude
-    lon : float or np.ndarray of float
+    lon : float
           target geodetic longitude
-    h : float or np.ndarray of float
+    h : float
           target altitude above ellipsoid  (meters)
     lat0 : float
            Observer geodetic latitude
@@ -166,15 +182,14 @@ def geodetic2enu(lat: float, lon: float, h: float,
 
     Results
     -------
-    e : float or np.ndarray of float
+    e : float
         East ENU
-    n : float or np.ndarray of float
+    n : float
         North ENU
-    u : float or np.ndarray of float
+    u : float
         Up ENU
     """
     x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)
     x2, y2, z2 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
 
-    return uvw2enu(x1 - x2, y1 - y2, z1 - z2,
-                   lat0, lon0, deg=deg)
+    return uvw2enu(x1 - x2, y1 - y2, z1 - z2, lat0, lon0, deg=deg)

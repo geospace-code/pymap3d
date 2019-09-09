@@ -55,4 +55,3 @@ if numpy is not None:
     from .lox import isometric, meridian_dist, loxodrome_inverse
 else:  # pure Python only
     from .math import *  # type: ignore
-    from .vincenty import *
