@@ -33,9 +33,6 @@ Numpy and AstroPy are optional; algorithms from Vallado and Meeus are used if As
 
 ## Install
 
-If you choose to do the hard install as below, you will need Numpy.
-Only the development install allows missing Numpy.
-
 ```sh
 python3 -m pip install pymap3d
 ```
@@ -125,7 +122,7 @@ Abbreviations:
 
 As compared to [PyProj](https://github.com/jswhit/pyproj):
 
-* PyMap3D does not require anything beyond pure Python -- not even Numpy is required for basic functions.
+* PyMap3D does not require anything beyond pure Python -- not even Numpy is required except for ECI (let us know if this is an issue).
 * PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
 * PyMap3D intrinsically handles local coordinate systems such as ENU,
   while PyProj ENU requires some [additional effort](https://github.com/jswhit/pyproj/issues/105).
