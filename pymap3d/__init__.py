@@ -37,13 +37,12 @@ from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
 from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
 from .ecef import geodetic2ecef, ecef2geodetic, eci2geodetic, ecef2enuv, enu2ecef, ecef2enu, enu2uvw, uvw2enu
 from .sidereal import datetime2sidereal
+from .lox import isometric, meridian_dist, loxodrome_inverse
+from .los import lookAtSpheroid
+from .timeconv import str2dt
 
 try:
-    from .timeconv import str2dt
     from .azelradec import radec2azel, azel2radec
     from .eci import eci2ecef, ecef2eci
-
-    from .los import lookAtSpheroid
-    from .lox import isometric, meridian_dist, loxodrome_inverse
 except ImportError:
     from .vallado import radec2azel, azel2radec

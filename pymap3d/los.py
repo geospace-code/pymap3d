@@ -1,16 +1,29 @@
 """ Line of sight intersection of space observer to ellipsoid """
 from typing import Tuple
-import numpy as np
-from math import pi
+from math import pi, nan, sqrt
+
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
+try:
+    import numpy
+except ImportError:
+    numpy = None
 
 __all__ = ['lookAtSpheroid']
 
 
 def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
                    ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+    if numpy is not None:
+        fun = numpy.vectorize(lookAtSpheroid_point)
+        return fun(lat0, lon0, h0, az, tilt, ell, deg)
+    else:
+        return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
+
+
+def lookAtSpheroid_point(lat0: float, lon0: float, h0: float, az: float, tilt: float,
+                         ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -47,13 +60,11 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
 
-    if (np.asarray(h0) < 0).any():
+    if h0 < 0:
         raise ValueError('Intersection calculation requires altitude  [0, Infinity)')
 
     if ell is None:
         ell = Ellipsoid()
-
-    tilt = np.asarray(tilt)
 
     a = ell.semimajor_axis
     b = ell.semimajor_axis
@@ -73,11 +84,13 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
     magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
 
 # %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
-    with np.errstate(invalid='ignore'):
-        d = np.where(radical > 0,
-                     (value - a * b * c * np.sqrt(radical)) / magnitude,
-                     np.nan)
-        d[d < 0] = np.nan
+    if radical > 0:
+        d = (value - a * b * c * sqrt(radical)) / magnitude
+    else:
+        d = nan
+
+    if d < 0:
+        d = nan
 # %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 

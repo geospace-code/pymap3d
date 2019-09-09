@@ -1,5 +1,5 @@
 """ isometric latitude, meridian distance """
-import numpy as np
+from math import radians, degrees, sin, cos, atan2, tan, log, sqrt, pi
 from .ellipsoid import Ellipsoid
 
 
@@ -40,20 +40,20 @@ def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
     f = ell.flattening  # flattening of ellipsoid
 
     if deg is True:
-        lat = np.deg2rad(lat)
+        lat = radians(lat)
 
     e2 = f * (2 - f)  # eccentricity-squared
-    e = np.sqrt(e2)  # eccentricity of ellipsoid
+    e = sqrt(e2)  # eccentricity of ellipsoid
 
-    x = e * np.sin(lat)
+    x = e * sin(lat)
     y = (1 - x) / (1 + x)
-    z = np.pi / 4 + lat / 2
+    z = pi / 4 + lat / 2
 
 #   calculate the isometric latitude
-    isolat = np.log(np.tan(z) * (y**(e / 2)))
+    isolat = log(tan(z) * (y**(e / 2)))
 
     if deg is True:
-        isolat = np.degrees(isolat)
+        isolat = degrees(isolat)
 
     return isolat
 
@@ -90,7 +90,7 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     """
 
     if deg is True:
-        lat = np.radians(lat)
+        lat = radians(lat)
 
     #   set ellipsoid parameters
     if ell is None:
@@ -116,11 +116,11 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     F = (693 / 131072) * e10
 
     term1 = A * lat
-    term2 = (B / 2) * np.sin(2 * lat)
-    term3 = (C / 4) * np.sin(4 * lat)
-    term4 = (D / 6) * np.sin(6 * lat)
-    term5 = (E / 8) * np.sin(8 * lat)
-    term6 = (F / 10) * np.sin(10 * lat)
+    term2 = (B / 2) * sin(2 * lat)
+    term3 = (C / 4) * sin(4 * lat)
+    term4 = (D / 6) * sin(6 * lat)
+    term5 = (E / 8) * sin(8 * lat)
+    term6 = (F / 10) * sin(10 * lat)
 
     mdist = a * (1 - e2) * (term1 - term2 + term3 - term4 + term5 - term6)
 
@@ -177,7 +177,7 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
         ell = Ellipsoid()
 
     if deg is True:
-        lat1, lon1, lat2, lon2 = np.radians([lat1, lon1, lat2, lon2])
+        lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
     # compute isometric latitude of P1 and P2
     isolat1 = isometric(lat1, deg=False, ell=ell)
@@ -188,15 +188,15 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
     dlon = lon2 - lon1
 
     # compute azimuth
-    az12 = np.arctan2(dlon, disolat)
+    az12 = atan2(dlon, disolat)
 
     # compute distance along loxodromic curve
     m1 = meridian_dist(lat1, deg=False, ell=ell)
     m2 = meridian_dist(lat2, deg=False, ell=ell)
     dm = m2 - m1
-    lox_s = dm / np.cos(az12)
+    lox_s = dm / cos(az12)
 
     if deg is True:
-        az12 = np.degrees(az12) % 360.
+        az12 = degrees(az12) % 360.
 
     return lox_s, az12
