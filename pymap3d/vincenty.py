@@ -146,9 +146,10 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         sigma = arctan2(sinsigma, cossigma)
 
         sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
-        if np.isnan(sinAlpha):
-            sinAlpha = 0.0
-        alpha = arcsin(sinAlpha)
+        if np.isnan(sinAlpha) or abs(sinAlpha - 1) < 1e-16:
+            alpha = 0
+        else:
+            alpha = arcsin(sinAlpha)
 
         cos2sigmam = cos(sigma) - 2 * sin(U1) * sin(U2) / cos(alpha) ** 2
 
