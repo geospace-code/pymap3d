@@ -1,7 +1,8 @@
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
 
-[![Build Status](https://dev.azure.com/mhirsch0512/PyMap3d/_apis/build/status/scivision.pymap3d?branchName=master)](https://dev.azure.com/mhirsch0512/PyMap3d/_build/latest?definitionId=3&branchName=master)
+[![Actions Status](https://github.com/scivision/pymap3d/workflows/ci/badge.svg)](https://github.com/scivision/pymap3d/actions)
+
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b6e4b90175e6dbf1b375/maintainability)](https://codeclimate.com/github/scivision/pymap3d/maintainability)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
