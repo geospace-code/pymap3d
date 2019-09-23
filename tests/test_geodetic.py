@@ -3,22 +3,12 @@ import pytest
 from pytest import approx
 from math import radians, nan, sqrt, isnan
 
-try:
-    import numpy
-except ImportError:
-    numpy = None
-
 import pymap3d as pm
 
 lla0 = (42, -82, 200)
 rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
-lla1 = (42.002582, -81.997752, 1.1397018e3)
-rlla1 = (radians(lla1[0]), radians(lla1[1]), lla1[2])
 
 xyz0 = (660675.2518247, -4700948.68316, 4245737.66222)
-
-aer0 = (33, 70, 1000)
-raer0 = (radians(aer0[0]), radians(aer0[1]), aer0[2])
 
 ELL = pm.Ellipsoid()
 A = ELL.semimajor_axis
@@ -32,8 +22,8 @@ def test_scalar_geodetic2ecef(lla):
     """
     verify we can handle the wide variety of input data type users might use
     """
-    if numpy is None and isinstance(lla[0], list):
-        pytest.skip("non-numpy scalar only")
+    if isinstance(lla[0], list):
+        pytest.importorskip("numpy")
 
     x0, y0, z0 = pm.geodetic2ecef(*lla)
 
@@ -53,8 +43,8 @@ def test_scalar_ecef2geodetic(xyz):
     """
     verify we can handle the wide variety of input data type users might use
     """
-    if numpy is None and isinstance(xyz[0], list):
-        pytest.skip("non-numpy scalar only")
+    if isinstance(xyz[0], list):
+        pytest.importorskip("numpy")
 
     lat, lon, alt = pm.ecef2geodetic(*xyz)
 
@@ -151,18 +141,22 @@ def test_ecef2geodetic(xyz, lla):
     assert alt == approx(lla[2])
 
 
-def test_aer():
-    lla2 = pm.aer2geodetic(*aer0, *lla0)
-    rlla2 = pm.aer2geodetic(*raer0, *rlla0, deg=False)
+@pytest.mark.parametrize(
+    "aer,lla,lla0",
+    [((33, 77, 1000), (42.0016981935, -81.99852, 1174.374035), (42, -82, 200)), ((0, 90, 10000), (0, 0, 10000), (0, 0, 0))],
+)
+def test_aer_geodetic(aer, lla, lla0):
+    assert pm.aer2geodetic(*aer, *lla0) == approx(lla)
+
+    raer = (radians(aer[0]), radians(aer[1]), aer[2])
+    rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
+    assert pm.aer2geodetic(*raer, *rlla0, deg=False) == approx((radians(lla[0]), radians(lla[1]), lla[2]))
 
     with pytest.raises(ValueError):
-        pm.aer2geodetic(aer0[0], aer0[1], -1, *lla0)
+        pm.aer2geodetic(aer[0], aer[1], -1, *lla0)
 
-    assert lla2 == approx(lla1)
-    assert rlla2 == approx(rlla1)
-
-    assert pm.geodetic2aer(*lla2, *lla0) == approx(aer0)
-    assert pm.geodetic2aer(*rlla2, *rlla0, deg=False) == approx(raer0)
+    assert pm.geodetic2aer(*lla, *lla0) == approx(aer, rel=1e-3)
+    assert pm.geodetic2aer(radians(lla[0]), radians(lla[1]), lla[2], *rlla0, deg=False) == approx(raer, rel=1e-3)
 
 
 def test_scalar_nan():

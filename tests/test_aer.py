@@ -59,7 +59,7 @@ def test_aer_enu(aer, enu):
 
 
 @pytest.mark.parametrize("aer,ned", [((33, 70, 1000), (286.8422, 186.2775, -939.6926))])
-def test_ned(aer, ned):
+def test_aer_ned(aer, ned):
     assert pm.aer2ned(*aer) == approx(ned)
 
     with pytest.raises(ValueError):
