@@ -48,6 +48,8 @@ from .latitude import (
     rectifying2geodetic,
     geodetic2authalic,
     authalic2geodetic,
+    geodetic2parametric,
+    parametric2geodetic,
 )
 from .lox import isometric, meridian_dist, loxodrome_inverse
 from .los import lookAtSpheroid

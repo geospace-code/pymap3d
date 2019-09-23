@@ -7,6 +7,21 @@ try:
 except ImportError:
     numpy = None
 
+__all__ = [
+    "geodetic2isometric",
+    "isometric2geodetic",
+    "geodetic2rectifying",
+    "rectifying2geodetic",
+    "geodetic2conformal",
+    "conformal2geodetic",
+    "geodetic2parametric",
+    "parametric2geodetic",
+    "geodetic2geocentric",
+    "geocentric2geodetic",
+    "geodetic2authalic",
+    "authalic2geodetic",
+]
+
 
 def geodetic2geocentric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
@@ -300,6 +315,7 @@ def geodetic2conformal_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bo
     return degrees(conformal_lat) if deg else conformal_lat
 
 
+# %% rectifying
 def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     if numpy is not None:
         fun = numpy.vectorize(geodetic2rectifying_point)
@@ -356,6 +372,7 @@ def rectifying2geodetic_point(rectifying_lat: float, ell: Ellipsoid = None, deg:
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
+# %% authalic
 def geodetic2authalic_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
@@ -395,6 +412,39 @@ def authalic2geodetic(authalic_lat: float, ell: Ellipsoid = None, deg: bool = Tr
         return fun(authalic_lat, ell, deg)
     else:
         return authalic2geodetic_point(authalic_lat, ell, deg)
+
+
+# %% parametric
+def geodetic2parametric_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
+
+    parametric_lat = atan(sqrt(1 - (ell.eccentricity) ** 2) * tan(geodetic_lat))
+
+    return degrees(parametric_lat) if deg else parametric_lat
+
+
+def geodetic2parametric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    if numpy is not None:
+        fun = numpy.vectorize(geodetic2parametric_point)
+        return fun(geodetic_lat, ell, deg)
+    else:
+        return geodetic2parametric_point(geodetic_lat, ell, deg)
+
+
+def parametric2geodetic_point(parametric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    parametric_lat, ell = sanitize(parametric_lat, ell, deg)
+
+    geodetic_lat = atan(tan(parametric_lat) / sqrt(1 - (ell.eccentricity) ** 2))
+
+    return degrees(geodetic_lat) if deg else geodetic_lat
+
+
+def parametric2geodetic(parametric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    if numpy is not None:
+        fun = numpy.vectorize(parametric2geodetic_point)
+        return fun(parametric_lat, ell, deg)
+    else:
+        return parametric2geodetic_point(parametric_lat, ell, deg)
 
 
 def sanitize(lat: float, ell: Ellipsoid, deg: bool) -> typing.Tuple[float, typing.Any]:
