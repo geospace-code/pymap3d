@@ -52,6 +52,7 @@ from .latitude import (
     parametric2geodetic,
 )
 from .rcurve import rcurve_parallel, rcurve_meridian, rcurve_transverse
+from .rsphere import rsphere_eqavol, rsphere_authalic, rsphere_rectifying, rsphere_euler, rsphere_curve, rsphere_triaxial, rsphere_biaxial
 from .lox import isometric, meridian_dist, loxodrome_inverse
 from .los import lookAtSpheroid
 from .timeconv import str2dt

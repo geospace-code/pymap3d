@@ -2,7 +2,7 @@
 """
  Ported by Michael Hirsch to Python.
 """
-from typing import Tuple
+import typing
 import logging
 from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, nan, pi, radians, degrees
 from copy import copy
@@ -27,7 +27,7 @@ def sign(x: float) -> float:
     return y
 
 
-def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
+def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
     if numpy is not None:
         fun = numpy.vectorize(vdist_point)
         return fun(Lat1, Lon1, Lat2, Lon2, ell)
@@ -35,7 +35,7 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
         return vdist_point(Lat1, Lon1, Lat2, Lon2, ell)
 
 
-def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
+def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -235,7 +235,7 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     return dist_m, az, backaz
 
 
-def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
+def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
     if numpy is not None:
         fun = numpy.vectorize(vreckon_point)
         return fun(Lat1, Lon1, Rng, Azim, ell)
@@ -243,7 +243,7 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
         return vreckon_point(Lat1, Lon1, Rng, Azim, ell)
 
 
-def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> Tuple[float, float, float]:
+def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
     """
     This is the Vincenty "forward" solution.
 
@@ -380,7 +380,7 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
     return degrees(lat2), lon2, a21 % 360.0
 
 
-def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True):
+def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True) -> typing.Tuple[typing.List[float], typing.List[float]]:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 
@@ -405,9 +405,9 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = 
     Results
     -------
 
-    lats : numpy.ndarray of float
+    lats : list of float
         latitudes of points along track
-    lons : numpy.ndarray of float
+    lons : list of float
         longitudes of points along track
 
     Based on code posted to the GMT mailing list in Dec 1999 by Jim Levens and by Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
