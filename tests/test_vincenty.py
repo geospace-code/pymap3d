@@ -10,5 +10,5 @@ def test_track2():
     assert lons == approx([80, 113.06849104, -148])
 
 
-if __name__ == '__main__':
-    pytest.main(['-v', __file__])
+if __name__ == "__main__":
+    pytest.main(["-v", __file__])

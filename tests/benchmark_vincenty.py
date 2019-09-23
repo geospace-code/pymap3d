@@ -18,7 +18,7 @@ from pymap3d.vincenty import vreckon, vdist
 import numpy as np
 from argparse import ArgumentParser
 
-ll0 = (42., 82.)
+ll0 = (42.0, 82.0)
 
 
 def bench_vreckon(N: int) -> float:
@@ -42,9 +42,9 @@ def bench_vdist(N: int) -> float:
     return time() - tic
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     p = ArgumentParser()
-    p.add_argument('N', type=int)
+    p.add_argument("N", type=int)
     p = p.parse_args()
 
     print(bench_vreckon(p.N))

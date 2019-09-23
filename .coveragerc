@@ -3,7 +3,7 @@ cover_pylib = false
 omit =
   /home/travis/virtualenv/*
   */site-packages/*
-  */bin/*
+  */tests/*
 
 [report]
 exclude_lines =
@@ -12,6 +12,7 @@ exclude_lines =
   except RuntimeError
   except NotImplementedError
   except ImportError
+  raise ImportError
   except FileNotFoundError
   except CalledProcessError
   logging.warning

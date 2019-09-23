@@ -42,13 +42,6 @@ def eci2ecef(x: float, y: float, z: float = None,
         target z ECEF coordinate
     """
 # %%
-    # FIXME: temporary old API, which was a single N x 3 numpy.ndarray
-    if z is None and isinstance(y, (str, datetime)):
-        time = y
-        z = x[:, 2]
-        y = x[:, 1]
-        x = x[:, 0]
-# %%
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
     z = np.atleast_1d(z)
@@ -112,13 +105,6 @@ def ecef2eci(x: float, y: float, z: float = None,
     z : float
         target z ECI coordinate
     """
-# %%
-    # FIXME: temporary old API, which was a single N x 3 numpy.ndarray
-    if z is None and isinstance(y, (str, datetime)):
-        time = y
-        z = x[:, 2]
-        y = x[:, 1]
-        x = x[:, 0]
 # %%
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)

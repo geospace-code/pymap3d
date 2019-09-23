@@ -25,5 +25,5 @@ def test_rhumb():
     assert rhaz == approx(302.0056736)
 
 
-if __name__ == '__main__':
-    pytest.main(['-xrsv', __file__])
+if __name__ == "__main__":
+    pytest.main(["-xrsv", __file__])

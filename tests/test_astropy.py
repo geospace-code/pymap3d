@@ -15,9 +15,9 @@ ha = 45.482789587392013
 eci0 = (-3.977913815668146e6, -2.582332196263046e6, 4.250818828152067e6)
 
 
-@pytest.mark.parametrize('time', [t0, [t0]], ids=('scalar', 'list'))
+@pytest.mark.parametrize("time", [t0, [t0]], ids=("scalar", "list"))
 def test_sidereal(time):
-    pytest.importorskip('astropy')
+    pytest.importorskip("astropy")
     # http://www.jgiesen.de/astro/astroJS/siderealClock/
     tsr = pmd.datetime2sidereal(time, radians(lon), False)
     if isinstance(tsr, list):
@@ -25,7 +25,7 @@ def test_sidereal(time):
     assert tsr == approx(sra, rel=1e-5)
 
 
-@pytest.mark.parametrize('time', [t0, [t0]], ids=('scalar', 'list'))
+@pytest.mark.parametrize("time", [t0, [t0]], ids=("scalar", "list"))
 def test_sidereal_vallado(time):
     tsr = pmd.datetime2sidereal(time, radians(lon), True)
     if isinstance(tsr, list):
@@ -34,7 +34,7 @@ def test_sidereal_vallado(time):
 
 
 def test_anglesep():
-    pytest.importorskip('astropy')
+    pytest.importorskip("astropy")
 
     assert pmh.anglesep(35, 23, 84, 20) == approx(ha)
 
@@ -44,18 +44,18 @@ def test_anglesep_meeus():
     assert pmh.anglesep_meeus(35, 23, 84, 20) == approx(ha)
 
 
-@pytest.mark.parametrize('useastropy', [True, False])
+@pytest.mark.parametrize("useastropy", [True, False])
 def test_eci_geodetic(useastropy):
     pytest.importorskip("numpy")
-    t = '2013-01-15T12:00:05'
+    t = "2013-01-15T12:00:05"
     lla = pm.eci2geodetic(*eci0, t, useastropy=useastropy)
     assert lla == approx(lla0, rel=0.2)
 
 
-@pytest.mark.parametrize('useastropy', [True, False])
+@pytest.mark.parametrize("useastropy", [True, False])
 def test_eci_aer(useastropy):
     pytest.importorskip("numpy")
-    t = '2013-01-15T12:00:05'
+    t = "2013-01-15T12:00:05"
 
     aer1 = pm.eci2aer(*eci0, 42, -100, 0, t, useastropy=useastropy)
     assert aer1 == approx([83.73050, -6.614478, 1.473510e6], rel=0.001)
@@ -66,5 +66,5 @@ def test_eci_aer(useastropy):
         pm.aer2eci(aer1[0], aer1[1], -1, 42, -100, 0, t, useastropy=useastropy)
 
 
-if __name__ == '__main__':
-    pytest.main(['-v', __file__])
+if __name__ == "__main__":
+    pytest.main(["-v", __file__])
