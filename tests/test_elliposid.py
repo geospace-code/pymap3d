@@ -6,11 +6,16 @@ import pymap3d as pm
 xyz0 = (660e3, -4700e3, 4247e3)
 
 
-@pytest.mark.parametrize("model,f", [("wgs84", 3.352810664747480e-03),
-                                     ("wgs72", 3.352779454167505e-03),
-                                     ("grs80", 3.352810681182319e-03),
-                                     ("clarke1866", 3.390075303928791e-03),
-                                     ("moon", 0.)])
+@pytest.mark.parametrize(
+    "model,f",
+    [
+        ("wgs84", 3.352810664747480e-03),
+        ("wgs72", 3.352779454167505e-03),
+        ("grs80", 3.352810681182319e-03),
+        ("clarke1866", 3.390075303928791e-03),
+        ("moon", 0.0),
+    ],
+)
 def test_reference(model, f):
     assert pm.Ellipsoid(model).flattening == approx(f)
 
