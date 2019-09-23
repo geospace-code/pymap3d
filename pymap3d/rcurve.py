@@ -26,7 +26,7 @@ def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
         fun = numpy.vectorize(rcurve_parallel_point)
         return fun(lat, ell, deg)
     else:
-        return rcurve_parallel(lat, ell, deg)
+        return rcurve_parallel_point(lat, ell, deg)
 
 
 def rcurve_meridian_point(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
@@ -48,7 +48,7 @@ def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
         fun = numpy.vectorize(rcurve_meridian_point)
         return fun(lat, ell, deg)
     else:
-        return rcurve_meridian(lat, ell, deg)
+        return rcurve_meridian_point(lat, ell, deg)
 
 
 def rcurve_transverse_point(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
@@ -71,4 +71,4 @@ def rcurve_transverse(lat: float, ell: Ellipsoid = None, deg: bool = True) -> fl
         fun = numpy.vectorize(rcurve_transverse_point)
         return fun(lat, ell, deg)
     else:
-        return rcurve_transverse(lat, ell, deg)
+        return rcurve_transverse_point(lat, ell, deg)
