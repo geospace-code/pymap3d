@@ -37,7 +37,18 @@ from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
 from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
 from .ecef import geodetic2ecef, ecef2geodetic, eci2geodetic, ecef2enuv, enu2ecef, ecef2enu, enu2uvw, uvw2enu
 from .sidereal import datetime2sidereal
-from .latitude import geodetic2geocentric, geocentric2geodetic, geodetic2isometric, isometric2geodetic, geodetic2conformal, conformal2geodetic
+from .latitude import (
+    geodetic2geocentric,
+    geocentric2geodetic,
+    geodetic2isometric,
+    isometric2geodetic,
+    geodetic2conformal,
+    conformal2geodetic,
+    geodetic2rectifying,
+    rectifying2geodetic,
+    geodetic2authalic,
+    authalic2geodetic,
+)
 from .lox import isometric, meridian_dist, loxodrome_inverse
 from .los import lookAtSpheroid
 from .timeconv import str2dt

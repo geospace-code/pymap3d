@@ -203,7 +203,7 @@ def conformal2geodetic(conformal_lat: float, ell: Ellipsoid = None, deg: bool = 
 
     Parameters
     ----------
-    cnflat : float
+    conformal_flat : float
         conformal latitude
     ell : Ellipsoid, optional
         reference ellipsoid (default WGS84)
@@ -212,7 +212,7 @@ def conformal2geodetic(conformal_lat: float, ell: Ellipsoid = None, deg: bool = 
 
     Returns
     -------
-    lat : float
+    geodetic_lat : float
         geodetic latiude
 
     Notes
@@ -265,7 +265,7 @@ def geodetic2conformal(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = T
 
     Returns
     -------
-    cnflat : float
+    conformal_lat : float
          conformal latiude
 
     Notes
@@ -298,6 +298,103 @@ def geodetic2conformal_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bo
         conformal_lat = pi / 2
 
     return degrees(conformal_lat) if deg else conformal_lat
+
+
+def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    if numpy is not None:
+        fun = numpy.vectorize(geodetic2rectifying_point)
+        return fun(geodetic_lat, ell, deg)
+    else:
+        return geodetic2rectifying_point(geodetic_lat, ell, deg)
+
+
+def geodetic2rectifying_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
+
+    n = ell.thirdflattening
+    f1 = 3 * n / 2 - 9 * n ** 3 / 16
+    f2 = 15 * n ** 2 / 16 - 15 * n ** 4 / 32
+    f3 = 35 * n ** 3 / 48
+    f4 = 315 * n ** 4 / 512
+
+    rectifying_lat = (
+        geodetic_lat
+        - f1 * sin(2 * geodetic_lat)
+        + f2 * sin(4 * geodetic_lat)
+        - f3 * sin(6 * geodetic_lat)
+        + f4 * sin(8 * geodetic_lat)
+    )
+
+    return degrees(rectifying_lat) if deg else rectifying_lat
+
+
+def rectifying2geodetic(rectifying_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    if numpy is not None:
+        fun = numpy.vectorize(rectifying2geodetic_point)
+        return fun(rectifying_lat, ell, deg)
+    else:
+        return rectifying2geodetic_point(rectifying_lat, ell, deg)
+
+
+def rectifying2geodetic_point(rectifying_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    rectifying_lat, ell = sanitize(rectifying_lat, ell, deg)
+
+    n = ell.thirdflattening
+    f1 = 3 * n / 2 - 27 * n ** 3 / 32
+    f2 = 21 * n ** 2 / 16 - 55 * n ** 4 / 32
+    f3 = 151 * n ** 3 / 96
+    f4 = 1097 * n ** 4 / 512
+
+    geodetic_lat = (
+        rectifying_lat
+        + f1 * sin(2 * rectifying_lat)
+        + f2 * sin(4 * rectifying_lat)
+        + f3 * sin(6 * rectifying_lat)
+        + f4 * sin(8 * rectifying_lat)
+    )
+
+    return degrees(geodetic_lat) if deg else geodetic_lat
+
+
+def geodetic2authalic_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
+
+    e = ell.eccentricity
+    f1 = e ** 2 / 3 + 31 * e ** 4 / 180 + 59 * e ** 6 / 560
+    f2 = 17 * e ** 4 / 360 + 61 * e ** 6 / 1260
+    f3 = 383 * e ** 6 / 45360
+
+    authalic_lat = geodetic_lat - f1 * sin(2 * geodetic_lat) + f2 * sin(4 * geodetic_lat) - f3 * sin(6 * geodetic_lat)
+
+    return degrees(authalic_lat) if deg else authalic_lat
+
+
+def geodetic2authalic(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    if numpy is not None:
+        fun = numpy.vectorize(geodetic2authalic_point)
+        return fun(geodetic_lat, ell, deg)
+    else:
+        return geodetic2authalic_point(geodetic_lat, ell, deg)
+
+
+def authalic2geodetic_point(authalic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    authalic_lat, ell = sanitize(authalic_lat, ell, deg)
+    e = ell.eccentricity
+    f1 = e ** 2 / 3 + 31 * e ** 4 / 180 + 517 * e ** 6 / 5040
+    f2 = 23 * e ** 4 / 360 + 251 * e ** 6 / 3780
+    f3 = 761 * e ** 6 / 45360
+
+    geodetic_lat = authalic_lat + f1 * sin(2 * authalic_lat) + f2 * sin(4 * authalic_lat) + f3 * sin(6 * authalic_lat)
+
+    return degrees(geodetic_lat) if deg else geodetic_lat
+
+
+def authalic2geodetic(authalic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    if numpy is not None:
+        fun = numpy.vectorize(authalic2geodetic_point)
+        return fun(authalic_lat, ell, deg)
+    else:
+        return authalic2geodetic_point(authalic_lat, ell, deg)
 
 
 def sanitize(lat: float, ell: Ellipsoid, deg: bool) -> typing.Tuple[float, typing.Any]:

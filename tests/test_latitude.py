@@ -23,7 +23,7 @@ def test_numpy_geodetic_geocentric():
 
 
 @pytest.mark.parametrize(
-    "geodetic_lat, isometric_lat", [(45, 50.227466), (-45, -50.227466), (0, 0), (89, 271.275), (90, inf), (-90, -inf)]
+    "geodetic_lat, isometric_lat", [(0, 0), (90, inf), (-90, -inf), (45, 50.227466), (-45, -50.227466), (89, 271.275)]
 )
 def test_geodetic_isometric(geodetic_lat, isometric_lat):
     assert pm.geodetic2isometric(geodetic_lat) == approx(isometric_lat)
@@ -39,7 +39,9 @@ def test_numpy_geodetic_isometric():
     assert pm.isometric2geodetic([50.227466, 0]) == approx([45, 0])
 
 
-@pytest.mark.parametrize("geodetic_lat,conformal_lat", [(0, 0), (89, 88.99327), (90, 90), (45, 44.80768406), (-45, -44.80768406)])
+@pytest.mark.parametrize(
+    "geodetic_lat,conformal_lat", [(0, 0), (90, 90), (-90, -90), (45, 44.80768406), (-45, -44.80768406), (89, 88.99327)]
+)
 def test_geodetic_conformal(geodetic_lat, conformal_lat):
     assert pm.geodetic2conformal(geodetic_lat) == approx(conformal_lat)
     assert pm.geodetic2conformal(radians(geodetic_lat), deg=False) == approx(radians(conformal_lat))
@@ -54,6 +56,36 @@ def test_numpy_geodetic_conformal():
     assert pm.conformal2geodetic([44.80768406, 0]) == approx([45, 0])
 
 
+@pytest.mark.parametrize("geodetic_lat,rectifying_lat", [(0, 0), (90, 90), (-90, -90), (45, 44.855682), (-45, -44.855682)])
+def test_geodetic_rectifying(geodetic_lat, rectifying_lat):
+    assert pm.geodetic2rectifying(geodetic_lat) == approx(rectifying_lat)
+    assert pm.geodetic2rectifying(radians(geodetic_lat), deg=False) == approx(radians(rectifying_lat))
+
+    assert pm.rectifying2geodetic(rectifying_lat) == approx(geodetic_lat)
+    assert pm.rectifying2geodetic(radians(rectifying_lat), deg=False) == approx(radians(geodetic_lat))
+
+
+def test_numpy_geodetic_rectifying():
+    pytest.importorskip("numpy")
+    assert pm.geodetic2rectifying([45, 0]) == approx([44.855682, 0])
+    assert pm.rectifying2geodetic([44.855682, 0]) == approx([45, 0])
+
+
+@pytest.mark.parametrize("geodetic_lat,authalic_lat", [(0, 0), (90, 90), (-90, -90), (45, 44.87170288), (-45, -44.87170288)])
+def test_geodetic_authalic(geodetic_lat, authalic_lat):
+    assert pm.geodetic2authalic(geodetic_lat) == approx(authalic_lat)
+    assert pm.geodetic2authalic(radians(geodetic_lat), deg=False) == approx(radians(authalic_lat))
+
+    assert pm.authalic2geodetic(authalic_lat) == approx(geodetic_lat)
+    assert pm.authalic2geodetic(radians(authalic_lat), deg=False) == approx(radians(geodetic_lat))
+
+
+def test_numpy_geodetic_authalic():
+    pytest.importorskip("numpy")
+    assert pm.geodetic2authalic([45, 0]) == approx([44.87170288, 0])
+    assert pm.authalic2geodetic([44.87170288, 0]) == approx([45, 0])
+
+
 @pytest.mark.parametrize("lat", [91, -91])
 def test_badvals(lat):
     # geodetic_isometric is not included on purpose
@@ -65,6 +97,14 @@ def test_badvals(lat):
         pm.geodetic2conformal(lat)
     with pytest.raises(ValueError):
         pm.conformal2geodetic(lat)
+    with pytest.raises(ValueError):
+        pm.geodetic2rectifying(lat)
+    with pytest.raises(ValueError):
+        pm.rectifying2geodetic(lat)
+    with pytest.raises(ValueError):
+        pm.geodetic2authalic(lat)
+    with pytest.raises(ValueError):
+        pm.authalic2geodetic(lat)
 
 
 if __name__ == "__main__":
