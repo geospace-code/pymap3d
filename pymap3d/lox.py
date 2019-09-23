@@ -1,6 +1,8 @@
 """ isometric latitude, meridian distance """
 from math import radians, degrees, sin, cos, atan2, tan, log, sqrt, pi
 from .ellipsoid import Ellipsoid
+from .rsphere import rsphere_rectifying
+from .latitude import geodetic2rectifying
 
 
 def isometric(lat: float, ell: Ellipsoid = None, deg: bool = True):
@@ -127,6 +129,37 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True):
     return mdist
 
 
+def meridian_arc(lat1: float, lat2: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    '''
+    Computes the meridian distance on an ellipsoid between two latitudes.
+
+    Parameters
+    ----------
+    lat1, lat2 : float or numpy.ndarray of float
+        geodetic latitudes
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+    Results
+    -------
+    dist : float or numpy.ndarray of float
+         distance (units same as ellipsoid)
+    '''
+
+    if deg is True:
+        lat1, lat2 = radians(lat1), radians(lat2)
+
+    #  set ellipsoid parameters
+    if ell is None:
+        ell = Ellipsoid()
+
+    rlat1 = geodetic2rectifying(lat1, ell, deg=False)
+    rlat2 = geodetic2rectifying(lat2, ell, deg=False)
+
+    return rsphere_rectifying(ell) * abs(rlat2 - rlat1)
+
+
 def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
                       ell: Ellipsoid = None, deg: bool = True):
     """
@@ -191,12 +224,9 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float,
     az12 = atan2(dlon, disolat)
 
     # compute distance along loxodromic curve
-    m1 = meridian_dist(lat1, deg=False, ell=ell)
-    m2 = meridian_dist(lat2, deg=False, ell=ell)
-    dm = m2 - m1
-    lox_s = dm / cos(az12)
+    dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / abs(cos(az12))
 
     if deg is True:
         az12 = degrees(az12) % 360.
 
-    return lox_s, az12
+    return dist, az12
