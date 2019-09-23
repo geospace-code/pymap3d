@@ -3,6 +3,8 @@
 [![astronomer](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fastronomer.ullaakut.eu%2Fshields%3Fowner%3Dscivision%26name%3Dpymap3d)](https://github.com/Ullaakut/astronomer/)
 
 [![Actions Status](https://github.com/scivision/pymap3d/workflows/ci/badge.svg)](https://github.com/scivision/pymap3d/actions)
+[![Actions Status](https://github.com/scivision/pymap3d/workflows/ci_stdlib_only/badge.svg)](https://github.com/scivision/pymap3d/actions)
+
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)

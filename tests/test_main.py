@@ -79,10 +79,8 @@ def test_aer_enu():
 
 
 def test_ned():
-    xyz = pm.aer2ecef(*aer0, *lla0)
     enu = pm.aer2enu(*aer0)
     ned = (enu[1], enu[0], -enu[2])
-    lla = pm.aer2geodetic(*aer0, *lla0)
 
     assert pm.aer2ned(*aer0) == approx(ned0)
 
@@ -94,18 +92,29 @@ def test_ned():
 
     assert pm.ned2aer(*ned) == approx(aer0)
 
+
+def test_ecef_ned():
+    enu = pm.aer2enu(*aer0)
+    ned = (enu[1], enu[0], -enu[2])
+    xyz = pm.aer2ecef(*aer0, *lla0)
+
     n, e, d = pm.ecef2ned(*xyz, *lla0)
     assert n == approx(ned[0])
     assert e == approx(ned[1])
     assert d == approx(ned[2])
 
     assert pm.ned2ecef(*ned, *lla0) == approx(xyz)
-# %%
+
+
+def test_enuv_nedv():
     assert pm.ecef2enuv(vx, vy, vz, *lla0[:2]) == approx((ve, vn, vu))
 
     assert pm.ecef2nedv(vx, vy, vz, *lla0[:2]) == approx((vn, ve, -vu))
 
-# %%
+
+def test_ned_geodetic():
+    lla = pm.aer2geodetic(*aer0, *lla0)
+
     enu3 = pm.geodetic2enu(*lla, *lla0)
     ned3 = (enu3[1], enu3[0], -enu3[2])
 

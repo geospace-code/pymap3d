@@ -4,91 +4,30 @@ on: [push, pull_request]
 
 jobs:
 
-  lint:
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 3
-      matrix:
-        python-version: [3.5, 3.7]
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: pip install -e .[lint]
-    - name: Lint
-      run: flake8
-    - name: Type check
-      run: mypy .
-
-  linux:
-    needs: [lint]
+  dev:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
       with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: pip install -e .[full,tests]
-    - name: run Pytest
-      run: pytest -r a -v
-
-  macos:
-    needs: [lint]
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: pip install -e .[full,tests]
-    - name: run Pytest
-      run: pytest -r a -v
-
-  windows:
-    needs: [lint]
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: pip install -e .[full,tests]
-    - name: run Pytest
-      run: pytest -r a -v
+        python-version: '3.x'
+    - run: pip install -e .[full,tests,lint]
+    - run: flake8
+    - run: mypy .
+    - run: pytest -r a -v
 
   install:
-    needs: [lint]
+    needs: [dev]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
       with:
-        python-version: 3.7
-    - name: Install Python package
-      run: |
-        pip install numpy python-dateutil
-        python setup.py install
-    - name: run Pytest
+        python-version: '3.x'
+    - run: pip install numpy python-dateutil
+    - run: python setup.py install
+    - name: Pytest package
       run: |
         cd ${HOME}
         python -m pip install pytest
         python -m pytest ${GITHUB_WORKSPACE} -r a -v
-
-  linuxPy35Math:
-    needs: [lint]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: 3.5
-    - name: Install dependencies
-      run: pip install -e .[tests]
-    - name: run Pytest
-      run: pytest
