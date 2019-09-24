@@ -1,3 +1,4 @@
+"""geodetic transforms to auxilary coordinate systems involving latitude"""
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
 
@@ -194,7 +195,7 @@ def conformal2geodetic(conformal_lat: float, ell: Ellipsoid = None, deg: bool = 
 
     Parameters
     ----------
-    conformal_flat : float
+    conformal_lat : float
         conformal latitude
     ell : Ellipsoid, optional
         reference ellipsoid (default WGS84)
@@ -239,7 +240,7 @@ def geodetic2conformal(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = T
 
     Parameters
     ----------
-    lat : float
+    geodetic_lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -285,6 +286,32 @@ def geodetic2conformal_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bo
 
 # %% rectifying
 def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    converts from geodetic latitude to rectifying latitude
+
+    like Matlab map.geodesy.RectifyingLatitudeConverter.forward()
+
+    Parameters
+    ----------
+    geodetic_lat : float
+         geodetic latitude
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    rectifying_lat : float
+         rectifying latiude
+
+    Notes
+    -----
+    Equations from J. P. Snyder, "Map Projections - A Working Manual",
+    US Geological Survey Professional Paper 1395, US Government Printing
+    Office, Washington, DC, 1987, pp. 13-18.
+
+    """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     n = ell.thirdflattening
@@ -305,6 +332,31 @@ def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = 
 
 
 def rectifying2geodetic(rectifying_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    converts from rectifying latitude to geodetic latitude
+
+    like Matlab map.geodesy.RectifyingLatitudeConverter.inverse()
+
+    Parameters
+    ----------
+    rectifying_lat : float
+        latitude
+    ell : Ellipsoid, optional
+        reference ellipsoid (default WGS84)
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    geodetic_lat : float
+        geodetic latiude
+
+    Notes
+    -----
+    Equations from J. P. Snyder, "Map Projections - A Working Manual",
+    US Geological Survey Professional Paper 1395, US Government Printing
+    Office, Washington, DC, 1987, pp. 13-18.
+    """
     rectifying_lat, ell = sanitize(rectifying_lat, ell, deg)
 
     n = ell.thirdflattening
@@ -326,6 +378,32 @@ def rectifying2geodetic(rectifying_lat: float, ell: Ellipsoid = None, deg: bool 
 
 # %% authalic
 def geodetic2authalic(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    converts from geodetic latitude to authalic latitude
+
+    like Matlab map.geodesy.AuthalicLatitudeConverter.forward()
+
+    Parameters
+    ----------
+    geodetic_lat : float
+         geodetic latitude
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    authalic_lat : float
+         authalic latiude
+
+    Notes
+    -----
+    Equations from J. P. Snyder, "Map Projections - A Working Manual",
+    US Geological Survey Professional Paper 1395, US Government Printing
+    Office, Washington, DC, 1987, pp. 13-18.
+
+    """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     e = ell.eccentricity
@@ -339,6 +417,31 @@ def geodetic2authalic(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = Tr
 
 
 def authalic2geodetic(authalic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    converts from authalic latitude to geodetic latitude
+
+    like Matlab map.geodesy.AuthalicLatitudeConverter.inverse()
+
+    Parameters
+    ----------
+    authalic_lat : float
+        latitude
+    ell : Ellipsoid, optional
+        reference ellipsoid (default WGS84)
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    geodetic_lat : float
+        geodetic latiude
+
+    Notes
+    -----
+    Equations from J. P. Snyder, "Map Projections - A Working Manual",
+    US Geological Survey Professional Paper 1395, US Government Printing
+    Office, Washington, DC, 1987, pp. 13-18.
+    """
     authalic_lat, ell = sanitize(authalic_lat, ell, deg)
     e = ell.eccentricity
     f1 = e ** 2 / 3 + 31 * e ** 4 / 180 + 517 * e ** 6 / 5040
@@ -352,6 +455,32 @@ def authalic2geodetic(authalic_lat: float, ell: Ellipsoid = None, deg: bool = Tr
 
 # %% parametric
 def geodetic2parametric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    converts from geodetic latitude to parametric latitude
+
+    like Matlab parametriclatitude()
+
+    Parameters
+    ----------
+    geodetic_lat : float
+         geodetic latitude
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    parametric_lat : float
+         parametric latiude
+
+    Notes
+    -----
+    Equations from J. P. Snyder, "Map Projections - A Working Manual",
+    US Geological Survey Professional Paper 1395, US Government Printing
+    Office, Washington, DC, 1987, pp. 13-18.
+
+    """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     parametric_lat = atan(sqrt(1 - (ell.eccentricity) ** 2) * tan(geodetic_lat))
@@ -360,6 +489,31 @@ def geodetic2parametric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = 
 
 
 def parametric2geodetic(parametric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    converts from parametric latitude to geodetic latitude
+
+    like Matlab geodeticLatitudeFromParametric()
+
+    Parameters
+    ----------
+    parametric_lat : float
+        latitude
+    ell : Ellipsoid, optional
+        reference ellipsoid (default WGS84)
+    deg : bool, optional
+        degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    geodetic_lat : float
+        geodetic latiude
+
+    Notes
+    -----
+    Equations from J. P. Snyder, "Map Projections - A Working Manual",
+    US Geological Survey Professional Paper 1395, US Government Printing
+    Office, Washington, DC, 1987, pp. 13-18.
+    """
     parametric_lat, ell = sanitize(parametric_lat, ell, deg)
 
     geodetic_lat = atan(tan(parametric_lat) / sqrt(1 - (ell.eccentricity) ** 2))

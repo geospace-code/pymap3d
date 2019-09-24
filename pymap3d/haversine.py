@@ -1,6 +1,5 @@
-# Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """
-Michael Hirsch
+Compute angular separation in the sky using haversine
 
 Note:
 decimal points on constants made 0 difference in `%timeit` execution time
@@ -27,13 +26,13 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
     Parameters
     ----------
 
-    lon0 : float or numpy.ndarray of float
+    lon0 : float
         longitude of first point
-    lat0 : float or numpy.ndarray of float
+    lat0 : float
         latitude of first point
-    lon1 : float or numpy.ndarray of float
+    lon1 : float
         longitude of second point
-    lat1 : float or numpy.ndarray of float
+    lat1 : float
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -41,7 +40,7 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
     Returns
     -------
 
-    sep_rad : float or numpy.ndarray of float
+    sep_rad : float
         angular separation
 
 
@@ -86,7 +85,7 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
     Returns
     -------
 
-    sep_rad : float or numpy.ndarray of float
+    sep_rad : float
         angular separation
 
     For reference, this is from astropy astropy/coordinates/angle_utilities.py

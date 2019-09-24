@@ -21,7 +21,18 @@ __all__ = [
 
 
 def rsphere_eqavol(ell: Ellipsoid = None) -> float:
-    """computes the radius of the sphere with equal volume as the ellipsoid"""
+    """computes the radius of the sphere with equal volume as the ellipsoid
+
+    Parameters
+    ----------
+    ell : Ellipsoid, optional
+          reference ellipsoid
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
     if ell is None:
         ell = Ellipsoid()
 
@@ -31,7 +42,18 @@ def rsphere_eqavol(ell: Ellipsoid = None) -> float:
 
 
 def rsphere_authalic(ell: Ellipsoid = None) -> float:
-    """computes the radius of the sphere with equal surface area as the ellipsoid"""
+    """computes the radius of the sphere with equal surface area as the ellipsoid
+
+    Parameters
+    ----------
+    ell : Ellipsoid, optional
+          reference ellipsoid
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
     if ell is None:
         ell = Ellipsoid()
 
@@ -47,7 +69,18 @@ def rsphere_authalic(ell: Ellipsoid = None) -> float:
 
 
 def rsphere_rectifying(ell: Ellipsoid = None) -> float:
-    """computes the radius of the sphere with equal meridional distances as the ellipsoid"""
+    """computes the radius of the sphere with equal meridional distances as the ellipsoid
+
+    Parameters
+    ----------
+    ell : Ellipsoid, optional
+          reference ellipsoid
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
     if ell is None:
         ell = Ellipsoid()
     return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
@@ -55,7 +88,24 @@ def rsphere_rectifying(ell: Ellipsoid = None) -> float:
 
 def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = True) -> float:
     """computes the Euler radii of curvature at the midpoint of the
-     great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)"""
+     great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)
+
+    Parameters
+    ----------
+    lat1, lat2 : float
+        geodetic latitudes (degrees)
+    lon1, lon2 : float
+       geodetic longitudes (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
     if not deg:
         lat1, lon1, lat2, lon2 = degrees(lat1), degrees(lon1), degrees(lat2), degrees(lon2)
     if asarray is not None:
@@ -77,9 +127,24 @@ def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = Tru
     return rho * nu / den
 
 
-def rsphere_curve(lat, ell: Ellipsoid = None, deg: bool = True, method="mean") -> float:
+def rsphere_curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> float:
     """computes the arithmetic average of the transverse and meridional
-    radii of curvature at a specified latitude point"""
+    radii of curvature at a specified latitude point
+
+    Parameters
+    ----------
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    method: str, optional
+        "mean" or "norm"
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
 
     if deg:
         lat = radians(lat)
@@ -95,8 +160,21 @@ def rsphere_curve(lat, ell: Ellipsoid = None, deg: bool = True, method="mean") -
         raise Exception("pymap3d.rsphere.curve: method must be mean or norm")
 
 
-def rsphere_triaxial(ell: Ellipsoid = None, method="mean") -> float:
-    """computes triaxial average of the semimajor and semiminor axes of the ellipsoid"""
+def rsphere_triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+    """computes triaxial average of the semimajor and semiminor axes of the ellipsoid
+
+    Parameters
+    ----------
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    method: str, optional
+        "mean" or "norm"
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
 
     if ell is None:
         ell = Ellipsoid()
@@ -109,8 +187,21 @@ def rsphere_triaxial(ell: Ellipsoid = None, method="mean") -> float:
         raise Exception("pymap3d.rsphere.rsphere_triaxial: method must be mean or norm")
 
 
-def rsphere_biaxial(ell: Ellipsoid = None, method="mean") -> float:
-    """computes biaxial average of the semimajor and semiminor axes of the ellipsoid"""
+def rsphere_biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+    """computes biaxial average of the semimajor and semiminor axes of the ellipsoid
+
+    Parameters
+    ----------
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    method: str, optional
+        "mean" or "norm"
+
+    Returns
+    -------
+    radius: float
+        radius of sphere
+    """
 
     if ell is None:
         ell = Ellipsoid()

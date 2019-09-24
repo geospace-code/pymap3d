@@ -13,6 +13,8 @@ try:
 except ImportError:
     Time = None
 
+__all__ = ["radec2azel", "azel2radec"]
+
 
 def azel2radec(
     az_deg: float, el_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = False
@@ -22,9 +24,9 @@ def azel2radec(
 
     Parameters
     ----------
-    az_deg : float or numpy.ndarray of float
+    az_deg : float
          azimuth [degrees clockwize from North]
-    el_deg : float or numpy.ndarray of float
+    el_deg : float
              elevation [degrees above horizon (neglecting aberration)]
     lat_deg : float
               observer latitude [-90, 90]
@@ -37,9 +39,9 @@ def azel2radec(
 
     Returns
     -------
-    ra_deg : float or numpy.ndarray of float
+    ra_deg : float
          ecliptic right ascension (degress)
-    dec_deg : float or numpy.ndarray of float
+    dec_deg : float
          ecliptic declination (degrees)
     """
 
@@ -63,9 +65,9 @@ def radec2azel(
 
     Parameters
     ----------
-    ra_deg : float or numpy.ndarray of float
+    ra_deg : float
          ecliptic right ascension (degress)
-    dec_deg : float or numpy.ndarray of float
+    dec_deg : float
          ecliptic declination (degrees)
     lat_deg : float
               observer latitude [-90, 90]
@@ -78,9 +80,9 @@ def radec2azel(
 
     Returns
     -------
-    az_deg : float or numpy.ndarray of float
+    az_deg : float
              azimuth [degrees clockwize from North]
-    el_deg : float or numpy.ndarray of float
+    el_deg : float
              elevation [degrees above horizon (neglecting aberration)]
     """
 

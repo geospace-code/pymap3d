@@ -301,7 +301,7 @@ def uvw2enu(u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = 
 
 def eci2geodetic(x: float, y: float, z: float, t: datetime, useastropy: bool = True) -> typing.Tuple[float, float, float]:
     """
-    convert ECI to geodetic coordinates
+    convert Earth Centered Internal ECI to geodetic coordinates
 
     Parameters
     ----------

@@ -16,6 +16,23 @@ __all__ = ["loxodrome_inverse", "loxodrome_direct", "meridian_arc", "meridian_di
 
 
 def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+    """
+    Computes the ground distance on an ellipsoid from the equator to the input latitude.
+
+    Parameters
+    ----------
+    lat : float
+        geodetic latitude
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Results
+    -------
+    dist : float
+         distance (meters)
+    """
     return meridian_arc(0, lat, ell, deg)
 
 
@@ -147,6 +164,8 @@ def loxodrome_direct(
         azimuth (degrees) clockwide from north.
     ell : Ellipsoid, optional
           reference ellipsoid
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
 
     Results
     -------
@@ -199,6 +218,22 @@ def departure(lon1: float, lon2: float, lat: float, ell: Ellipsoid = None, deg: 
     Computes the distance along a specific parallel between two meridians.
 
     like Matlab departure()
+
+    Parameters
+    ----------
+    lon1, lon2 : float
+        geodetic longitudes (degrees)
+    lat : float
+        geodetic latitude (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    dist: float
+        ground distance (meters)
     """
     if deg:
         lon1, lon2, lat = radians(lon1), radians(lon2), radians(lat)
@@ -211,6 +246,22 @@ def meanm(lat: "ndarray", lon: "ndarray", ell: Ellipsoid = None, deg: bool = Tru
     Computes geographic mean for geographic points on an ellipsoid
 
     like Matlab meanm()
+
+    Parameters
+    ----------
+    lat : sequence of float
+        geodetic latitude (degrees)
+    lon : sequence of float
+        geodetic longitude (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    latbar, lonbar: float
+        geographic mean latitude, longitude
     """
     if deg:
         lat, lon = radians(lat), radians(lon)

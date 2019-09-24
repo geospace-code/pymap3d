@@ -11,6 +11,20 @@ __all__ = ["rcurve_parallel", "rcurve_meridian", "rcurve_transverse"]
 def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
+
+    Parameters
+    ----------
+    lat : float
+        geodetic latitude (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    radius: float
+        radius of ellipsoid
     """
 
     if deg:
@@ -20,7 +34,22 @@ def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
 
 
 def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
-    """computes the meridional radius of curvature for the ellipsoid"""
+    """computes the meridional radius of curvature for the ellipsoid
+
+    Parameters
+    ----------
+    lat : float
+        geodetic latitude (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    radius: float
+        radius of ellipsoid
+    """
 
     if ell is None:
         ell = Ellipsoid()
@@ -36,6 +65,20 @@ def rcurve_transverse(lat: float, ell: Ellipsoid = None, deg: bool = True) -> fl
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid
+
+    Parameters
+    ----------
+    lat : float
+        geodetic latitude (degrees)
+    ell : Ellipsoid, optional
+          reference ellipsoid
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    radius: float
+        radius of ellipsoid
     """
 
     if ell is None:

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
-
 """
 converts right ascension, declination to azimuth, elevation and vice versa.
 Normally do this via AstroPy.

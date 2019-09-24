@@ -1,4 +1,6 @@
-"""all functions assume radians"""
+"""Utility functions
+
+all assume radians"""
 import typing
 from .ellipsoid import Ellipsoid
 

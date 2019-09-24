@@ -18,16 +18,6 @@ __all__ = ["lookAtSpheroid"]
 def lookAtSpheroid(
     lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
 ) -> Tuple[float, float, float]:
-    if vectorize is not None:
-        fun = vectorize(lookAtSpheroid_point)
-        return fun(lat0, lon0, h0, az, tilt, ell, deg)
-    else:
-        return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
-
-
-def lookAtSpheroid_point(
-    lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
-) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -40,9 +30,9 @@ def lookAtSpheroid_point(
            observer geodetic longitude
     h0 : float
         observer altitude (meters)  Must be non-negative since this function doesn't consider terrain
-    az : float or numpy.ndarray of float
+    az : float
         azimuth angle of line-of-sight, clockwise from North
-    tilt : float or numpy.ndarray of float
+    tilt : float
         tilt angle of line-of-sight with respect to local vertical (nadir = 0)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -52,17 +42,27 @@ def lookAtSpheroid_point(
     Results
     -------
 
-    lat0 : float or numpy.ndarray of float
+    lat0 : float
            geodetic latitude where the line-of-sight intersects with the Earth ellipsoid
-    lon0 : float or numpy.ndarray of float
+    lon0 : float
            geodetic longitude where the line-of-sight intersects with the Earth ellipsoid
-    d : float or numpy.ndarray of float
+    d : float
         slant range (meters) from starting point to intersect point
 
     Values will be NaN if the line of sight does not intersect.
 
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
+    if vectorize is not None:
+        fun = vectorize(lookAtSpheroid_point)
+        return fun(lat0, lon0, h0, az, tilt, ell, deg)
+    else:
+        return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
+
+
+def lookAtSpheroid_point(
+    lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
 
     if h0 < 0:
         raise ValueError("Intersection calculation requires altitude  [0, Infinity)")

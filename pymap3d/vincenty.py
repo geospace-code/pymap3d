@@ -1,6 +1,5 @@
-# Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """
- Ported by Michael Hirsch to Python.
+Vincenty's methods for computing ground distance and reckoning
 """
 import typing
 import logging
@@ -407,13 +406,13 @@ def track2(
     Parameters
     ----------
 
-    Lat1 : float or numpy.ndarray of float
+    Lat1 : float
         Geodetic latitude of first point (degrees)
-    Lon1 : float or numpy.ndarray of float
+    Lon1 : float
         Geodetic longitude of first point (degrees)
-    Lat2 : float or numpy.ndarray of float
+    Lat2 : float
         Geodetic latitude of second point (degrees)
-    Lon2 : float or numpy.ndarray of float
+    Lon2 : float
         Geodetic longitude of second point (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid

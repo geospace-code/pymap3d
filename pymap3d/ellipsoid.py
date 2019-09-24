@@ -1,3 +1,4 @@
+"""Minimal class for planetary ellipsoids"""
 from math import sqrt
 
 
@@ -12,7 +13,7 @@ class Ellipsoid:
     as everywhere else in this program, distance units are METERS
     """
 
-    def __init__(self, model="wgs84"):
+    def __init__(self, model: str = "wgs84"):
         """
         feel free to suggest additional ellipsoids
 
