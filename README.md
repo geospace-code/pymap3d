@@ -12,7 +12,7 @@
 
 # Python 3-D coordinate conversions
 
-Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions.
+Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions and geodesy.
 API similar to popular $1000 Matlab Mapping Toolbox routines for:
 
 * Python
@@ -49,7 +49,7 @@ pip install -e pymap3d
 
 One can verify Python functionality after installation by:
 ```sh
-pytest -r a -v
+pytest pymap3d -r a -v
 ```
 
 ## Usage
@@ -97,12 +97,15 @@ converted to the desired coordinate system:
     azel2radec radec2azel
     vreckon vdist
     lookAtSpheroid
-    track2
+    track2 departure meanm 
+    rcurve rsphere 
 
 
 Additional functions:
 
-`loxodrome_inverse`: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
+* loxodrome_inverse: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
+* loxodrome_direct
+* geodetic latitude transforms to/from: parametric, authalic, isometric, and more in pymap3d.latitude
 
 
 Abbreviations:
@@ -113,6 +116,18 @@ Abbreviations:
 * [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
 * [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
 * [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
+
+### array vs scalar
+
+Use of pymap3d on embedded systems or other streaming data applications often deal with scalar position data.
+These data are handled efficiently with the Python math stdlib module.
+Vector data can be handled via list comprehension.
+
+Those needing multidimensional data with SIMD and other Numpy and/or PyPy accelerated performance can do so automatically by installing Numpy.
+pymap3d seamlessly falls back to Python's math module if Numpy isn't present.
+To keep the code clean, only scalar data can be used without Numpy.
+As noted above, use list comprehension if you need vector data without Numpy.
+
 
 ### Caveats
 
