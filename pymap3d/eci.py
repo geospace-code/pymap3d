@@ -5,15 +5,14 @@ import numpy as np
 from typing import Tuple
 
 from .sidereal import datetime2sidereal
+
 try:
     from astropy.time import Time
 except ImportError:
     Time = None
 
 
-def eci2ecef(x: float, y: float, z: float = None,
-             time: datetime = None, *,
-             useastropy: bool = True) -> Tuple[float, float, float]:
+def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -> Tuple[float, float, float]:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -41,27 +40,27 @@ def eci2ecef(x: float, y: float, z: float = None,
     z : float
         target z ECEF coordinate
     """
-# %%
+    # %%
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
     z = np.atleast_1d(z)
     if not x.shape == y.shape == z.shape:
-        raise ValueError('shapes of ECI x,y,z must be identical')
+        raise ValueError("shapes of ECI x,y,z must be identical")
 
     useastropy = useastropy and Time is not None
 
     if useastropy:
-        gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+        gst = Time(time).sidereal_time("apparent", "greenwich").radian
     else:
-        gst = datetime2sidereal(time, 0.)
+        gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
     if gst.ndim != 1 or not isinstance(gst[0], float):
-        raise ValueError('GST must be vector in radians')
+        raise ValueError("GST must be vector in radians")
     if gst.size == 1:
         gst *= np.ones(x.size)
     if gst.size != x.size:
-        raise ValueError('GST must be scalar or same length as positions')
+        raise ValueError("GST must be scalar or same length as positions")
 
     eci = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
     ecef = np.empty((x.size, 3))
@@ -75,9 +74,7 @@ def eci2ecef(x: float, y: float, z: float = None,
     return xecef, yecef, zecef
 
 
-def ecef2eci(x: float, y: float, z: float = None,
-             time: datetime = None, *,
-             useastropy: bool = True) -> Tuple[float, float, float]:
+def ecef2eci(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -> Tuple[float, float, float]:
     """
     Point => Point   ECEF => ECI
 
@@ -105,27 +102,27 @@ def ecef2eci(x: float, y: float, z: float = None,
     z : float
         target z ECI coordinate
     """
-# %%
+    # %%
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
     z = np.atleast_1d(z)
     if not x.shape == y.shape == z.shape:
-        raise ValueError('shapes of ECI x,y,z must be identical')
+        raise ValueError("shapes of ECI x,y,z must be identical")
 
     useastropy = useastropy and Time is not None
 
     if useastropy:
-        gst = Time(time).sidereal_time('apparent', 'greenwich').radian
+        gst = Time(time).sidereal_time("apparent", "greenwich").radian
     else:
-        gst = datetime2sidereal(time, 0.)
+        gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
     if gst.ndim != 1 or not isinstance(gst[0], float):
-        raise ValueError('GST must be vector in radians')
+        raise ValueError("GST must be vector in radians")
     if gst.size == 1:
         gst *= np.ones(x.size)
     if gst.size != x.size:
-        raise ValueError('GST must be scalar or same length as positions')
+        raise ValueError("GST must be scalar or same length as positions")
 
     ecef = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
     eci = np.empty((x.size, 3))
@@ -154,6 +151,4 @@ def _rottrip(ang: float) -> np.ndarray:
     T : numpy.ndarray of float
         3 x 3 transformation matrix
     """
-    return np.array([[np.cos(ang), np.sin(ang), 0],
-                     [-np.sin(ang), np.cos(ang), 0],
-                     [0, 0, 1]])
+    return np.array([[np.cos(ang), np.sin(ang), 0], [-np.sin(ang), np.cos(ang), 0], [0, 0, 1]])

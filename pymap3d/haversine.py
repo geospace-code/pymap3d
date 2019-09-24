@@ -20,11 +20,10 @@ try:
 except ImportError:
     angular_separation = None
 
-__all__ = ['anglesep', 'anglesep_meeus', 'haversine']
+__all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
 
-def anglesep_meeus(lon0: float, lat0: float,
-                   lon1: float, lat1: float, deg: bool = True) -> float:
+def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
     """
     Parameters
     ----------
@@ -64,8 +63,7 @@ def anglesep_meeus(lon0: float, lat0: float,
         lon1 = radians(lon1)
         lat1 = radians(lat1)
 
-    sep_rad = 2 * arcsin(sqrt(haversine(lat0 - lat1) +
-                              cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
+    sep_rad = 2 * arcsin(sqrt(haversine(lat0 - lat1) + cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
 
     if deg:
         return degrees(sep_rad)
@@ -73,8 +71,7 @@ def anglesep_meeus(lon0: float, lat0: float,
         return sep_rad
 
 
-def anglesep(lon0: float, lat0: float,
-             lon1: float, lat1: float, deg: bool = True) -> float:
+def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
     """
     Parameters
     ----------
@@ -100,7 +97,7 @@ def anglesep(lon0: float, lat0: float,
     Angular separation between two points on a sphere.
     """
     if angular_separation is None:
-        raise ImportError('angledist requires AstroPy. Try angledis_meeus')
+        raise ImportError("angledist requires AstroPy. Try angledis_meeus")
 
     if deg:
         lon0 = radians(lon0)
@@ -135,4 +132,4 @@ def haversine(theta: float) -> float:
     https://en.wikipedia.org/wiki/Haversine
     Meeus p. 111
     """
-    return (1 - cos(theta)) / 2.
+    return (1 - cos(theta)) / 2.0

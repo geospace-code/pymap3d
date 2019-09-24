@@ -5,16 +5,18 @@ from math import pi, nan, sqrt
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
+
 try:
     import numpy
 except ImportError:
     numpy = None
 
-__all__ = ['lookAtSpheroid']
+__all__ = ["lookAtSpheroid"]
 
 
-def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
-                   ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def lookAtSpheroid(
+    lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
     if numpy is not None:
         fun = numpy.vectorize(lookAtSpheroid_point)
         return fun(lat0, lon0, h0, az, tilt, ell, deg)
@@ -22,8 +24,9 @@ def lookAtSpheroid(lat0: float, lon0: float, h0: float, az: float, tilt: float,
         return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
 
 
-def lookAtSpheroid_point(lat0: float, lon0: float, h0: float, az: float, tilt: float,
-                         ell: Ellipsoid = None, deg: bool = True) -> Tuple[float, float, float]:
+def lookAtSpheroid_point(
+    lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
+) -> Tuple[float, float, float]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -61,7 +64,7 @@ def lookAtSpheroid_point(lat0: float, lon0: float, h0: float, az: float, tilt: f
     """
 
     if h0 < 0:
-        raise ValueError('Intersection calculation requires altitude  [0, Infinity)')
+        raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
 
     if ell is None:
         ell = Ellipsoid()
@@ -70,20 +73,31 @@ def lookAtSpheroid_point(lat0: float, lon0: float, h0: float, az: float, tilt: f
     b = ell.semimajor_axis
     c = ell.semiminor_axis
 
-    el = tilt - 90. if deg else tilt - pi / 2
+    el = tilt - 90.0 if deg else tilt - pi / 2
 
-    e, n, u = aer2enu(az, el, srange=1., deg=deg)  # fixed 1 km slant range
+    e, n, u = aer2enu(az, el, srange=1.0, deg=deg)  # fixed 1 km slant range
     u, v, w = enu2uvw(e, n, u, lat0, lon0, deg=deg)
     x, y, z = geodetic2ecef(lat0, lon0, h0, deg=deg)
 
-    value = -a**2 * b**2 * w * z - a**2 * c**2 * v * y - b**2 * c**2 * u * x
-    radical = (a**2 * b**2 * w**2 + a**2 * c**2 * v**2 - a**2 * v**2 * z**2 + 2 * a**2 * v * w * y * z -
-               a**2 * w**2 * y**2 + b**2 * c**2 * u**2 - b**2 * u**2 * z**2 + 2 * b**2 * u * w * x * z -
-               b**2 * w**2 * x**2 - c**2 * u**2 * y**2 + 2 * c**2 * u * v * x * y - c**2 * v**2 * x**2)
+    value = -a ** 2 * b ** 2 * w * z - a ** 2 * c ** 2 * v * y - b ** 2 * c ** 2 * u * x
+    radical = (
+        a ** 2 * b ** 2 * w ** 2
+        + a ** 2 * c ** 2 * v ** 2
+        - a ** 2 * v ** 2 * z ** 2
+        + 2 * a ** 2 * v * w * y * z
+        - a ** 2 * w ** 2 * y ** 2
+        + b ** 2 * c ** 2 * u ** 2
+        - b ** 2 * u ** 2 * z ** 2
+        + 2 * b ** 2 * u * w * x * z
+        - b ** 2 * w ** 2 * x ** 2
+        - c ** 2 * u ** 2 * y ** 2
+        + 2 * c ** 2 * u * v * x * y
+        - c ** 2 * v ** 2 * x ** 2
+    )
 
-    magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
+    magnitude = a ** 2 * b ** 2 * w ** 2 + a ** 2 * c ** 2 * v ** 2 + b ** 2 * c ** 2 * u ** 2
 
-# %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
+    # %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     if radical > 0:
         d = (value - a * b * c * sqrt(radical)) / magnitude
     else:
@@ -91,7 +105,7 @@ def lookAtSpheroid_point(lat0: float, lon0: float, h0: float, az: float, tilt: f
 
     if d < 0:
         d = nan
-# %% cartesian to ellipsodal
+    # %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
     return lat, lon, d

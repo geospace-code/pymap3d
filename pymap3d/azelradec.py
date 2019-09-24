@@ -5,6 +5,7 @@ from typing import Tuple
 from datetime import datetime
 from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
 from .timeconv import str2dt  # astropy can't handle xarray times (yet)
+
 try:
     from astropy.time import Time
     from astropy import units as u
@@ -13,9 +14,9 @@ except ImportError:
     Time = None
 
 
-def azel2radec(az_deg: float, el_deg: float,
-               lat_deg: float, lon_deg: float,
-               time: datetime, usevallado: bool = False) -> Tuple[float, float]:
+def azel2radec(
+    az_deg: float, el_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = False
+) -> Tuple[float, float]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
 
@@ -47,17 +48,16 @@ def azel2radec(az_deg: float, el_deg: float,
 
     obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    direc = AltAz(location=obs, obstime=Time(str2dt(time)),
-                  az=az_deg * u.deg, alt=el_deg * u.deg)
+    direc = AltAz(location=obs, obstime=Time(str2dt(time)), az=az_deg * u.deg, alt=el_deg * u.deg)
 
     sky = SkyCoord(direc.transform_to(ICRS()))
 
     return sky.ra.deg, sky.dec.deg
 
 
-def radec2azel(ra_deg: float, dec_deg: float,
-               lat_deg: float, lon_deg: float,
-               time: datetime, usevallado: bool = False) -> Tuple[float, float]:
+def radec2azel(
+    ra_deg: float, dec_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = False
+) -> Tuple[float, float]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
 
@@ -87,12 +87,9 @@ def radec2azel(ra_deg: float, dec_deg: float,
     if usevallado or Time is None:
         return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
 
-    obs = EarthLocation(lat=lat_deg * u.deg,
-                        lon=lon_deg * u.deg)
+    obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    points = SkyCoord(Angle(ra_deg, unit=u.deg),
-                      Angle(dec_deg, unit=u.deg),
-                      equinox='J2000.0')
+    points = SkyCoord(Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox="J2000.0")
 
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(str2dt(time))))
 

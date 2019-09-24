@@ -6,6 +6,7 @@ import typing
 import logging
 from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, nan, pi, radians, degrees
 from copy import copy
+
 try:
     import numpy
 except ImportError:
@@ -18,11 +19,11 @@ __all__ = ["vdist", "vreckon", "track2"]
 
 def sign(x: float) -> float:
     if x < 0:
-        y = -1.
+        y = -1.0
     elif x > 0:
-        y = 1.
+        y = 1.0
     else:
-        y = 0.
+        y = 0.0
 
     return y
 
@@ -164,10 +165,10 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         try:
             sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
         except ZeroDivisionError:
-            sinAlpha = 0.
+            sinAlpha = 0.0
 
         if isnan(sinAlpha) or abs(sinAlpha - 1) < 1e-16:
-            alpha = 0.
+            alpha = 0.0
         else:
             alpha = asin(sinAlpha)
 
@@ -191,10 +192,19 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     u2 = cos(alpha) ** 2 * (a ** 2 - b ** 2) / b ** 2
     A = 1 + u2 / 16384 * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)))
     B = u2 / 1024 * (256 + u2 * (-128 + u2 * (74 - 47 * u2)))
-    deltasigma = (B * sin(sigma) * (cos2sigmam + B / 4 * (cos(sigma) * (-1 + 2 * cos2sigmam ** 2) - B / 6 * cos2sigmam * (-3 + 4 * sin(sigma) ** 2) * (-3 + 4 * cos2sigmam ** 2)
-                                                          )
-                                    )
-                  )
+    deltasigma = (
+        B
+        * sin(sigma)
+        * (
+            cos2sigmam
+            + B
+            / 4
+            * (
+                cos(sigma) * (-1 + 2 * cos2sigmam ** 2)
+                - B / 6 * cos2sigmam * (-3 + 4 * sin(sigma) ** 2) * (-3 + 4 * cos2sigmam ** 2)
+            )
+        )
+    )
 
     dist_m = b * A * (sigma - deltasigma)
 
@@ -349,9 +359,17 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
         sinSigma = sin(sigma)
         cosSigma = cos(sigma)
         deltaSigma = (
-            B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)
-                                                  )
-                            )
+            B
+            * sinSigma
+            * (
+                cos2SigmaM
+                + B
+                / 4
+                * (
+                    cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)
+                    - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)
+                )
+            )
         )
         sigmaP = sigma
         sigma = Rng / (b * A) + deltaSigma
@@ -380,7 +398,9 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
     return degrees(lat2), lon2, a21 % 360.0
 
 
-def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True) -> typing.Tuple[typing.List[float], typing.List[float]]:
+def track2(
+    lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True
+) -> typing.Tuple[typing.List[float], typing.List[float]]:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 
@@ -416,7 +436,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = 
     if ell is None:
         ell = Ellipsoid()
 
-    if npts <= 1:
+    if npts < 2:
         raise ValueError("npts must be greater than 1")
 
     if npts == 2:
@@ -430,9 +450,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = 
     else:
         rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
 
-    gcarclen = 2.0 * asin(
-        sqrt((sin((rlat1 - rlat2) / 2)) ** 2 + cos(rlat1) * cos(rlat2) * (sin((rlon1 - rlon2) / 2)) ** 2)
-    )
+    gcarclen = 2.0 * asin(sqrt((sin((rlat1 - rlat2) / 2)) ** 2 + cos(rlat1) * cos(rlat2) * (sin((rlon1 - rlon2) / 2)) ** 2))
     # check to see if points are antipodal (if so, route is undefined).
     if abs(gcarclen - pi) < 1e-12:
         raise ValueError("cannot compute intermediate points on a great circle whose endpoints are antipodal")
@@ -446,7 +464,7 @@ def track2(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = 
     lats = [latpt]
     for _ in range(npts - 2):
         latptnew, lonptnew, _ = vreckon(latpt, lonpt, incdist, azimuth)
-        _, azimuth, _ = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)
+        azimuth = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)[1]
         lats.append(latptnew)
         lons.append(lonptnew)
         latpt = latptnew

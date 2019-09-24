@@ -4,6 +4,7 @@ from math import pi
 from datetime import datetime
 
 from .timeconv import str2dt
+
 try:
     from astropy.time import Time
     import astropy.units as u
@@ -16,12 +17,10 @@ The "usevallado" datetime to julian runs 4 times faster than astropy.
 However, AstroPy is more accurate.
 """
 
-__all__ = ['datetime2sidereal', 'juliandate', 'julian2sidereal']
+__all__ = ["datetime2sidereal", "juliandate", "julian2sidereal"]
 
 
-def datetime2sidereal(time: datetime,
-                      lon_radians: float,
-                      usevallado: bool = True) -> float:
+def datetime2sidereal(time: datetime, lon_radians: float, usevallado: bool = True) -> float:
     """
     Convert ``datetime`` to sidereal time
 
@@ -47,13 +46,12 @@ def datetime2sidereal(time: datetime,
     usevallado = usevallado or Time is None
     if usevallado:
         jd = juliandate(str2dt(time))
-# %% Greenwich Sidereal time RADIANS
+        # %% Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
-# %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
+        # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
         tsr = gst + lon_radians
     else:
-        tsr = Time(time).sidereal_time(kind='apparent',
-                                       longitude=Longitude(lon_radians, unit=u.radian)).radian
+        tsr = Time(time).sidereal_time(kind="apparent", longitude=Longitude(lon_radians, unit=u.radian)).radian
 
     return tsr
 
@@ -88,8 +86,8 @@ def juliandate(time: datetime) -> float:
         month = time.month
 
     A = int(year / 100.0)
-    B = 2 - A + int(A / 4.)
-    C = ((time.second / 60. + time.minute) / 60. + time.hour) / 24.
+    B = 2 - A + int(A / 4.0)
+    C = ((time.second / 60.0 + time.minute) / 60.0 + time.hour) / 24.0
 
     return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
@@ -116,11 +114,10 @@ def julian2sidereal(Jdate: float) -> float:
         return list(map(julian2sidereal, Jdate))
 
     # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
-    tUT1 = (Jdate - 2451545.0) / 36525.
+    tUT1 = (Jdate - 2451545.0) / 36525.0
 
     # Eqn. 3-47 p. 188
-    gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
-                tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3)
+    gmst_sec = 67310.54841 + (876600 * 3600 + 8640184.812866) * tUT1 + 0.093104 * tUT1 ** 2 - 6.2e-6 * tUT1 ** 3
 
     # 1/86400 and %(2*pi) implied by units of radians
-    return gmst_sec * (2 * pi) / 86400. % (2 * pi)
+    return gmst_sec * (2 * pi) / 86400.0 % (2 * pi)

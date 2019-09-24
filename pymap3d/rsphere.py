@@ -45,17 +45,12 @@ def rsphere_rectifying(ell: Ellipsoid = None) -> float:
     """computes the radius of the sphere with equal meridional distances as the ellipsoid"""
     if ell is None:
         ell = Ellipsoid()
-
     return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
 def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = True) -> float:
     """computes the Euler radii of curvature at the midpoint of the
      great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)"""
-
-    if ell is None:
-        ell = Ellipsoid()
-
     if not deg:
         lat1, lon1, lat2, lon2 = degrees(lat1), degrees(lon1), degrees(lat2), degrees(lon2)
 
@@ -79,10 +74,7 @@ def rsphere_curve(lat, ell: Ellipsoid = None, deg: bool = True, method="mean") -
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point"""
 
-    if ell is None:
-        ell = Ellipsoid()
-
-    if deg is True:
+    if deg:
         lat = radians(lat)
 
     rho = rcurve_meridian(lat, ell, deg=False)

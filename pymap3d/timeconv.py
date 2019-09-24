@@ -1,6 +1,7 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """ convert strings to datetime """
 from datetime import datetime
+
 try:
     from dateutil.parser import parse
 except ImportError:
@@ -11,7 +12,7 @@ except ImportError:
     np = None
 
 
-__all__ = ['str2dt']
+__all__ = ["str2dt"]
 
 
 def str2dt(time: datetime) -> datetime:
@@ -33,7 +34,7 @@ def str2dt(time: datetime) -> datetime:
         return time
     elif isinstance(time, str):
         if parse is None:
-            raise TypeError('expected datetime')
+            raise TypeError("expected datetime")
         return parse(time)
     elif np is not None and isinstance(time, np.datetime64):
         return time.astype(datetime)
@@ -45,11 +46,11 @@ def str2dt(time: datetime) -> datetime:
                 return time.astype(datetime)
             elif isinstance(time[0], str):
                 if parse is None:
-                    raise TypeError('expected datetime')
+                    raise TypeError("expected datetime")
                 return [parse(t) for t in time]
         except (IndexError, TypeError):
             pass
 
         # last resort--assume pandas/xarray
 
-        return time.values.astype('datetime64[us]').astype(datetime)
+        return time.values.astype("datetime64[us]").astype(datetime)

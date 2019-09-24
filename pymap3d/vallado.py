@@ -13,12 +13,12 @@ from math import sin, cos, degrees, radians, asin, atan2
 from typing import Tuple
 from .sidereal import datetime2sidereal
 
-__all__ = ['azel2radec', 'radec2azel']
+__all__ = ["azel2radec", "radec2azel"]
 
 
-def azel2radec(az_deg: float, el_deg: float,
-               lat_deg: float, lon_deg: float,
-               time: datetime, usevallado: bool = True) -> Tuple[float, float]:
+def azel2radec(
+    az_deg: float, el_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = True
+) -> Tuple[float, float]:
     """
     converts azimuth, elevation to right ascension, declination
 
@@ -54,13 +54,13 @@ def azel2radec(az_deg: float, el_deg: float,
     """
 
     if abs(lat_deg) > 90:
-        raise ValueError('-90 <= lat <= 90')
+        raise ValueError("-90 <= lat <= 90")
 
     az = radians(az_deg)
     el = radians(el_deg)
     lat = radians(lat_deg)
     lon = radians(lon_deg)
-# %% Vallado "algorithm 28" p 268
+    # %% Vallado "algorithm 28" p 268
     dec = asin(sin(el) * sin(lat) + cos(el) * cos(lat) * cos(az))
 
     lha = atan2(-(sin(az) * cos(el)) / cos(dec), (sin(el) - sin(lat) * sin(dec)) / (cos(dec) * cos(lat)))
@@ -71,9 +71,9 @@ def azel2radec(az_deg: float, el_deg: float,
     return degrees(lst - lha) % 360, degrees(dec)
 
 
-def radec2azel(ra_deg: float, dec_deg: float,
-               lat_deg: float, lon_deg: float,
-               time: datetime, usevallado: bool = True) -> Tuple[float, float]:
+def radec2azel(
+    ra_deg: float, dec_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = True
+) -> Tuple[float, float]:
     """
     converts right ascension, declination to azimuth, elevation
 
@@ -109,7 +109,7 @@ def radec2azel(ra_deg: float, dec_deg: float,
        4th Edition Ch. 4.4 pg. 266-268
     """
     if abs(lat_deg) > 90:
-        raise ValueError('-90 <= lat <= 90')
+        raise ValueError("-90 <= lat <= 90")
 
     ra = radians(ra_deg)
     dec = radians(dec_deg)
@@ -117,11 +117,11 @@ def radec2azel(ra_deg: float, dec_deg: float,
     lon = radians(lon_deg)
 
     lst = datetime2sidereal(time, lon)  # RADIANS
-# %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
+    # %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
     lha = lst - ra
-# %% #Eq. 4-12 p. 267
+    # %% #Eq. 4-12 p. 267
     el = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(lha))
-# %% combine Eq. 4-13 and 4-14 p. 268
+    # %% combine Eq. 4-13 and 4-14 p. 268
     az = atan2(-sin(lha) * cos(dec) / cos(el), (sin(dec) - sin(el) * sin(lat)) / (cos(el) * cos(lat)))
 
     return degrees(az) % 360.0, degrees(el)
