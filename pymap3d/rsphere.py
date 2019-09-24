@@ -1,5 +1,9 @@
 """ compute radii of auxiliary spheres"""
-from math import radians, sin, cos, log, sqrt, degrees
+try:
+    from numpy import radians, sin, cos, log, sqrt, degrees, asarray
+except ImportError:
+    from math import radians, sin, cos, log, sqrt, degrees
+    asarray = None
 from .ellipsoid import Ellipsoid
 from .rcurve import rcurve_meridian, rcurve_transverse
 from .vincenty import vdist
@@ -53,6 +57,8 @@ def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = Tru
      great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)"""
     if not deg:
         lat1, lon1, lat2, lon2 = degrees(lat1), degrees(lon1), degrees(lat2), degrees(lon2)
+    if asarray is not None:
+        lat1, lat2 = asarray(lat1), asarray(lat2)
 
     latmid = lat1 + (lat2 - lat1) / 2  # compute the midpoint
 
