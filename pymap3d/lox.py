@@ -193,11 +193,6 @@ def meanm(
     if deg:
         lat, lon = radians(lat), radians(lon)
 
-    if isinstance(lat, (float, int)):
-        lat = [lat]
-    if isinstance(lon, (float, int)):
-        lon = [lon]
-
     lat = geodetic2authalic(lat, ell, deg=False)
     x, y, z = sph2cart(lon, lat, 1)
     lonbar, latbar, _ = cart2sph(sum(x), sum(y), sum(z))  # type: ignore

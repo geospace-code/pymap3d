@@ -71,6 +71,7 @@ def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
 
 @pytest.mark.parametrize("lat,lon", [([0, 45, 90], [0, 45, 90])])
 def test_meanm(lat, lon):
+    pytest.importorskip("numpy")
     assert pm.meanm(lat, lon) == approx([47.26967, 18.460557])
 
 
