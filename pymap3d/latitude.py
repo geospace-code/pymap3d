@@ -1,12 +1,15 @@
 from .ellipsoid import Ellipsoid
+from .utils import sanitize
+
 try:
-    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, any, vectorize
+    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, vectorize
     from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh, absolute as abs  # noqa: A001
+
     use_numpy = True
 except ImportError:
     from math import atan, radians, degrees, tan, sin, asinh, atanh, exp, pi, sqrt, inf
+
     use_numpy = False
-import typing
 
 __all__ = [
     "geodetic2isometric",
@@ -362,24 +365,3 @@ def parametric2geodetic(parametric_lat: float, ell: Ellipsoid = None, deg: bool 
     geodetic_lat = atan(tan(parametric_lat) / sqrt(1 - (ell.eccentricity) ** 2))
 
     return degrees(geodetic_lat) if deg else geodetic_lat
-
-
-def sanitize(lat: float, ell: Ellipsoid, deg: bool) -> typing.Tuple[float, typing.Any]:
-    if ell is None:
-        ell = Ellipsoid()
-
-    if deg:
-        if isinstance(lat, (float, int)):
-            if abs(lat) > 90:
-                raise ValueError("-90 <= latitude <= 90")
-        elif any(abs(lat) > 90):
-            raise ValueError("-90 <= latitude <= 90")
-        lat = radians(lat)
-    else:
-        if isinstance(lat, (float, int)):
-            if abs(lat) > pi:
-                raise ValueError("-pi <= latitude <= pi")
-        elif any(abs(lat) > pi):
-            raise ValueError("-pi <= latitude <= pi")
-
-    return lat, ell

@@ -182,9 +182,7 @@ def departure(lon1: float, lon2: float, lat: float, ell: Ellipsoid = None, deg: 
     return rcurve_parallel(lat, ell, deg=False) * ((lon2 - lon1) % pi)
 
 
-def meanm(
-    lat: "ndarray", lon: "ndarray", ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float]:
+def meanm(lat: "ndarray", lon: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> typing.Tuple[float, float]:
     """
     Computes geographic mean for geographic points on an ellipsoid
 

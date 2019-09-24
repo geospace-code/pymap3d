@@ -13,8 +13,7 @@ within double precision arithmetic limitations
 try:
     from numpy import cos, arcsin, sqrt, radians, degrees
 except ImportError:
-    from math import cos, sqrt, radians, degrees
-    from math import asin as arcsin
+    from math import cos, sqrt, radians, degrees, asin as arcsin
 try:
     from astropy.coordinates.angle_utilities import angular_separation
 except ImportError:
@@ -65,10 +64,7 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
 
     sep_rad = 2 * arcsin(sqrt(haversine(lat0 - lat1) + cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
 
-    if deg:
-        return degrees(sep_rad)
-    else:
-        return sep_rad
+    return degrees(sep_rad) if deg else sep_rad
 
 
 def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
@@ -107,10 +103,7 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
 
     sep_rad = angular_separation(lon0, lat0, lon1, lat1)
 
-    if deg:
-        return degrees(sep_rad)
-    else:
-        return sep_rad
+    return degrees(sep_rad) if deg else sep_rad
 
 
 def haversine(theta: float) -> float:

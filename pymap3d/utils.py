@@ -1,10 +1,13 @@
 """all functions assume radians"""
 import typing
+from .ellipsoid import Ellipsoid
 
 try:
-    from numpy import hypot, cos, sin, arctan2 as atan2
+    from numpy import hypot, cos, sin, arctan2 as atan2, radians, pi, asarray
 except ImportError:
-    from math import atan2, hypot, cos, sin
+    from math import atan2, hypot, cos, sin, radians, pi
+
+    asarray = None
 
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart"]
 
@@ -35,3 +38,21 @@ def sph2cart(az: float, el: float, r: float) -> typing.Tuple[float, float, float
     y = rcos_theta * sin(az)
     z = r * sin(el)
     return x, y, z
+
+
+def sanitize(lat: float, ell: Ellipsoid, deg: bool) -> typing.Tuple[float, typing.Any]:
+    if ell is None:
+        ell = Ellipsoid()
+    if asarray is not None:
+        lat = asarray(lat)
+    if deg:
+        lat = radians(lat)
+
+    try:
+        if (abs(lat) > pi / 2).any():
+            raise ValueError("-pi <= latitude <= pi")
+    except (AttributeError, TypeError):
+        if abs(lat) > pi / 2:
+            raise ValueError("-pi <= latitude <= pi")
+
+    return lat, ell

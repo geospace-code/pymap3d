@@ -3,6 +3,7 @@ try:
     from numpy import radians, sin, cos, log, sqrt, degrees, asarray
 except ImportError:
     from math import radians, sin, cos, log, sqrt, degrees
+
     asarray = None
 from .ellipsoid import Ellipsoid
 from .rcurve import rcurve_meridian, rcurve_transverse

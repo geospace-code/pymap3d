@@ -86,9 +86,9 @@ def test_pandas():
     pd_lla = pandas.DataFrame([[*lla0], [*lla0]], columns=["lat", "lon", "alt_m"])
     xyz = pm.geodetic2ecef(pd_lla["lat"], pd_lla["lon"], pd_lla["alt_m"])
 
-    assert xyz[0] == approx(xyz0[0])
-    assert xyz[1] == approx(xyz0[1])
-    assert xyz[2] == approx(xyz0[2])
+    assert xyz[0].values == approx(xyz0[0])
+    assert xyz[1].values == approx(xyz0[1])
+    assert xyz[2].values == approx(xyz0[2])
 
 
 def test_ecef():
