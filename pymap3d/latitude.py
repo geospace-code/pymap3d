@@ -3,7 +3,7 @@ from .utils import sanitize
 
 try:
     from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, vectorize
-    from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh, absolute as abs  # noqa: A001
+    from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh  # noqa: A001
 
     use_numpy = True
 except ImportError:

@@ -1,8 +1,9 @@
 """ isometric latitude, meridian distance """
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, ndarray
+    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, ndarray, vectorize
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi
+    vectorize = None
 import typing
 from .ellipsoid import Ellipsoid
 from .rcurve import rcurve_parallel
@@ -45,7 +46,7 @@ def meridian_arc(lat1: float, lat2: float, ell: Ellipsoid = None, deg: bool = Tr
     return rsphere_rectifying(ell) * abs(rlat2 - rlat1)
 
 
-def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True):
+def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True) -> typing.Tuple[float, float]:
     """
     computes the arc length and azimuth of the loxodrome
     between two points on the surface of the reference ellipsoid
@@ -90,6 +91,14 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float, ell: E
     Survey, U.S. Department of Commerce, Washington, DC: U.S.
     Government Printing Office, p. 66.
     """
+    if vectorize is not None:
+        fun = vectorize(loxodrome_inverse_point)
+        return fun(lat1, lon1, lat2, lon2, ell, deg)
+    else:
+        return loxodrome_inverse_point(lat1, lon1, lat2, lon2, ell, deg)
+
+
+def loxodrome_inverse_point(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True) -> typing.Tuple[float, float]:
     if deg:
         lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
@@ -140,7 +149,17 @@ def loxodrome_direct(
         final geodetic latitude (degrees)
     lon2 : float
         final geodetic longitude (degrees)
-"""
+    """
+    if vectorize is not None:
+        fun = vectorize(loxodrome_direct_point)
+        return fun(lat1, lon1, rng, a12, ell, deg)
+    else:
+        return loxodrome_direct_point(lat1, lon1, rng, a12, ell, deg)
+
+
+def loxodrome_direct_point(
+    lat1: float, lon1: float, rng: float, a12: float, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple[float, float]:
 
     if deg:
         lat1, lon1, a12 = radians(lat1), radians(lon1), radians(a12)

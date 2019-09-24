@@ -52,6 +52,14 @@ def test_loxodrome_inverse(lat1, lon1, lat2, lon2, arclen, az):
     assert rhaz == approx(az)
 
 
+def test_numpy_loxodrome_inverse():
+    pytest.importorskip("numpy")
+    d, a = pm.loxodrome_inverse([40, 40], [-80, -80], 65, -148)
+
+    assert d == approx(5248666.209)
+    assert a == approx(302.00567)
+
+
 @pytest.mark.parametrize(
     "lat0,lon0,rng,az,lat1,lon1",
     [
@@ -67,6 +75,13 @@ def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
     lat2, lon2 = pm.loxodrome_direct(lat0, lon0, rng, az)
     assert lat2 == approx(lat1, abs=1e-6)
     assert lon2 == approx(lon1)
+
+
+def test_numpy_loxodrome_direct():
+    pytest.importorskip("numpy")
+    lat, lon = pm.loxodrome_direct([40, 40], [-80, -80], [10000, 10000], [30, 30])
+    assert lat == approx(40.077995)
+    assert lon == approx(-79.941414)
 
 
 @pytest.mark.parametrize("lat,lon", [([0, 45, 90], [0, 45, 90])])
