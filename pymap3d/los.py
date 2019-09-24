@@ -1,15 +1,14 @@
 """ Line of sight intersection of space observer to ellipsoid """
 from typing import Tuple
-from math import pi, nan, sqrt
+try:
+    from numpy import pi, nan, sqrt, vectorize
+except ImportError:
+    from math import pi, nan, sqrt
+    vectorize = None
 
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
-
-try:
-    import numpy
-except ImportError:
-    numpy = None
 
 __all__ = ["lookAtSpheroid"]
 
@@ -17,8 +16,8 @@ __all__ = ["lookAtSpheroid"]
 def lookAtSpheroid(
     lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
 ) -> Tuple[float, float, float]:
-    if numpy is not None:
-        fun = numpy.vectorize(lookAtSpheroid_point)
+    if vectorize is not None:
+        fun = vectorize(lookAtSpheroid_point)
         return fun(lat0, lon0, h0, az, tilt, ell, deg)
     else:
         return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
