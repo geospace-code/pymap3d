@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.5.3" />
+<meta name="generator" content="pdoc 0.6.3" />
 <title>pymap3d.eci API documentation</title>
 <meta name="description" content="transforms involving ECI earth-centered inertial" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 </head>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title"><code>pymap3d.eci</code> module</h1>
+<h1 class="title">Module <code>pymap3d.eci</code></h1>
 </header>
 <section id="section-intro">
 <p>transforms involving ECI earth-centered inertial</p>
@@ -27,23 +27,32 @@
 
 from datetime import datetime
 import numpy as np
+from typing import Tuple
+
 from .sidereal import datetime2sidereal
+
 try:
     from astropy.time import Time
 except ImportError:
     Time = None
 
+__all__ = [&#34;eci2ecef&#34;, &#34;ecef2eci&#34;]
 
-def eci2ecef(eci: np.ndarray,
-             time: datetime,
-             useastropy: bool = True) -&gt; np.ndarray:
+
+def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -&gt; Tuple[float, float, float]:
     &#34;&#34;&#34;
     Observer =&gt; Point  ECI  =&gt;  ECEF
 
+    defaults to J2000 frame
+
     Parameters
     ----------
-    eci : tuple of float
-        Nx3 target ECI location (x,y,z) [meters]
+    x : float
+        ECI x-location [meters]
+    y : float
+        ECI y-location [meters]
+    z : float
+        ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
     useastropy : bool, optional
@@ -58,41 +67,53 @@ def eci2ecef(eci: np.ndarray,
     z : float
         target z ECEF coordinate
     &#34;&#34;&#34;
-    useastropy = useastropy and Time
+    # %%
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
+    z = np.atleast_1d(z)
+    if not x.shape == y.shape == z.shape:
+        raise ValueError(&#34;shapes of ECI x,y,z must be identical&#34;)
+
+    useastropy = useastropy and Time is not None
 
     if useastropy:
-        gst = Time(time).sidereal_time(&#39;apparent&#39;, &#39;greenwich&#39;).radian
+        gst = Time(time).sidereal_time(&#34;apparent&#34;, &#34;greenwich&#34;).radian
     else:
-        gst = datetime2sidereal(time, 0.)
+        gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
-    assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
+    if gst.ndim != 1 or not isinstance(gst[0], float):
+        raise ValueError(&#34;GST must be vector in radians&#34;)
+    if gst.size == 1:
+        gst *= np.ones(x.size)
+    if gst.size != x.size:
+        raise ValueError(&#34;GST must be scalar or same length as positions&#34;)
 
-    eci = np.atleast_2d(eci)
-    assert eci.shape[0] == gst.size, &#39;length of time does not match number of ECI positions&#39;
-
-    N, trip = eci.shape
-    if eci.ndim &gt; 2 or trip != 3:
-        raise ValueError(&#39;eci triplets must be shape (N,3)&#39;)
-
-    ecef = np.empty_like(eci)
-
-    for i in range(N):
+    eci = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+    ecef = np.empty((x.size, 3))
+    for i in range(eci.shape[0]):
         ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
 
-    return ecef.squeeze()
+    xecef = ecef[:, 0].reshape(x.shape)
+    yecef = ecef[:, 1].reshape(x.shape)
+    zecef = ecef[:, 2].reshape(x.shape)
+
+    return xecef, yecef, zecef
 
 
-def ecef2eci(ecef: np.ndarray,
-             time: datetime,
-             useastropy: bool = True) -&gt; np.ndarray:
+def ecef2eci(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -&gt; Tuple[float, float, float]:
     &#34;&#34;&#34;
     Point =&gt; Point   ECEF =&gt; ECI
 
-    input
-    -----
-    ecef : tuple of float
-        Nx3 target ECEF location (x,y,z) [meters]
+    Parameters
+    ----------
+
+    x : float
+        target x ECEF coordinate
+    y : float
+        target y ECEF coordinate
+    z : float
+        target z ECEF coordinate
     time : datetime.datetime
         time of observation
     useastropy : bool, optional
@@ -108,47 +129,56 @@ def ecef2eci(ecef: np.ndarray,
     z : float
         target z ECI coordinate
     &#34;&#34;&#34;
-    useastropy = useastropy and Time
+    # %%
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
+    z = np.atleast_1d(z)
+    if not x.shape == y.shape == z.shape:
+        raise ValueError(&#34;shapes of ECI x,y,z must be identical&#34;)
+
+    useastropy = useastropy and Time is not None
 
     if useastropy:
-        gst = Time(time).sidereal_time(&#39;apparent&#39;, &#39;greenwich&#39;).radian
+        gst = Time(time).sidereal_time(&#34;apparent&#34;, &#34;greenwich&#34;).radian
     else:
-        gst = datetime2sidereal(time, 0.)
+        gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
-    assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
+    if gst.ndim != 1 or not isinstance(gst[0], float):
+        raise ValueError(&#34;GST must be vector in radians&#34;)
+    if gst.size == 1:
+        gst *= np.ones(x.size)
+    if gst.size != x.size:
+        raise ValueError(&#34;GST must be scalar or same length as positions&#34;)
 
-    ecef = np.atleast_2d(ecef)
-    assert ecef.shape[0] == gst.size, &#39;length of time does not match number of ECEF positions&#39;
-
-    N, trip = ecef.shape
-    if ecef.ndim &gt; 2 or trip != 3:
-        raise ValueError(&#39;ecef triplets must be shape (N,3)&#39;)
-
-    eci = np.empty_like(ecef)
-    for i in range(N):
+    ecef = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+    eci = np.empty((x.size, 3))
+    for i in range(x.size):
         eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :]  # this one is transposed
 
-    return eci.squeeze()
+    xeci = eci[:, 0].reshape(x.shape)
+    yeci = eci[:, 1].reshape(x.shape)
+    zeci = eci[:, 2].reshape(x.shape)
+
+    return xeci, yeci, zeci
 
 
-def _rottrip(ang: np.ndarray) -&gt; np.ndarray:
+def _rottrip(ang: float) -&gt; np.ndarray:
     &#34;&#34;&#34;
     transformation matrix
 
     Parameters
     ----------
 
-    ang : N x 3 numpy.ndarray
+    ang : float
         angle to transform (radians)
-    &#34;&#34;&#34;
-    ang = ang.squeeze()
-    if ang.size &gt; 1:
-        raise ValueError(&#39;only one angle allowed at a time&#39;)
 
-    return np.array([[np.cos(ang), np.sin(ang), 0],
-                     [-np.sin(ang), np.cos(ang), 0],
-                     [0, 0, 1]])</code></pre>
+    Returns
+    -------
+    T : numpy.ndarray of float
+        3 x 3 transformation matrix
+    &#34;&#34;&#34;
+    return np.array([[np.cos(ang), np.sin(ang), 0], [-np.sin(ang), np.cos(ang), 0], [0, 0, 1]])</code></pre>
 </details>
 </section>
 <section>
@@ -159,15 +189,19 @@ def _rottrip(ang: np.ndarray) -&gt; np.ndarray:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="pymap3d.eci.ecef2eci"><code class="name flex">
-<span>def <span class="ident">ecef2eci</span></span>(<span>ecef, time, useastropy=True)</span>
+<span>def <span class="ident">ecef2eci</span></span>(<span>x, y, z=None, time=None, *, useastropy=True)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Point =&gt; Point
 ECEF =&gt; ECI</p>
-<h2 id="input">input</h2>
+<h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>ecef</code></strong> :&ensp;<code>tuple</code> of <code>float</code></dt>
-<dd>Nx3 target ECEF location (x,y,z) [meters]</dd>
+<dt><strong><code>x</code></strong> :&ensp;<code>float</code></dt>
+<dd>target x ECEF coordinate</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>float</code></dt>
+<dd>target y ECEF coordinate</dd>
+<dt><strong><code>z</code></strong> :&ensp;<code>float</code></dt>
+<dd>target z ECEF coordinate</dd>
 <dt><strong><code>time</code></strong> :&ensp;<code>datetime.datetime</code></dt>
 <dd>time of observation</dd>
 <dt><strong><code>useastropy</code></strong> :&ensp;<code>bool</code>, optional</dt>
@@ -184,16 +218,19 @@ ECEF =&gt; ECI</p>
 </dl></section>
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">def ecef2eci(ecef: np.ndarray,
-             time: datetime,
-             useastropy: bool = True) -&gt; np.ndarray:
+<pre><code class="python">def ecef2eci(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -&gt; Tuple[float, float, float]:
     &#34;&#34;&#34;
     Point =&gt; Point   ECEF =&gt; ECI
 
-    input
-    -----
-    ecef : tuple of float
-        Nx3 target ECEF location (x,y,z) [meters]
+    Parameters
+    ----------
+
+    x : float
+        target x ECEF coordinate
+    y : float
+        target y ECEF coordinate
+    z : float
+        target z ECEF coordinate
     time : datetime.datetime
         time of observation
     useastropy : bool, optional
@@ -209,42 +246,57 @@ ECEF =&gt; ECI</p>
     z : float
         target z ECI coordinate
     &#34;&#34;&#34;
-    useastropy = useastropy and Time
+    # %%
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
+    z = np.atleast_1d(z)
+    if not x.shape == y.shape == z.shape:
+        raise ValueError(&#34;shapes of ECI x,y,z must be identical&#34;)
+
+    useastropy = useastropy and Time is not None
 
     if useastropy:
-        gst = Time(time).sidereal_time(&#39;apparent&#39;, &#39;greenwich&#39;).radian
+        gst = Time(time).sidereal_time(&#34;apparent&#34;, &#34;greenwich&#34;).radian
     else:
-        gst = datetime2sidereal(time, 0.)
+        gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
-    assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
+    if gst.ndim != 1 or not isinstance(gst[0], float):
+        raise ValueError(&#34;GST must be vector in radians&#34;)
+    if gst.size == 1:
+        gst *= np.ones(x.size)
+    if gst.size != x.size:
+        raise ValueError(&#34;GST must be scalar or same length as positions&#34;)
 
-    ecef = np.atleast_2d(ecef)
-    assert ecef.shape[0] == gst.size, &#39;length of time does not match number of ECEF positions&#39;
-
-    N, trip = ecef.shape
-    if ecef.ndim &gt; 2 or trip != 3:
-        raise ValueError(&#39;ecef triplets must be shape (N,3)&#39;)
-
-    eci = np.empty_like(ecef)
-    for i in range(N):
+    ecef = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+    eci = np.empty((x.size, 3))
+    for i in range(x.size):
         eci[i, :] = _rottrip(gst[i]).T @ ecef[i, :]  # this one is transposed
 
-    return eci.squeeze()</code></pre>
+    xeci = eci[:, 0].reshape(x.shape)
+    yeci = eci[:, 1].reshape(x.shape)
+    zeci = eci[:, 2].reshape(x.shape)
+
+    return xeci, yeci, zeci</code></pre>
 </details>
 </dd>
 <dt id="pymap3d.eci.eci2ecef"><code class="name flex">
-<span>def <span class="ident">eci2ecef</span></span>(<span>eci, time, useastropy=True)</span>
+<span>def <span class="ident">eci2ecef</span></span>(<span>x, y, z=None, time=None, *, useastropy=True)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Observer =&gt; Point
 ECI
 =&gt;
 ECEF</p>
+<p>defaults to J2000 frame</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>eci</code></strong> :&ensp;<code>tuple</code> of <code>float</code></dt>
-<dd>Nx3 target ECI location (x,y,z) [meters]</dd>
+<dt><strong><code>x</code></strong> :&ensp;<code>float</code></dt>
+<dd>ECI x-location [meters]</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>float</code></dt>
+<dd>ECI y-location [meters]</dd>
+<dt><strong><code>z</code></strong> :&ensp;<code>float</code></dt>
+<dd>ECI z-location [meters]</dd>
 <dt><strong><code>time</code></strong> :&ensp;<code>datetime.datetime</code></dt>
 <dd>time of obsevation (UTC)</dd>
 <dt><strong><code>useastropy</code></strong> :&ensp;<code>bool</code>, optional</dt>
@@ -261,16 +313,20 @@ ECEF</p>
 </dl></section>
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">def eci2ecef(eci: np.ndarray,
-             time: datetime,
-             useastropy: bool = True) -&gt; np.ndarray:
+<pre><code class="python">def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -&gt; Tuple[float, float, float]:
     &#34;&#34;&#34;
     Observer =&gt; Point  ECI  =&gt;  ECEF
 
+    defaults to J2000 frame
+
     Parameters
     ----------
-    eci : tuple of float
-        Nx3 target ECI location (x,y,z) [meters]
+    x : float
+        ECI x-location [meters]
+    y : float
+        ECI y-location [meters]
+    z : float
+        ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
     useastropy : bool, optional
@@ -285,29 +341,38 @@ ECEF</p>
     z : float
         target z ECEF coordinate
     &#34;&#34;&#34;
-    useastropy = useastropy and Time
+    # %%
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
+    z = np.atleast_1d(z)
+    if not x.shape == y.shape == z.shape:
+        raise ValueError(&#34;shapes of ECI x,y,z must be identical&#34;)
+
+    useastropy = useastropy and Time is not None
 
     if useastropy:
-        gst = Time(time).sidereal_time(&#39;apparent&#39;, &#39;greenwich&#39;).radian
+        gst = Time(time).sidereal_time(&#34;apparent&#34;, &#34;greenwich&#34;).radian
     else:
-        gst = datetime2sidereal(time, 0.)
+        gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
-    assert gst.ndim == 1 and isinstance(gst[0], float)  # must be in radians!
+    if gst.ndim != 1 or not isinstance(gst[0], float):
+        raise ValueError(&#34;GST must be vector in radians&#34;)
+    if gst.size == 1:
+        gst *= np.ones(x.size)
+    if gst.size != x.size:
+        raise ValueError(&#34;GST must be scalar or same length as positions&#34;)
 
-    eci = np.atleast_2d(eci)
-    assert eci.shape[0] == gst.size, &#39;length of time does not match number of ECI positions&#39;
-
-    N, trip = eci.shape
-    if eci.ndim &gt; 2 or trip != 3:
-        raise ValueError(&#39;eci triplets must be shape (N,3)&#39;)
-
-    ecef = np.empty_like(eci)
-
-    for i in range(N):
+    eci = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+    ecef = np.empty((x.size, 3))
+    for i in range(eci.shape[0]):
         ecef[i, :] = _rottrip(gst[i]) @ eci[i, :]
 
-    return ecef.squeeze()</code></pre>
+    xecef = ecef[:, 0].reshape(x.shape)
+    yecef = ecef[:, 1].reshape(x.shape)
+    zecef = ecef[:, 2].reshape(x.shape)
+
+    return xecef, yecef, zecef</code></pre>
 </details>
 </dd>
 </dl>
@@ -336,7 +401,7 @@ ECEF</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.3</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

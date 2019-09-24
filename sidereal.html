@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.5.3" />
+<meta name="generator" content="pdoc 0.6.3" />
 <title>pymap3d.sidereal API documentation</title>
 <meta name="description" content="manipulations of sidereal time" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 </head>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title"><code>pymap3d.sidereal</code> module</h1>
+<h1 class="title">Module <code>pymap3d.sidereal</code></h1>
 </header>
 <section id="section-intro">
 <p>manipulations of sidereal time</p>
@@ -27,8 +27,9 @@
 &#34;&#34;&#34; manipulations of sidereal time &#34;&#34;&#34;
 from math import pi
 from datetime import datetime
-import numpy as np
+
 from .timeconv import str2dt
+
 try:
     from astropy.time import Time
     import astropy.units as u
@@ -41,12 +42,10 @@ The &#34;usevallado&#34; datetime to julian runs 4 times faster than astropy.
 However, AstroPy is more accurate.
 &#34;&#34;&#34;
 
-__all__ = [&#39;datetime2sidereal&#39;, &#39;juliandate&#39;, &#39;julian2sidereal&#39;]
+__all__ = [&#34;datetime2sidereal&#34;, &#34;juliandate&#34;, &#34;julian2sidereal&#34;]
 
 
-def datetime2sidereal(time: datetime,
-                      lon_radians: float,
-                      usevallado: bool = True) -&gt; float:
+def datetime2sidereal(time: datetime, lon_radians: float, usevallado: bool = True) -&gt; float:
     &#34;&#34;&#34;
     Convert ``datetime`` to sidereal time
 
@@ -66,16 +65,18 @@ def datetime2sidereal(time: datetime,
     tsr : float
         Sidereal time
     &#34;&#34;&#34;
+    if isinstance(time, (tuple, list)):
+        return [datetime2sidereal(t, lon_radians) for t in time]
+
     usevallado = usevallado or Time is None
     if usevallado:
         jd = juliandate(str2dt(time))
-# %% Greenwich Sidereal time RADIANS
+        # %% Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
-# %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
+        # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
         tsr = gst + lon_radians
     else:
-        tsr = Time(time).sidereal_time(kind=&#39;apparent&#39;,
-                                       longitude=Longitude(lon_radians, unit=u.radian)).radian
+        tsr = Time(time).sidereal_time(kind=&#34;apparent&#34;, longitude=Longitude(lon_radians, unit=u.radian)).radian
 
     return tsr
 
@@ -99,27 +100,21 @@ def juliandate(time: datetime) -&gt; float:
     jd : float
         Julian date
     &#34;&#34;&#34;
+    if isinstance(time, (tuple, list)):
+        return list(map(juliandate, time))
 
-    times = np.atleast_1d(time)
-    assert times.ndim == 1
+    if time.month &lt; 3:
+        year = time.year - 1
+        month = time.month + 12
+    else:
+        year = time.year
+        month = time.month
 
-    jd = np.empty(times.size)
-    for i, t in enumerate(times):
-        if t.month &lt; 3:
-            year = t.year - 1
-            month = t.month + 12
-        else:
-            year = t.year
-            month = t.month
+    A = int(year / 100.0)
+    B = 2 - A + int(A / 4.0)
+    C = ((time.second / 60.0 + time.minute) / 60.0 + time.hour) / 24.0
 
-        A = int(year / 100.0)
-        B = 2 - A + int(A / 4.)
-        C = ((t.second / 60. + t.minute) / 60. + t.hour) / 24.
-
-        jd[i] = (int(365.25 * (year + 4716)) +
-                 int(30.6001 * (month + 1)) + t.day + B - 1524.5 + C)
-
-    return jd.squeeze()
+    return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
 
 def julian2sidereal(Jdate: float) -&gt; float:
@@ -139,25 +134,18 @@ def julian2sidereal(Jdate: float) -&gt; float:
 
     tsr : float
         Sidereal time
-
     &#34;&#34;&#34;
+    if isinstance(Jdate, (tuple, list)):
+        return list(map(julian2sidereal, Jdate))
 
-    jdate = np.atleast_1d(Jdate)
-    assert jdate.ndim == 1
+    # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+    tUT1 = (Jdate - 2451545.0) / 36525.0
 
-    tsr = np.empty(jdate.size)
-    for i, jd in enumerate(jdate):
-        # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
-        tUT1 = (jd - 2451545.0) / 36525.
+    # Eqn. 3-47 p. 188
+    gmst_sec = 67310.54841 + (876600 * 3600 + 8640184.812866) * tUT1 + 0.093104 * tUT1 ** 2 - 6.2e-6 * tUT1 ** 3
 
-        # Eqn. 3-47 p. 188
-        gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
-                    tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3)
-
-        # 1/86400 and %(2*pi) implied by units of radians
-        tsr[i] = gmst_sec * (2 * pi) / 86400. % (2 * pi)
-
-    return tsr.squeeze()</code></pre>
+    # 1/86400 and %(2*pi) implied by units of radians
+    return gmst_sec * (2 * pi) / 86400.0 % (2 * pi)</code></pre>
 </details>
 </section>
 <section>
@@ -173,14 +161,12 @@ def julian2sidereal(Jdate: float) -&gt; float:
 <dd>
 <section class="desc"><p>Convert <code>datetime</code> to sidereal time</p>
 <p>from D. Vallado "Fundamentals of Astrodynamics and Applications"</p>
-<dl>
-<dt><strong><code>time</code></strong> :&ensp;<code>datetime.datetime</code></dt>
-<dd>time to convert</dd>
-<dt><strong><code>lon_radians</code></strong> :&ensp;<code>float</code></dt>
-<dd>longitude (radians)</dd>
-<dt><strong><code>usevallado</code></strong> :&ensp;<code>bool</code>, optional</dt>
-<dd>use vallado instead of AstroPy (default is Vallado)</dd>
-</dl>
+<p>time : datetime.datetime
+time to convert
+lon_radians : float
+longitude (radians)
+usevallado : bool, optional
+use vallado instead of AstroPy (default is Vallado)</p>
 <h2 id="results">Results</h2>
 <dl>
 <dt><strong><code>tsr</code></strong> :&ensp;<code>float</code></dt>
@@ -188,9 +174,7 @@ def julian2sidereal(Jdate: float) -&gt; float:
 </dl></section>
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">def datetime2sidereal(time: datetime,
-                      lon_radians: float,
-                      usevallado: bool = True) -&gt; float:
+<pre><code class="python">def datetime2sidereal(time: datetime, lon_radians: float, usevallado: bool = True) -&gt; float:
     &#34;&#34;&#34;
     Convert ``datetime`` to sidereal time
 
@@ -210,16 +194,18 @@ def julian2sidereal(Jdate: float) -&gt; float:
     tsr : float
         Sidereal time
     &#34;&#34;&#34;
+    if isinstance(time, (tuple, list)):
+        return [datetime2sidereal(t, lon_radians) for t in time]
+
     usevallado = usevallado or Time is None
     if usevallado:
         jd = juliandate(str2dt(time))
-# %% Greenwich Sidereal time RADIANS
+        # %% Greenwich Sidereal time RADIANS
         gst = julian2sidereal(jd)
-# %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
+        # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
         tsr = gst + lon_radians
     else:
-        tsr = Time(time).sidereal_time(kind=&#39;apparent&#39;,
-                                       longitude=Longitude(lon_radians, unit=u.radian)).radian
+        tsr = Time(time).sidereal_time(kind=&#34;apparent&#34;, longitude=Longitude(lon_radians, unit=u.radian)).radian
 
     return tsr</code></pre>
 </details>
@@ -259,25 +245,18 @@ def julian2sidereal(Jdate: float) -&gt; float:
 
     tsr : float
         Sidereal time
-
     &#34;&#34;&#34;
+    if isinstance(Jdate, (tuple, list)):
+        return list(map(julian2sidereal, Jdate))
 
-    jdate = np.atleast_1d(Jdate)
-    assert jdate.ndim == 1
+    # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
+    tUT1 = (Jdate - 2451545.0) / 36525.0
 
-    tsr = np.empty(jdate.size)
-    for i, jd in enumerate(jdate):
-        # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
-        tUT1 = (jd - 2451545.0) / 36525.
+    # Eqn. 3-47 p. 188
+    gmst_sec = 67310.54841 + (876600 * 3600 + 8640184.812866) * tUT1 + 0.093104 * tUT1 ** 2 - 6.2e-6 * tUT1 ** 3
 
-        # Eqn. 3-47 p. 188
-        gmst_sec = (67310.54841 + (876600 * 3600 + 8640184.812866) *
-                    tUT1 + 0.093104 * tUT1**2 - 6.2e-6 * tUT1**3)
-
-        # 1/86400 and %(2*pi) implied by units of radians
-        tsr[i] = gmst_sec * (2 * pi) / 86400. % (2 * pi)
-
-    return tsr.squeeze()</code></pre>
+    # 1/86400 and %(2*pi) implied by units of radians
+    return gmst_sec * (2 * pi) / 86400.0 % (2 * pi)</code></pre>
 </details>
 </dd>
 <dt id="pymap3d.sidereal.juliandate"><code class="name flex">
@@ -318,27 +297,21 @@ and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61</p>
     jd : float
         Julian date
     &#34;&#34;&#34;
+    if isinstance(time, (tuple, list)):
+        return list(map(juliandate, time))
 
-    times = np.atleast_1d(time)
-    assert times.ndim == 1
+    if time.month &lt; 3:
+        year = time.year - 1
+        month = time.month + 12
+    else:
+        year = time.year
+        month = time.month
 
-    jd = np.empty(times.size)
-    for i, t in enumerate(times):
-        if t.month &lt; 3:
-            year = t.year - 1
-            month = t.month + 12
-        else:
-            year = t.year
-            month = t.month
+    A = int(year / 100.0)
+    B = 2 - A + int(A / 4.0)
+    C = ((time.second / 60.0 + time.minute) / 60.0 + time.hour) / 24.0
 
-        A = int(year / 100.0)
-        B = 2 - A + int(A / 4.)
-        C = ((t.second / 60. + t.minute) / 60. + t.hour) / 24.
-
-        jd[i] = (int(365.25 * (year + 4716)) +
-                 int(30.6001 * (month + 1)) + t.day + B - 1524.5 + C)
-
-    return jd.squeeze()</code></pre>
+    return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C</code></pre>
 </details>
 </dd>
 </dl>
@@ -368,7 +341,7 @@ and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.3</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
