@@ -33,4 +33,4 @@ def test_compare_geodetic():
 
 
 if __name__ == "__main__":
-    pytest.main(["-xrsv", __file__])
+    pytest.main(["-v", __file__])

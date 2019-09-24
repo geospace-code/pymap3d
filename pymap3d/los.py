@@ -1,9 +1,11 @@
 """ Line of sight intersection of space observer to ellipsoid """
 from typing import Tuple
+
 try:
     from numpy import pi, nan, sqrt, vectorize
 except ImportError:
     from math import pi, nan, sqrt
+
     vectorize = None
 
 from .aer import aer2enu

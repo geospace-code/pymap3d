@@ -9,7 +9,11 @@ These functions are fallbacks for those wihtout AstroPy.
 Michael Hirsch implementation of algorithms from D. Vallado
 """
 from datetime import datetime
-from math import sin, cos, degrees, radians, asin, atan2
+
+try:
+    from numpy import sin, cos, degrees, radians, arcsin as asin, arctan2 as atan2
+except ImportError:
+    from math import sin, cos, degrees, radians, asin, atan2
 from typing import Tuple
 from .sidereal import datetime2sidereal
 

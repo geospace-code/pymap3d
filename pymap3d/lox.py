@@ -3,6 +3,7 @@ try:
     from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, ndarray, vectorize
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi
+
     vectorize = None
 import typing
 from .ellipsoid import Ellipsoid
@@ -46,7 +47,9 @@ def meridian_arc(lat1: float, lat2: float, ell: Ellipsoid = None, deg: bool = Tr
     return rsphere_rectifying(ell) * abs(rlat2 - rlat1)
 
 
-def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True) -> typing.Tuple[float, float]:
+def loxodrome_inverse(
+    lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple[float, float]:
     """
     computes the arc length and azimuth of the loxodrome
     between two points on the surface of the reference ellipsoid
@@ -98,7 +101,9 @@ def loxodrome_inverse(lat1: float, lon1: float, lat2: float, lon2: float, ell: E
         return loxodrome_inverse_point(lat1, lon1, lat2, lon2, ell, deg)
 
 
-def loxodrome_inverse_point(lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True) -> typing.Tuple[float, float]:
+def loxodrome_inverse_point(
+    lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple[float, float]:
     if deg:
         lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
