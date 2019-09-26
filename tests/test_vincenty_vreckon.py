@@ -16,39 +16,36 @@ az3 = (218.00292856, 225.0011203)
 
 
 @pytest.mark.parametrize(
-    "lat,lon,srange,az,lato,lono,baz",
+    "lat,lon,srange,az,lato,lono",
     [
-        (0, 0, 0, 0, 0, 0, 180),
-        (0, 0, 1.001875e7, 90, 0, 90, 270),
-        (0, 0, 1.001875e7, 270, 0, 270, 90),
-        (0, 0, 1.001875e7, -90, 0, 270, 90),
-        (0, 0, 2.00375e7, 90, 0, 180, 270),
-        (0, 0, 2.00375e7, 270, 0, 180, 90),
-        (0, 0, 2.00375e7, -90, 0, 180, 90),
+        (0, 0, 0, 0, 0, 0),
+        (0, 0, 1.001875e7, 90, 0, 90),
+        (0, 0, 1.001875e7, 270, 0, 270),
+        (0, 0, 1.001875e7, -90, 0, 270),
+        (0, 0, 2.00375e7, 90, 0, 180),
+        (0, 0, 2.00375e7, 270, 0, 180),
+        (0, 0, 2.00375e7, -90, 0, 180),
     ],
 )
-def test_unit(lat, lon, srange, az, lato, lono, baz):
-    lat1, lon1, backaz = vincenty.vreckon(lat, lon, srange, az)
+def test_unit(lat, lon, srange, az, lato, lono):
+    lat1, lon1 = vincenty.vreckon(lat, lon, srange, az)
 
     assert lat1 == approx(lato)
     assert lon1 == approx(lono, rel=0.001)
-    assert backaz == approx(baz)
 
 
 def test_az_vector():
     pytest.importorskip("numpy")
-    a, b, c = vincenty.vreckon(*ll0, sr1[0], az1)
+    a, b = vincenty.vreckon(*ll0, sr1[0], az1)
     assert a == approx(lat2)
     assert b == approx(lon2)
-    assert c == approx(az2)
 
 
 def test_both_vector():
     pytest.importorskip("numpy")
-    a, b, c = vincenty.vreckon(10, 20, sr1, az1)
+    a, b = vincenty.vreckon(10, 20, sr1, az1)
     assert a == approx(lat3)
     assert b == approx(lon3)
-    assert c == approx(az3)
 
 
 if __name__ == "__main__":

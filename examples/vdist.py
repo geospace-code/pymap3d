@@ -13,7 +13,7 @@ def main():
 
     dist_m = vdist(P.lat1, P.lon1, P.lat2, P.lon2)
 
-    print("{:.3f} {:.3f} {:.3f}".format(*dist_m))
+    print("{:.3f} meters {:.3f} deg azimuth".format(*dist_m))
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -11,7 +11,19 @@ except ImportError:
 
     asarray = None
 
-__all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart"]
+__all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart", "sign"]
+
+
+def sign(x: float) -> float:
+    """ signum function """
+    if x < 0:
+        y = -1.0
+    elif x > 0:
+        y = 1.0
+    else:
+        y = 0.0
+
+    return y
 
 
 def cart2pol(x: float, y: float) -> typing.Tuple[float, float]:

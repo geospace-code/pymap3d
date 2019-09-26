@@ -11,10 +11,9 @@ def main():
     p.add_argument("azimuth", help="clockwise from north: azimuth to start [degrees]", type=float)
     P = p.parse_args()
 
-    lat2, lon2, a21 = vreckon(P.lat, P.lon, P.range, P.azimuth)
+    lat2, lon2 = vreckon(P.lat, P.lon, P.range, P.azimuth)
 
-    print("{:.4f} {:.4f}".format(lat2, lon2))
-    print("{:.1f}".format(a21))
+    print("lat, lon = ({:.4f}, {:.4f})".format(lat2, lon2))
 
 
 if __name__ == "__main__":  # pragma: no cover

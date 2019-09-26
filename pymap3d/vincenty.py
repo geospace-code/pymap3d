@@ -12,39 +12,21 @@ except ImportError:
     numpy = None
 
 from .ellipsoid import Ellipsoid
+from .utils import sign
 
 __all__ = ["vdist", "vreckon", "track2"]
 
 
-def sign(x: float) -> float:
-    if x < 0:
-        y = -1.0
-    elif x > 0:
-        y = 1.0
-    else:
-        y = 0.0
-
-    return y
-
-
-def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
-    if numpy is not None:
-        fun = numpy.vectorize(vdist_point)
-        return fun(Lat1, Lon1, Lat2, Lon2, ell)
-    else:
-        return vdist_point(Lat1, Lon1, Lat2, Lon2, ell)
-
-
-def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
+def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float]:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
     and compute backward azimuth, all using a vectorized version of
     Vincenty's algorithm:
 
-    ```python
-    s,a12,a21 = vdist(lat1, lon1, lat2, lon2, ell)
-    ```
+    Example:
+
+        dist_m, azimuth_deg = vdist(lat1, lon1, lat2, lon2, ell)
 
     Parameters
     ----------
@@ -63,12 +45,10 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     Results
     -------
 
-    s : float
+    dist_m : float
         distance (meters)
-    a12 : float
+    az : float
         azimuth (degrees) clockwise from first point to second point (forward)
-    a21 : float
-        azimuth (degrees) clockwise from second point to first point (backward)
 
 
 
@@ -108,6 +88,14 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
      11. Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3) to within about a hundred-thousandth of a degree, except when traversing to or from a pole, where the convention for this function is described in (10), and except in the cases noted above in (9).
      12. No warranties; use at your own risk.
     """
+    if numpy is not None:
+        fun = numpy.vectorize(vdist_point)
+        return fun(Lat1, Lon1, Lat2, Lon2, ell)
+    else:
+        return vdist_point(Lat1, Lon1, Lat2, Lon2, ell)
+
+
+def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float]:
     if ell is None:
         ell = Ellipsoid()
     # %% Input check:
@@ -123,10 +111,10 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     lon2 = radians(Lon2)
     # %% correct for errors at exact poles by adjusting 0.6 millimeters:
     if abs(pi / 2 - abs(lat1)) < 1e-10:
-        lat1 = sign(lat1) * (pi / 2 - (1e-10))
+        lat1 = sign(lat1) * (pi / 2 - 1e-10)
 
     if abs(pi / 2 - abs(lat2)) < 1e-10:
-        lat2 = sign(lat2) * (pi / 2 - (1e-10))
+        lat2 = sign(lat2) * (pi / 2 - 1e-10)
 
     f = (a - b) / a
     U1 = atan((1 - f) * tan(lat1))
@@ -215,44 +203,14 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     numer = cos(U2) * sin(lamb)
     denom = cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)
     a12 = atan2(numer, denom)
-    if a12 < 0:
-        a12 += 2 * pi
-    # %% from poles
-    if Lat1 <= -90:
-        a12 = 0
-    elif Lat1 >= 90:
-        a12 = pi
+    a12 %= 2 * pi
+
     az = degrees(a12)
 
-    # %% From point #2 to point #1
-    # correct sign of lambda for azimuth calcs:
-    lamb = abs(lamb)
-    if sign(sin(lon1 - lon2)) * sign(sin(lamb)) < 0:
-        lamb = -lamb
-    numer = cos(U1) * sin(lamb)
-    denom = sin(U1) * cos(U2) - cos(U1) * sin(U2) * cos(lamb)
-    a21 = atan2(numer, denom)
-    if a21 < 0:
-        a21 += 2 * pi
-    # %% backwards from poles:
-    if Lat2 >= 90:
-        a21 = pi
-    elif Lat2 <= -90:
-        a21 = 0
-    backaz = degrees(a21)
-
-    return dist_m, az, backaz
+    return dist_m, az
 
 
-def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
-    if numpy is not None:
-        fun = numpy.vectorize(vreckon_point)
-        return fun(Lat1, Lon1, Rng, Azim, ell)
-    else:
-        return vreckon_point(Lat1, Lon1, Rng, Azim, ell)
-
-
-def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float, float]:
+def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float]:
     """
     This is the Vincenty "forward" solution.
 
@@ -260,9 +218,9 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
     Using the reference ellipsoid, travel a given distance along a given azimuth starting at a given initial point,
     and return the endpoint within a few millimeters of accuracy, using Vincenty's algorithm.
 
-    ```python
-    lat2, lon2 = vreckon(lat1, lon1, rng, azim)
-    ```
+    Example:
+
+        lat2, lon2 = vreckon(lat1, lon1, ground_range_m, azimuth_deg)
 
     Parameters
     ----------
@@ -285,8 +243,6 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
         final geodetic latitude (degrees)
     Lon2 : float
         final geodetic longitude (degrees)
-    a21 : float
-        reverse azimuth (degrees), at final point facing back toward the intial point
 
 
     Original algorithm: T. Vincenty, "Direct and Inverse Solutions of Geodesics on the Ellipsoid with Application of Nested Equations", Survey Review, vol. 23, no. 176, April 1975, pp 88-93. http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
@@ -311,7 +267,14 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
     Added ellipsoid and vectorized whenever possible. Also, lon2 is always converted to the [-180 180] interval.
     Joaquim Luis
     """
+    if numpy is not None:
+        fun = numpy.vectorize(vreckon_point)
+        return fun(Lat1, Lon1, Rng, Azim, ell)
+    else:
+        return vreckon_point(Lat1, Lon1, Rng, Azim, ell)
 
+
+def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float]:
     if abs(Lat1) > 90:
         raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
     if Rng < 0:
@@ -389,12 +352,8 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
     #       2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
     lon2 = lon2 % 360  # follow [0, 360) convention
-    # lon2 = (lon2 + 180) % 360 - 180  # no parenthesis on RHS
 
-    a21 = atan2(sinAlpha, -tmp)
-    a21 = 180.0 + degrees(a21)  # note direction reversal
-
-    return degrees(lat2), lon2, a21 % 360.0
+    return degrees(lat2), lon2
 
 
 def track2(
@@ -454,7 +413,7 @@ def track2(
     if abs(gcarclen - pi) < 1e-12:
         raise ValueError("cannot compute intermediate points on a great circle whose endpoints are antipodal")
 
-    distance, azimuth, _ = vdist(lat1, lon1, lat2, lon2)
+    distance, azimuth = vdist(lat1, lon1, lat2, lon2)
     incdist = distance / (npts - 1)
 
     latpt = lat1
@@ -462,7 +421,7 @@ def track2(
     lons = [lonpt]
     lats = [latpt]
     for _ in range(npts - 2):
-        latptnew, lonptnew, _ = vreckon(latpt, lonpt, incdist, azimuth)
+        latptnew, lonptnew = vreckon(latpt, lonpt, incdist, azimuth)
         azimuth = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)[1]
         lats.append(latptnew)
         lons.append(lonptnew)
