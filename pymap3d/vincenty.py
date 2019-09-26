@@ -104,6 +104,7 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
     b = ell.semiminor_axis
+    f = ell.flattening
     # %% convert inputs in degrees to radians:
     lat1 = radians(Lat1)
     lon1 = radians(Lon1)
@@ -116,7 +117,6 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     if abs(pi / 2 - abs(lat2)) < 1e-10:
         lat2 = sign(lat2) * (pi / 2 - 1e-10)
 
-    f = (a - b) / a
     U1 = atan((1 - f) * tan(lat1))
     U2 = atan((1 - f) * tan(lat2))
     lon1 = lon1 % (2 * pi)
@@ -154,8 +154,10 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
         except ZeroDivisionError:
             sinAlpha = 0.0
 
-        if isnan(sinAlpha) or abs(sinAlpha - 1) < 1e-16:
+        if isnan(sinAlpha):
             alpha = 0.0
+        elif sinAlpha > 1 or abs(sinAlpha - 1) < 1e-16:
+            alpha = pi / 2
         else:
             alpha = asin(sinAlpha)
 

@@ -1,9 +1,11 @@
 """ transforms involving ENU East North Up """
 from typing import Tuple
+
 try:
     from numpy import radians, sin, cos, hypot, arctan2 as atan2, degrees, pi, vectorize
 except ImportError:
     from math import radians, sin, cos, hypot, atan2, degrees, pi
+
     vectorize = None
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
