@@ -4,30 +4,15 @@ on: [push, pull_request]
 
 jobs:
 
-  dev:
+  full:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
       with:
         python-version: '3.x'
-    - run: pip install -e .[full,tests,lint]
+    - run: pip install .[full,tests,lint]
     - run: flake8
     - run: mypy .
-    - run: pytest -r a -v
-
-  install:
-    needs: [dev]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-    - run: pip install numpy python-dateutil
-    - run: python setup.py install
-    - name: Pytest package
-      run: |
-        cd ${HOME}
-        python -m pip install pytest
-        python -m pytest ${GITHUB_WORKSPACE} -r a -v
+    - run: pytest
+      working-directory: tests
