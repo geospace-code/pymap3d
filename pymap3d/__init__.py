@@ -38,6 +38,8 @@ from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2n
 from .ecef import geodetic2ecef, ecef2geodetic, eci2geodetic, ecef2enuv, enu2ecef, ecef2enu, enu2uvw, uvw2enu
 from .sidereal import datetime2sidereal
 from .latitude import (
+    geod2geoc,
+    geoc2geod,
     geodetic2geocentric,
     geocentric2geodetic,
     geodetic2isometric,
@@ -51,7 +53,7 @@ from .latitude import (
     geodetic2parametric,
     parametric2geodetic,
 )
-from .rcurve import rcurve_parallel, rcurve_meridian, rcurve_transverse
+from .rcurve import geocentric_radius, rcurve_parallel, rcurve_meridian, rcurve_transverse
 from .rsphere import (
     rsphere_eqavol,
     rsphere_authalic,

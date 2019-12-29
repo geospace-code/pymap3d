@@ -3,6 +3,7 @@ import typing
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
+from .rcurve import rcurve_transverse
 
 try:
     from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, vectorize
@@ -27,22 +28,69 @@ __all__ = [
     "geocentric2geodetic",
     "geodetic2authalic",
     "authalic2geodetic",
+    "geod2geoc",
+    "geoc2geod",
 ]
 
 if typing.TYPE_CHECKING:
     from numpy import ndarray
 
 
-def geodetic2geocentric(geodetic_lat: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
+def geoc2geod(geocentric_lat: "ndarray", geocentric_distance: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
     """
-    convert geodetic latitude to geocentric latitude.
+    convert geocentric latitude to geodetic latitude, consider mean sea level altitude
 
-    like Matlab geocentricLatitude()
+    like Matlab geoc2geod()
+
+    Parameters
+    ----------
+    geocentric_lat : "ndarray"
+        geocentric latitude
+    geocentric_distance: "ndarray"
+        distance from planet center, meters (NOT altitude above ground!)
+    ell : Ellipsoid, optional
+         reference ellipsoid (default WGS84)
+    deg : bool, optional
+         degrees input/output  (False: radians in/out)
+
+    Returns
+    -------
+    geodetic_lat : "ndarray"
+         geodetic latiude
+
+
+    References
+    ----------
+    Long, S.A.T. "General-Altitude Transformation between Geocentric
+        and Geodetic Coordinates. Celestial Mechanics (12), 2, p. 225-230 (1975)
+        doi: 10.1007/BF01230214"
+    """
+    geocentric_lat, ell = sanitize(geocentric_lat, ell, deg)
+
+    r = geocentric_distance / ell.semimajor_axis
+
+    geodetic_lat = (
+        geocentric_lat
+        + (sin(2 * geocentric_lat) / r) * ell.flattening
+        + ((1 / r ** 2 + 1 / (4 * r)) * sin(4 * geocentric_lat)) * ell.flattening ** 2
+    )
+
+    return degrees(geodetic_lat) if deg else geodetic_lat
+
+
+def geodetic2geocentric(geodetic_lat: "ndarray", alt_m: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
+    """
+    convert geodetic latitude to geocentric latitude on spheroid surface
+
+    like Matlab geocentricLatitude() with alt_m = 0
+    like Matlab geod2geoc()
 
     Parameters
     ----------
     geodetic_lat : "ndarray"
         geodetic latitude
+    alt_m: "ndarray"
+        altitude above ellipsoid
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
     deg : bool, optional
@@ -60,22 +108,28 @@ def geodetic2geocentric(geodetic_lat: "ndarray", ell: Ellipsoid = None, deg: boo
     Office, Washington, DC, 1987, pp. 13-18.
     """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
-
-    geocentric_lat = atan((1 - (ell.eccentricity) ** 2) * tan(geodetic_lat))
+    r = rcurve_transverse(geodetic_lat, ell, deg=False)
+    geocentric_lat = atan((1 - ell.eccentricity ** 2 * (r / (r + alt_m))) * tan(geodetic_lat))
 
     return degrees(geocentric_lat) if deg else geocentric_lat
 
 
-def geocentric2geodetic(geocentric_lat: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
+geod2geoc = geodetic2geocentric
+
+
+def geocentric2geodetic(geocentric_lat: "ndarray", alt_m: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
     """
     converts from geocentric latitude to geodetic latitude
 
-    like Matlab geodeticLatitudeFromGeocentric()
+    like Matlab geodeticLatitudeFromGeocentric() when alt_m = 0
+    like Matlab geod2geoc() but with sea level altitude rather than planet center distance
 
     Parameters
     ----------
     geocentric_lat : "ndarray"
          geocentric latitude
+    alt_m: "ndarray"
+        altitude above ellipsoid
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
     deg : bool, optional
@@ -93,8 +147,8 @@ def geocentric2geodetic(geocentric_lat: "ndarray", ell: Ellipsoid = None, deg: b
     Office, Washington, DC, 1987, pp. 13-18.
     """
     geocentric_lat, ell = sanitize(geocentric_lat, ell, deg)
-
-    geodetic_lat = atan(tan(geocentric_lat) / (1 - (ell.eccentricity) ** 2))
+    r = rcurve_transverse(geocentric_lat, ell, deg=False)
+    geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity ** 2 * (r / (r + alt_m))))
 
     return degrees(geodetic_lat) if deg else geodetic_lat
 

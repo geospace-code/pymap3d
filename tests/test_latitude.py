@@ -6,20 +6,33 @@ from math import radians, inf
 import pymap3d as pm
 
 
+@pytest.mark.parametrize(
+    "geodetic_lat,alt_m,geocentric_lat", [(0, 0, 0), (90, 0, 90), (-90, 0, -90), (45, 0, 44.80757678), (-45, 0, -44.80757678)]
+)
+def test_geodetic_alt_geocentric(geodetic_lat, alt_m, geocentric_lat):
+    assert pm.geod2geoc(geodetic_lat, alt_m) == approx(geocentric_lat)
+
+    r = pm.geocentric_radius(geodetic_lat)
+    assert pm.geoc2geod(geocentric_lat, r) == approx(geodetic_lat)
+    assert pm.geoc2geod(geocentric_lat, 1e5 + r) == approx(pm.geocentric2geodetic(geocentric_lat, 1e5 + alt_m))
+
+    assert pm.geod2geoc(geodetic_lat, 1e5 + alt_m) == approx(pm.geodetic2geocentric(geodetic_lat, 1e5 + alt_m))
+
+
 @pytest.mark.parametrize("geodetic_lat,geocentric_lat", [(0, 0), (90, 90), (-90, -90), (45, 44.80757678), (-45, -44.80757678)])
 def test_geodetic_geocentric(geodetic_lat, geocentric_lat):
 
-    assert pm.geodetic2geocentric(geodetic_lat) == approx(geocentric_lat)
-    assert pm.geodetic2geocentric(radians(geodetic_lat), deg=False) == approx(radians(geocentric_lat))
+    assert pm.geodetic2geocentric(geodetic_lat, 0) == approx(geocentric_lat)
+    assert pm.geodetic2geocentric(radians(geodetic_lat), 0, deg=False) == approx(radians(geocentric_lat))
 
-    assert pm.geocentric2geodetic(geocentric_lat) == approx(geodetic_lat)
-    assert pm.geocentric2geodetic(radians(geocentric_lat), deg=False) == approx(radians(geodetic_lat))
+    assert pm.geocentric2geodetic(geocentric_lat, 0) == approx(geodetic_lat)
+    assert pm.geocentric2geodetic(radians(geocentric_lat), 0, deg=False) == approx(radians(geodetic_lat))
 
 
 def test_numpy_geodetic_geocentric():
     pytest.importorskip("numpy")
-    assert pm.geodetic2geocentric([45, 0]) == approx([44.80757678, 0])
-    assert pm.geocentric2geodetic([44.80757678, 0]) == approx([45, 0])
+    assert pm.geodetic2geocentric([45, 0], 0) == approx([44.80757678, 0])
+    assert pm.geocentric2geodetic([44.80757678, 0], 0) == approx([45, 0])
 
 
 @pytest.mark.parametrize(
@@ -105,9 +118,9 @@ def test_numpy_geodetic_parametric():
 def test_badvals(lat):
     # geodetic_isometric is not included on purpose
     with pytest.raises(ValueError):
-        pm.geodetic2geocentric(lat)
+        pm.geodetic2geocentric(lat, 0)
     with pytest.raises(ValueError):
-        pm.geocentric2geodetic(lat)
+        pm.geocentric2geodetic(lat, 0)
     with pytest.raises(ValueError):
         pm.geodetic2conformal(lat)
     with pytest.raises(ValueError):
@@ -127,4 +140,4 @@ def test_badvals(lat):
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", __file__])
+    pytest.main([__file__])

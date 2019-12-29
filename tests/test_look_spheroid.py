@@ -26,3 +26,7 @@ def test_array():
     truth = np.array([[42.00103959, lla0[1], 230.9413173], [42.00177328, -81.9995808, 282.84715651], [nan, nan, nan]])
 
     assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

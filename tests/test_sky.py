@@ -37,4 +37,4 @@ def test_numpy_radec2azel(usevallado):
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", __file__])
+    pytest.main([__file__])

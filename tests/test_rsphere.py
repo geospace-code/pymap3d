@@ -7,6 +7,19 @@ ell = pm.Ellipsoid()
 A = ell.semimajor_axis
 
 
+def test_geocentric_radius():
+    assert pm.geocentric_radius(0) == approx(ell.semimajor_axis)
+    assert pm.geocentric_radius(90) == approx(ell.semiminor_axis)
+    assert pm.geocentric_radius(45) == approx(6367490.0)
+    assert pm.geocentric_radius(30) == approx(6372824.0)
+
+
+@pytest.mark.parametrize("bad_lat", [-91, 91])
+def test_geocentric_radius_badval(bad_lat):
+    with pytest.raises(ValueError):
+        pm.geocentric_radius(bad_lat)
+
+
 def test_rsphere_eqavol():
     assert pm.rsphere_eqavol() == approx(6371000.8049)
 
@@ -37,4 +50,4 @@ def test_numpy_rsphere_euler():
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", __file__])
+    pytest.main([__file__])

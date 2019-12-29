@@ -1,3 +1,5 @@
+# Python 3-D coordinate conversions
+
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
 [![astronomer](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fastronomer.ullaakut.eu%2Fshields%3Fowner%3Dscivision%26name%3Dpymap3d)](https://github.com/Ullaakut/astronomer/)
@@ -9,8 +11,6 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
-
-# Python 3-D coordinate conversions
 
 Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions and geodesy.
 API similar to popular $1000 Matlab Mapping Toolbox routines for:
@@ -32,7 +32,6 @@ Thanks to our [contributors](./contributors.md).
 Pymap3d is compatible with Python &ge; 3.5 including PyPy.
 Numpy and AstroPy are optional; algorithms from Vallado and Meeus are used if AstroPy is not present.
 
-
 ## Install
 
 ```sh
@@ -48,6 +47,7 @@ pip install -e pymap3d
 ```
 
 One can verify Python functionality after installation by:
+
 ```sh
 pytest pymap3d -r a -v
 ```
@@ -79,7 +79,6 @@ lla = pm.aer2geodetic(*aer,*obslla)
 
 where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
 
-
 Example scripts are in the [examples](./examples) directory.
 
 ### Functions
@@ -97,16 +96,15 @@ converted to the desired coordinate system:
     azel2radec radec2azel
     vreckon vdist
     lookAtSpheroid
-    track2 departure meanm 
-    rcurve rsphere 
-
+    track2 departure meanm
+    rcurve rsphere
+    geod2geoc geoc2geod
 
 Additional functions:
 
 * loxodrome_inverse: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
 * loxodrome_direct
 * geodetic latitude transforms to/from: parametric, authalic, isometric, and more in pymap3d.latitude
-
 
 Abbreviations:
 
@@ -127,7 +125,6 @@ Those needing multidimensional data with SIMD and other Numpy and/or PyPy accele
 pymap3d seamlessly falls back to Python's math module if Numpy isn't present.
 To keep the code clean, only scalar data can be used without Numpy.
 As noted above, use list comprehension if you need vector data without Numpy.
-
 
 ### Caveats
 

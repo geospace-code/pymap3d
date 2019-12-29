@@ -11,13 +11,14 @@ def test_compare_vicenty():
     taz, tsr = 38, 3000
     pyproj = pytest.importorskip("pyproj")
 
-    lat2, lon2, a21 = vreckon(10, 20, tsr, taz)
+    lat2, lon2 = vreckon(10, 20, tsr, taz)
 
     p4lon, p4lat, p4a21 = pyproj.Geod(ellps="WGS84").fwd(lon2, lat2, taz, tsr)
-    assert (p4lon, p4lat, p4a21 % 360.0) == approx((lon2, lat2, a21), rel=0.0025)
+    assert p4lon == approx(lon2, rel=0.0025)
+    assert p4lat == approx(lat2, rel=0.0025)
 
     p4az, p4a21, p4sr = pyproj.Geod(ellps="WGS84").inv(20, 10, lon2, lat2)
-    assert (p4az, p4a21 % 360.0, p4sr) == approx((taz, a21, tsr))
+    assert (p4az, p4sr) == approx((taz, tsr))
 
 
 def test_compare_geodetic():
@@ -33,4 +34,4 @@ def test_compare_geodetic():
 
 
 if __name__ == "__main__":
-    pytest.main(["-v", __file__])
+    pytest.main([__file__])
