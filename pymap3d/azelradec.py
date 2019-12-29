@@ -1,7 +1,7 @@
 """
 Azimuth / elevation <==> Right ascension, declination
 """
-from typing import Tuple
+import typing
 from datetime import datetime
 from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
 from .timeconv import str2dt  # astropy can't handle xarray times (yet)
@@ -15,22 +15,25 @@ except ImportError:
 
 __all__ = ["radec2azel", "azel2radec"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
+
 
 def azel2radec(
-    az_deg: float, el_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = False
-) -> Tuple[float, float]:
+    az_deg: "ndarray", el_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, usevallado: bool = False
+) -> typing.Tuple["ndarray", "ndarray"]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
 
     Parameters
     ----------
-    az_deg : float
+    az_deg : "ndarray"
          azimuth [degrees clockwize from North]
-    el_deg : float
+    el_deg : "ndarray"
              elevation [degrees above horizon (neglecting aberration)]
-    lat_deg : float
+    lat_deg : "ndarray"
               observer latitude [-90, 90]
-    lon_deg : float
+    lon_deg : "ndarray"
               observer longitude [-180, 180] (degrees)
     time : datetime.datetime or str
            time of observation
@@ -39,9 +42,9 @@ def azel2radec(
 
     Returns
     -------
-    ra_deg : float
+    ra_deg : "ndarray"
          ecliptic right ascension (degress)
-    dec_deg : float
+    dec_deg : "ndarray"
          ecliptic declination (degrees)
     """
 
@@ -58,20 +61,20 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: float, dec_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = False
-) -> Tuple[float, float]:
+    ra_deg: "ndarray", dec_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, usevallado: bool = False
+) -> typing.Tuple["ndarray", "ndarray"]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
 
     Parameters
     ----------
-    ra_deg : float
+    ra_deg : "ndarray"
          ecliptic right ascension (degress)
-    dec_deg : float
+    dec_deg : "ndarray"
          ecliptic declination (degrees)
-    lat_deg : float
+    lat_deg : "ndarray"
               observer latitude [-90, 90]
-    lon_deg : float
+    lon_deg : "ndarray"
               observer longitude [-180, 180] (degrees)
     time : datetime.datetime or str
            time of observation
@@ -80,9 +83,9 @@ def radec2azel(
 
     Returns
     -------
-    az_deg : float
+    az_deg : "ndarray"
              azimuth [degrees clockwize from North]
-    el_deg : float
+    el_deg : "ndarray"
              elevation [degrees above horizon (neglecting aberration)]
     """
 

@@ -5,49 +5,49 @@ These functions are fallbacks for those wihtout AstroPy.
 
 Michael Hirsch implementation of algorithms from D. Vallado
 """
+
+import typing
 from datetime import datetime
 
 try:
     from numpy import sin, cos, degrees, radians, arcsin as asin, arctan2 as atan2
 except ImportError:
     from math import sin, cos, degrees, radians, asin, atan2
-from typing import Tuple
+
 from .sidereal import datetime2sidereal
 
 __all__ = ["azel2radec", "radec2azel"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
+
 
 def azel2radec(
-    az_deg: float, el_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = True
-) -> Tuple[float, float]:
+    az_deg: "ndarray", el_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, usevallado: bool = True
+) -> typing.Tuple["ndarray", "ndarray"]:
     """
     converts azimuth, elevation to right ascension, declination
 
     Parameters
     ----------
 
-    az_deg : float
+    az_deg : "ndarray"
         azimuth (clockwise) to point [degrees]
-
-    el_deg : float
+    el_deg : "ndarray"
         elevation above horizon to point [degrees]
-
-    lat_deg : float
+    lat_deg : "ndarray"
         observer WGS84 latitude [degrees]
-
-    lon_deg : float
+    lon_deg : "ndarray"
         observer WGS84 longitude [degrees]
-
     time : datetime.datetime
         time of observation
 
     Results
     -------
 
-    ra_deg : float
+    ra_deg : "ndarray"
         right ascension to target [degrees]
-
-    dec_deg : float
+    dec_deg : "ndarray"
         declination of target [degrees]
 
     from D.Vallado Fundamentals of Astrodynamics and Applications
@@ -73,36 +73,31 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: float, dec_deg: float, lat_deg: float, lon_deg: float, time: datetime, usevallado: bool = True
-) -> Tuple[float, float]:
+    ra_deg: "ndarray", dec_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, usevallado: bool = True
+) -> typing.Tuple["ndarray", "ndarray"]:
     """
     converts right ascension, declination to azimuth, elevation
 
     Parameters
     ----------
 
-    ra_deg : float
+    ra_deg : "ndarray"
         right ascension to target [degrees]
-
-    dec_deg : float
+    dec_deg : "ndarray"
         declination to target [degrees]
-
-    lat_deg : float
+    lat_deg : "ndarray"
         observer WGS84 latitude [degrees]
-
-    lon_deg : float
+    lon_deg : "ndarray"
         observer WGS84 longitude [degrees]
-
     time : datetime.datetime
         time of observation
 
     Results
     -------
 
-    az_deg : float
+    az_deg : "ndarray"
         azimuth clockwise from north to point [degrees]
-
-    el_deg : float
+    el_deg : "ndarray"
         elevation above horizon to point [degrees]
 
 

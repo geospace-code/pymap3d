@@ -2,7 +2,7 @@
 
 from datetime import datetime
 import numpy as np
-from typing import Tuple
+import typing
 
 from .sidereal import datetime2sidereal
 
@@ -13,8 +13,13 @@ except ImportError:
 
 __all__ = ["eci2ecef", "ecef2eci"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
-def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -> Tuple[float, float, float]:
+
+def eci2ecef(
+    x: "ndarray", y: "ndarray", z: "ndarray" = None, time: datetime = None, *, useastropy: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -22,11 +27,11 @@ def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, usea
 
     Parameters
     ----------
-    x : float
+    x : "ndarray"
         ECI x-location [meters]
-    y : float
+    y : "ndarray"
         ECI y-location [meters]
-    z : float
+    z : "ndarray"
         ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
@@ -35,11 +40,11 @@ def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, usea
 
     Results
     -------
-    x : float
+    x : "ndarray"
         target x ECEF coordinate
-    y : float
+    y : "ndarray"
         target y ECEF coordinate
-    z : float
+    z : "ndarray"
         target z ECEF coordinate
     """
     # %%
@@ -57,8 +62,8 @@ def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, usea
         gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
-    if gst.ndim != 1 or not isinstance(gst[0], float):
-        raise ValueError("GST must be vector in radians")
+    if gst.ndim != 1:
+        raise ValueError("GST must be scalar or vector in radians")
     if gst.size == 1:
         gst *= np.ones(x.size)
     if gst.size != x.size:
@@ -76,18 +81,20 @@ def eci2ecef(x: float, y: float, z: float = None, time: datetime = None, *, usea
     return xecef, yecef, zecef
 
 
-def ecef2eci(x: float, y: float, z: float = None, time: datetime = None, *, useastropy: bool = True) -> Tuple[float, float, float]:
+def ecef2eci(
+    x: "ndarray", y: "ndarray", z: "ndarray" = None, time: datetime = None, *, useastropy: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     Point => Point   ECEF => ECI
 
     Parameters
     ----------
 
-    x : float
+    x : "ndarray"
         target x ECEF coordinate
-    y : float
+    y : "ndarray"
         target y ECEF coordinate
-    z : float
+    z : "ndarray"
         target z ECEF coordinate
     time : datetime.datetime
         time of observation
@@ -97,11 +104,11 @@ def ecef2eci(x: float, y: float, z: float = None, time: datetime = None, *, usea
 
     Results
     -------
-    x : float
+    x : "ndarray"
         target x ECI coordinate
-    y : float
+    y : "ndarray"
         target y ECI coordinate
-    z : float
+    z : "ndarray"
         target z ECI coordinate
     """
     # %%
@@ -119,8 +126,8 @@ def ecef2eci(x: float, y: float, z: float = None, time: datetime = None, *, usea
         gst = datetime2sidereal(time, 0.0)
 
     gst = np.atleast_1d(gst)
-    if gst.ndim != 1 or not isinstance(gst[0], float):
-        raise ValueError("GST must be vector in radians")
+    if gst.ndim != 1:
+        raise ValueError("GST must be scalar or vector in radians")
     if gst.size == 1:
         gst *= np.ones(x.size)
     if gst.size != x.size:

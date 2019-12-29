@@ -1,5 +1,5 @@
 """ transforms involving ENU East North Up """
-from typing import Tuple
+import typing
 
 try:
     from numpy import radians, sin, cos, hypot, arctan2 as atan2, degrees, pi, vectorize
@@ -16,19 +16,22 @@ tau = 2 * pi
 
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
-def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
+
+def enu2aer(e: "ndarray", n: "ndarray", u: "ndarray", deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     ENU to Azimuth, Elevation, Range
 
     Parameters
     ----------
 
-    e : float
+    e : "ndarray"
         ENU East coordinate (meters)
-    n : float
+    n : "ndarray"
         ENU North coordinate (meters)
-    u : float
+    u : "ndarray"
         ENU Up coordinate (meters)
     deg : bool, optional
         degrees input/output  (False: radians in/out)
@@ -36,11 +39,11 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
     Results
     -------
 
-    azimuth : float
+    azimuth : "ndarray"
         azimuth to rarget
-    elevation : float
+    elevation : "ndarray"
         elevation to target
-    srange : float
+    srange : "ndarray"
         slant range [meters]
     """
     if vectorize is not None:
@@ -50,7 +53,7 @@ def enu2aer(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, floa
         return enu2aer_point(e, n, u, deg)
 
 
-def enu2aer_point(e: float, n: float, u: float, deg: bool = True) -> Tuple[float, float, float]:
+def enu2aer_point(e: "ndarray", n: "ndarray", u: "ndarray", deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
 
     # 1 millimeter precision for singularity
 
@@ -73,7 +76,7 @@ def enu2aer_point(e: float, n: float, u: float, deg: bool = True) -> Tuple[float
     return az, elev, slantRange
 
 
-def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
+def aer2enu(az: "ndarray", el: "ndarray", srange: "ndarray", deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     if vectorize is not None:
         fun = vectorize(aer2enu_point)
         return fun(az, el, srange, deg)
@@ -81,7 +84,7 @@ def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> Tuple[floa
         return aer2enu_point(az, el, srange, deg)
 
 
-def aer2enu_point(az: float, el: float, srange: float, deg: bool = True) -> Tuple[float, float, float]:
+def aer2enu_point(az: float, el: float, srange: float, deg: bool = True) -> typing.Tuple[float, float, float]:
     """
     Azimuth, Elevation, Slant range to target to East, North, Up
 
@@ -118,24 +121,31 @@ def aer2enu_point(az: float, el: float, srange: float, deg: bool = True) -> Tupl
 
 
 def enu2geodetic(
-    e: float, n: float, u: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
-) -> Tuple[float, float, float]:
+    e: "ndarray",
+    n: "ndarray",
+    u: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     East, North, Up to target to geodetic coordinates
 
     Parameters
     ----------
-    e : float
+    e : "ndarray"
         East ENU coordinate (meters)
-    n : float
+    n : "ndarray"
         North ENU coordinate (meters)
-    u : float
+    u : "ndarray"
         Up ENU coordinate (meters)
-    lat0 : float
+    lat0 : "ndarray"
            Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
            Observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -145,11 +155,11 @@ def enu2geodetic(
 
     Results
     -------
-    lat : float
+    lat : "ndarray"
           geodetic latitude
-    lon : float
+    lon : "ndarray"
           geodetic longitude
-    alt : float
+    alt : "ndarray"
           altitude above ellipsoid  (meters)
     """
 
@@ -159,22 +169,29 @@ def enu2geodetic(
 
 
 def geodetic2enu(
-    lat: float, lon: float, h: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
-) -> Tuple[float, float, float]:
+    lat: "ndarray",
+    lon: "ndarray",
+    h: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     Parameters
     ----------
-    lat : float
+    lat : "ndarray"
           target geodetic latitude
-    lon : float
+    lon : "ndarray"
           target geodetic longitude
-    h : float
+    h : "ndarray"
           target altitude above ellipsoid  (meters)
-    lat0 : float
+    lat0 : "ndarray"
            Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
            Observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -184,11 +201,11 @@ def geodetic2enu(
 
     Results
     -------
-    e : float
+    e : "ndarray"
         East ENU
-    n : float
+    n : "ndarray"
         North ENU
-    u : float
+    u : "ndarray"
         Up ENU
     """
     x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)

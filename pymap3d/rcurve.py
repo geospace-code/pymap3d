@@ -1,4 +1,7 @@
 """compute radii of curvature for an ellipsoid"""
+
+import typing
+
 try:
     from numpy import radians, sin, cos, sqrt
 except ImportError:
@@ -7,14 +10,17 @@ from .ellipsoid import Ellipsoid
 
 __all__ = ["rcurve_parallel", "rcurve_meridian", "rcurve_transverse"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
-def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+
+def rcurve_parallel(lat: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
 
     Parameters
     ----------
-    lat : float
+    lat : "ndarray"
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -23,7 +29,7 @@ def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
 
     Returns
     -------
-    radius: float
+    radius: "ndarray"
         radius of ellipsoid
     """
 
@@ -33,12 +39,12 @@ def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
     return cos(lat) * rcurve_transverse(lat, ell, deg=False)
 
 
-def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def rcurve_meridian(lat: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
     """computes the meridional radius of curvature for the ellipsoid
 
     Parameters
     ----------
-    lat : float
+    lat : "ndarray"
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -47,7 +53,7 @@ def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
 
     Returns
     -------
-    radius: float
+    radius: "ndarray"
         radius of ellipsoid
     """
 
@@ -61,14 +67,14 @@ def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
     return f1 / sqrt(f2 ** 3)
 
 
-def rcurve_transverse(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def rcurve_transverse(lat: "ndarray", ell: Ellipsoid = None, deg: bool = True) -> "ndarray":
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid
 
     Parameters
     ----------
-    lat : float
+    lat : "ndarray"
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -77,7 +83,7 @@ def rcurve_transverse(lat: float, ell: Ellipsoid = None, deg: bool = True) -> fl
 
     Returns
     -------
-    radius: float
+    radius: "ndarray"
         radius of ellipsoid
     """
 

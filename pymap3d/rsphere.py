@@ -1,10 +1,14 @@
 """ compute radii of auxiliary spheres"""
+
+import typing
+
 try:
     from numpy import radians, sin, cos, log, sqrt, degrees, asarray
 except ImportError:
     from math import radians, sin, cos, log, sqrt, degrees
 
     asarray = None
+
 from .ellipsoid import Ellipsoid
 from .rcurve import rcurve_meridian, rcurve_transverse
 from .vincenty import vdist
@@ -18,6 +22,9 @@ __all__ = [
     "rsphere_triaxial",
     "rsphere_biaxial",
 ]
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 
 def rsphere_eqavol(ell: Ellipsoid = None) -> float:
@@ -86,15 +93,17 @@ def rsphere_rectifying(ell: Ellipsoid = None) -> float:
     return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
-def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = True) -> float:
+def rsphere_euler(
+    lat1: "ndarray", lon1: "ndarray", lat2: "ndarray", lon2: "ndarray", ell: Ellipsoid = None, deg: bool = True
+) -> "ndarray":
     """computes the Euler radii of curvature at the midpoint of the
      great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)
 
     Parameters
     ----------
-    lat1, lat2 : float
+    lat1, lat2 : "ndarray"
         geodetic latitudes (degrees)
-    lon1, lon2 : float
+    lon1, lon2 : "ndarray"
        geodetic longitudes (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -103,7 +112,7 @@ def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = Tru
 
     Returns
     -------
-    radius: float
+    radius: "ndarray"
         radius of sphere
     """
     if not deg:
@@ -127,12 +136,14 @@ def rsphere_euler(lat1, lon1, lat2, lon2, ell: Ellipsoid = None, deg: bool = Tru
     return rho * nu / den
 
 
-def rsphere_curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> float:
+def rsphere_curve(lat: "ndarray", ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> "ndarray":
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
     Parameters
     ----------
+    lat1 : "ndarray"
+        geodetic latitudes (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
     method: str, optional
@@ -142,7 +153,7 @@ def rsphere_curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "m
 
     Returns
     -------
-    radius: float
+    radius: "ndarray"
         radius of sphere
     """
 

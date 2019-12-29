@@ -1,33 +1,40 @@
 """ Transforms involving NED North East Down """
+
+import typing
+
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
 from .ellipsoid import Ellipsoid
-import typing
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 
-def aer2ned(az: float, elev: float, slantRange: float, deg: bool = True) -> typing.Tuple[float, float, float]:
+def aer2ned(
+    az: "ndarray", elev: "ndarray", slantRange: "ndarray", deg: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     converts azimuth, elevation, range to target from observer to North, East, Down
 
     Parameters
     -----------
 
-    az : float
+    az : "ndarray"
          azimuth
-    elev : float
+    elev : "ndarray"
          elevation
-    slantRange : float
+    slantRange : "ndarray"
          slant range [meters]
     deg : bool, optional
           degrees input/output  (False: radians in/out)
 
     Results
     -------
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
     """
     e, n, u = aer2enu(az, elev, slantRange, deg=deg)
@@ -35,18 +42,18 @@ def aer2ned(az: float, elev: float, slantRange: float, deg: bool = True) -> typi
     return n, e, -u
 
 
-def ned2aer(n: float, e: float, d: float, deg: bool = True) -> typing.Tuple[float, float, float]:
+def ned2aer(n: "ndarray", e: "ndarray", d: "ndarray", deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     converts North, East, Down to azimuth, elevation, range
 
     Parameters
     ----------
 
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
     deg : bool, optional
         degrees input/output  (False: radians in/out)
@@ -54,36 +61,43 @@ def ned2aer(n: float, e: float, d: float, deg: bool = True) -> typing.Tuple[floa
     Results
     -------
 
-    az : float
+    az : "ndarray"
          azimuth
-    elev : float
+    elev : "ndarray"
          elevation
-    slantRange : float
+    slantRange : "ndarray"
          slant range [meters]
     """
     return enu2aer(e, n, -d, deg=deg)
 
 
 def ned2geodetic(
-    n: float, e: float, d: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float, float]:
+    n: "ndarray",
+    e: "ndarray",
+    d: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     Converts North, East, Down to target latitude, longitude, altitude
 
     Parameters
     ----------
 
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
-    lat0 : float
+    lat0 : "ndarray"
         Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
         Observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -93,11 +107,11 @@ def ned2geodetic(
     Results
     -------
 
-    lat : float
+    lat : "ndarray"
         target geodetic latitude
-    lon : float
+    lon : "ndarray"
         target geodetic longitude
-    h : float
+    h : "ndarray"
         target altitude above geodetic ellipsoid (meters)
 
     """
@@ -107,25 +121,32 @@ def ned2geodetic(
 
 
 def ned2ecef(
-    n: float, e: float, d: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float, float]:
+    n: "ndarray",
+    e: "ndarray",
+    d: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     North, East, Down to target ECEF coordinates
 
     Parameters
     ----------
 
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
-    lat0 : float
+    lat0 : "ndarray"
         Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
         Observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -135,36 +156,43 @@ def ned2ecef(
     Results
     -------
 
-    x : float
+    x : "ndarray"
         ECEF x coordinate (meters)
-    y : float
+    y : "ndarray"
         ECEF y coordinate (meters)
-    z : float
+    z : "ndarray"
         ECEF z coordinate (meters)
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
 
 def ecef2ned(
-    x: float, y: float, z: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float, float]:
+    x: "ndarray",
+    y: "ndarray",
+    z: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     Convert ECEF x,y,z to North, East, Down
 
     Parameters
     ----------
 
-    x : float
+    x : "ndarray"
         ECEF x coordinate (meters)
-    y : float
+    y : "ndarray"
         ECEF y coordinate (meters)
-    z : float
+    z : "ndarray"
         ECEF z coordinate (meters)
-    lat0 : float
+    lat0 : "ndarray"
         Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
         Observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -174,11 +202,11 @@ def ecef2ned(
     Results
     -------
 
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
 
     """
@@ -188,25 +216,32 @@ def ecef2ned(
 
 
 def geodetic2ned(
-    lat: float, lon: float, h: float, lat0: float, lon0: float, h0: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float, float]:
+    lat: "ndarray",
+    lon: "ndarray",
+    h: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     convert latitude, longitude, altitude of target to North, East, Down from observer
 
     Parameters
     ----------
 
-    lat : float
+    lat : "ndarray"
         target geodetic latitude
-    lon : float
+    lon : "ndarray"
         target geodetic longitude
-    h : float
+    h : "ndarray"
         target altitude above geodetic ellipsoid (meters)
-    lat0 : float
+    lat0 : "ndarray"
         Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
         Observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -217,11 +252,11 @@ def geodetic2ned(
     Results
     -------
 
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
@@ -229,21 +264,23 @@ def geodetic2ned(
     return n, e, -u
 
 
-def ecef2nedv(x: float, y: float, z: float, lat0: float, lon0: float, deg: bool = True) -> typing.Tuple[float, float, float]:
+def ecef2nedv(
+    x: "ndarray", y: "ndarray", z: "ndarray", lat0: "ndarray", lon0: "ndarray", deg: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     for VECTOR between two points
 
     Parameters
     ----------
-    x : float
+    x : "ndarray"
         ECEF x coordinate (meters)
-    y : float
+    y : "ndarray"
         ECEF y coordinate (meters)
-    z : float
+    z : "ndarray"
         ECEF z coordinate (meters)
-    lat0 : float
+    lat0 : "ndarray"
         Observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
         Observer geodetic longitude
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -253,11 +290,11 @@ def ecef2nedv(x: float, y: float, z: float, lat0: float, lon0: float, deg: bool 
 
     (Vector)
 
-    n : float
+    n : "ndarray"
         North NED coordinate (meters)
-    e : float
+    e : "ndarray"
         East NED coordinate (meters)
-    d : float
+    d : "ndarray"
         Down NED coordinate (meters)
     """
     e, n, u = ecef2enuv(x, y, z, lat0, lon0, deg=deg)

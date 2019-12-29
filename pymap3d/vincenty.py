@@ -1,6 +1,7 @@
 """
 Vincenty's methods for computing ground distance and reckoning
 """
+
 import typing
 import logging
 from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, nan, pi, radians, degrees
@@ -16,8 +17,13 @@ from .utils import sign
 
 __all__ = ["vdist", "vreckon", "track2"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
-def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = None) -> typing.Tuple[float, float]:
+
+def vdist(
+    Lat1: "ndarray", Lon1: "ndarray", Lat2: "ndarray", Lon2: "ndarray", ell: Ellipsoid = None
+) -> typing.Tuple["ndarray", "ndarray"]:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -31,13 +37,13 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     Parameters
     ----------
 
-    Lat1 : float
+    Lat1 : "ndarray"
         Geodetic latitude of first point (degrees)
-    Lon1 : float
+    Lon1 : "ndarray"
         Geodetic longitude of first point (degrees)
-    Lat2 : float
+    Lat2 : "ndarray"
         Geodetic latitude of second point (degrees)
-    Lon2 : float
+    Lon2 : "ndarray"
         Geodetic longitude of second point (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -45,9 +51,9 @@ def vdist(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid = N
     Results
     -------
 
-    dist_m : float
+    dist_m : "ndarray"
         distance (meters)
-    az : float
+    az : "ndarray"
         azimuth (degrees) clockwise from first point to second point (forward)
 
 
@@ -212,7 +218,9 @@ def vdist_point(Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipso
     return dist_m, az
 
 
-def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None) -> typing.Tuple[float, float]:
+def vreckon(
+    Lat1: "ndarray", Lon1: "ndarray", Rng: "ndarray", Azim: "ndarray", ell: Ellipsoid = None
+) -> typing.Tuple["ndarray", "ndarray"]:
     """
     This is the Vincenty "forward" solution.
 
@@ -227,13 +235,13 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
     Parameters
     ----------
 
-    Lat1 : float
+    Lat1 : "ndarray"
         inital geodetic latitude (degrees)
-    Lon1 : float
+    Lon1 : "ndarray"
         initial geodetic longitude (degrees)
-    Rng : float
+    Rng : "ndarray"
         ground distance (meters)
-    Azim : float
+    Azim : "ndarray"
         intial azimuth (degrees) clockwide from north.
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -241,9 +249,9 @@ def vreckon(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = 
     Results
     -------
 
-    Lat2 : float
+    Lat2 : "ndarray"
         final geodetic latitude (degrees)
-    Lon2 : float
+    Lon2 : "ndarray"
         final geodetic longitude (degrees)
 
 
@@ -359,7 +367,7 @@ def vreckon_point(Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellips
 
 
 def track2(
-    lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, npts: int = 100, deg: bool = True
+    lat1: "ndarray", lon1: "ndarray", lat2: "ndarray", lon2: "ndarray", ell: Ellipsoid = None, npts: int = 100, deg: bool = True
 ) -> typing.Tuple[typing.List[float], typing.List[float]]:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
@@ -367,13 +375,13 @@ def track2(
     Parameters
     ----------
 
-    Lat1 : float
+    Lat1 : "ndarray"
         Geodetic latitude of first point (degrees)
-    Lon1 : float
+    Lon1 : "ndarray"
         Geodetic longitude of first point (degrees)
-    Lat2 : float
+    Lat2 : "ndarray"
         Geodetic latitude of second point (degrees)
-    Lon2 : float
+    Lon2 : "ndarray"
         Geodetic longitude of second point (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid

@@ -20,7 +20,7 @@ import argparse
 import subprocess
 import shutil
 
-MATLAB = shutil.which('matlab')
+MATLAB = shutil.which("matlab")
 
 ll0 = (42.0, 82.0)
 
@@ -56,4 +56,6 @@ if __name__ == "__main__":
     print(f"vdist: {bench_vdist(N):.3f}")
 
     if MATLAB:
-        subprocess.check_call(f'matlab -batch "f = @() distance({ll0[0]}, {ll0[1]}, rand({N},1), rand({N},1));  t = timeit(f); disp(t)"', timeout=45)
+        subprocess.check_call(
+            f'matlab -batch "f = @() distance({ll0[0]}, {ll0[1]}, rand({N},1), rand({N},1));  t = timeit(f); disp(t)"', timeout=45
+        )

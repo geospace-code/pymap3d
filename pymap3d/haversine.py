@@ -9,6 +9,8 @@ and gives virtually identical result
 within double precision arithmetic limitations
 """
 
+import typing
+
 try:
     from numpy import cos, arcsin, sqrt, radians, degrees
 except ImportError:
@@ -20,19 +22,22 @@ except ImportError:
 
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
-def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
+
+def anglesep_meeus(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "ndarray", deg: bool = True) -> "ndarray":
     """
     Parameters
     ----------
 
-    lon0 : float
+    lon0 : "ndarray"
         longitude of first point
-    lat0 : float
+    lat0 : "ndarray"
         latitude of first point
-    lon1 : float
+    lon1 : "ndarray"
         longitude of second point
-    lat1 : float
+    lat1 : "ndarray"
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -40,7 +45,7 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
     Returns
     -------
 
-    sep_rad : float
+    sep_rad : "ndarray"
         angular separation
 
 
@@ -66,18 +71,18 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
     return degrees(sep_rad) if deg else sep_rad
 
 
-def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
+def anglesep(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "ndarray", deg: bool = True) -> "ndarray":
     """
     Parameters
     ----------
 
-    lon0 : float
+    lon0 : "ndarray"
         longitude of first point
-    lat0 : float
+    lat0 : "ndarray"
         latitude of first point
-    lon1 : float
+    lon1 : "ndarray"
         longitude of second point
-    lat1 : float
+    lat1 : "ndarray"
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -85,7 +90,7 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
     Returns
     -------
 
-    sep_rad : float
+    sep_rad : "ndarray"
         angular separation
 
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
@@ -105,20 +110,20 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
     return degrees(sep_rad) if deg else sep_rad
 
 
-def haversine(theta: float) -> float:
+def haversine(theta: "ndarray") -> "ndarray":
     """
     Compute haversine
 
     Parameters
     ----------
 
-    theta : float
+    theta : "ndarray"
         angle (radians)
 
     Results
     -------
 
-    htheta : float
+    htheta : "ndarray"
         haversine of `theta`
 
     https://en.wikipedia.org/wiki/Haversine

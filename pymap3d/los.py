@@ -1,5 +1,6 @@
 """ Line of sight intersection of space observer to ellipsoid """
-from typing import Tuple
+
+import typing
 
 try:
     from numpy import pi, nan, sqrt, vectorize
@@ -14,25 +15,28 @@ from .ellipsoid import Ellipsoid
 
 __all__ = ["lookAtSpheroid"]
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
+
 
 def lookAtSpheroid(
-    lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
-) -> Tuple[float, float, float]:
+    lat0: "ndarray", lon0: "ndarray", h0: "ndarray", az: "ndarray", tilt: "ndarray", ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
     Parameters
     ----------
 
-    lat0 : float
+    lat0 : "ndarray"
            observer geodetic latitude
-    lon0 : float
+    lon0 : "ndarray"
            observer geodetic longitude
-    h0 : float
+    h0 : "ndarray"
         observer altitude (meters)  Must be non-negative since this function doesn't consider terrain
-    az : float
+    az : "ndarray"
         azimuth angle of line-of-sight, clockwise from North
-    tilt : float
+    tilt : "ndarray"
         tilt angle of line-of-sight with respect to local vertical (nadir = 0)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -42,11 +46,11 @@ def lookAtSpheroid(
     Results
     -------
 
-    lat0 : float
+    lat0 : "ndarray"
            geodetic latitude where the line-of-sight intersects with the Earth ellipsoid
-    lon0 : float
+    lon0 : "ndarray"
            geodetic longitude where the line-of-sight intersects with the Earth ellipsoid
-    d : float
+    d : "ndarray"
         slant range (meters) from starting point to intersect point
 
     Values will be NaN if the line of sight does not intersect.
@@ -62,7 +66,7 @@ def lookAtSpheroid(
 
 def lookAtSpheroid_point(
     lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
-) -> Tuple[float, float, float]:
+) -> typing.Tuple[float, float, float]:
 
     if h0 < 0:
         raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
@@ -80,7 +84,7 @@ def lookAtSpheroid_point(
     u, v, w = enu2uvw(e, n, u, lat0, lon0, deg=deg)
     x, y, z = geodetic2ecef(lat0, lon0, h0, deg=deg)
 
-    value = -a ** 2 * b ** 2 * w * z - a ** 2 * c ** 2 * v * y - b ** 2 * c ** 2 * u * x
+    value = -(a ** 2) * b ** 2 * w * z - a ** 2 * c ** 2 * v * y - b ** 2 * c ** 2 * u * x
     radical = (
         a ** 2 * b ** 2 * w ** 2
         + a ** 2 * c ** 2 * v ** 2
