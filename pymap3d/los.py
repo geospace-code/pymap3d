@@ -46,9 +46,9 @@ def lookAtSpheroid(
     Results
     -------
 
-    lat0 : "ndarray"
+    lat : "ndarray"
            geodetic latitude where the line-of-sight intersects with the Earth ellipsoid
-    lon0 : "ndarray"
+    lon : "ndarray"
            geodetic longitude where the line-of-sight intersects with the Earth ellipsoid
     d : "ndarray"
         slant range (meters) from starting point to intersect point
@@ -59,7 +59,8 @@ def lookAtSpheroid(
     """
     if vectorize is not None:
         fun = vectorize(lookAtSpheroid_point)
-        return fun(lat0, lon0, h0, az, tilt, ell, deg)
+        lat, lon, d = fun(lat0, lon0, h0, az, tilt, ell, deg)
+        return lat[()], lon[()], d[()]
     else:
         return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
 

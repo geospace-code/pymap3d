@@ -39,7 +39,10 @@ def test_numpy_geodetic_geocentric():
     "geodetic_lat, isometric_lat", [(0, 0), (90, inf), (-90, -inf), (45, 50.227466), (-45, -50.227466), (89, 271.275)]
 )
 def test_geodetic_isometric(geodetic_lat, isometric_lat):
-    assert pm.geodetic2isometric(geodetic_lat) == approx(isometric_lat)
+    isolat = pm.geodetic2isometric(geodetic_lat)
+    assert isolat == approx(isometric_lat)
+    assert isinstance(isolat, float)
+
     assert pm.geodetic2isometric(radians(geodetic_lat), deg=False) == approx(radians(isometric_lat))
 
     assert pm.isometric2geodetic(isometric_lat) == approx(geodetic_lat)
@@ -56,7 +59,10 @@ def test_numpy_geodetic_isometric():
     "geodetic_lat,conformal_lat", [(0, 0), (90, 90), (-90, -90), (45, 44.80768406), (-45, -44.80768406), (89, 88.99327)]
 )
 def test_geodetic_conformal(geodetic_lat, conformal_lat):
-    assert pm.geodetic2conformal(geodetic_lat) == approx(conformal_lat)
+    clat = pm.geodetic2conformal(geodetic_lat)
+    assert clat == approx(conformal_lat)
+    assert isinstance(clat, float)
+
     assert pm.geodetic2conformal(radians(geodetic_lat), deg=False) == approx(radians(conformal_lat))
 
     assert pm.conformal2geodetic(conformal_lat) == approx(geodetic_lat)

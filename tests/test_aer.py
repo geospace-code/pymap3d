@@ -46,7 +46,13 @@ def test_ecef2aer(xyz, lla, aer):
 
 @pytest.mark.parametrize("aer,enu", [((33, 70, 1000), (186.2775, 286.8422, 939.6926))])
 def test_aer_enu(aer, enu):
-    assert pm.aer2enu(*aer) == approx(enu)
+    e, n, u = pm.aer2enu(*aer)
+    assert e == approx(enu[0])
+    assert n == approx(enu[1])
+    assert u == approx(enu[2])
+    assert isinstance(e, float)
+    assert isinstance(n, float)
+    assert isinstance(u, float)
 
     raer = (radians(aer[0]), radians(aer[1]), aer[2])
     assert pm.aer2enu(*raer, deg=False) == approx(enu)
@@ -54,7 +60,14 @@ def test_aer_enu(aer, enu):
     with pytest.raises(ValueError):
         pm.aer2enu(aer[0], aer[1], -1)
 
-    assert pm.enu2aer(*enu) == approx(aer)
+    a, e, r = pm.enu2aer(*enu)
+    assert a == approx(aer[0])
+    assert e == approx(aer[1])
+    assert r == approx(aer[2])
+    assert isinstance(a, float)
+    assert isinstance(e, float)
+    assert isinstance(r, float)
+
     assert pm.enu2aer(*enu, deg=False) == approx(raer)
 
 

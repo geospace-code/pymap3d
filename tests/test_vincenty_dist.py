@@ -27,6 +27,9 @@ def test_unit(lat, lon, lat1, lon1, srange, az):
     assert dist == approx(srange, rel=0.005)
     assert az1 == approx(az)
 
+    assert isinstance(dist, float)
+    assert isinstance(az1, float)
+
 
 def test_vector():
     pytest.importorskip("numpy")
