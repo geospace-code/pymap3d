@@ -74,7 +74,8 @@ def ecef2geodetic(
 ) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     if vectorize is not None:
         fun = vectorize(ecef2geodetic_point)
-        return fun(x, y, z, ell, deg)
+        lat, lon, alt = fun(x, y, z, ell, deg)
+        return lat[()], lon[()], alt[()]
     else:
         return ecef2geodetic_point(x, y, z, ell, deg)
 
@@ -102,7 +103,7 @@ def ecef2geodetic_point(x: float, y: float, z: float, ell: Ellipsoid = None, deg
            target geodetic latitude
     lon : float
            target geodetic longitude
-    h : float
+    alt : float
          target altitude above geodetic ellipsoid (meters)
 
     based on:

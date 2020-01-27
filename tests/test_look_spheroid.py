@@ -13,6 +13,9 @@ def test_losint():
     lat, lon, sr = pm.lookAtSpheroid(*lla0, az[1], tilt=0.0)
 
     assert (lat, lon, sr) == approx(lla0)
+    assert isinstance(lat, float)
+    assert isinstance(lon, float)
+    assert isinstance(sr, float)
 
     with pytest.raises(ValueError):
         pm.lookAtSpheroid(lla0[0], lla0[1], -1, az, 0)

@@ -96,7 +96,8 @@ def vdist(
     """
     if numpy is not None:
         fun = numpy.vectorize(vdist_point)
-        return fun(Lat1, Lon1, Lat2, Lon2, ell)
+        dist, az = fun(Lat1, Lon1, Lat2, Lon2, ell)
+        return dist[()], az[()]
     else:
         return vdist_point(Lat1, Lon1, Lat2, Lon2, ell)
 

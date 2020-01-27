@@ -50,6 +50,8 @@ def test_loxodrome_inverse(lat1, lon1, lat2, lon2, arclen, az):
 
     assert rhdist == approx(arclen)
     assert rhaz == approx(az)
+    assert isinstance(rhdist, float)
+    assert isinstance(rhaz, float)
 
 
 def test_numpy_loxodrome_inverse():
@@ -75,6 +77,8 @@ def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
     lat2, lon2 = pm.loxodrome_direct(lat0, lon0, rng, az)
     assert lat2 == approx(lat1, abs=1e-6)
     assert lon2 == approx(lon1)
+    assert isinstance(lat2, float)
+    assert isinstance(lon2, float)
 
 
 def test_numpy_loxodrome_direct():

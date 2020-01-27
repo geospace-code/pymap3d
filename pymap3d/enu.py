@@ -48,7 +48,8 @@ def enu2aer(e: "ndarray", n: "ndarray", u: "ndarray", deg: bool = True) -> typin
     """
     if vectorize is not None:
         fun = vectorize(enu2aer_point)
-        return fun(e, n, u, deg)
+        az, el, rng = fun(e, n, u, deg)
+        return az[()], el[()], rng[()]
     else:
         return enu2aer_point(e, n, u, deg)
 
@@ -79,7 +80,8 @@ def enu2aer_point(e: "ndarray", n: "ndarray", u: "ndarray", deg: bool = True) ->
 def aer2enu(az: "ndarray", el: "ndarray", srange: "ndarray", deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     if vectorize is not None:
         fun = vectorize(aer2enu_point)
-        return fun(az, el, srange, deg)
+        e, n, u = fun(az, el, srange, deg)
+        return e[()], n[()], u[()]
     else:
         return aer2enu_point(az, el, srange, deg)
 

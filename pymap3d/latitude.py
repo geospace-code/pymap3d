@@ -205,7 +205,7 @@ def geodetic2isometric(geodetic_lat: "ndarray", ell: Ellipsoid = None, deg: bool
     """
     if use_numpy:
         fun = vectorize(geodetic2isometric_point)
-        return fun(geodetic_lat, ell, deg)
+        return fun(geodetic_lat, ell, deg)[()]
     else:
         return geodetic2isometric_point(geodetic_lat, ell, deg)
 
@@ -320,7 +320,7 @@ def geodetic2conformal(geodetic_lat: "ndarray", ell: Ellipsoid = None, deg: bool
     """
     if use_numpy:
         fun = vectorize(geodetic2conformal_point)
-        return fun(geodetic_lat, ell, deg)
+        return fun(geodetic_lat, ell, deg)[()]
     else:
         return geodetic2conformal_point(geodetic_lat, ell, deg)
 

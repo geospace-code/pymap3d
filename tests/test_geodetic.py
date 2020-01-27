@@ -146,7 +146,13 @@ def test_ecef2geodetic(xyz, lla):
     [((33, 77, 1000), (42.0016981935, -81.99852, 1174.374035), (42, -82, 200)), ((0, 90, 10000), (0, 0, 10000), (0, 0, 0))],
 )
 def test_aer_geodetic(aer, lla, lla0):
-    assert pm.aer2geodetic(*aer, *lla0) == approx(lla)
+    lat1, lon1, alt1 = pm.aer2geodetic(*aer, *lla0)
+    assert lat1 == approx(lla[0])
+    assert lon1 == approx(lla[1])
+    assert alt1 == approx(lla[2])
+    assert isinstance(lat1, float)
+    assert isinstance(lon1, float)
+    assert isinstance(alt1, float)
 
     raer = (radians(aer[0]), radians(aer[1]), aer[2])
     rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])

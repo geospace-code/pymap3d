@@ -33,22 +33,28 @@ def test_enuv_nedv():
 
 
 def test_ned_geodetic():
-    lla = pm.aer2geodetic(*aer0, *lla0)
+    lat1, lon1, alt1 = pm.aer2geodetic(*aer0, *lla0)
 
-    enu3 = pm.geodetic2enu(*lla, *lla0)
+    enu3 = pm.geodetic2enu(lat1, lon1, alt1, *lla0)
     ned3 = (enu3[1], enu3[0], -enu3[2])
 
-    assert pm.geodetic2ned(*lla, *lla0) == approx(ned3)
+    assert pm.geodetic2ned(lat1, lon1, alt1, *lla0) == approx(ned3)
 
     lat, lon, alt = pm.enu2geodetic(*enu3, *lla0)
-    assert lat == approx(lla[0])
-    assert lon == approx(lla[1])
-    assert alt == approx(lla[2])
+    assert lat == approx(lat1)
+    assert lon == approx(lon1)
+    assert alt == approx(alt1)
+    assert isinstance(lat, float)
+    assert isinstance(lon, float)
+    assert isinstance(alt, float)
 
     lat, lon, alt = pm.ned2geodetic(*ned3, *lla0)
-    assert lat == approx(lla[0])
-    assert lon == approx(lla[1])
-    assert alt == approx(lla[2])
+    assert lat == approx(lat1)
+    assert lon == approx(lon1)
+    assert alt == approx(alt1)
+    assert isinstance(lat, float)
+    assert isinstance(lon, float)
+    assert isinstance(alt, float)
 
 
 if __name__ == "__main__":

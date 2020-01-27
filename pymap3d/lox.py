@@ -116,7 +116,8 @@ def loxodrome_inverse(
     """
     if vectorize is not None:
         fun = vectorize(loxodrome_inverse_point)
-        return fun(lat1, lon1, lat2, lon2, ell, deg)
+        lox, az = fun(lat1, lon1, lat2, lon2, ell, deg)
+        return lox[()], az[()]
     else:
         return loxodrome_inverse_point(lat1, lon1, lat2, lon2, ell, deg)
 
@@ -179,7 +180,8 @@ def loxodrome_direct(
     """
     if vectorize is not None:
         fun = vectorize(loxodrome_direct_point)
-        return fun(lat1, lon1, rng, a12, ell, deg)
+        lat2, lon2 = fun(lat1, lon1, rng, a12, ell, deg)
+        return lat2[()], lon2[()]
     else:
         return loxodrome_direct_point(lat1, lon1, rng, a12, ell, deg)
 
