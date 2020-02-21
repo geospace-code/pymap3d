@@ -27,8 +27,8 @@ Other languages
 
 Companion packages exist for:
 
-* Matlab / GNU Octave: [Matmap3D](https://github.com/scivision/matmap3d)
-* Fortran: [Maptran3D](https://github.com/scivision/maptran3d)
+* Matlab / GNU Octave: [Matmap3D](https://github.com/geospace-code/matmap3d)
+* Fortran: [Maptran3D](https://github.com/geospace-code/maptran3d)
 """
 
 from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic, eci2aer, aer2eci
