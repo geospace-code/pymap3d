@@ -25,5 +25,49 @@ def test_ecef2eci():
     assert eci == approx([-2.9818e6, 5.2070e6, 3.1616e6], rel=0.01)
 
 
+def test_eci2geodetic():
+    pytest.importorskip("astropy")
+
+    eci = [-2981784, 5207055, 3161595]
+    utc = datetime(2019, 1, 4, 12)
+    lla = pm.eci2geodetic(*eci, utc)
+    assert lla == approx([27.881, -163.722, 408850.65], rel=0.001)
+
+
+def test_geodetic2eci():
+    pytest.importorskip("astropy")
+
+    lla = [27.881, -163.722, 408850.65]
+    utc = datetime(2019, 1, 4, 12)
+    eci = pm.geodetic2eci(*lla, utc)
+    assert eci == approx([-2981784, 5207055, 3161595], rel=0.001)
+
+
+def test_eci2aer():
+    # test coords from Matlab eci2aer
+    pytest.importorskip("astropy")
+    t = datetime(1969, 7, 20, 21, 17, 40)
+
+    eci = [-3.8454e8, -0.5099e8, -0.3255e8]
+    lla = [28.4, -80.5, 2.7]
+
+    aer = pm.eci2aer(*eci, *lla, t)
+    assert aer == approx([162.55, 55.12, 384013940.9], rel=0.001)
+
+
+def test_aer2eci():
+    # test coords from Matlab aer2eci
+    pytest.importorskip("astropy")
+
+    aer = [162.55, 55.12, 384013940.9]
+    lla = [28.4, -80.5, 2.7]
+    t = datetime(1969, 7, 20, 21, 17, 40)
+
+    assert pm.aer2eci(*aer, *lla, t) == approx([-3.8454e8, -0.5099e8, -0.3255e8], rel=0.001)
+
+    with pytest.raises(ValueError):
+        pm.aer2eci(aer[0], aer[1], -1, *lla, t)
+
+
 if __name__ == "__main__":
     pytest.main([__file__])

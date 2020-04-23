@@ -88,7 +88,7 @@ converted to the desired coordinate system:
 
     aer2ecef  aer2enu  aer2geodetic  aer2ned
     ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
-    ecef2eci  eci2ecef  eci2aer  aer2eci
+    ecef2eci  eci2ecef eci2aer aer2eci geodetic2eci eci2geodetic
     enu2aer  enu2ecef   enu2geodetic
     geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
     ned2aer  ned2ecef   ned2geodetic
@@ -135,7 +135,8 @@ As noted above, use list comprehension if you need vector data without Numpy.
 
 As compared to [PyProj](https://github.com/jswhit/pyproj):
 
-* PyMap3D does not require anything beyond pure Python -- not even Numpy is required except for ECI (let us know if this is an issue).
+* PyMap3D does not require anything beyond pure Python for most transforms
+* Astronomical conversions are done using (optional) AstroPy for established accuracy
 * PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
 * PyMap3D intrinsically handles local coordinate systems such as ENU,
   while PyProj ENU requires some [additional effort](https://github.com/jswhit/pyproj/issues/105).

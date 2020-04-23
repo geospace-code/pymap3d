@@ -35,12 +35,12 @@ def eci2ecef(x: "ndarray", y: "ndarray", z: "ndarray", time: datetime) -> typing
 
     Results
     -------
-    x : "ndarray"
-        target x ECEF coordinate
-    y : "ndarray"
-        target y ECEF coordinate
-    z : "ndarray"
-        target z ECEF coordinate
+    x_ecef : "ndarray"
+        x ECEF coordinate
+    y_ecef : "ndarray"
+        y ECEF coordinate
+    z_ecef : "ndarray"
+        z ECEF coordinate
     """
 
     if Time is None:
@@ -72,12 +72,12 @@ def ecef2eci(x: "ndarray", y: "ndarray", z: "ndarray", time: datetime) -> typing
 
     Results
     -------
-    x : "ndarray"
-        target x ECI coordinate
-    y : "ndarray"
-        target y ECI coordinate
-    z : "ndarray"
-        target z ECI coordinate
+    x_eci : "ndarray"
+        x ECI coordinate
+    y_eci : "ndarray"
+        y ECI coordinate
+    z_eci : "ndarray"
+        z ECI coordinate
     """
 
     if Time is None:

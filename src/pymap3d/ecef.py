@@ -1,7 +1,7 @@
 """ Transforms involving ECEF: earth-centered, earth-fixed frame """
 try:
     from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt, pi, vectorize
-    from .eci import eci2ecef
+    from .eci import eci2ecef, ecef2eci
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi
 
@@ -15,7 +15,17 @@ from .utils import sanitize
 # py < 3.6 compatible
 tau = 2 * pi
 
-__all__ = ["geodetic2ecef", "ecef2geodetic", "ecef2enuv", "ecef2enu", "enu2uvw", "uvw2enu", "eci2geodetic", "enu2ecef"]
+__all__ = [
+    "geodetic2ecef",
+    "ecef2geodetic",
+    "ecef2enuv",
+    "ecef2enu",
+    "enu2uvw",
+    "uvw2enu",
+    "eci2geodetic",
+    "geodetic2eci",
+    "enu2ecef",
+]
 
 if typing.TYPE_CHECKING:
     from numpy import ndarray
@@ -320,9 +330,13 @@ def uvw2enu(
     return East, North, Up
 
 
-def eci2geodetic(x: "ndarray", y: "ndarray", z: "ndarray", t: datetime) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+def eci2geodetic(
+    x: "ndarray", y: "ndarray", z: "ndarray", t: datetime, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
+
+    J2000 time
 
     Parameters
     ----------
@@ -333,7 +347,11 @@ def eci2geodetic(x: "ndarray", y: "ndarray", z: "ndarray", t: datetime) -> typin
     z : "ndarray"
         ECI z-location [meters]
     t : datetime.datetime, "ndarray"
-          length N vector of datetime OR greenwich sidereal time angle [radians].
+        UTC time
+    ell : Ellipsoid (optional)
+        planet ellipsoid model
+    deg : bool (optional)
+        if True, degrees. if False, radians
 
     Results
     -------
@@ -344,13 +362,6 @@ def eci2geodetic(x: "ndarray", y: "ndarray", z: "ndarray", t: datetime) -> typin
     alt : "ndarray"
           altitude above ellipsoid  (meters)
 
-    Notes
-    -----
-
-    Conversion is idealized: doesn't consider nutations, perterbations,
-    etc. like the IAU-76/FK5 or IAU-2000/2006 model-based conversions
-    from ECI to ECEF
-
     eci2geodetic() a.k.a. eci2lla()
     """
     if eci2ecef is None:
@@ -358,7 +369,49 @@ def eci2geodetic(x: "ndarray", y: "ndarray", z: "ndarray", t: datetime) -> typin
 
     xecef, yecef, zecef = eci2ecef(x, y, z, t)
 
-    return ecef2geodetic(xecef, yecef, zecef)
+    return ecef2geodetic(xecef, yecef, zecef, ell, deg)
+
+
+def geodetic2eci(
+    lat: "ndarray", lon: "ndarray", alt: "ndarray", t: datetime, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    """
+    convert geodetic coordinates to Earth Centered Internal ECI
+
+    J2000 frame
+
+    Parameters
+    ----------
+    lat : "ndarray"
+        geodetic latitude
+    lon : "ndarray"
+        geodetic longitude
+    alt : "ndarray"
+        altitude above ellipsoid  (meters)
+    t : datetime.datetime, "ndarray"
+        UTC time
+    ell : Ellipsoid (optional)
+        planet ellipsoid model
+    deg : bool (optional)
+        if True, degrees. if False, radians
+
+    Results
+    -------
+    x : "ndarray"
+        ECI x-location [meters]
+    y : "ndarray"
+        ECI y-location [meters]
+    z : "ndarray"
+        ECI z-location [meters]
+
+    geodetic2eci() a.k.a lla2eci()
+    """
+    if ecef2eci is None:
+        raise ImportError("pip install astropy")
+
+    x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
+
+    return ecef2eci(x, y, z, t)
 
 
 def enu2ecef(
@@ -384,9 +437,9 @@ def enu2ecef(
     u1 : "ndarray"
         target up ENU coordinate (meters)
     lat0 : "ndarray"
-           Observer geodetic latitude
+        Observer geodetic latitude
     lon0 : "ndarray"
-           Observer geodetic longitude
+        Observer geodetic longitude
     h0 : "ndarray"
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
