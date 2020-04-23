@@ -165,8 +165,7 @@ def aer2geodetic(
 
 
 def eci2aer(
-    x: "ndarray", y: "ndarray", z: "ndarray", lat0: "ndarray", lon0: "ndarray", h0: "ndarray", t: datetime, useastropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    x: "ndarray", y: "ndarray", z: "ndarray", lat0: "ndarray", lon0: "ndarray", h0: "ndarray", t: datetime) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
 
@@ -187,8 +186,6 @@ def eci2aer(
          observer altitude above geodetic ellipsoid (meters)
     t : datetime.datetime
         Observation time
-    useastropy: bool, optional
-        Force use / non-use of AstroPy (default use AstroPy if available)
 
     Returns
     -------
@@ -200,9 +197,9 @@ def eci2aer(
          slant range [meters]
     """
     if eci2ecef is None:
-        raise ImportError("pip install numpy")
+        raise ImportError("pip install astropy")
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t, useastropy=useastropy)
+    xecef, yecef, zecef = eci2ecef(x, y, z, t)
 
     return ecef2aer(xecef, yecef, zecef, lat0, lon0, h0)
 
@@ -216,9 +213,7 @@ def aer2eci(
     h0: "ndarray",
     t: datetime,
     ell=None,
-    deg: bool = True,
-    useastropy: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     gives ECI of a point from an observer at az, el, slant range
 
@@ -242,8 +237,6 @@ def aer2eci(
           reference ellipsoid
     deg : bool, optional
           degrees input/output  (False: radians in/out)
-    useastropy: bool, optional
-        Force use / non-use of AstroPy (default use AstroPy if available)
 
     Returns
     -------
@@ -262,7 +255,7 @@ def aer2eci(
 
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
 
-    return ecef2eci(x, y, z, t, useastropy=useastropy)
+    return ecef2eci(x, y, z, t)
 
 
 def aer2ecef(

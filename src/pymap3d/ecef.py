@@ -320,9 +320,7 @@ def uvw2enu(
     return East, North, Up
 
 
-def eci2geodetic(
-    x: "ndarray", y: "ndarray", z: "ndarray", t: datetime, useastropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+def eci2geodetic(x: "ndarray", y: "ndarray", z: "ndarray", t: datetime) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
 
@@ -356,9 +354,9 @@ def eci2geodetic(
     eci2geodetic() a.k.a. eci2lla()
     """
     if eci2ecef is None:
-        raise ImportError("pip install numpy")
+        raise ImportError("pip install astropy")
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t, useastropy=useastropy)
+    xecef, yecef, zecef = eci2ecef(x, y, z, t)
 
     return ecef2geodetic(xecef, yecef, zecef)
 
