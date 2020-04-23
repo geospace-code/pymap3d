@@ -6,7 +6,7 @@ import pymap3d as pm
 
 def test_eci2ecef():
 
-    pytest.importorskip('astropy')
+    pytest.importorskip("astropy")
     # this example from Matlab eci2ecef docs
     eci = [-2981784, 5207055, 3161595]
     utc = datetime(2019, 1, 4, 12)
@@ -16,7 +16,7 @@ def test_eci2ecef():
 
 def test_ecef2eci():
 
-    pytest.importorskip('astropy')
+    pytest.importorskip("astropy")
     # this example from Matlab ecef2eci docs
     ecef = [-5762640, -1682738, 3156028]
     utc = datetime(2019, 1, 4, 12)

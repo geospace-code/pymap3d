@@ -45,14 +45,14 @@ def test_anglesep_meeus():
 
 
 def test_eci_geodetic():
-    pytest.importorskip("numpy")
+    pytest.importorskip("astropy")
     t = "2013-01-15T12:00:05"
     lla = pm.eci2geodetic(*eci0, t)
-    assert lla == approx(lla0, rel=0.2)
+    assert lla == approx(lla0, rel=0.001)
 
 
 def test_eci_aer():
-    pytest.importorskip("numpy")
+    pytest.importorskip("astropy")
     t = "2013-01-15T12:00:05"
 
     aer1 = pm.eci2aer(*eci0, 42, -100, 0, t)

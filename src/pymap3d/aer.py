@@ -165,7 +165,8 @@ def aer2geodetic(
 
 
 def eci2aer(
-    x: "ndarray", y: "ndarray", z: "ndarray", lat0: "ndarray", lon0: "ndarray", h0: "ndarray", t: datetime) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    x: "ndarray", y: "ndarray", z: "ndarray", lat0: "ndarray", lon0: "ndarray", h0: "ndarray", t: datetime
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
 
@@ -213,7 +214,8 @@ def aer2eci(
     h0: "ndarray",
     t: datetime,
     ell=None,
-    deg: bool = True) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    deg: bool = True,
+) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     gives ECI of a point from an observer at az, el, slant range
 
