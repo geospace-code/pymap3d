@@ -10,7 +10,11 @@ from datetime import datetime
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
-from .eci import eci2ecef, ecef2eci
+
+try:
+    from .eci import eci2ecef, ecef2eci
+except ImportError:
+    eci2ecef = ecef2eci = None
 
 # py < 3.6 compatible
 tau = 2 * pi
@@ -366,6 +370,8 @@ def eci2geodetic(
 
     eci2geodetic() a.k.a. eci2lla()
     """
+    if eci2ecef is None:
+        raise ImportError("pip install numpy")
 
     xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
 
@@ -415,6 +421,9 @@ def geodetic2eci(
 
     geodetic2eci() a.k.a lla2eci()
     """
+    if ecef2eci is None:
+        raise ImportError("pip install numpy")
+
     x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
 
     return ecef2eci(x, y, z, t, use_astropy=use_astropy)

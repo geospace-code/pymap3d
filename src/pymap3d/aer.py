@@ -6,8 +6,10 @@ from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .ellipsoid import Ellipsoid
 
-from .eci import eci2ecef, ecef2eci
-
+try:
+    from .eci import eci2ecef, ecef2eci
+except ImportError:
+    eci2ecef = ecef2eci = None
 
 __all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
 
@@ -208,6 +210,8 @@ def eci2aer(
     srange : "ndarray"
          slant range [meters]
     """
+    if eci2ecef is None:
+        raise ImportError("pip install numpy")
 
     xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
 
@@ -265,6 +269,9 @@ def aer2eci(
     z : "ndarray"
         ECEF z coordinate (meters)
     """
+    if ecef2eci is None:
+        raise ImportError("pip install numpy")
+
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg=deg)
 
     return ecef2eci(x, y, z, t, use_astropy=use_astropy)

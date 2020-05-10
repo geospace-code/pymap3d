@@ -31,7 +31,7 @@ Companion packages exist for:
 * Fortran: [Maptran3D](https://github.com/geospace-code/maptran3d)
 """
 
-from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic, eci2aer, aer2eci
+from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic
 from .ellipsoid import Ellipsoid
 from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
 from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
@@ -66,9 +66,10 @@ from .rsphere import (
 from .lox import meridian_arc, meridian_dist, loxodrome_inverse, loxodrome_direct, departure, meanm
 from .los import lookAtSpheroid
 from .timeconv import str2dt
-from .eci import eci2ecef, ecef2eci
 
 try:
     from .azelradec import radec2azel, azel2radec
+    from .eci import eci2ecef, ecef2eci
+    from .aer import eci2aer, aer2eci
 except ImportError:
     from .vallado import radec2azel, azel2radec

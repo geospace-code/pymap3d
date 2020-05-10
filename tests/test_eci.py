@@ -6,6 +6,7 @@ import pymap3d as pm
 
 @pytest.mark.parametrize("use_astropy", [True, False])
 def test_eci2ecef(use_astropy):
+    pytest.importorskip("numpy")
     if use_astropy:
         pytest.importorskip("astropy")
     # this example from Matlab eci2ecef docs
@@ -19,6 +20,7 @@ def test_eci2ecef(use_astropy):
 
 @pytest.mark.parametrize("use_astropy", [True, False])
 def test_ecef2eci(use_astropy):
+    pytest.importorskip("numpy")
     if use_astropy:
         pytest.importorskip("astropy")
     # this example from Matlab ecef2eci docs
@@ -32,6 +34,7 @@ def test_ecef2eci(use_astropy):
 
 @pytest.mark.parametrize("use_astropy", [True, False])
 def test_eci2geodetic(use_astropy):
+    pytest.importorskip("numpy")
     if use_astropy:
         pytest.importorskip("astropy")
 
@@ -45,6 +48,7 @@ def test_eci2geodetic(use_astropy):
 
 @pytest.mark.parametrize("use_astropy", [True, False])
 def test_geodetic2eci(use_astropy):
+    pytest.importorskip("numpy")
     if use_astropy:
         pytest.importorskip("astropy")
 
@@ -59,6 +63,7 @@ def test_geodetic2eci(use_astropy):
 @pytest.mark.parametrize("use_astropy", [True, False])
 def test_eci2aer(use_astropy):
     # test coords from Matlab eci2aer
+    pytest.importorskip("numpy")
     if use_astropy:
         pytest.importorskip("astropy")
     t = datetime(1969, 7, 20, 21, 17, 40)
@@ -74,6 +79,7 @@ def test_eci2aer(use_astropy):
 @pytest.mark.parametrize("use_astropy", [True, False])
 def test_aer2eci(use_astropy):
     # test coords from Matlab aer2eci
+    pytest.importorskip("numpy")
     if use_astropy:
         pytest.importorskip("astropy")
 
