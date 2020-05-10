@@ -6,10 +6,8 @@ from .ecef import ecef2enu, geodetic2ecef, ecef2geodetic, enu2uvw
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .ellipsoid import Ellipsoid
 
-try:
-    from .eci import eci2ecef, ecef2eci
-except ImportError:
-    eci2ecef = ecef2eci = None
+from .eci import eci2ecef, ecef2eci
+
 
 __all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
 
@@ -165,7 +163,16 @@ def aer2geodetic(
 
 
 def eci2aer(
-    x: "ndarray", y: "ndarray", z: "ndarray", lat0: "ndarray", lon0: "ndarray", h0: "ndarray", t: datetime
+    x: "ndarray",
+    y: "ndarray",
+    z: "ndarray",
+    lat0: "ndarray",
+    lon0: "ndarray",
+    h0: "ndarray",
+    t: datetime,
+    *,
+    deg: bool = True,
+    use_astropy: bool = True
 ) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
@@ -187,6 +194,10 @@ def eci2aer(
          observer altitude above geodetic ellipsoid (meters)
     t : datetime.datetime
         Observation time
+    deg : bool, optional
+        true: degrees, false: radians
+    use_astropy: bool, optional
+        use Astropy (recommended)
 
     Returns
     -------
@@ -197,12 +208,10 @@ def eci2aer(
     srange : "ndarray"
          slant range [meters]
     """
-    if eci2ecef is None:
-        raise ImportError("pip install astropy")
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t)
+    xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
 
-    return ecef2aer(xecef, yecef, zecef, lat0, lon0, h0)
+    return ecef2aer(xecef, yecef, zecef, lat0, lon0, h0, deg=deg)
 
 
 def aer2eci(
@@ -214,7 +223,9 @@ def aer2eci(
     h0: "ndarray",
     t: datetime,
     ell=None,
+    *,
     deg: bool = True,
+    use_astropy: bool = True
 ) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     gives ECI of a point from an observer at az, el, slant range
@@ -239,6 +250,8 @@ def aer2eci(
           reference ellipsoid
     deg : bool, optional
           degrees input/output  (False: radians in/out)
+    use_astropy : bool, optional
+        use AstroPy (recommended)
 
     Returns
     -------
@@ -252,12 +265,9 @@ def aer2eci(
     z : "ndarray"
         ECEF z coordinate (meters)
     """
-    if ecef2eci is None:
-        raise ImportError("pip install numpy")
+    x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg=deg)
 
-    x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg)
-
-    return ecef2eci(x, y, z, t)
+    return ecef2eci(x, y, z, t, use_astropy=use_astropy)
 
 
 def aer2ecef(

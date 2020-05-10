@@ -36,7 +36,7 @@ from .ellipsoid import Ellipsoid
 from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
 from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
 from .ecef import geodetic2ecef, ecef2geodetic, eci2geodetic, geodetic2eci, ecef2enuv, enu2ecef, ecef2enu, enu2uvw, uvw2enu
-from .sidereal import datetime2sidereal
+from .sidereal import datetime2sidereal, greenwichsrt
 from .latitude import (
     geod2geoc,
     geoc2geod,
@@ -66,9 +66,9 @@ from .rsphere import (
 from .lox import meridian_arc, meridian_dist, loxodrome_inverse, loxodrome_direct, departure, meanm
 from .los import lookAtSpheroid
 from .timeconv import str2dt
+from .eci import eci2ecef, ecef2eci
 
 try:
     from .azelradec import radec2azel, azel2radec
-    from .eci import eci2ecef, ecef2eci
 except ImportError:
     from .vallado import radec2azel, azel2radec

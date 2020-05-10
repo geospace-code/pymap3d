@@ -20,7 +20,7 @@ if typing.TYPE_CHECKING:
 
 
 def azel2radec(
-    az_deg: "ndarray", el_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, usevallado: bool = False
+    az_deg: "ndarray", el_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, *, use_astropy: bool = True
 ) -> typing.Tuple["ndarray", "ndarray"]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
@@ -37,8 +37,8 @@ def azel2radec(
               observer longitude [-180, 180] (degrees)
     time : datetime.datetime or str
            time of observation
-    usevallado : bool, optional
-                 default use astropy. If true, use Vallado algorithm
+    use_astropy : bool, optional
+                 default use astropy.
 
     Returns
     -------
@@ -48,20 +48,21 @@ def azel2radec(
          ecliptic declination (degrees)
     """
 
-    if usevallado or Time is None:  # non-AstroPy method, less accurate
-        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)
+    if use_astropy and Time is not None:
 
-    obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
+        obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    direc = AltAz(location=obs, obstime=Time(str2dt(time)), az=az_deg * u.deg, alt=el_deg * u.deg)
+        direc = AltAz(location=obs, obstime=Time(str2dt(time)), az=az_deg * u.deg, alt=el_deg * u.deg)
 
-    sky = SkyCoord(direc.transform_to(ICRS()))
+        sky = SkyCoord(direc.transform_to(ICRS()))
 
-    return sky.ra.deg, sky.dec.deg
+        return sky.ra.deg, sky.dec.deg
+
+    return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)
 
 
 def radec2azel(
-    ra_deg: "ndarray", dec_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, usevallado: bool = False
+    ra_deg: "ndarray", dec_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, *, use_astropy: bool = False
 ) -> typing.Tuple["ndarray", "ndarray"]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
@@ -78,8 +79,8 @@ def radec2azel(
               observer longitude [-180, 180] (degrees)
     time : datetime.datetime or str
            time of observation
-    usevallado : bool, optional
-                 default use astropy. If true, use Vallado algorithm
+    use_astropy : bool, optional
+                 default use astropy.
 
     Returns
     -------
@@ -89,13 +90,11 @@ def radec2azel(
              elevation [degrees above horizon (neglecting aberration)]
     """
 
-    if usevallado or Time is None:
-        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
+    if use_astropy and Time is not None:
+        obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
+        points = SkyCoord(Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox="J2000.0")
+        altaz = points.transform_to(AltAz(location=obs, obstime=Time(str2dt(time))))
 
-    obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
+        return altaz.az.degree, altaz.alt.degree
 
-    points = SkyCoord(Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox="J2000.0")
-
-    altaz = points.transform_to(AltAz(location=obs, obstime=Time(str2dt(time))))
-
-    return altaz.az.degree, altaz.alt.degree
+    return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)

@@ -17,12 +17,12 @@ The "usevallado" datetime to julian runs 4 times faster than astropy.
 However, AstroPy is more accurate.
 """
 
-__all__ = ["datetime2sidereal", "juliandate", "julian2sidereal"]
+__all__ = ["datetime2sidereal", "juliandate", "greenwichsrt"]
 
 
-def datetime2sidereal(time: datetime, lon_radians: float, usevallado: bool = True) -> float:
+def datetime2sidereal(time: datetime, lon_radians: float, *, use_astropy: bool = True) -> float:
     """
-    Convert ``datetime`` to sidereal time
+    Convert ``datetime`` to local sidereal time
 
     from D. Vallado "Fundamentals of Astrodynamics and Applications"
 
@@ -31,34 +31,33 @@ def datetime2sidereal(time: datetime, lon_radians: float, usevallado: bool = Tru
         time to convert
     lon_radians : float
         longitude (radians)
-    usevallado : bool, optional
-        use vallado instead of AstroPy (default is Vallado)
+    use_astropy : bool, optional
+        use AstroPy for conversion (False is Vallado)
 
     Results
     -------
 
     tsr : float
-        Sidereal time
+        Local sidereal time
     """
     if isinstance(time, (tuple, list)):
         return [datetime2sidereal(t, lon_radians) for t in time]
 
-    usevallado = usevallado or Time is None
-    if usevallado:
+    if use_astropy and Time is not None:
+        tsr = Time(time).sidereal_time(kind="apparent", longitude=Longitude(lon_radians, unit=u.radian)).radian
+    else:
         jd = juliandate(str2dt(time))
         # %% Greenwich Sidereal time RADIANS
-        gst = julian2sidereal(jd)
+        gst = greenwichsrt(jd)
         # %% Algorithm 15 p. 188 rotate GST to LOCAL SIDEREAL TIME
         tsr = gst + lon_radians
-    else:
-        tsr = Time(time).sidereal_time(kind="apparent", longitude=Longitude(lon_radians, unit=u.radian)).radian
 
     return tsr
 
 
 def juliandate(time: datetime) -> float:
     """
-    Python datetime to Julian time
+    Python datetime to Julian time (days since Jan 1, 4713 BCE)
 
     from D.Vallado Fundamentals of Astrodynamics and Applications p.187
      and J. Meeus Astronomical Algorithms 1991 Eqn. 7.1 pg. 61
@@ -73,7 +72,7 @@ def juliandate(time: datetime) -> float:
     -------
 
     jd : float
-        Julian date
+        Julian date (days since Jan 1, 4713 BCE)
     """
     if isinstance(time, (tuple, list)):
         return list(map(juliandate, time))
@@ -92,7 +91,7 @@ def juliandate(time: datetime) -> float:
     return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
 
-def julian2sidereal(Jdate: float) -> float:
+def greenwichsrt(Jdate: float) -> float:
     """
     Convert Julian time to sidereal time
 
@@ -102,7 +101,7 @@ def julian2sidereal(Jdate: float) -> float:
     ----------
 
     Jdate: float
-        Julian centuries from J2000.0
+        Julian date (since Jan 1, 4713 BCE)
 
     Results
     -------
@@ -111,7 +110,7 @@ def julian2sidereal(Jdate: float) -> float:
         Sidereal time
     """
     if isinstance(Jdate, (tuple, list)):
-        return list(map(julian2sidereal, Jdate))
+        return list(map(greenwichsrt, Jdate))
 
     # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1
     tUT1 = (Jdate - 2451545.0) / 36525.0

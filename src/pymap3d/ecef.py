@@ -1,16 +1,16 @@
 """ Transforms involving ECEF: earth-centered, earth-fixed frame """
 try:
     from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt, pi, vectorize
-    from .eci import eci2ecef, ecef2eci
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi
 
-    vectorize = eci2ecef = None
+    vectorize = None
 import typing
 from datetime import datetime
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
+from .eci import eci2ecef, ecef2eci
 
 # py < 3.6 compatible
 tau = 2 * pi
@@ -331,7 +331,7 @@ def uvw2enu(
 
 
 def eci2geodetic(
-    x: "ndarray", y: "ndarray", z: "ndarray", t: datetime, ell: Ellipsoid = None, deg: bool = True
+    x: "ndarray", y: "ndarray", z: "ndarray", t: datetime, ell: Ellipsoid = None, *, deg: bool = True, use_astropy: bool = True
 ) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
@@ -348,10 +348,12 @@ def eci2geodetic(
         ECI z-location [meters]
     t : datetime.datetime, "ndarray"
         UTC time
-    ell : Ellipsoid (optional)
+    ell : Ellipsoid, optional
         planet ellipsoid model
-    deg : bool (optional)
+    deg : bool, optional
         if True, degrees. if False, radians
+    use_astropy : bool, optional
+        use AstroPy (recommended)
 
     Results
     -------
@@ -364,16 +366,21 @@ def eci2geodetic(
 
     eci2geodetic() a.k.a. eci2lla()
     """
-    if eci2ecef is None:
-        raise ImportError("pip install astropy")
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t)
+    xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
 
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
 
 def geodetic2eci(
-    lat: "ndarray", lon: "ndarray", alt: "ndarray", t: datetime, ell: Ellipsoid = None, deg: bool = True
+    lat: "ndarray",
+    lon: "ndarray",
+    alt: "ndarray",
+    t: datetime,
+    ell: Ellipsoid = None,
+    *,
+    deg: bool = True,
+    use_astropy: bool = True
 ) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
@@ -390,10 +397,12 @@ def geodetic2eci(
         altitude above ellipsoid  (meters)
     t : datetime.datetime, "ndarray"
         UTC time
-    ell : Ellipsoid (optional)
+    ell : Ellipsoid, optional
         planet ellipsoid model
-    deg : bool (optional)
+    deg : bool, optional
         if True, degrees. if False, radians
+    use_astropy: bool, optional
+        use AstroPy (recommended)
 
     Results
     -------
@@ -406,12 +415,9 @@ def geodetic2eci(
 
     geodetic2eci() a.k.a lla2eci()
     """
-    if ecef2eci is None:
-        raise ImportError("pip install astropy")
-
     x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
 
-    return ecef2eci(x, y, z, t)
+    return ecef2eci(x, y, z, t, use_astropy=use_astropy)
 
 
 def enu2ecef(
