@@ -3,28 +3,25 @@
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
 [![astronomer](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fastronomer.ullaakut.eu%2Fshields%3Fowner%3Dscivision%26name%3Dpymap3d)](https://github.com/Ullaakut/astronomer/)
-
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci/badge.svg)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci_stdlib_only/badge.svg)
-
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/pymap3d/context:python)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
 
 Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions and geodesy.
-API similar to popular $1000 Matlab Mapping Toolbox routines for:
-
-* Python
-* [Matlab, GNU Octave](https://github.com/geospace-code/matmap3d)
-* [modern Fortran](https://github.com/geospace-code/maptran)
-
+API similar to popular $1000 Matlab Mapping Toolbox routines for Python
 PyMap3D is intended for non-interactive use on massively parallel (HPC) and embedded systems.
-Includes some relevant
-[Vallado algorithms](http://www.smad.com/vallado/fortran/fortran.html).
 
 [API docs](https://geospace-code.github.io/pymap3d/)
 
 Thanks to our [contributors](./contributors.md).
+
+## Similar toolboxes in other code languages
+
+* [Matlab, GNU Octave](https://github.com/geospace-code/matmap3d)
+* [Fortran](https://github.com/geospace-code/maptran)
+* [Rust](https://github.com/gberrante/map_3d)
 
 ## Prerequisites
 
