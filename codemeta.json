@@ -1,0 +1,35 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "license": "https://spdx.org/licenses/BSD-2-Clause",
+  "codeRepository": "https://github.com/geospace-code/pymap3d",
+  "contIntegration": "https://github.com/geospace-code/pymap3d/actions",
+  "dateCreated": "2014-08-01",
+  "datePublished": "2014-08-03",
+  "dateModified": "2020-05-10",
+  "issueTracker": "https://github.com/geospace-code/pymap3d/issues",
+  "name": "PyMap3d",
+  "version": "2.4.1",
+  "identifier": "10.5281/zenodo.3262738",
+  "description": "pure-Python (Numpy optional) 3D coordinate conversions for geospace",
+  "applicationCategory": "geospace",
+  "developmentStatus": "active",
+  "funder": {
+      "@type": "Organization",
+      "name": "AFOSR"
+  },
+  "keywords": [
+      "coordinate transformation"
+  ],
+  "programmingLanguage": [
+      "Python"
+  ],
+  "author": [
+      {
+          "@type": "Person",
+          "@id": "https://orcid.org/0000-0002-1637-6526",
+          "givenName": "Michael",
+          "familyName": "Hirsch"
+      }
+  ]
+}
