@@ -1,7 +1,6 @@
 name: "CodeQL"
 
 on:
-  push:
   schedule:
     - cron: '0 10 * * 6'
 
