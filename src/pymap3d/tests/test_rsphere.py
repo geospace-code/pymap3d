@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import pytest
 from pytest import approx
 import pymap3d as pm
@@ -47,7 +46,3 @@ def test_rsphere_euler():
 def test_numpy_rsphere_euler():
     pytest.importorskip("numpy")
     assert pm.rsphere_euler([42, 0], [82, 0], 44, 100) == approx([6386606.829131, 6363111.70923164])
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

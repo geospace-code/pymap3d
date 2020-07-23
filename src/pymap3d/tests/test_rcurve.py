@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import pytest
 from pytest import approx
 import pymap3d as pm
@@ -32,7 +31,3 @@ def test_numpy_meridian():
 def test_numpy_transverse():
     pytest.importorskip("numpy")
     assert pm.rcurve_transverse([0, 90]) == approx([A, 6399593.626])
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

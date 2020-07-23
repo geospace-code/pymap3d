@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pytest
 from pytest import approx
 from pymap3d.vincenty import vreckon
@@ -31,7 +30,3 @@ def test_compare_geodetic():
 
     assert pyproj.transform(lla, ecef, lla0[1], lla0[0], lla0[2]) == approx(xyz)
     assert pyproj.transform(ecef, lla, *xyz) == approx((lla0[1], lla0[0], lla0[2]))
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

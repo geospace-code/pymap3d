@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pytest
 from pytest import approx
 from datetime import datetime
@@ -54,7 +53,3 @@ def test_pandas_time():
 
     t = pandas.Series([t0, t0])
     assert (str2dt(t) == t0).all()
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

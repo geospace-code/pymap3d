@@ -34,7 +34,3 @@ def test_numpy_radec2azel(use_astropy):
     pytest.importorskip("numpy")
     azel1 = pm.radec2azel([166.503208, 166.503208], [55, 55], lat, lon, t0, use_astropy=use_astropy)
     assert azel1 == approx(azel, rel=0.01)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

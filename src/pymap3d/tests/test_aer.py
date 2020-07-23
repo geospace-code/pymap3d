@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from math import radians
 import pytest
 from pytest import approx
@@ -79,7 +78,3 @@ def test_aer_ned(aer, ned):
         pm.aer2ned(aer[0], aer[1], -1)
 
     assert pm.ned2aer(*ned) == approx(aer)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

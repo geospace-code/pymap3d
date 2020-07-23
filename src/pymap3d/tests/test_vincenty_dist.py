@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import pytest
 from pytest import approx
 import pymap3d.vincenty as vincenty
@@ -47,7 +46,3 @@ def test_identity(lat, lon, slantrange, az):
 
     assert dist == approx(slantrange)
     assert az1 == approx(az)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-import pytest
 from pytest import approx
 import pymap3d as pm
 
@@ -55,7 +53,3 @@ def test_ned_geodetic():
     assert isinstance(lat, float)
     assert isinstance(lon, float)
     assert isinstance(alt, float)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

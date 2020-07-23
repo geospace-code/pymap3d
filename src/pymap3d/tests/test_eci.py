@@ -94,7 +94,3 @@ def test_aer2eci(use_astropy):
 
     with pytest.raises(ValueError):
         pm.aer2eci(aer[0], aer[1], -1, *lla, t)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

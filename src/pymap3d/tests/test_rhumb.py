@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pytest
 from pytest import approx
 import pymap3d as pm
@@ -92,7 +91,3 @@ def test_numpy_loxodrome_direct():
 def test_meanm(lat, lon):
     pytest.importorskip("numpy")
     assert pm.meanm(lat, lon) == approx([47.26967, 18.460557])
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

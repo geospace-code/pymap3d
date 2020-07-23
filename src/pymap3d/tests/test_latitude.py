@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import pytest
 from pytest import approx
 from math import radians, inf
@@ -143,7 +142,3 @@ def test_badvals(lat):
         pm.geodetic2parametric(lat)
     with pytest.raises(ValueError):
         pm.parametric2geodetic(lat)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

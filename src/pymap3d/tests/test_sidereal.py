@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pytest
 from pytest import approx
 from math import radians
@@ -32,7 +31,3 @@ def test_anglesep():
 def test_anglesep_meeus():
     # %% compare with astropy
     assert pmh.anglesep_meeus(35, 23, 84, 20) == approx(ha)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

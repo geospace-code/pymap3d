@@ -12,12 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - name: Setup python
+      uses: actions/setup-python@v2
       with:
         python-version: 3.8
     - run: pip install .[full,tests,lint]
 
     - run: flake8
-    - run: mypy .
+    - run: mypy . src
 
     - run: pytest
+
+# codecov coverage
+    - run: pip install codecov pytest-cov
+    - run: pytest --cov --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1

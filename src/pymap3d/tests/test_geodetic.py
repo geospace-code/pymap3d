@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pytest
 from pytest import approx
 from math import radians, nan, sqrt, isnan
@@ -187,7 +186,3 @@ def test_somenan():
 
     lat, lon, alt = pm.ecef2geodetic(xyz[:, 0], xyz[:, 1], xyz[:, 2])
     assert (lat[0], lon[0], alt[0]) == approx(lla0)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from math import radians
 import pytest
 from pytest import approx
@@ -56,7 +55,3 @@ def test_enu_ecef(enu, lla, xyz):
     assert e == approx(enu[0])
     assert n == approx(enu[1])
     assert u == approx(enu[2])
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

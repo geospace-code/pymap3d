@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pytest
 from pytest import approx
 import pymap3d.vincenty as vincenty
@@ -46,7 +45,3 @@ def test_both_vector():
     a, b = vincenty.vreckon(10, 20, sr1, az1)
     assert a == approx(lat3)
     assert b == approx(lon3)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])

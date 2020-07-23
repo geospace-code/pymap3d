@@ -2,8 +2,6 @@ name: "CodeQL"
 
 on:
   push:
-    paths:
-      - "**.py"
   schedule:
     - cron: '0 10 * * 6'
 
