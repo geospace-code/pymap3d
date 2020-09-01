@@ -108,7 +108,7 @@ Abbreviations:
 
 * [AER: Azimuth, Elevation, Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
 * [ECEF: Earth-centered, Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
-* [ECI: Earth-centered Inertial](https://en.wikipedia.org/wiki/Earth-centered_inertial)
+* [ECI: Earth-centered Inertial using IERS](https://www.iers.org/IERS/EN/Home/home_node.html) via `astropy`
 * [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
 * [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
 * [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
