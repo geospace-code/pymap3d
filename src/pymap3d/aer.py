@@ -11,22 +11,24 @@ try:
 except ImportError:
     eci2ecef = ecef2eci = None
 
-__all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
+__all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
 
 
 def ecef2aer(
-    x: "ndarray",
-    y: "ndarray",
-    z: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    x: ArrayLike,
+    y: ArrayLike,
+    z: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     compute azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
@@ -35,17 +37,17 @@ def ecef2aer(
     Parameters
     ----------
 
-    x : "ndarray"
+    x : ArrayLike
         ECEF x coordinate (meters)
-    y : "ndarray"
+    y : ArrayLike
         ECEF y coordinate (meters)
-    z : "ndarray"
+    z : ArrayLike
         ECEF z coordinate (meters)
-    lat0 : "ndarray"
+    lat0 : ArrayLike
         Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
         Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
         reference ellipsoid
@@ -54,11 +56,11 @@ def ecef2aer(
 
     Returns
     -------
-    az : "ndarray"
+    az : ArrayLike
          azimuth to target
-    el : "ndarray"
+    el : ArrayLike
          elevation to target
-    srange : "ndarray"
+    srange : ArrayLike
          slant range [meters]
     """
     xEast, yNorth, zUp = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
@@ -67,15 +69,15 @@ def ecef2aer(
 
 
 def geodetic2aer(
-    lat: "ndarray",
-    lon: "ndarray",
-    h: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    lat: ArrayLike,
+    lon: ArrayLike,
+    h: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
 
@@ -83,17 +85,17 @@ def geodetic2aer(
     Parameters
     ----------
 
-    lat : "ndarray"
+    lat : ArrayLike
         target geodetic latitude
-    lon : "ndarray"
+    lon : ArrayLike
         target geodetic longitude
-    h : "ndarray"
+    h : ArrayLike
         target altitude above geodetic ellipsoid (meters)
-    lat0 : "ndarray"
+    lat0 : ArrayLike
         Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
         Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -102,11 +104,11 @@ def geodetic2aer(
 
     Returns
     -------
-    az : "ndarray"
+    az : ArrayLike
          azimuth
-    el : "ndarray"
+    el : ArrayLike
          elevation
-    srange : "ndarray"
+    srange : ArrayLike
          slant range [meters]
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
@@ -115,32 +117,32 @@ def geodetic2aer(
 
 
 def aer2geodetic(
-    az: "ndarray",
-    el: "ndarray",
-    srange: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    az: ArrayLike,
+    el: ArrayLike,
+    srange: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     gives geodetic coordinates of a point with az, el, range
     from an observer at lat0, lon0, h0
 
     Parameters
     ----------
-    az : "ndarray"
+    az : ArrayLike
          azimuth to target
-    el : "ndarray"
+    el : ArrayLike
          elevation to target
-    srange : "ndarray"
+    srange : ArrayLike
          slant range [meters]
-    lat0 : "ndarray"
+    lat0 : ArrayLike
            Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
            Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -152,11 +154,11 @@ def aer2geodetic(
 
     In reference ellipsoid system:
 
-    lat : "ndarray"
+    lat : ArrayLike
           geodetic latitude
-    lon : "ndarray"
+    lon : ArrayLike
           geodetic longitude
-    alt : "ndarray"
+    alt : ArrayLike
           altitude above ellipsoid  (meters)
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell=ell, deg=deg)
@@ -165,34 +167,34 @@ def aer2geodetic(
 
 
 def eci2aer(
-    x: "ndarray",
-    y: "ndarray",
-    z: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    x: ArrayLike,
+    y: ArrayLike,
+    z: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     t: datetime,
     *,
     deg: bool = True,
     use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
 
     Parameters
     ----------
 
-    x : "ndarray"
+    x : ArrayLike
         ECI x-location [meters]
-    y : "ndarray"
+    y : ArrayLike
         ECI y-location [meters]
-    z : "ndarray"
+    z : ArrayLike
         ECI z-location [meters]
-    lat0 : "ndarray"
+    lat0 : ArrayLike
            Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
            Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     t : datetime.datetime
         Observation time
@@ -203,11 +205,11 @@ def eci2aer(
 
     Returns
     -------
-    az : "ndarray"
+    az : ArrayLike
          azimuth to target
-    el : "ndarray"
+    el : ArrayLike
          elevation to target
-    srange : "ndarray"
+    srange : ArrayLike
          slant range [meters]
     """
     if eci2ecef is None:
@@ -219,34 +221,34 @@ def eci2aer(
 
 
 def aer2eci(
-    az: "ndarray",
-    el: "ndarray",
-    srange: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    az: ArrayLike,
+    el: ArrayLike,
+    srange: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     t: datetime,
     ell=None,
     *,
     deg: bool = True,
     use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     gives ECI of a point from an observer at az, el, slant range
 
     Parameters
     ----------
-    az : "ndarray"
+    az : ArrayLike
          azimuth to target
-    el : "ndarray"
+    el : ArrayLike
          elevation to target
-    srange : "ndarray"
+    srange : ArrayLike
          slant range [meters]
-    lat0 : "ndarray"
+    lat0 : ArrayLike
            Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
            Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     t : datetime.datetime
         Observation time
@@ -262,11 +264,11 @@ def aer2eci(
 
     Earth Centered Inertial x,y,z
 
-    x : "ndarray"
+    x : ArrayLike
         ECEF x coordinate (meters)
-    y : "ndarray"
+    y : ArrayLike
         ECEF y coordinate (meters)
-    z : "ndarray"
+    z : ArrayLike
         ECEF z coordinate (meters)
     """
     if ecef2eci is None:
@@ -278,31 +280,31 @@ def aer2eci(
 
 
 def aer2ecef(
-    az: "ndarray",
-    el: "ndarray",
-    srange: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    alt0: "ndarray",
+    az: ArrayLike,
+    el: ArrayLike,
+    srange: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    alt0: ArrayLike,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
 
     Parameters
     ----------
-    az : "ndarray"
+    az : ArrayLike
          azimuth to target
-    el : "ndarray"
+    el : ArrayLike
          elevation to target
-    srange : "ndarray"
+    srange : ArrayLike
          slant range [meters]
-    lat0 : "ndarray"
+    lat0 : ArrayLike
            Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
            Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -314,11 +316,11 @@ def aer2ecef(
 
     ECEF (Earth centered, Earth fixed)  x,y,z
 
-    x : "ndarray"
+    x : ArrayLike
         ECEF x coordinate (meters)
-    y : "ndarray"
+    y : ArrayLike
         ECEF y coordinate (meters)
-    z : "ndarray"
+    z : ArrayLike
         ECEF z coordinate (meters)
 
 

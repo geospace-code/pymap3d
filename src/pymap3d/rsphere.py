@@ -13,6 +13,11 @@ from .ellipsoid import Ellipsoid
 from .rcurve import rcurve_meridian, rcurve_transverse
 from .vincenty import vdist
 
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
+
 __all__ = [
     "rsphere_eqavol",
     "rsphere_authalic",
@@ -22,9 +27,6 @@ __all__ = [
     "rsphere_triaxial",
     "rsphere_biaxial",
 ]
-
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
 
 def rsphere_eqavol(ell: Ellipsoid = None) -> float:
@@ -94,16 +96,16 @@ def rsphere_rectifying(ell: Ellipsoid = None) -> float:
 
 
 def rsphere_euler(
-    lat1: "ndarray", lon1: "ndarray", lat2: "ndarray", lon2: "ndarray", ell: Ellipsoid = None, deg: bool = True
-) -> "ndarray":
+    lat1: ArrayLike, lon1: ArrayLike, lat2: ArrayLike, lon2: ArrayLike, ell: Ellipsoid = None, deg: bool = True
+) -> ArrayLike:
     """computes the Euler radii of curvature at the midpoint of the
      great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)
 
     Parameters
     ----------
-    lat1, lat2 : "ndarray"
+    lat1, lat2 : ArrayLike
         geodetic latitudes (degrees)
-    lon1, lon2 : "ndarray"
+    lon1, lon2 : ArrayLike
        geodetic longitudes (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -112,7 +114,7 @@ def rsphere_euler(
 
     Returns
     -------
-    radius: "ndarray"
+    radius: ArrayLike
         radius of sphere
     """
     if not deg:
@@ -136,13 +138,13 @@ def rsphere_euler(
     return rho * nu / den
 
 
-def rsphere_curve(lat: "ndarray", ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> "ndarray":
+def rsphere_curve(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> ArrayLike:
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
     Parameters
     ----------
-    lat1 : "ndarray"
+    lat1 : ArrayLike
         geodetic latitudes (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -153,7 +155,7 @@ def rsphere_curve(lat: "ndarray", ell: Ellipsoid = None, deg: bool = True, metho
 
     Returns
     -------
-    radius: "ndarray"
+    radius: ArrayLike
         radius of sphere
     """
 

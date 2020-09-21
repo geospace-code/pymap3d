@@ -20,24 +20,26 @@ try:
 except ImportError:
     angular_separation = None
 
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
+
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
-
-def anglesep_meeus(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "ndarray", deg: bool = True) -> "ndarray":
+def anglesep_meeus(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: ArrayLike, deg: bool = True) -> ArrayLike:
     """
     Parameters
     ----------
 
-    lon0 : "ndarray"
+    lon0 : ArrayLike
         longitude of first point
-    lat0 : "ndarray"
+    lat0 : ArrayLike
         latitude of first point
-    lon1 : "ndarray"
+    lon1 : ArrayLike
         longitude of second point
-    lat1 : "ndarray"
+    lat1 : ArrayLike
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -45,7 +47,7 @@ def anglesep_meeus(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "nda
     Returns
     -------
 
-    sep_rad : "ndarray"
+    sep_rad : ArrayLike
         angular separation
 
 
@@ -71,18 +73,18 @@ def anglesep_meeus(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "nda
     return degrees(sep_rad) if deg else sep_rad
 
 
-def anglesep(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "ndarray", deg: bool = True) -> "ndarray":
+def anglesep(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: ArrayLike, deg: bool = True) -> ArrayLike:
     """
     Parameters
     ----------
 
-    lon0 : "ndarray"
+    lon0 : ArrayLike
         longitude of first point
-    lat0 : "ndarray"
+    lat0 : ArrayLike
         latitude of first point
-    lon1 : "ndarray"
+    lon1 : ArrayLike
         longitude of second point
-    lat1 : "ndarray"
+    lat1 : ArrayLike
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -90,7 +92,7 @@ def anglesep(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "ndarray",
     Returns
     -------
 
-    sep_rad : "ndarray"
+    sep_rad : ArrayLike
         angular separation
 
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
@@ -110,20 +112,20 @@ def anglesep(lon0: "ndarray", lat0: "ndarray", lon1: "ndarray", lat1: "ndarray",
     return degrees(sep_rad) if deg else sep_rad
 
 
-def haversine(theta: "ndarray") -> "ndarray":
+def haversine(theta: ArrayLike) -> ArrayLike:
     """
     Compute haversine
 
     Parameters
     ----------
 
-    theta : "ndarray"
+    theta : ArrayLike
         angle (radians)
 
     Results
     -------
 
-    htheta : "ndarray"
+    htheta : ArrayLike
         haversine of `theta`
 
     https://en.wikipedia.org/wiki/Haversine

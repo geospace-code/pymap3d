@@ -16,28 +16,30 @@ except ImportError:
 
 from .sidereal import datetime2sidereal
 
-__all__ = ["azel2radec", "radec2azel"]
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
+__all__ = ["azel2radec", "radec2azel"]
 
 
 def azel2radec(
-    az_deg: "ndarray", el_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray"]:
+    az_deg: ArrayLike, el_deg: ArrayLike, lat_deg: ArrayLike, lon_deg: ArrayLike, time: datetime, *, use_astropy: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike]:
     """
     converts azimuth, elevation to right ascension, declination
 
     Parameters
     ----------
 
-    az_deg : "ndarray"
+    az_deg : ArrayLike
         azimuth (clockwise) to point [degrees]
-    el_deg : "ndarray"
+    el_deg : ArrayLike
         elevation above horizon to point [degrees]
-    lat_deg : "ndarray"
+    lat_deg : ArrayLike
         observer WGS84 latitude [degrees]
-    lon_deg : "ndarray"
+    lon_deg : ArrayLike
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
@@ -47,9 +49,9 @@ def azel2radec(
     Results
     -------
 
-    ra_deg : "ndarray"
+    ra_deg : ArrayLike
         right ascension to target [degrees]
-    dec_deg : "ndarray"
+    dec_deg : ArrayLike
         declination of target [degrees]
 
     from D.Vallado Fundamentals of Astrodynamics and Applications
@@ -75,21 +77,21 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: "ndarray", dec_deg: "ndarray", lat_deg: "ndarray", lon_deg: "ndarray", time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray"]:
+    ra_deg: ArrayLike, dec_deg: ArrayLike, lat_deg: ArrayLike, lon_deg: ArrayLike, time: datetime, *, use_astropy: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike]:
     """
     converts right ascension, declination to azimuth, elevation
 
     Parameters
     ----------
 
-    ra_deg : "ndarray"
+    ra_deg : ArrayLike
         right ascension to target [degrees]
-    dec_deg : "ndarray"
+    dec_deg : ArrayLike
         declination to target [degrees]
-    lat_deg : "ndarray"
+    lat_deg : ArrayLike
         observer WGS84 latitude [degrees]
-    lon_deg : "ndarray"
+    lon_deg : ArrayLike
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
@@ -99,9 +101,9 @@ def radec2azel(
     Results
     -------
 
-    az_deg : "ndarray"
+    az_deg : ArrayLike
         azimuth clockwise from north to point [degrees]
-    el_deg : "ndarray"
+    el_deg : ArrayLike
         elevation above horizon to point [degrees]
 
 

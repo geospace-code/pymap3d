@@ -11,13 +11,15 @@ except ImportError:
 
     asarray = None
 
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
+
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart", "sign"]
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
-
-def sign(x: "ndarray") -> "ndarray":
+def sign(x: ArrayLike) -> ArrayLike:
     """ signum function """
     if x < 0:
         y = -1.0
@@ -29,17 +31,17 @@ def sign(x: "ndarray") -> "ndarray":
     return y
 
 
-def cart2pol(x: "ndarray", y: "ndarray") -> typing.Tuple["ndarray", "ndarray"]:
+def cart2pol(x: ArrayLike, y: ArrayLike) -> typing.Tuple[ArrayLike, ArrayLike]:
     """Transform Cartesian to polar coordinates"""
     return atan2(y, x), hypot(x, y)
 
 
-def pol2cart(theta: "ndarray", rho: "ndarray") -> typing.Tuple["ndarray", "ndarray"]:
+def pol2cart(theta: ArrayLike, rho: ArrayLike) -> typing.Tuple[ArrayLike, ArrayLike]:
     """Transform polar to Cartesian coordinates"""
     return rho * cos(theta), rho * sin(theta)
 
 
-def cart2sph(x: "ndarray", y: "ndarray", z: "ndarray") -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+def cart2sph(x: ArrayLike, y: ArrayLike, z: ArrayLike) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """Transform Cartesian to spherical coordinates"""
     hxy = hypot(x, y)
     r = hypot(hxy, z)
@@ -48,7 +50,7 @@ def cart2sph(x: "ndarray", y: "ndarray", z: "ndarray") -> typing.Tuple["ndarray"
     return az, el, r
 
 
-def sph2cart(az: "ndarray", el: "ndarray", r: "ndarray") -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+def sph2cart(az: ArrayLike, el: ArrayLike, r: ArrayLike) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """Transform spherical to Cartesian coordinates"""
     rcos_theta = r * cos(el)
     x = rcos_theta * cos(az)
@@ -57,7 +59,7 @@ def sph2cart(az: "ndarray", el: "ndarray", r: "ndarray") -> typing.Tuple["ndarra
     return x, y, z
 
 
-def sanitize(lat: "ndarray", ell: Ellipsoid, deg: bool) -> typing.Tuple["ndarray", Ellipsoid]:
+def sanitize(lat: ArrayLike, ell: Ellipsoid, deg: bool) -> typing.Tuple[ArrayLike, Ellipsoid]:
     if ell is None:
         ell = Ellipsoid()
     if asarray is not None:

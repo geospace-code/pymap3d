@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
+import typing
 import pymap3d as pm
 import matplotlib.pyplot as mpl
 import numpy as np
 import argparse
+
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
 
 p = argparse.ArgumentParser()
 p.add_argument("alt_m", help="altitude [meters]", type=float, default=0.0, nargs="?")
@@ -13,7 +19,7 @@ lat, lon = np.meshgrid(np.arange(-90, 90, 0.1), np.arange(-180, 180, 0.2))
 x, y, z = pm.geodetic2ecef(lat, lon, p.alt_m)
 
 
-def panel(ax, val: np.ndarray, name: str, cmap: str = None):
+def panel(ax, val: ArrayLike, name: str, cmap: str = None):
     hi = ax.pcolormesh(lon, lat, val, cmap=cmap)
     ax.set_title(name)
     fg.colorbar(hi, ax=ax).set_label(name + " [m]")

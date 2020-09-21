@@ -19,6 +19,11 @@ except ImportError:
 # py < 3.6 compatible
 tau = 2 * pi
 
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
+
 __all__ = [
     "geodetic2ecef",
     "ecef2geodetic",
@@ -31,24 +36,21 @@ __all__ = [
     "enu2ecef",
 ]
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
-
 
 def geodetic2ecef(
-    lat: "ndarray", lon: "ndarray", alt: "ndarray", ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    lat: ArrayLike, lon: ArrayLike, alt: ArrayLike, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
     Parameters
     ----------
 
-    lat : "ndarray"
+    lat : ArrayLike
            target geodetic latitude
-    lon : "ndarray"
+    lon : ArrayLike
            target geodetic longitude
-    h : "ndarray"
+    h : ArrayLike
          target altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -61,11 +63,11 @@ def geodetic2ecef(
 
     ECEF (Earth centered, Earth fixed)  x,y,z
 
-    x : "ndarray"
+    x : ArrayLike
         target x ECEF coordinate (meters)
-    y : "ndarray"
+    y : ArrayLike
         target y ECEF coordinate (meters)
-    z : "ndarray"
+    z : ArrayLike
         target z ECEF coordinate (meters)
     """
     lat, ell = sanitize(lat, ell, deg)
@@ -84,8 +86,8 @@ def geodetic2ecef(
 
 
 def ecef2geodetic(
-    x: "ndarray", y: "ndarray", z: "ndarray", ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    x: ArrayLike, y: ArrayLike, z: ArrayLike, ell: Ellipsoid = None, deg: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     if vectorize is not None:
         fun = vectorize(ecef2geodetic_point)
         lat, lon, alt = fun(x, y, z, ell, deg)
@@ -174,35 +176,35 @@ def ecef2geodetic_point(x: float, y: float, z: float, ell: Ellipsoid = None, deg
 
 
 def ecef2enuv(
-    u: "ndarray", v: "ndarray", w: "ndarray", lat0: "ndarray", lon0: "ndarray", deg: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    u: ArrayLike, v: ArrayLike, w: ArrayLike, lat0: ArrayLike, lon0: ArrayLike, deg: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     VECTOR from observer to target  ECEF => ENU
 
     Parameters
     ----------
-    u : "ndarray"
+    u : ArrayLike
         target x ECEF coordinate (meters)
-    v : "ndarray"
+    v : ArrayLike
         target y ECEF coordinate (meters)
-    w : "ndarray"
+    w : ArrayLike
         target z ECEF coordinate (meters)
-    lat0 : "ndarray"
+    lat0 : ArrayLike
            Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
            Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     deg : bool, optional
           degrees input/output  (False: radians in/out)
 
     Returns
     -------
-    uEast : "ndarray"
+    uEast : ArrayLike
         target east ENU coordinate (meters)
-    vNorth : "ndarray"
+    vNorth : ArrayLike
         target north ENU coordinate (meters)
-    wUp : "ndarray"
+    wUp : ArrayLike
         target up ENU coordinate (meters)
 
     """
@@ -219,31 +221,31 @@ def ecef2enuv(
 
 
 def ecef2enu(
-    x: "ndarray",
-    y: "ndarray",
-    z: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    x: ArrayLike,
+    y: ArrayLike,
+    z: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     from observer to target, ECEF => ENU
 
     Parameters
     ----------
-    x : "ndarray"
+    x : ArrayLike
         target x ECEF coordinate (meters)
-    y : "ndarray"
+    y : ArrayLike
         target y ECEF coordinate (meters)
-    z : "ndarray"
+    z : ArrayLike
         target z ECEF coordinate (meters)
-    lat0 : "ndarray"
+    lat0 : ArrayLike
            Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
            Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -252,11 +254,11 @@ def ecef2enu(
 
     Returns
     -------
-    East : "ndarray"
+    East : ArrayLike
         target east ENU coordinate (meters)
-    North : "ndarray"
+    North : ArrayLike
         target north ENU coordinate (meters)
-    Up : "ndarray"
+    Up : ArrayLike
         target up ENU coordinate (meters)
 
     """
@@ -266,25 +268,25 @@ def ecef2enu(
 
 
 def enu2uvw(
-    east: "ndarray", north: "ndarray", up: "ndarray", lat0: "ndarray", lon0: "ndarray", deg: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    east: ArrayLike, north: ArrayLike, up: ArrayLike, lat0: ArrayLike, lon0: ArrayLike, deg: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Parameters
     ----------
 
-    e1 : "ndarray"
+    e1 : ArrayLike
         target east ENU coordinate (meters)
-    n1 : "ndarray"
+    n1 : ArrayLike
         target north ENU coordinate (meters)
-    u1 : "ndarray"
+    u1 : ArrayLike
         target up ENU coordinate (meters)
 
     Results
     -------
 
-    u : "ndarray"
-    v : "ndarray"
-    w : "ndarray"
+    u : ArrayLike
+    v : ArrayLike
+    w : ArrayLike
     """
 
     if deg:
@@ -301,25 +303,25 @@ def enu2uvw(
 
 
 def uvw2enu(
-    u: "ndarray", v: "ndarray", w: "ndarray", lat0: "ndarray", lon0: "ndarray", deg: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    u: ArrayLike, v: ArrayLike, w: ArrayLike, lat0: ArrayLike, lon0: ArrayLike, deg: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Parameters
     ----------
 
-    u : "ndarray"
-    v : "ndarray"
-    w : "ndarray"
+    u : ArrayLike
+    v : ArrayLike
+    w : ArrayLike
 
 
     Results
     -------
 
-    East : "ndarray"
+    East : ArrayLike
         target east ENU coordinate (meters)
-    North : "ndarray"
+    North : ArrayLike
         target north ENU coordinate (meters)
-    Up : "ndarray"
+    Up : ArrayLike
         target up ENU coordinate (meters)
     """
     if deg:
@@ -335,8 +337,8 @@ def uvw2enu(
 
 
 def eci2geodetic(
-    x: "ndarray", y: "ndarray", z: "ndarray", t: datetime, ell: Ellipsoid = None, *, deg: bool = True, use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    x: ArrayLike, y: ArrayLike, z: ArrayLike, t: datetime, ell: Ellipsoid = None, *, deg: bool = True, use_astropy: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
 
@@ -344,13 +346,13 @@ def eci2geodetic(
 
     Parameters
     ----------
-    x : "ndarray"
+    x : ArrayLike
         ECI x-location [meters]
-    y : "ndarray"
+    y : ArrayLike
         ECI y-location [meters]
-    z : "ndarray"
+    z : ArrayLike
         ECI z-location [meters]
-    t : datetime.datetime, "ndarray"
+    t : datetime.datetime, ArrayLike
         UTC time
     ell : Ellipsoid, optional
         planet ellipsoid model
@@ -361,11 +363,11 @@ def eci2geodetic(
 
     Results
     -------
-    lat : "ndarray"
+    lat : ArrayLike
           geodetic latitude
-    lon : "ndarray"
+    lon : ArrayLike
           geodetic longitude
-    alt : "ndarray"
+    alt : ArrayLike
           altitude above ellipsoid  (meters)
 
     eci2geodetic() a.k.a. eci2lla()
@@ -379,15 +381,15 @@ def eci2geodetic(
 
 
 def geodetic2eci(
-    lat: "ndarray",
-    lon: "ndarray",
-    alt: "ndarray",
+    lat: ArrayLike,
+    lon: ArrayLike,
+    alt: ArrayLike,
     t: datetime,
     ell: Ellipsoid = None,
     *,
     deg: bool = True,
     use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
 
@@ -395,13 +397,13 @@ def geodetic2eci(
 
     Parameters
     ----------
-    lat : "ndarray"
+    lat : ArrayLike
         geodetic latitude
-    lon : "ndarray"
+    lon : ArrayLike
         geodetic longitude
-    alt : "ndarray"
+    alt : ArrayLike
         altitude above ellipsoid  (meters)
-    t : datetime.datetime, "ndarray"
+    t : datetime.datetime, ArrayLike
         UTC time
     ell : Ellipsoid, optional
         planet ellipsoid model
@@ -412,11 +414,11 @@ def geodetic2eci(
 
     Results
     -------
-    x : "ndarray"
+    x : ArrayLike
         ECI x-location [meters]
-    y : "ndarray"
+    y : ArrayLike
         ECI y-location [meters]
-    z : "ndarray"
+    z : ArrayLike
         ECI z-location [meters]
 
     geodetic2eci() a.k.a lla2eci()
@@ -430,32 +432,32 @@ def geodetic2eci(
 
 
 def enu2ecef(
-    e1: "ndarray",
-    n1: "ndarray",
-    u1: "ndarray",
-    lat0: "ndarray",
-    lon0: "ndarray",
-    h0: "ndarray",
+    e1: ArrayLike,
+    n1: ArrayLike,
+    u1: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     ENU to ECEF
 
     Parameters
     ----------
 
-    e1 : "ndarray"
+    e1 : ArrayLike
         target east ENU coordinate (meters)
-    n1 : "ndarray"
+    n1 : ArrayLike
         target north ENU coordinate (meters)
-    u1 : "ndarray"
+    u1 : ArrayLike
         target up ENU coordinate (meters)
-    lat0 : "ndarray"
+    lat0 : ArrayLike
         Observer geodetic latitude
-    lon0 : "ndarray"
+    lon0 : ArrayLike
         Observer geodetic longitude
-    h0 : "ndarray"
+    h0 : ArrayLike
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -465,11 +467,11 @@ def enu2ecef(
 
     Results
     -------
-    x : "ndarray"
+    x : ArrayLike
         target x ECEF coordinate (meters)
-    y : "ndarray"
+    y : ArrayLike
         target y ECEF coordinate (meters)
-    z : "ndarray"
+    z : ArrayLike
         target z ECEF coordinate (meters)
     """
     x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 import typing
-from numpy import array, ndarray, sin, cos, column_stack, empty, atleast_1d
+from numpy import array, sin, cos, column_stack, empty, atleast_1d
 
 try:
     from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
@@ -13,12 +13,17 @@ except ImportError:
 
 from .sidereal import greenwichsrt, juliandate
 
+try:
+    from numpy.typing import ArrayLike
+except ImportError:
+    ArrayLike = typing.Any
+
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
 def eci2ecef(
-    x: "ndarray", y: "ndarray", z: "ndarray", time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    x: ArrayLike, y: ArrayLike, z: ArrayLike, time: datetime, *, use_astropy: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -26,11 +31,11 @@ def eci2ecef(
 
     Parameters
     ----------
-    x : "ndarray"
+    x : ArrayLike
         ECI x-location [meters]
-    y : "ndarray"
+    y : ArrayLike
         ECI y-location [meters]
-    z : "ndarray"
+    z : ArrayLike
         ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
@@ -39,11 +44,11 @@ def eci2ecef(
 
     Results
     -------
-    x_ecef : "ndarray"
+    x_ecef : ArrayLike
         x ECEF coordinate
-    y_ecef : "ndarray"
+    y_ecef : ArrayLike
         y ECEF coordinate
-    z_ecef : "ndarray"
+    z_ecef : ArrayLike
         z ECEF coordinate
     """
 
@@ -75,8 +80,8 @@ def eci2ecef(
 
 
 def ecef2eci(
-    x: "ndarray", y: "ndarray", z: "ndarray", time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple["ndarray", "ndarray", "ndarray"]:
+    x: ArrayLike, y: ArrayLike, z: ArrayLike, time: datetime, *, use_astropy: bool = True
+) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
     """
     Point => Point   ECEF => ECI
 
@@ -85,11 +90,11 @@ def ecef2eci(
     Parameters
     ----------
 
-    x : "ndarray"
+    x : ArrayLike
         target x ECEF coordinate
-    y : "ndarray"
+    y : ArrayLike
         target y ECEF coordinate
-    z : "ndarray"
+    z : ArrayLike
         target z ECEF coordinate
     time : datetime.datetime
         time of observation
@@ -98,11 +103,11 @@ def ecef2eci(
 
     Results
     -------
-    x_eci : "ndarray"
+    x_eci : ArrayLike
         x ECI coordinate
-    y_eci : "ndarray"
+    y_eci : ArrayLike
         y ECI coordinate
-    z_eci : "ndarray"
+    z_eci : ArrayLike
         z ECI coordinate
     """
 
@@ -134,6 +139,6 @@ def ecef2eci(
     return x_eci, y_eci, z_eci
 
 
-def R3(x: float) -> "ndarray":
+def R3(x: float) -> ArrayLike:
     """Rotation matrix for ECI"""
     return array([[cos(x), sin(x), 0], [-sin(x), cos(x), 0], [0, 0, 1]])
