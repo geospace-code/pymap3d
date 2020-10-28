@@ -1,3 +1,4 @@
+.ipynb_checkpoints/
 .eggs/
 .mypy_cache/
 .pytest_cache/
