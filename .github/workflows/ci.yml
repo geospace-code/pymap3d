@@ -19,7 +19,7 @@ jobs:
     - run: pip install .[full,tests,lint]
 
     - run: flake8
-    - run: mypy
+    # - run: mypy  # pymap3d > 2.5 only
 
     - run: pytest
 
