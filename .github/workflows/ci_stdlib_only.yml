@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "**.py"
+    - .github/workflows/ci_stdlib_only.yml
 
 
 jobs:
