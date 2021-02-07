@@ -1,24 +1,22 @@
 """compute radii of curvature for an ellipsoid"""
 
+from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, sqrt
+    from numpy import radians, sin, cos, sqrt, ndarray
 except ImportError:
-    from math import radians, sin, cos, sqrt
+    from math import radians, sin, cos, sqrt  # type: ignore
+
+    ndarray = typing.Any  # type: ignore
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
 
-try:
-    from numpy.typing import ArrayLike
-except ImportError:
-    ArrayLike = typing.Any
-
 __all__ = ["rcurve_parallel", "rcurve_meridian", "rcurve_transverse", "geocentric_radius"]
 
 
-def geocentric_radius(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geocentric_radius(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     compute geocentric radius at geodetic latitude
 
@@ -27,18 +25,24 @@ def geocentric_radius(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     return sqrt(
-        ((ell.semimajor_axis ** 2 * cos(geodetic_lat)) ** 2 + (ell.semiminor_axis ** 2 * sin(geodetic_lat)) ** 2)
-        / ((ell.semimajor_axis * cos(geodetic_lat)) ** 2 + (ell.semiminor_axis * sin(geodetic_lat)) ** 2)
+        (
+            (ell.semimajor_axis ** 2 * cos(geodetic_lat)) ** 2
+            + (ell.semiminor_axis ** 2 * sin(geodetic_lat)) ** 2
+        )
+        / (
+            (ell.semimajor_axis * cos(geodetic_lat)) ** 2
+            + (ell.semiminor_axis * sin(geodetic_lat)) ** 2
+        )
     )
 
 
-def rcurve_parallel(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
 
     Parameters
     ----------
-    lat : ArrayLike
+    lat : float
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -47,7 +51,7 @@ def rcurve_parallel(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> 
 
     Returns
     -------
-    radius: ArrayLike
+    radius: float
         radius of ellipsoid
     """
 
@@ -57,14 +61,14 @@ def rcurve_parallel(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> 
     return cos(lat) * rcurve_transverse(lat, ell, deg=False)
 
 
-def rcurve_meridian(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """computes the meridional radius of curvature for the ellipsoid
 
     like Matlab rcurve('meridian', ...)
 
     Parameters
     ----------
-    lat : ArrayLike
+    lat : float
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -73,7 +77,7 @@ def rcurve_meridian(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> 
 
     Returns
     -------
-    radius: ArrayLike
+    radius: float
         radius of ellipsoid
     """
 
@@ -87,7 +91,7 @@ def rcurve_meridian(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> 
     return f1 / sqrt(f2 ** 3)
 
 
-def rcurve_transverse(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def rcurve_transverse(lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid
@@ -96,7 +100,7 @@ def rcurve_transverse(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -
 
     Parameters
     ----------
-    lat : ArrayLike
+    lat : float
         latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -105,7 +109,7 @@ def rcurve_transverse(lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -
 
     Returns
     -------
-    radius: ArrayLike
+    radius: float
         radius of ellipsoid
     """
 

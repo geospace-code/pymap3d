@@ -9,37 +9,30 @@ and gives virtually identical result
 within double precision arithmetic limitations
 """
 
-import typing
-
 try:
     from numpy import cos, arcsin, sqrt, radians, degrees
 except ImportError:
-    from math import cos, sqrt, radians, degrees, asin as arcsin
+    from math import cos, sqrt, radians, degrees, asin as arcsin  # type: ignore
 try:
     from astropy.coordinates.angle_utilities import angular_separation
 except ImportError:
     angular_separation = None
 
-try:
-    from numpy.typing import ArrayLike
-except ImportError:
-    ArrayLike = typing.Any
-
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
 
-def anglesep_meeus(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: ArrayLike, deg: bool = True) -> ArrayLike:
+def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
     """
     Parameters
     ----------
 
-    lon0 : ArrayLike
+    lon0 : float
         longitude of first point
-    lat0 : ArrayLike
+    lat0 : float
         latitude of first point
-    lon1 : ArrayLike
+    lon1 : float
         longitude of second point
-    lat1 : ArrayLike
+    lat1 : float
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -47,7 +40,7 @@ def anglesep_meeus(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: Arra
     Returns
     -------
 
-    sep_rad : ArrayLike
+    sep_rad : float
         angular separation
 
 
@@ -68,23 +61,25 @@ def anglesep_meeus(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: Arra
         lon1 = radians(lon1)
         lat1 = radians(lat1)
 
-    sep_rad = 2 * arcsin(sqrt(haversine(lat0 - lat1) + cos(lat0) * cos(lat1) * haversine(lon0 - lon1)))
+    sep_rad = 2 * arcsin(
+        sqrt(haversine(lat0 - lat1) + cos(lat0) * cos(lat1) * haversine(lon0 - lon1))
+    )
 
     return degrees(sep_rad) if deg else sep_rad
 
 
-def anglesep(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: ArrayLike, deg: bool = True) -> ArrayLike:
+def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
     """
     Parameters
     ----------
 
-    lon0 : ArrayLike
+    lon0 : float
         longitude of first point
-    lat0 : ArrayLike
+    lat0 : float
         latitude of first point
-    lon1 : ArrayLike
+    lon1 : float
         longitude of second point
-    lat1 : ArrayLike
+    lat1 : float
         latitude of second point
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -92,7 +87,7 @@ def anglesep(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: ArrayLike,
     Returns
     -------
 
-    sep_rad : ArrayLike
+    sep_rad : float
         angular separation
 
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
@@ -112,20 +107,20 @@ def anglesep(lon0: ArrayLike, lat0: ArrayLike, lon1: ArrayLike, lat1: ArrayLike,
     return degrees(sep_rad) if deg else sep_rad
 
 
-def haversine(theta: ArrayLike) -> ArrayLike:
+def haversine(theta: float) -> float:
     """
     Compute haversine
 
     Parameters
     ----------
 
-    theta : ArrayLike
+    theta : float
         angle (radians)
 
     Results
     -------
 
-    htheta : ArrayLike
+    htheta : float
         haversine of `theta`
 
     https://en.wikipedia.org/wiki/Haversine

@@ -27,7 +27,7 @@ Thanks to our [contributors](./contributors.md).
 
 ## Prerequisites
 
-Pymap3d is compatible with Python &ge; 3.5 including PyPy.
+Pymap3d is compatible with Python &ge; 3.7 including PyPy.
 Numpy and AstroPy are optional; algorithms from Vallado and Meeus are used if AstroPy is not present.
 
 ## Install

@@ -12,7 +12,9 @@ sra = 2.90658
 ha = 45.482789587392013
 
 
-@pytest.mark.parametrize("time, use_astropy", [(t0, False), (t0, True), ([t0], False), ([t0], True)])
+@pytest.mark.parametrize(
+    "time, use_astropy", [(t0, False), (t0, True), ([t0], False), ([t0], True)]
+)
 def test_sidereal(time, use_astropy):
     if use_astropy:
         pytest.importorskip("astropy")

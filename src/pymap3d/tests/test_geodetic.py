@@ -37,7 +37,9 @@ def test_3d_geodetic2ecef():
     assert (x0, y0, z0) == approx(xyz0)
 
 
-@pytest.mark.parametrize("xyz", [(xyz0[0], xyz0[1], xyz0[2]), ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list"))
+@pytest.mark.parametrize(
+    "xyz", [(xyz0[0], xyz0[1], xyz0[2]), ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list")
+)
 def test_scalar_ecef2geodetic(xyz):
     """
     verify we can handle the wide variety of input data type users might use
@@ -142,7 +144,10 @@ def test_ecef2geodetic(xyz, lla):
 
 @pytest.mark.parametrize(
     "aer,lla,lla0",
-    [((33, 77, 1000), (42.0016981935, -81.99852, 1174.374035), (42, -82, 200)), ((0, 90, 10000), (0, 0, 10000), (0, 0, 0))],
+    [
+        ((33, 77, 1000), (42.0016981935, -81.99852, 1174.374035), (42, -82, 200)),
+        ((0, 90, 10000), (0, 0, 10000), (0, 0, 0)),
+    ],
 )
 def test_aer_geodetic(aer, lla, lla0):
     lat1, lon1, alt1 = pm.aer2geodetic(*aer, *lla0)
@@ -155,13 +160,17 @@ def test_aer_geodetic(aer, lla, lla0):
 
     raer = (radians(aer[0]), radians(aer[1]), aer[2])
     rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
-    assert pm.aer2geodetic(*raer, *rlla0, deg=False) == approx((radians(lla[0]), radians(lla[1]), lla[2]))
+    assert pm.aer2geodetic(*raer, *rlla0, deg=False) == approx(
+        (radians(lla[0]), radians(lla[1]), lla[2])
+    )
 
     with pytest.raises(ValueError):
         pm.aer2geodetic(aer[0], aer[1], -1, *lla0)
 
     assert pm.geodetic2aer(*lla, *lla0) == approx(aer, rel=1e-3)
-    assert pm.geodetic2aer(radians(lla[0]), radians(lla[1]), lla[2], *rlla0, deg=False) == approx(raer, rel=1e-3)
+    assert pm.geodetic2aer(radians(lla[0]), radians(lla[1]), lla[2], *rlla0, deg=False) == approx(
+        raer, rel=1e-3
+    )
 
 
 def test_scalar_nan():

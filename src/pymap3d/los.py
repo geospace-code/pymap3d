@@ -1,44 +1,47 @@
 """ Line of sight intersection of space observer to ellipsoid """
 
+from __future__ import annotations
 import typing
 
 try:
-    from numpy import pi, nan, sqrt, vectorize
+    from numpy import pi, nan, sqrt, vectorize, ndarray
 except ImportError:
-    from math import pi, nan, sqrt
+    from math import pi, nan, sqrt  # type: ignore
 
     vectorize = None
+    ndarray = typing.Any  # type: ignore
 
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
 
-try:
-    from numpy.typing import ArrayLike
-except ImportError:
-    ArrayLike = typing.Any
-
 __all__ = ["lookAtSpheroid"]
 
 
 def lookAtSpheroid(
-    lat0: ArrayLike, lon0: ArrayLike, h0: ArrayLike, az: ArrayLike, tilt: ArrayLike, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[ArrayLike, ArrayLike, ArrayLike]:
+    lat0: float,
+    lon0: float,
+    h0: float,
+    az: float,
+    tilt: float,
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
     Parameters
     ----------
 
-    lat0 : ArrayLike
+    lat0 : float
            observer geodetic latitude
-    lon0 : ArrayLike
+    lon0 : float
            observer geodetic longitude
-    h0 : ArrayLike
+    h0 : float
         observer altitude (meters)  Must be non-negative since this function doesn't consider terrain
-    az : ArrayLike
+    az : float
         azimuth angle of line-of-sight, clockwise from North
-    tilt : ArrayLike
+    tilt : float
         tilt angle of line-of-sight with respect to local vertical (nadir = 0)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -48,11 +51,11 @@ def lookAtSpheroid(
     Results
     -------
 
-    lat : ArrayLike
+    lat : float
            geodetic latitude where the line-of-sight intersects with the Earth ellipsoid
-    lon : ArrayLike
+    lon : float
            geodetic longitude where the line-of-sight intersects with the Earth ellipsoid
-    d : ArrayLike
+    d : float
         slant range (meters) from starting point to intersect point
 
     Values will be NaN if the line of sight does not intersect.
@@ -68,8 +71,14 @@ def lookAtSpheroid(
 
 
 def lookAtSpheroid_point(
-    lat0: float, lon0: float, h0: float, az: float, tilt: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float, float]:
+    lat0: float,
+    lon0: float,
+    h0: float,
+    az: float,
+    tilt: float,
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
 
     if h0 < 0:
         raise ValueError("Intersection calculation requires altitude  [0, Infinity)")

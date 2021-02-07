@@ -62,9 +62,13 @@ class Ellipsoid:
             self.semiminor_axis = self.semimajor_axis
         else:
             raise NotImplementedError(
-                "{} model not implemented, let us know and we will add it (or make a pull request)".format(model)
+                "{} model not implemented, let us know and we will add it (or make a pull request)".format(
+                    model
+                )
             )
 
         self.flattening = (self.semimajor_axis - self.semiminor_axis) / self.semimajor_axis
-        self.thirdflattening = (self.semimajor_axis - self.semiminor_axis) / (self.semimajor_axis + self.semiminor_axis)
+        self.thirdflattening = (self.semimajor_axis - self.semiminor_axis) / (
+            self.semimajor_axis + self.semiminor_axis
+        )
         self.eccentricity = sqrt(2 * self.flattening - self.flattening ** 2)

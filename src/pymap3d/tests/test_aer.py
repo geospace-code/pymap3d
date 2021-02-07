@@ -8,7 +8,9 @@ A = ELL.semimajor_axis
 B = ELL.semiminor_axis
 
 
-@pytest.mark.parametrize("aer,lla,xyz", [((33, 70, 1000), (42, -82, 200), (660930.2, -4701424.0, 4246579.6))])
+@pytest.mark.parametrize(
+    "aer,lla,xyz", [((33, 70, 1000), (42, -82, 200), (660930.2, -4701424.0, 4246579.6))]
+)
 def test_aer2ecef(aer, lla, xyz):
     x, y, z = pm.aer2ecef(*aer, *lla)
     assert x == approx(xyz[0])

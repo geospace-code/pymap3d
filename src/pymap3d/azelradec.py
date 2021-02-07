@@ -1,7 +1,9 @@
 """
 Azimuth / elevation <==> Right ascension, declination
 """
-import typing
+
+from __future__ import annotations
+
 from datetime import datetime
 from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
 from .timeconv import str2dt  # astropy can't handle xarray times (yet)
@@ -13,29 +15,30 @@ try:
 except ImportError:
     Time = None
 
-try:
-    from numpy.typing import ArrayLike
-except ImportError:
-    ArrayLike = typing.Any
-
 __all__ = ["radec2azel", "azel2radec"]
 
 
 def azel2radec(
-    az_deg: ArrayLike, el_deg: ArrayLike, lat_deg: ArrayLike, lon_deg: ArrayLike, time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple[ArrayLike, ArrayLike]:
+    az_deg: float,
+    el_deg: float,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+    *,
+    use_astropy: bool = True
+) -> tuple[float, float]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
 
     Parameters
     ----------
-    az_deg : ArrayLike
+    az_deg : float
          azimuth [degrees clockwize from North]
-    el_deg : ArrayLike
+    el_deg : float
              elevation [degrees above horizon (neglecting aberration)]
-    lat_deg : ArrayLike
+    lat_deg : float
               observer latitude [-90, 90]
-    lon_deg : ArrayLike
+    lon_deg : float
               observer longitude [-180, 180] (degrees)
     time : datetime.datetime or str
            time of observation
@@ -44,9 +47,9 @@ def azel2radec(
 
     Returns
     -------
-    ra_deg : ArrayLike
+    ra_deg : float
          ecliptic right ascension (degress)
-    dec_deg : ArrayLike
+    dec_deg : float
          ecliptic declination (degrees)
     """
 
@@ -54,7 +57,9 @@ def azel2radec(
 
         obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-        direc = AltAz(location=obs, obstime=Time(str2dt(time)), az=az_deg * u.deg, alt=el_deg * u.deg)
+        direc = AltAz(
+            location=obs, obstime=Time(str2dt(time)), az=az_deg * u.deg, alt=el_deg * u.deg
+        )
 
         sky = SkyCoord(direc.transform_to(ICRS()))
 
@@ -64,20 +69,26 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: ArrayLike, dec_deg: ArrayLike, lat_deg: ArrayLike, lon_deg: ArrayLike, time: datetime, *, use_astropy: bool = False
-) -> typing.Tuple[ArrayLike, ArrayLike]:
+    ra_deg: float,
+    dec_deg: float,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+    *,
+    use_astropy: bool = False
+) -> tuple[float, float]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
 
     Parameters
     ----------
-    ra_deg : ArrayLike
+    ra_deg : float
          ecliptic right ascension (degress)
-    dec_deg : ArrayLike
+    dec_deg : float
          ecliptic declination (degrees)
-    lat_deg : ArrayLike
+    lat_deg : float
               observer latitude [-90, 90]
-    lon_deg : ArrayLike
+    lon_deg : float
               observer longitude [-180, 180] (degrees)
     time : datetime.datetime or str
            time of observation
@@ -86,9 +97,9 @@ def radec2azel(
 
     Returns
     -------
-    az_deg : ArrayLike
+    az_deg : float
              azimuth [degrees clockwize from North]
-    el_deg : ArrayLike
+    el_deg : float
              elevation [degrees above horizon (neglecting aberration)]
     """
 

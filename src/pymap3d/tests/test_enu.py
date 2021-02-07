@@ -30,7 +30,9 @@ def test_3d_enu():
     assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])
 
 
-@pytest.mark.parametrize("enu,lla,xyz", [((0, 0, 0), (0, 0, 0), (A, 0, 0)), ((0, 0, 1000), (0, 0, 0), (A + 1000, 0, 0))])
+@pytest.mark.parametrize(
+    "enu,lla,xyz", [((0, 0, 0), (0, 0, 0), (A, 0, 0)), ((0, 0, 1000), (0, 0, 0), (A + 1000, 0, 0))]
+)
 def test_enu_ecef(enu, lla, xyz):
     x, y, z = pm.enu2ecef(*enu, *lla)
     assert x == approx(xyz[0])

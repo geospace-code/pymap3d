@@ -43,6 +43,12 @@ def test_array():
     lla0 = (42, -82, 200)
     lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt)
 
-    truth = np.array([[42.00103959, lla0[1], 230.9413173], [42.00177328, -81.9995808, 282.84715651], [nan, nan, nan]])
+    truth = np.array(
+        [
+            [42.00103959, lla0[1], 230.9413173],
+            [42.00177328, -81.9995808, 282.84715651],
+            [nan, nan, nan],
+        ]
+    )
 
     assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)

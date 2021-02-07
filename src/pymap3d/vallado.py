@@ -6,40 +6,41 @@ These functions are fallbacks for those wihtout AstroPy.
 Michael Hirsch implementation of algorithms from D. Vallado
 """
 
-import typing
+from __future__ import annotations
 from datetime import datetime
 
 try:
     from numpy import sin, cos, degrees, radians, arcsin as asin, arctan2 as atan2
 except ImportError:
-    from math import sin, cos, degrees, radians, asin, atan2
+    from math import sin, cos, degrees, radians, asin, atan2  # type: ignore
 
 from .sidereal import datetime2sidereal
-
-try:
-    from numpy.typing import ArrayLike
-except ImportError:
-    ArrayLike = typing.Any
 
 __all__ = ["azel2radec", "radec2azel"]
 
 
 def azel2radec(
-    az_deg: ArrayLike, el_deg: ArrayLike, lat_deg: ArrayLike, lon_deg: ArrayLike, time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple[ArrayLike, ArrayLike]:
+    az_deg: float,
+    el_deg: float,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+    *,
+    use_astropy: bool = True
+) -> tuple[float, float]:
     """
     converts azimuth, elevation to right ascension, declination
 
     Parameters
     ----------
 
-    az_deg : ArrayLike
+    az_deg : float
         azimuth (clockwise) to point [degrees]
-    el_deg : ArrayLike
+    el_deg : float
         elevation above horizon to point [degrees]
-    lat_deg : ArrayLike
+    lat_deg : float
         observer WGS84 latitude [degrees]
-    lon_deg : ArrayLike
+    lon_deg : float
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
@@ -49,9 +50,9 @@ def azel2radec(
     Results
     -------
 
-    ra_deg : ArrayLike
+    ra_deg : float
         right ascension to target [degrees]
-    dec_deg : ArrayLike
+    dec_deg : float
         declination of target [degrees]
 
     from D.Vallado Fundamentals of Astrodynamics and Applications
@@ -68,7 +69,9 @@ def azel2radec(
     # %% Vallado "algorithm 28" p 268
     dec = asin(sin(el) * sin(lat) + cos(el) * cos(lat) * cos(az))
 
-    lha = atan2(-(sin(az) * cos(el)) / cos(dec), (sin(el) - sin(lat) * sin(dec)) / (cos(dec) * cos(lat)))
+    lha = atan2(
+        -(sin(az) * cos(el)) / cos(dec), (sin(el) - sin(lat) * sin(dec)) / (cos(dec) * cos(lat))
+    )
 
     lst = datetime2sidereal(time, lon, use_astropy=use_astropy)  # lon, ra in RADIANS
 
@@ -77,21 +80,27 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: ArrayLike, dec_deg: ArrayLike, lat_deg: ArrayLike, lon_deg: ArrayLike, time: datetime, *, use_astropy: bool = True
-) -> typing.Tuple[ArrayLike, ArrayLike]:
+    ra_deg: float,
+    dec_deg: float,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+    *,
+    use_astropy: bool = True
+) -> tuple[float, float]:
     """
     converts right ascension, declination to azimuth, elevation
 
     Parameters
     ----------
 
-    ra_deg : ArrayLike
+    ra_deg : float
         right ascension to target [degrees]
-    dec_deg : ArrayLike
+    dec_deg : float
         declination to target [degrees]
-    lat_deg : ArrayLike
+    lat_deg : float
         observer WGS84 latitude [degrees]
-    lon_deg : ArrayLike
+    lon_deg : float
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
@@ -101,9 +110,9 @@ def radec2azel(
     Results
     -------
 
-    az_deg : ArrayLike
+    az_deg : float
         azimuth clockwise from north to point [degrees]
-    el_deg : ArrayLike
+    el_deg : float
         elevation above horizon to point [degrees]
 
 
@@ -124,6 +133,8 @@ def radec2azel(
     # %% #Eq. 4-12 p. 267
     el = asin(sin(lat) * sin(dec) + cos(lat) * cos(dec) * cos(lha))
     # %% combine Eq. 4-13 and 4-14 p. 268
-    az = atan2(-sin(lha) * cos(dec) / cos(el), (sin(dec) - sin(el) * sin(lat)) / (cos(el) * cos(lat)))
+    az = atan2(
+        -sin(lha) * cos(dec) / cos(el), (sin(dec) - sin(el) * sin(lat)) / (cos(el) * cos(lat))
+    )
 
     return degrees(az) % 360.0, degrees(el)

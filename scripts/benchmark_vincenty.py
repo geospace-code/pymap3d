@@ -57,5 +57,6 @@ if __name__ == "__main__":
 
     if MATLAB:
         subprocess.check_call(
-            f'matlab -batch "f = @() distance({ll0[0]}, {ll0[1]}, rand({N},1), rand({N},1));  t = timeit(f); disp(t)"', timeout=45
+            f'matlab -batch "f = @() distance({ll0[0]}, {ll0[1]}, rand({N},1), rand({N},1));  t = timeit(f); disp(t)"',
+            timeout=45,
         )

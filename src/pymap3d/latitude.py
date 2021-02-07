@@ -1,24 +1,22 @@
 """geodetic transforms to auxilary coordinate systems involving latitude"""
-import typing
 
+from __future__ import annotations
+import typing
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
 from .rcurve import rcurve_transverse
 
 try:
-    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, vectorize
+    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, vectorize, ndarray
     from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh  # noqa: A001
 
     use_numpy = True
 except ImportError:
-    from math import atan, radians, degrees, tan, sin, asinh, atanh, exp, pi, sqrt, inf
+    from math import atan, radians, degrees, tan, sin, asinh, atanh, exp, pi, sqrt, inf  # type: ignore
 
     use_numpy = False
+    ndarray = typing.Any  # type: ignore
 
-try:
-    from numpy.typing import ArrayLike
-except ImportError:
-    ArrayLike = typing.Any
 
 __all__ = [
     "geodetic2isometric",
@@ -38,7 +36,12 @@ __all__ = [
 ]
 
 
-def geoc2geod(geocentric_lat: ArrayLike, geocentric_distance: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geoc2geod(
+    geocentric_lat: float,
+    geocentric_distance: float,
+    ell: Ellipsoid = None,
+    deg: bool = True,
+) -> float:
     """
     convert geocentric latitude to geodetic latitude, consider mean sea level altitude
 
@@ -46,9 +49,9 @@ def geoc2geod(geocentric_lat: ArrayLike, geocentric_distance: ArrayLike, ell: El
 
     Parameters
     ----------
-    geocentric_lat : ArrayLike
+    geocentric_lat : float
         geocentric latitude
-    geocentric_distance: ArrayLike
+    geocentric_distance: float
         distance from planet center, meters (NOT altitude above ground!)
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -57,7 +60,7 @@ def geoc2geod(geocentric_lat: ArrayLike, geocentric_distance: ArrayLike, ell: El
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latiude
 
 
@@ -80,7 +83,9 @@ def geoc2geod(geocentric_lat: ArrayLike, geocentric_distance: ArrayLike, ell: El
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2geocentric(geodetic_lat: ArrayLike, alt_m: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geodetic2geocentric(
+    geodetic_lat: float, alt_m: float, ell: Ellipsoid = None, deg: bool = True
+) -> float:
     """
     convert geodetic latitude to geocentric latitude on spheroid surface
 
@@ -89,9 +94,9 @@ def geodetic2geocentric(geodetic_lat: ArrayLike, alt_m: ArrayLike, ell: Ellipsoi
 
     Parameters
     ----------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
         geodetic latitude
-    alt_m: ArrayLike
+    alt_m: float
         altitude above ellipsoid
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -100,7 +105,7 @@ def geodetic2geocentric(geodetic_lat: ArrayLike, alt_m: ArrayLike, ell: Ellipsoi
 
     Returns
     -------
-    geocentric_lat : ArrayLike
+    geocentric_lat : float
          geocentric latiude
 
     Notes
@@ -119,7 +124,9 @@ def geodetic2geocentric(geodetic_lat: ArrayLike, alt_m: ArrayLike, ell: Ellipsoi
 geod2geoc = geodetic2geocentric
 
 
-def geocentric2geodetic(geocentric_lat: ArrayLike, alt_m: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geocentric2geodetic(
+    geocentric_lat: float, alt_m: float, ell: Ellipsoid = None, deg: bool = True
+) -> float:
     """
     converts from geocentric latitude to geodetic latitude
 
@@ -128,9 +135,9 @@ def geocentric2geodetic(geocentric_lat: ArrayLike, alt_m: ArrayLike, ell: Ellips
 
     Parameters
     ----------
-    geocentric_lat : ArrayLike
+    geocentric_lat : float
          geocentric latitude
-    alt_m: ArrayLike
+    alt_m: float
         altitude above ellipsoid
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -139,7 +146,7 @@ def geocentric2geodetic(geocentric_lat: ArrayLike, alt_m: ArrayLike, ell: Ellips
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latiude
 
     Notes
@@ -176,7 +183,7 @@ def geodetic2isometric_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bo
     return degrees(isometric_lat) if deg else isometric_lat
 
 
-def geodetic2isometric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geodetic2isometric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes isometric latitude on an ellipsoid
 
@@ -185,7 +192,7 @@ def geodetic2isometric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool
 
     Parameters
     ----------
-    lat : ArrayLike
+    lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -194,7 +201,7 @@ def geodetic2isometric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool
 
     Returns
     -------
-    isolat : ArrayLike
+    isolat : float
          isometric latiude
 
     Notes
@@ -212,7 +219,7 @@ def geodetic2isometric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool
         return geodetic2isometric_point(geodetic_lat, ell, deg)
 
 
-def isometric2geodetic(isometric_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def isometric2geodetic(isometric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from isometric latitude to geodetic latitude
 
@@ -220,7 +227,7 @@ def isometric2geodetic(isometric_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Parameters
     ----------
-    isometric_lat : ArrayLike
+    isometric_lat : float
          isometric latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -229,7 +236,7 @@ def isometric2geodetic(isometric_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latiude
 
     Notes
@@ -248,7 +255,7 @@ def isometric2geodetic(isometric_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def conformal2geodetic(conformal_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def conformal2geodetic(conformal_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from conformal latitude to geodetic latitude
 
@@ -256,7 +263,7 @@ def conformal2geodetic(conformal_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Parameters
     ----------
-    conformal_lat : ArrayLike
+    conformal_lat : float
         conformal latitude
     ell : Ellipsoid, optional
         reference ellipsoid (default WGS84)
@@ -265,7 +272,7 @@ def conformal2geodetic(conformal_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
         geodetic latiude
 
     Notes
@@ -293,7 +300,7 @@ def conformal2geodetic(conformal_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2conformal(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geodetic2conformal(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from geodetic latitude to conformal latitude
 
@@ -301,7 +308,7 @@ def geodetic2conformal(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool
 
     Parameters
     ----------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -310,7 +317,7 @@ def geodetic2conformal(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool
 
     Returns
     -------
-    conformal_lat : ArrayLike
+    conformal_lat : float
          conformal latiude
 
     Notes
@@ -346,7 +353,7 @@ def geodetic2conformal_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bo
 
 
 # %% rectifying
-def geodetic2rectifying(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from geodetic latitude to rectifying latitude
 
@@ -354,7 +361,7 @@ def geodetic2rectifying(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Parameters
     ----------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -363,7 +370,7 @@ def geodetic2rectifying(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Returns
     -------
-    rectifying_lat : ArrayLike
+    rectifying_lat : float
          rectifying latiude
 
     Notes
@@ -392,7 +399,7 @@ def geodetic2rectifying(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
     return degrees(rectifying_lat) if deg else rectifying_lat
 
 
-def rectifying2geodetic(rectifying_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def rectifying2geodetic(rectifying_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from rectifying latitude to geodetic latitude
 
@@ -400,7 +407,7 @@ def rectifying2geodetic(rectifying_lat: ArrayLike, ell: Ellipsoid = None, deg: b
 
     Parameters
     ----------
-    rectifying_lat : ArrayLike
+    rectifying_lat : float
         latitude
     ell : Ellipsoid, optional
         reference ellipsoid (default WGS84)
@@ -409,7 +416,7 @@ def rectifying2geodetic(rectifying_lat: ArrayLike, ell: Ellipsoid = None, deg: b
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
         geodetic latiude
 
     Notes
@@ -438,7 +445,9 @@ def rectifying2geodetic(rectifying_lat: ArrayLike, ell: Ellipsoid = None, deg: b
 
 
 # %% authalic
-def geodetic2authalic(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geodetic2authalic(
+    geodetic_lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True
+) -> float:
     """
     converts from geodetic latitude to authalic latitude
 
@@ -446,7 +455,7 @@ def geodetic2authalic(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
 
     Parameters
     ----------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -455,7 +464,7 @@ def geodetic2authalic(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
 
     Returns
     -------
-    authalic_lat : ArrayLike
+    authalic_lat : float
          authalic latiude
 
     Notes
@@ -472,12 +481,19 @@ def geodetic2authalic(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
     f2 = 17 * e ** 4 / 360 + 61 * e ** 6 / 1260
     f3 = 383 * e ** 6 / 45360
 
-    authalic_lat = geodetic_lat - f1 * sin(2 * geodetic_lat) + f2 * sin(4 * geodetic_lat) - f3 * sin(6 * geodetic_lat)
+    authalic_lat = (
+        geodetic_lat
+        - f1 * sin(2 * geodetic_lat)
+        + f2 * sin(4 * geodetic_lat)
+        - f3 * sin(6 * geodetic_lat)
+    )
 
     return degrees(authalic_lat) if deg else authalic_lat
 
 
-def authalic2geodetic(authalic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def authalic2geodetic(
+    authalic_lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True
+) -> float:
     """
     converts from authalic latitude to geodetic latitude
 
@@ -485,7 +501,7 @@ def authalic2geodetic(authalic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
 
     Parameters
     ----------
-    authalic_lat : ArrayLike
+    authalic_lat : float
         latitude
     ell : Ellipsoid, optional
         reference ellipsoid (default WGS84)
@@ -494,7 +510,7 @@ def authalic2geodetic(authalic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
         geodetic latiude
 
     Notes
@@ -509,13 +525,18 @@ def authalic2geodetic(authalic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool 
     f2 = 23 * e ** 4 / 360 + 251 * e ** 6 / 3780
     f3 = 761 * e ** 6 / 45360
 
-    geodetic_lat = authalic_lat + f1 * sin(2 * authalic_lat) + f2 * sin(4 * authalic_lat) + f3 * sin(6 * authalic_lat)
+    geodetic_lat = (
+        authalic_lat
+        + f1 * sin(2 * authalic_lat)
+        + f2 * sin(4 * authalic_lat)
+        + f3 * sin(6 * authalic_lat)
+    )
 
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
 # %% parametric
-def geodetic2parametric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def geodetic2parametric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from geodetic latitude to parametric latitude
 
@@ -523,7 +544,7 @@ def geodetic2parametric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Parameters
     ----------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -532,7 +553,7 @@ def geodetic2parametric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
 
     Returns
     -------
-    parametric_lat : ArrayLike
+    parametric_lat : float
          parametric latiude
 
     Notes
@@ -549,7 +570,7 @@ def geodetic2parametric(geodetic_lat: ArrayLike, ell: Ellipsoid = None, deg: boo
     return degrees(parametric_lat) if deg else parametric_lat
 
 
-def parametric2geodetic(parametric_lat: ArrayLike, ell: Ellipsoid = None, deg: bool = True) -> ArrayLike:
+def parametric2geodetic(parametric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from parametric latitude to geodetic latitude
 
@@ -557,7 +578,7 @@ def parametric2geodetic(parametric_lat: ArrayLike, ell: Ellipsoid = None, deg: b
 
     Parameters
     ----------
-    parametric_lat : ArrayLike
+    parametric_lat : float
         latitude
     ell : Ellipsoid, optional
         reference ellipsoid (default WGS84)
@@ -566,7 +587,7 @@ def parametric2geodetic(parametric_lat: ArrayLike, ell: Ellipsoid = None, deg: b
 
     Returns
     -------
-    geodetic_lat : ArrayLike
+    geodetic_lat : float
         geodetic latiude
 
     Notes
