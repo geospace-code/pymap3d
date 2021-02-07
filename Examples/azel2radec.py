@@ -9,7 +9,9 @@ from argparse import ArgumentParser
 
 
 def main():
-    p = ArgumentParser(description="convert azimuth and elevation to " "right ascension and declination")
+    p = ArgumentParser(
+        description="convert azimuth and elevation to " "right ascension and declination"
+    )
     p.add_argument("azimuth", help="azimuth [deg]", type=float)
     p.add_argument("elevation", help="elevation [deg]", type=float)
     p.add_argument("lat", help="WGS84 obs. lat [deg]", type=float)
