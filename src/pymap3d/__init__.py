@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """
 PyMap3D provides coordinate transforms and geodesy functions with a similar API
 to the Matlab Mapping Toolbox, but was of course independently derived.
