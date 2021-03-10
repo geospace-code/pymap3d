@@ -2,7 +2,6 @@
 
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
-[![astronomer](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fastronomer.ullaakut.eu%2Fshields%3Fowner%3Dscivision%26name%3Dpymap3d)](https://github.com/Ullaakut/astronomer/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/geospace-code/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/geospace-code/pymap3d/context:python)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci/badge.svg)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci_stdlib_only/badge.svg)
