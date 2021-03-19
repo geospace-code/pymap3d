@@ -3,11 +3,10 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, hypot, arctan2 as atan2, degrees, pi, vectorize, ndarray
+    from numpy import asarray, radians, sin, cos, hypot, arctan2 as atan2, degrees, pi, ndarray
 except ImportError:
     from math import radians, sin, cos, hypot, atan2, degrees, pi  # type: ignore
 
-    vectorize = None
     ndarray = typing.Any  # type: ignore
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
@@ -20,8 +19,8 @@ __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
 
 def enu2aer(
-    e: float | ndarray, n: float | ndarray, u: float | ndarray, deg: bool = True
-) -> tuple[float, float, float]:
+    e: ndarray, n: ndarray, u: ndarray, deg: bool = True
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     ENU to Azimuth, Elevation, Range
 
@@ -48,26 +47,19 @@ def enu2aer(
         slant range [meters]
     """
 
-    if vectorize is not None:
-        fun = vectorize(enu2aer_point)
-        az, el, rng = fun(e, n, u, deg)
-        return az[()], el[()], rng[()]
-    else:
-        return enu2aer_point(e, n, u, deg)
-
-
-def enu2aer_point(
-    e: float | ndarray, n: float | ndarray, u: float | ndarray, deg: bool = True
-) -> tuple[float, float, float]:
-
     # 1 millimeter precision for singularity
 
-    if abs(e) < 1e-3:
-        e = 0.0
-    if abs(n) < 1e-3:
-        n = 0.0
-    if abs(u) < 1e-3:
-        u = 0.0
+    try:
+        e[abs(e) < 1e-3] = 0.0
+        n[abs(n) < 1e-3] = 0.0
+        u[abs(u) < 1e-3] = 0.0
+    except TypeError:
+        if abs(e) < 1e-3:
+            e = 0.0  # type: ignore
+        if abs(n) < 1e-3:
+            n = 0.0  # type: ignore
+        if abs(u) < 1e-3:
+            u = 0.0  # type: ignore
 
     r = hypot(e, n)
     slantRange = hypot(r, u)
@@ -82,17 +74,6 @@ def enu2aer_point(
 
 
 def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> tuple[float, float, float]:
-    if vectorize is not None:
-        fun = vectorize(aer2enu_point)
-        e, n, u = fun(az, el, srange, deg)
-        return e[()], n[()], u[()]
-    else:
-        return aer2enu_point(az, el, srange, deg)
-
-
-def aer2enu_point(
-    az: float, el: float, srange: float, deg: bool = True
-) -> tuple[float, float, float]:
     """
     Azimuth, Elevation, Slant range to target to East, North, Up
 
@@ -120,8 +101,12 @@ def aer2enu_point(
         el = radians(el)
         az = radians(az)
 
-    if srange < 0:
-        raise ValueError("Slant range  [0, Infinity)")
+    try:
+        if (asarray(srange) < 0).any():
+            raise ValueError("Slant range  [0, Infinity)")
+    except UnboundLocalError:
+        if srange < 0:
+            raise ValueError("Slant range  [0, Infinity)")
 
     r = srange * cos(el)
 
@@ -177,15 +162,15 @@ def enu2geodetic(
 
 
 def geodetic2enu(
-    lat: float,
-    lon: float,
-    h: float,
+    lat: ndarray,
+    lon: ndarray,
+    h: ndarray,
     lat0: float,
     lon0: float,
     h0: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Parameters
     ----------

@@ -45,7 +45,9 @@ def aer2ned(
     return n, e, -u
 
 
-def ned2aer(n: float, e: float, d: float, deg: bool = True) -> tuple[float, float, float]:
+def ned2aer(
+    n: ndarray, e: ndarray, d: ndarray, deg: bool = True
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     converts North, East, Down to azimuth, elevation, range
 
@@ -170,9 +172,9 @@ def ned2ecef(
 
 
 def ecef2ned(
-    x: float,
-    y: float,
-    z: float,
+    x: ndarray,
+    y: ndarray,
+    z: ndarray,
     lat0: float,
     lon0: float,
     h0: float,
@@ -219,9 +221,9 @@ def ecef2ned(
 
 
 def geodetic2ned(
-    lat: float,
-    lon: float,
-    h: float,
+    lat: ndarray,
+    lon: ndarray,
+    h: ndarray,
     lat0: float,
     lon0: float,
     h0: float,

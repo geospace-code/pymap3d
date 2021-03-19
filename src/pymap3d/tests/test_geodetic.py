@@ -37,17 +37,11 @@ def test_3d_geodetic2ecef():
     assert (x0, y0, z0) == approx(xyz0)
 
 
-@pytest.mark.parametrize(
-    "xyz", [(xyz0[0], xyz0[1], xyz0[2]), ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list")
-)
-def test_scalar_ecef2geodetic(xyz):
+def test_scalar_ecef2geodetic():
     """
     verify we can handle the wide variety of input data type users might use
     """
-    if isinstance(xyz[0], list):
-        pytest.importorskip("numpy")
-
-    lat, lon, alt = pm.ecef2geodetic(*xyz)
+    lat, lon, alt = pm.ecef2geodetic(xyz0[0], xyz0[1], xyz0[2])
 
     assert [lat, lon, alt] == approx(lla0, rel=1e-4)
 

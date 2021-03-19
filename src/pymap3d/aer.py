@@ -20,15 +20,15 @@ __all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "a
 
 
 def ecef2aer(
-    x: float | ndarray,
-    y: float | ndarray,
-    z: float | ndarray,
+    x: ndarray,
+    y: ndarray,
+    z: ndarray,
     lat0: float,
     lon0: float,
     h0: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     compute azimuth, elevation and slant range from an Observer to a Point with ECEF coordinates.
 
@@ -69,15 +69,15 @@ def ecef2aer(
 
 
 def geodetic2aer(
-    lat: float,
-    lon: float,
-    h: float,
+    lat: ndarray,
+    lon: ndarray,
+    h: ndarray,
     lat0: float,
     lon0: float,
     h0: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     gives azimuth, elevation and slant range from an Observer to a Point with geodetic coordinates.
 
@@ -177,7 +177,7 @@ def eci2aer(
     *,
     deg: bool = True,
     use_astropy: bool = True
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
 

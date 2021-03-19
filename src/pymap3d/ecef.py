@@ -15,12 +15,10 @@ try:
         arctan2 as atan2,
         sqrt,
         pi,
-        vectorize,
     )
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi  # type: ignore
 
-    vectorize = None
     ndarray = typing.Any  # type: ignore
 
 from datetime import datetime
@@ -111,21 +109,6 @@ def ecef2geodetic(
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
-    if vectorize is not None:
-        fun = vectorize(ecef2geodetic_point)
-        lat, lon, alt = fun(x, y, z, ell, deg)
-        return lat[()], lon[()], alt[()]
-    else:
-        return ecef2geodetic_point(x, y, z, ell, deg)
-
-
-def ecef2geodetic_point(
-    x: float | ndarray,
-    y: float | ndarray,
-    z: float | ndarray,
-    ell: Ellipsoid = None,
-    deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -155,6 +138,7 @@ def ecef2geodetic_point(
     You, Rey-Jer. (2000). Transformation of Cartesian to Geodetic Coordinates without Iterations.
     Journal of Surveying Engineering. doi: 10.1061/(ASCE)0733-9453
     """
+
     if ell is None:
         ell = Ellipsoid()
 
@@ -199,8 +183,14 @@ def ecef2geodetic_point(
         + z ** 2 / ell.semiminor_axis ** 2
         < 1
     )
-    if inside:
-        alt = -alt
+
+    try:
+        if inside.any():  # type: ignore
+            # avoid all false assignment bug
+            alt[inside] = -alt
+    except (TypeError, AttributeError):
+        if inside:
+            alt = -alt
 
     if deg:
         lat = degrees(lat)
@@ -255,15 +245,15 @@ def ecef2enuv(
 
 
 def ecef2enu(
-    x: float | ndarray,
-    y: float | ndarray,
-    z: float | ndarray,
+    x: ndarray,
+    y: ndarray,
+    z: ndarray,
     lat0: float,
     lon0: float,
     h0: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     from observer to target, ECEF => ENU
 
@@ -343,7 +333,7 @@ def enu2uvw(
 
 def uvw2enu(
     u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Parameters
     ----------
