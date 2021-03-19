@@ -49,12 +49,12 @@ __all__ = [
 
 
 def geodetic2ecef(
-    lat: float | ndarray,
-    lon: float | ndarray,
-    alt: float | ndarray,
+    lat: ndarray,
+    lon: ndarray,
+    alt: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
@@ -103,12 +103,12 @@ def geodetic2ecef(
 
 
 def ecef2geodetic(
-    x: float | ndarray,
-    y: float | ndarray,
-    z: float | ndarray,
+    x: ndarray,
+    y: ndarray,
+    z: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -248,9 +248,9 @@ def ecef2enu(
     x: ndarray,
     y: ndarray,
     z: ndarray,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[ndarray, ndarray, ndarray]:
@@ -292,13 +292,13 @@ def ecef2enu(
 
 
 def enu2uvw(
-    east: float,
-    north: float,
-    up: float,
-    lat0: float,
-    lon0: float,
+    east: ndarray,
+    north: ndarray,
+    up: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Parameters
     ----------
@@ -332,7 +332,7 @@ def enu2uvw(
 
 
 def uvw2enu(
-    u: float, v: float, w: float, lat0: float, lon0: float, deg: bool = True
+    u: ndarray, v: ndarray, w: ndarray, lat0: ndarray, lon0: ndarray, deg: bool = True
 ) -> tuple[ndarray, ndarray, ndarray]:
     """
     Parameters
@@ -374,7 +374,7 @@ def eci2geodetic(
     *,
     deg: bool = True,
     use_astropy: bool = True
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
 
@@ -417,9 +417,9 @@ def eci2geodetic(
 
 
 def geodetic2eci(
-    lat: float | ndarray,
-    lon: float | ndarray,
-    alt: float | ndarray,
+    lat: ndarray,
+    lon: ndarray,
+    alt: ndarray,
     t: datetime,
     ell: Ellipsoid = None,
     *,
@@ -468,15 +468,15 @@ def geodetic2eci(
 
 
 def enu2ecef(
-    e1: float,
-    n1: float,
-    u1: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    e1: ndarray,
+    n1: ndarray,
+    u1: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     ENU to ECEF
 

@@ -23,9 +23,9 @@ def ecef2aer(
     x: ndarray,
     y: ndarray,
     z: ndarray,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[ndarray, ndarray, ndarray]:
@@ -72,9 +72,9 @@ def geodetic2aer(
     lat: ndarray,
     lon: ndarray,
     h: ndarray,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[ndarray, ndarray, ndarray]:
@@ -117,15 +117,15 @@ def geodetic2aer(
 
 
 def aer2geodetic(
-    az: float,
-    el: float,
-    srange: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    az: ndarray,
+    el: ndarray,
+    srange: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     gives geodetic coordinates of a point with az, el, range
     from an observer at lat0, lon0, h0
@@ -167,12 +167,12 @@ def aer2geodetic(
 
 
 def eci2aer(
-    x: float,
-    y: float,
-    z: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    x: ndarray,
+    y: ndarray,
+    z: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     t: datetime,
     *,
     deg: bool = True,
@@ -221,18 +221,18 @@ def eci2aer(
 
 
 def aer2eci(
-    az: float,
-    el: float,
-    srange: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    az: ndarray,
+    el: ndarray,
+    srange: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     t: datetime,
     ell=None,
     *,
     deg: bool = True,
     use_astropy: bool = True
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     gives ECI of a point from an observer at az, el, slant range
 
@@ -280,15 +280,15 @@ def aer2eci(
 
 
 def aer2ecef(
-    az: float,
-    el: float,
-    srange: float,
-    lat0: float,
-    lon0: float,
-    alt0: float,
+    az: ndarray,
+    el: ndarray,
+    srange: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    alt0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     converts target azimuth, elevation, range from observer at lat0,lon0,alt0 to ECEF coordinates.
 

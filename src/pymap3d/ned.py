@@ -14,8 +14,8 @@ from .ellipsoid import Ellipsoid
 
 
 def aer2ned(
-    az: float, elev: float, slantRange: float, deg: bool = True
-) -> tuple[float, float, float]:
+    az: ndarray, elev: ndarray, slantRange: ndarray, deg: bool = True
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     converts azimuth, elevation, range to target from observer to North, East, Down
 
@@ -77,15 +77,15 @@ def ned2aer(
 
 
 def ned2geodetic(
-    n: float,
-    e: float,
-    d: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    n: ndarray,
+    e: ndarray,
+    d: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Converts North, East, Down to target latitude, longitude, altitude
 
@@ -126,15 +126,15 @@ def ned2geodetic(
 
 
 def ned2ecef(
-    n: float,
-    e: float,
-    d: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    n: ndarray,
+    e: ndarray,
+    d: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float, float]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     North, East, Down to target ECEF coordinates
 
@@ -175,12 +175,12 @@ def ecef2ned(
     x: ndarray,
     y: ndarray,
     z: ndarray,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Convert ECEF x,y,z to North, East, Down
 
@@ -224,12 +224,12 @@ def geodetic2ned(
     lat: ndarray,
     lon: ndarray,
     h: ndarray,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     convert latitude, longitude, altitude of target to North, East, Down from observer
 

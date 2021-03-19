@@ -73,7 +73,9 @@ def enu2aer(
     return az, elev, slantRange
 
 
-def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> tuple[float, float, float]:
+def aer2enu(
+    az: ndarray, el: ndarray, srange: float | ndarray, deg: bool = True
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Azimuth, Elevation, Slant range to target to East, North, Up
 
@@ -104,7 +106,7 @@ def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> tuple[floa
     try:
         if (asarray(srange) < 0).any():
             raise ValueError("Slant range  [0, Infinity)")
-    except UnboundLocalError:
+    except NameError:
         if srange < 0:
             raise ValueError("Slant range  [0, Infinity)")
 
@@ -114,15 +116,15 @@ def aer2enu(az: float, el: float, srange: float, deg: bool = True) -> tuple[floa
 
 
 def enu2geodetic(
-    e: float,
-    n: float,
-    u: float,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    e: ndarray,
+    n: ndarray,
+    u: ndarray,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     East, North, Up to target to geodetic coordinates
 
@@ -165,9 +167,9 @@ def geodetic2enu(
     lat: ndarray,
     lon: ndarray,
     h: ndarray,
-    lat0: float,
-    lon0: float,
-    h0: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[ndarray, ndarray, ndarray]:

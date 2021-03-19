@@ -4,11 +4,10 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import pi, nan, sqrt, vectorize, ndarray
+    from numpy import pi, nan, sqrt, ndarray, atleast_1d
 except ImportError:
     from math import pi, nan, sqrt  # type: ignore
 
-    vectorize = None
     ndarray = typing.Any  # type: ignore
 
 from .aer import aer2enu
@@ -19,14 +18,14 @@ __all__ = ["lookAtSpheroid"]
 
 
 def lookAtSpheroid(
-    lat0: float,
-    lon0: float,
-    h0: float,
-    az: float,
-    tilt: float,
+    lat0: ndarray,
+    lon0: ndarray,
+    h0: ndarray,
+    az: ndarray,
+    tilt: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray, ndarray]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -62,29 +61,19 @@ def lookAtSpheroid(
 
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
-    if vectorize is not None:
-        fun = vectorize(lookAtSpheroid_point)
-        lat, lon, d = fun(lat0, lon0, h0, az, tilt, ell, deg)
-        return lat[()], lon[()], d[()]
-    else:
-        return lookAtSpheroid_point(lat0, lon0, h0, az, tilt, ell, deg)
-
-
-def lookAtSpheroid_point(
-    lat0: float,
-    lon0: float,
-    h0: float,
-    az: float,
-    tilt: float,
-    ell: Ellipsoid = None,
-    deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
 
     if h0 < 0:
         raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
 
     if ell is None:
         ell = Ellipsoid()
+
+    try:
+        lat0 = atleast_1d(lat0)
+        lon0 = atleast_1d(lon0)
+        tilt = atleast_1d(tilt)
+    except NameError:
+        pass
 
     a = ell.semimajor_axis
     b = ell.semimajor_axis
@@ -115,14 +104,22 @@ def lookAtSpheroid_point(
     magnitude = a ** 2 * b ** 2 * w ** 2 + a ** 2 * c ** 2 * v ** 2 + b ** 2 * c ** 2 * u ** 2
 
     # %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
-    if radical > 0:
+    try:
         d = (value - a * b * c * sqrt(radical)) / magnitude
-    else:
-        d = nan
+        d[radical < 0] = nan
+        d[d < 0] = nan
+    except ValueError:
+        if radical < 0:
+            d = nan
+        if d < 0:
+            d = nan
+    except TypeError:
+        pass
 
-    if d < 0:
-        d = nan
     # %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
-    return lat, lon, d
+    try:
+        return lat.squeeze()[()], lon.squeeze()[()], d.squeeze()[()]
+    except AttributeError:
+        return lat, lon, d

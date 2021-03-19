@@ -41,4 +41,4 @@ full = [
 line-length = 100
 
 [tool.pytest.ini_options]
-addopts = "-ra -v"
+addopts = "-ra"

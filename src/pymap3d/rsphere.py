@@ -94,13 +94,13 @@ def rsphere_rectifying(ell: Ellipsoid = None) -> float:
 
 
 def rsphere_euler(
-    lat1: float | ndarray,
-    lon1: float,
-    lat2: float | ndarray,
-    lon2: float,
+    lat1: ndarray,
+    lon1: ndarray,
+    lat2: ndarray,
+    lon2: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> float:
+) -> ndarray:
     """computes the Euler radii of curvature at the midpoint of the
      great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)
 

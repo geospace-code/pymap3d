@@ -5,13 +5,27 @@ Vincenty's methods for computing ground distance and reckoning
 from __future__ import annotations
 import typing
 import logging
-from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, nan, pi, radians, degrees
+from math import nan, pi
 from copy import copy
 
 try:
-    from numpy import ndarray, vectorize
+    from numpy import (
+        ndarray,
+        atleast_1d,
+        sqrt,
+        tan,
+        sin,
+        cos,
+        isnan,
+        arctan as atan,
+        arctan2 as atan2,
+        arcsin as asin,
+        radians,
+        degrees,
+    )
 except ImportError:
-    vectorize = None
+    from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees  # type: ignore
+
     ndarray = typing.Any  # type: ignore
 
 from .ellipsoid import Ellipsoid
@@ -21,8 +35,12 @@ __all__ = ["vdist", "vreckon", "track2"]
 
 
 def vdist(
-    Lat1: float | ndarray, Lon1: float, Lat2: float | ndarray, Lon2: float, ell: Ellipsoid = None
-) -> tuple[float, float]:
+    Lat1: float | ndarray,
+    Lon1: float | ndarray,
+    Lat2: float | ndarray,
+    Lon2: float | ndarray,
+    ell: Ellipsoid = None,
+) -> tuple[ndarray, ndarray]:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -93,22 +111,20 @@ def vdist(
      11. Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3) to within about a hundred-thousandth of a degree, except when traversing to or from a pole, where the convention for this function is described in (10), and except in the cases noted above in (9).
      12. No warranties; use at your own risk.
     """
-    if vectorize is not None:
-        fun = vectorize(vdist_point)
-        dist, az = fun(Lat1, Lon1, Lat2, Lon2, ell)
-        return dist[()], az[()]
-    else:
-        return vdist_point(Lat1, Lon1, Lat2, Lon2, ell)
 
-
-def vdist_point(
-    Lat1: float | ndarray, Lon1: float, Lat2: float | ndarray, Lon2: float, ell: Ellipsoid = None
-) -> tuple[float, float]:
     if ell is None:
         ell = Ellipsoid()
     # %% Input check:
-    if (abs(Lat1) > 90) | (abs(Lat2) > 90):
-        raise ValueError("Input latitudes must be in [-90, 90] degrees.")
+    try:
+        Lat1 = atleast_1d(Lat1)
+        Lon1 = atleast_1d(Lon1)
+        Lat2 = atleast_1d(Lat2)
+        Lon2 = atleast_1d(Lon2)
+        if (abs(Lat1) > 90).any() | (abs(Lat2) > 90).any():
+            raise ValueError("Input latitudes must be in [-90, 90] degrees.")
+    except NameError:
+        if (abs(Lat1) > 90) | (abs(Lat2) > 90):
+            raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
     b = ell.semiminor_axis
@@ -119,19 +135,30 @@ def vdist_point(
     lat2 = radians(Lat2)
     lon2 = radians(Lon2)
     # %% correct for errors at exact poles by adjusting 0.6 millimeters:
-    if abs(pi / 2 - abs(lat1)) < 1e-10:
-        lat1 = sign(lat1) * (pi / 2 - 1e-10)
+    try:
+        i = abs(pi / 2 - abs(lat1)) < 1e-10
+        lat1[i] = sign(lat1[i]) * (pi / 2 - 1e-10)
 
-    if abs(pi / 2 - abs(lat2)) < 1e-10:
-        lat2 = sign(lat2) * (pi / 2 - 1e-10)
+        i = abs(pi / 2 - abs(lat2)) < 1e-10
+        lat2[i] = sign(lat2[i]) * (pi / 2 - 1e-10)
+    except TypeError:
+        if abs(pi / 2 - abs(lat1)) < 1e-10:
+            lat1 = sign(lat1) * (pi / 2 - 1e-10)
+
+        if abs(pi / 2 - abs(lat2)) < 1e-10:
+            lat2 = sign(lat2) * (pi / 2 - 1e-10)
 
     U1 = atan((1 - f) * tan(lat1))
     U2 = atan((1 - f) * tan(lat2))
     lon1 = lon1 % (2 * pi)
     lon2 = lon2 % (2 * pi)
     L = abs(lon2 - lon1)
-    if L > pi:
-        L = 2 * pi - L
+
+    try:
+        L[L > pi] = 2 * pi - L[L > pi]
+    except TypeError:
+        if L > pi:
+            L = 2 * pi - L
 
     lamb = copy(L)  # NOTE: program will fail without copy!
     itercount = 0
@@ -161,15 +188,23 @@ def vdist_point(
 
         try:
             sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
-        except ZeroDivisionError:
-            sinAlpha = 0.0
 
-        if isnan(sinAlpha):
-            alpha = 0.0
-        elif sinAlpha > 1 or abs(sinAlpha - 1) < 1e-16:
-            alpha = pi / 2
-        else:
             alpha = asin(sinAlpha)
+            alpha[isnan(sinAlpha)] = 0
+            alpha[(sinAlpha > 1) | (abs(sinAlpha - 1) < 1e-16)] = pi / 2
+
+        except (ZeroDivisionError, TypeError, ValueError):
+            try:
+                sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
+            except ZeroDivisionError:
+                sinAlpha = 0.0
+
+            if isnan(sinAlpha):
+                alpha = 0.0
+            elif sinAlpha > 1 or abs(sinAlpha - 1) < 1e-16:
+                alpha = pi / 2
+            else:
+                alpha = asin(sinAlpha)
 
         cos2sigmam = cos(sigma) - 2 * sin(U1) * sin(U2) / cos(alpha) ** 2
 
@@ -180,7 +215,12 @@ def vdist_point(
         )
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
-        if lamb > pi:
+        try:
+            i = (lamb > pi).any()
+        except AttributeError:
+            i = lamb > pi
+
+        if i:
             logging.warning(
                 "Essentially antipodal points encountered. Precision may be reduced slightly."
             )
@@ -188,7 +228,10 @@ def vdist_point(
             lambdaold = pi
             lamb = pi
 
-        notdone = abs(lamb - lambdaold) > 1e-12
+        try:
+            notdone = (abs(lamb - lambdaold) > 1e-12).any()
+        except AttributeError:
+            notdone = abs(lamb - lambdaold) > 1e-12
 
     u2 = cos(alpha) ** 2 * (a ** 2 - b ** 2) / b ** 2
     A = 1 + u2 / 16384 * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)))
@@ -212,8 +255,14 @@ def vdist_point(
     # %% From point #1 to point #2
     # correct sign of lambda for azimuth calcs:
     lamb = abs(lamb)
-    if sign(sin(lon2 - lon1)) * sign(sin(lamb)) < 0:
-        lamb = -lamb
+
+    try:
+        i = sign(sin(lon2 - lon1)) * sign(sin(lamb)) < 0
+        lamb[i] = -lamb[i]
+    except TypeError:
+        if sign(sin(lon2 - lon1)) * sign(sin(lamb)) < 0:
+            lamb = -lamb
+
     numer = cos(U2) * sin(lamb)
     denom = cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)
     a12 = atan2(numer, denom)
@@ -221,12 +270,15 @@ def vdist_point(
 
     az = degrees(a12)
 
-    return dist_m, az
+    try:
+        return dist_m.squeeze()[()], az.squeeze()[()]
+    except AttributeError:
+        return dist_m, az
 
 
 def vreckon(
-    Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None
-) -> tuple[float, float]:
+    Lat1: float | ndarray, Lon1: float | ndarray, Rng: ndarray, Azim: ndarray, ell: Ellipsoid = None
+) -> tuple[ndarray, ndarray]:
     """
     This is the Vincenty "forward" solution.
 
@@ -283,20 +335,21 @@ def vreckon(
     Added ellipsoid and vectorized whenever possible. Also, lon2 is always converted to the [-180 180] interval.
     Joaquim Luis
     """
-    if vectorize is not None:
-        fun = vectorize(vreckon_point)
-        return fun(Lat1, Lon1, Rng, Azim, ell)
-    else:
-        return vreckon_point(Lat1, Lon1, Rng, Azim, ell)
 
-
-def vreckon_point(
-    Lat1: float, Lon1: float, Rng: float, Azim: float, ell: Ellipsoid = None
-) -> tuple[float, float]:
-    if abs(Lat1) > 90:
-        raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
-    if Rng < 0:
-        raise ValueError("Ground distance must be positive")
+    try:
+        Lat1 = atleast_1d(Lat1)
+        Lon1 = atleast_1d(Lon1)
+        Rng = atleast_1d(Rng)
+        Azim = atleast_1d(Azim)
+        if (abs(Lat1) > 90).any():
+            raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
+        if (Rng < 0).any():
+            raise ValueError("Ground distance must be positive")
+    except NameError:
+        if abs(Lat1) > 90:
+            raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
+        if Rng < 0:
+            raise ValueError("Ground distance must be positive")
 
     if ell is not None:
         a = ell.semimajor_axis
@@ -311,8 +364,12 @@ def vreckon_point(
     lon1 = radians(Lon1)  # intial longitude in radians
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
-    if abs(pi / 2 - abs(lat1)) < 1e-10:
-        lat1 = sign(lat1) * (pi / 2 - (1e-10))
+    try:
+        i = abs(pi / 2 - abs(lat1)) < 1e-10
+        lat1[i] = sign(lat1[i]) * (pi / 2 - (1e-10))
+    except TypeError:
+        if abs(pi / 2 - abs(lat1)) < 1e-10:
+            lat1 = sign(lat1) * (pi / 2 - (1e-10))
 
     alpha1 = radians(Azim)  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
@@ -334,7 +391,13 @@ def vreckon_point(
     sinSigma = nan
     cosSigma = nan
     cos2SigmaM = nan
-    while abs(sigma - sigmaP) > 1e-12:
+
+    try:
+        i = (abs(sigma - sigmaP) > 1e-12).any()
+    except AttributeError:
+        i = abs(sigma - sigmaP) > 1e-12
+
+    while i:
         cos2SigmaM = cos(2 * sigma1 + sigma)
         sinSigma = sin(sigma)
         cosSigma = cos(sigma)
@@ -357,6 +420,10 @@ def vreckon_point(
         )
         sigmaP = sigma
         sigma = Rng / (b * A) + deltaSigma
+        try:
+            i = (abs(sigma - sigmaP) > 1e-12).any()
+        except AttributeError:
+            i = abs(sigma - sigmaP) > 1e-12
 
     tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1
     lat2 = atan2(
@@ -387,14 +454,14 @@ def vreckon_point(
 
 
 def track2(
-    lat1: float,
-    lon1: float,
-    lat2: float,
-    lon2: float,
+    lat1: ndarray,
+    lon1: ndarray,
+    lat2: ndarray,
+    lon2: ndarray,
     ell: Ellipsoid = None,
     npts: int = 100,
     deg: bool = True,
-) -> tuple[list[float], list[float]]:
+) -> tuple[list[ndarray], list[ndarray]]:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 

@@ -4,11 +4,10 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, vectorize, ndarray
+    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, ndarray, atleast_1d
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
 
-    vectorize = None
     ndarray = typing.Any  # type: ignore
 
 import typing
@@ -34,7 +33,7 @@ __all__ = [
 ]
 
 
-def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def meridian_dist(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     Computes the ground distance on an ellipsoid from the equator to the input latitude.
 
@@ -52,10 +51,10 @@ def meridian_dist(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     dist : float
          distance (meters)
     """
-    return meridian_arc(0, lat, ell, deg)
+    return meridian_arc(0.0, lat, ell, deg)
 
 
-def meridian_arc(lat1: float, lat2: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def meridian_arc(lat1, lat2: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     Computes the ground distance on an ellipsoid between two latitudes.
 
@@ -84,10 +83,10 @@ def meridian_arc(lat1: float, lat2: float, ell: Ellipsoid = None, deg: bool = Tr
 
 
 def loxodrome_inverse(
-    lat1: float,
-    lon1: float,
-    lat2: float,
-    lon2: float,
+    lat1: ndarray,
+    lon1: ndarray,
+    lat2: ndarray,
+    lon2: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[float, float]:
@@ -135,17 +134,7 @@ def loxodrome_inverse(
     Survey, U.S. Department of Commerce, Washington, DC: U.S.
     Government Printing Office, p. 66.
     """
-    if vectorize is not None:
-        fun = vectorize(loxodrome_inverse_point)
-        lox, az = fun(lat1, lon1, lat2, lon2, ell, deg)
-        return lox[()], az[()]
-    else:
-        return loxodrome_inverse_point(lat1, lon1, lat2, lon2, ell, deg)
 
-
-def loxodrome_inverse_point(
-    lat1: float, lon1: float, lat2: float, lon2: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float]:
     if deg:
         lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
@@ -160,10 +149,13 @@ def loxodrome_inverse_point(
     cosaz12 = cos(az12)
 
     # compute distance along loxodromic curve
-    if abs(cosaz12) < 1e-9:  # straight east or west
-        dist = departure(lon2, lon1, lat1, ell, deg=False)
-    else:
-        dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / abs(cos(az12))
+    dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / abs(cos(az12))
+    try:
+        if (abs(cosaz12) < 1e-9).any():
+            dist[abs(cosaz12) < 1e-9] = departure(lon2, lon1, lat1, ell, deg=False)
+    except (AttributeError, TypeError):
+        if abs(cosaz12) < 1e-9:  # straight east or west
+            dist = departure(lon2, lon1, lat1, ell, deg=False)
 
     if deg:
         az12 = degrees(az12) % 360.0
@@ -172,13 +164,13 @@ def loxodrome_inverse_point(
 
 
 def loxodrome_direct(
-    lat1: float,
-    lon1: float,
-    rng: float,
+    lat1: ndarray,
+    lon1: ndarray,
+    rng: ndarray,
     a12: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float, float]:
+) -> tuple[ndarray, ndarray]:
     """
     Given starting lat, lon with arclength and azimuth, compute final lat, lon
 
@@ -206,25 +198,22 @@ def loxodrome_direct(
     lon2 : float
         final geodetic longitude (degrees)
     """
-    if vectorize is not None:
-        fun = vectorize(loxodrome_direct_point)
-        lat2, lon2 = fun(lat1, lon1, rng, a12, ell, deg)
-        return lat2[()], lon2[()]
-    else:
-        return loxodrome_direct_point(lat1, lon1, rng, a12, ell, deg)
-
-
-def loxodrome_direct_point(
-    lat1: float, lon1: float, rng: float, a12: float, ell: Ellipsoid = None, deg: bool = True
-) -> typing.Tuple[float, float]:
 
     if deg:
         lat1, lon1, a12 = radians(lat1), radians(lon1), radians(a12)
 
-    if abs(lat1) > pi / 2:
-        raise ValueError("-90 <= latitude <= 90")
-    if rng < 0:
-        raise ValueError("ground distance must be >= 0")
+    try:
+        lat1 = atleast_1d(lat1)
+        rng = atleast_1d(rng)
+        if (abs(lat1) > pi / 2).any():
+            raise ValueError("-90 <= latitude <= 90")
+        if (rng < 0).any():
+            raise ValueError("ground distance must be >= 0")
+    except NameError:
+        if abs(lat1) > pi / 2:
+            raise ValueError("-90 <= latitude <= 90")
+        if rng < 0:
+            raise ValueError("ground distance must be >= 0")
 
     #   compute rectifying sphere latitude and radius
     reclat = geodetic2rectifying(lat1, ell, deg=False)
@@ -243,11 +232,14 @@ def loxodrome_direct_point(
     if deg:
         lat2, lon2 = degrees(lat2), degrees(lon2)
 
-    return lat2, lon2
+    try:
+        return lat2.squeeze()[()], lon2.squeeze()[()]
+    except AttributeError:
+        return lat2, lon2
 
 
 def departure(
-    lon1: float, lon2: float, lat: float, ell: Ellipsoid = None, deg: bool = True
+    lon1: ndarray, lon2: ndarray, lat: ndarray, ell: Ellipsoid = None, deg: bool = True
 ) -> float:
     """
     Computes the distance along a specific parallel between two meridians.

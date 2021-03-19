@@ -7,7 +7,7 @@ from .utils import sanitize
 from .rcurve import rcurve_transverse
 
 try:
-    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, vectorize, ndarray
+    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, ndarray
     from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh  # noqa: A001
 
     use_numpy = True
@@ -37,8 +37,8 @@ __all__ = [
 
 
 def geoc2geod(
-    geocentric_lat: float,
-    geocentric_distance: float,
+    geocentric_lat: ndarray,
+    geocentric_distance: ndarray,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> float:
@@ -162,28 +162,7 @@ def geocentric2geodetic(
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2isometric_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
-    geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
-
-    e = ell.eccentricity
-
-    if abs(geodetic_lat - pi / 2) <= 1e-9:
-        isometric_lat = inf
-    elif abs(-geodetic_lat - pi / 2) <= 1e-9:
-        isometric_lat = -inf
-    else:
-        isometric_lat = asinh(tan(geodetic_lat)) - e * atanh(e * sin(geodetic_lat))
-        # same results
-        # a1 = e * sin(geodetic_lat)
-        # y = (1 - a1) / (1 + a1)
-        # a2 = pi / 4 + geodetic_lat / 2
-        # isometric_lat = log(tan(a2) * (y ** (e / 2)))
-        # isometric_lat = log(tan(a2)) + e/2 * log((1-e*sin(geodetic_lat)) / (1+e*sin(geodetic_lat)))
-
-    return degrees(isometric_lat) if deg else isometric_lat
-
-
-def geodetic2isometric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def geodetic2isometric(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes isometric latitude on an ellipsoid
 
@@ -212,11 +191,29 @@ def geodetic2isometric(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = T
     School of Mathematical and Geospatial Sciences, RMIT University,
     January 2010
     """
-    if use_numpy:
-        fun = vectorize(geodetic2isometric_point)
-        return fun(geodetic_lat, ell, deg)[()]
-    else:
-        return geodetic2isometric_point(geodetic_lat, ell, deg)
+
+    geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
+
+    e = ell.eccentricity
+
+    isometric_lat = asinh(tan(geodetic_lat)) - e * atanh(e * sin(geodetic_lat))
+    # same results
+    # a1 = e * sin(geodetic_lat)
+    # y = (1 - a1) / (1 + a1)
+    # a2 = pi / 4 + geodetic_lat / 2
+    # isometric_lat = log(tan(a2) * (y ** (e / 2)))
+    # isometric_lat = log(tan(a2)) + e/2 * log((1-e*sin(geodetic_lat)) / (1+e*sin(geodetic_lat)))
+
+    try:
+        isometric_lat[abs(geodetic_lat - pi / 2) <= 1e-9] = inf
+        isometric_lat[abs(-geodetic_lat - pi / 2) <= 1e-9] = -inf
+    except TypeError:
+        if abs(geodetic_lat - pi / 2) <= 1e-9:
+            isometric_lat = inf
+        elif abs(-geodetic_lat - pi / 2) <= 1e-9:
+            isometric_lat = -inf
+
+    return degrees(isometric_lat) if deg else isometric_lat
 
 
 def isometric2geodetic(isometric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
@@ -327,14 +324,7 @@ def geodetic2conformal(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = T
     Office, Washington, DC, 1987, pp. 13-18.
 
     """
-    if use_numpy:
-        fun = vectorize(geodetic2conformal_point)
-        return fun(geodetic_lat, ell, deg)[()]
-    else:
-        return geodetic2conformal_point(geodetic_lat, ell, deg)
 
-
-def geodetic2conformal_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     e = ell.eccentricity
@@ -353,7 +343,7 @@ def geodetic2conformal_point(geodetic_lat: float, ell: Ellipsoid = None, deg: bo
 
 
 # %% rectifying
-def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def geodetic2rectifying(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     converts from geodetic latitude to rectifying latitude
 
@@ -399,7 +389,9 @@ def geodetic2rectifying(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = 
     return degrees(rectifying_lat) if deg else rectifying_lat
 
 
-def rectifying2geodetic(rectifying_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def rectifying2geodetic(
+    rectifying_lat: ndarray, ell: Ellipsoid = None, deg: bool = True
+) -> ndarray:
     """
     converts from rectifying latitude to geodetic latitude
 

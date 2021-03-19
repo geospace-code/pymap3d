@@ -36,7 +36,7 @@ def geocentric_radius(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = Tr
     )
 
 
-def rcurve_parallel(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def rcurve_parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
 
