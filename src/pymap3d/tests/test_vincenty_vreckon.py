@@ -30,7 +30,10 @@ def test_unit(lat, lon, srange, az, lato, lono):
     lat1, lon1 = vincenty.vreckon(lat, lon, srange, az)
 
     assert lat1 == approx(lato)
+    assert isinstance(lat1, float)
+
     assert lon1 == approx(lono, rel=0.001)
+    assert isinstance(lon1, float)
 
 
 def test_az_vector():

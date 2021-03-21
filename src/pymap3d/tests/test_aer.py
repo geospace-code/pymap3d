@@ -16,6 +16,9 @@ def test_aer2ecef(aer, lla, xyz):
     assert x == approx(xyz[0])
     assert y == approx(xyz[1])
     assert z == approx(xyz[2])
+    assert isinstance(x, float)
+    assert isinstance(y, float)
+    assert isinstance(z, float)
 
     raer = (radians(aer[0]), radians(aer[1]), aer[2])
     rlla = (radians(lla[0]), radians(lla[1]), lla[2])

@@ -450,7 +450,10 @@ def vreckon(
 
     lon2 = lon2 % 360  # follow [0, 360) convention
 
-    return degrees(lat2), lon2
+    try:
+        return degrees(lat2).squeeze()[()], lon2.squeeze()[()]
+    except AttributeError:
+        return degrees(lat2), lon2
 
 
 def track2(
