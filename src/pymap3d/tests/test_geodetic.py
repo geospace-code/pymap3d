@@ -54,6 +54,34 @@ def test_3d_ecef2geodetic():
 
     assert [lat, lon, alt] == approx(lla0, rel=1e-4)
 
+def test_array_ecef2geodetic():
+    """
+    tests ecef2geodetic can handle numpy array data in addition to singular floats
+    """
+    np = pytest.importorskip("numpy")
+    # test values with no points inside ellipsoid
+    lla0_array = (
+        np.array([lla0[0], lla0[0]]), np.array([lla0[1], lla0[1]]), np.array([lla0[2], lla0[2]])
+        )
+    xyz = pm.geodetic2ecef(*lla0_array)
+    lats, lons, alts = pm.ecef2geodetic(*xyz)
+
+    np.testing.assert_almost_equal(lats, lla0_array[0])
+    np.testing.assert_almost_equal(lons, lla0_array[1])
+    np.testing.assert_almost_equal(alts, lla0_array[2])
+
+    # test values with some (but not all) points inside ellipsoid
+    lla0_array_inside = (
+        np.array([lla0[0], lla0[0]]), np.array([lla0[1], lla0[1]]), np.array([lla0[2], -lla0[2]])
+        )
+    xyz = pm.geodetic2ecef(*lla0_array_inside)
+    lats, lons, alts = pm.ecef2geodetic(*xyz)
+
+    np.testing.assert_almost_equal(lats, lla0_array_inside[0])
+    np.testing.assert_almost_equal(lons, lla0_array_inside[1])
+    np.testing.assert_almost_equal(alts, lla0_array_inside[2])
+
+
 
 def test_xarray():
     xarray = pytest.importorskip("xarray")
