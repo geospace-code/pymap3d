@@ -13,4 +13,4 @@ P = p.parse_args()
 
 lat2, lon2 = vincenty.vreckon(P.lat, P.lon, P.range, P.azimuth)
 
-print("lat, lon = ({:.4f}, {:.4f})".format(lat2.item(), lon2.item()))
+print(f"lat, lon = ({lat2.item():.4f}, {lon2.item():.4f})")

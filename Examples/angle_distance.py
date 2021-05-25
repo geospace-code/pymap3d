@@ -15,7 +15,7 @@ def main():
     dist_deg = anglesep_meeus(a.r0, a.d0, a.r1, a.d1)
     dist_deg_astropy = anglesep(a.r0, a.d0, a.r1, a.d1)
 
-    print("{:.6f} deg sep".format(dist_deg))
+    print(f"{dist_deg:.6f} deg sep")
 
     assert dist_deg == approx(dist_deg_astropy)
 

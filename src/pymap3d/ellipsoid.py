@@ -22,6 +22,7 @@ class Ellipsoid:
         model : str
                 name of ellipsoid
         """
+
         if model == "wgs84":
             """https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84"""
             self.semimajor_axis = 6378137.0
@@ -62,9 +63,7 @@ class Ellipsoid:
             self.semiminor_axis = self.semimajor_axis
         else:
             raise NotImplementedError(
-                "{} model not implemented, let us know and we will add it (or make a pull request)".format(
-                    model
-                )
+                f"{model} model not implemented, let us know and we will add it (or make a pull request)"
             )
 
         self.flattening = (self.semimajor_axis - self.semiminor_axis) / self.semimajor_axis

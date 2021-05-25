@@ -32,13 +32,13 @@ def get_place_coords(
     keyfn = Path(keyfn).expanduser()
     key = keyfn.read_text()
 
-    stub = URL + "location={},{}".format(latitude, longitude)
+    stub = URL + f"location={latitude},{longitude}"
 
-    stub += "&radius={}".format(search_radius_km * 1000)
+    stub += f"&radius={search_radius_km * 1000}"
 
-    stub += "&types={}".format(place_type)
+    stub += f"&types={place_type}"
 
-    stub += "&key={}".format(key)
+    stub += f"&key={key}"
 
     r = requests.get(stub)
     r.raise_for_status()

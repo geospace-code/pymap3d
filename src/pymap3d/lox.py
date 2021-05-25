@@ -265,7 +265,7 @@ def departure(
     if deg:
         lon1, lon2, lat = radians(lon1), radians(lon2), radians(lat)
 
-    return rcurve.parallel(lat, ell, deg=False) * ((lon2 - lon1) % pi)
+    return rcurve.parallel(lat, ell=ell, deg=False) * ((lon2 - lon1) % pi)
 
 
 def meanm(
