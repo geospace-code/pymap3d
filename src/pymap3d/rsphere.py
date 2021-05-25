@@ -12,22 +12,22 @@ except ImportError:
     ndarray = typing.Any  # type: ignore
 
 from .ellipsoid import Ellipsoid
-from .rcurve import rcurve_meridian, rcurve_transverse
+from . import rcurve
 from .vincenty import vdist
 
 
 __all__ = [
-    "rsphere_eqavol",
-    "rsphere_authalic",
-    "rsphere_rectifying",
-    "rsphere_euler",
-    "rsphere_curve",
-    "rsphere_triaxial",
-    "rsphere_biaxial",
+    "eqavol",
+    "authalic",
+    "rectifying",
+    "euler",
+    "curve",
+    "triaxial",
+    "biaxial",
 ]
 
 
-def rsphere_eqavol(ell: Ellipsoid = None) -> float:
+def eqavol(ell: Ellipsoid = None) -> float:
     """computes the radius of the sphere with equal volume as the ellipsoid
 
     Parameters
@@ -48,7 +48,7 @@ def rsphere_eqavol(ell: Ellipsoid = None) -> float:
     return ell.semimajor_axis * (1 - f / 3 - f ** 2 / 9)
 
 
-def rsphere_authalic(ell: Ellipsoid = None) -> float:
+def authalic(ell: Ellipsoid = None) -> float:
     """computes the radius of the sphere with equal surface area as the ellipsoid
 
     Parameters
@@ -75,7 +75,7 @@ def rsphere_authalic(ell: Ellipsoid = None) -> float:
         return ell.semimajor_axis
 
 
-def rsphere_rectifying(ell: Ellipsoid = None) -> float:
+def rectifying(ell: Ellipsoid = None) -> float:
     """computes the radius of the sphere with equal meridional distances as the ellipsoid
 
     Parameters
@@ -93,7 +93,7 @@ def rsphere_rectifying(ell: Ellipsoid = None) -> float:
     return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
-def rsphere_euler(
+def euler(
     lat1: ndarray,
     lon1: ndarray,
     lat2: ndarray,
@@ -131,8 +131,8 @@ def rsphere_euler(
     az = vdist(lat1, lon1, lat2, lon2, ell=ell)[1]
 
     #   compute meridional and transverse radii of curvature
-    rho = rcurve_meridian(latmid, ell, deg=True)
-    nu = rcurve_transverse(latmid, ell, deg=True)
+    rho = rcurve.meridian(latmid, ell, deg=True)
+    nu = rcurve.transverse(latmid, ell, deg=True)
 
     az = radians(az)
     den = rho * sin(az) ** 2 + nu * cos(az) ** 2
@@ -141,9 +141,7 @@ def rsphere_euler(
     return rho * nu / den
 
 
-def rsphere_curve(
-    lat: float, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"
-) -> float:
+def curve(lat: float, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> float:
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
@@ -167,18 +165,18 @@ def rsphere_curve(
     if deg:
         lat = radians(lat)
 
-    rho = rcurve_meridian(lat, ell, deg=False)
-    nu = rcurve_transverse(lat, ell, deg=False)
+    rho = rcurve.meridian(lat, ell, deg=False)
+    nu = rcurve.transverse(lat, ell, deg=False)
 
     if method == "mean":
         return (rho + nu) / 2
     elif method == "norm":
         return sqrt(rho * nu)
     else:
-        raise Exception("pymap3d.rsphere.curve: method must be mean or norm")
+        raise ValueError("method must be mean or norm")
 
 
-def rsphere_triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     """computes triaxial average of the semimajor and semiminor axes of the ellipsoid
 
     Parameters
@@ -202,10 +200,10 @@ def rsphere_triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     elif method == "norm":
         return (ell.semimajor_axis ** 2 * ell.semiminor_axis) ** (1 / 3)
     else:
-        raise Exception("pymap3d.rsphere.rsphere_triaxial: method must be mean or norm")
+        raise ValueError("method must be mean or norm")
 
 
-def rsphere_biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+def biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     """computes biaxial average of the semimajor and semiminor axes of the ellipsoid
 
     Parameters
@@ -229,4 +227,4 @@ def rsphere_biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     elif method == "norm":
         return sqrt(ell.semimajor_axis * ell.semiminor_axis)
     else:
-        raise Exception("pymap3d.rsphere.rsphere_biaxial: method must be mean or norm")
+        raise ValueError("method must be mean or norm")

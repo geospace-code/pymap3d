@@ -1,7 +1,9 @@
 import pytest
 from pytest import approx
-import pymap3d as pm
+
 from math import nan
+
+import pymap3d.los as los
 
 
 @pytest.mark.parametrize(
@@ -17,7 +19,7 @@ from math import nan
 def test_losint(az, tilt, lat, lon, sr):
 
     lla0 = (10, -20, 1e3)
-    lat1, lon1, sr1 = pm.lookAtSpheroid(*lla0, az, tilt=tilt)
+    lat1, lon1, sr1 = los.lookAtSpheroid(*lla0, az, tilt=tilt)
 
     nan_ok = True if tilt == 90 else False
 
@@ -32,7 +34,7 @@ def test_losint(az, tilt, lat, lon, sr):
 def test_badval():
 
     with pytest.raises(ValueError):
-        pm.lookAtSpheroid(0, 0, -1, 0, 0)
+        los.lookAtSpheroid(0, 0, -1, 0, 0)
 
 
 def test_array():
@@ -41,7 +43,7 @@ def test_array():
     az = [0.0, 10.0, 125.0]
     tilt = [30.0, 45.0, 90.0]
     lla0 = (42, -82, 200)
-    lat, lon, sr = pm.lookAtSpheroid(*lla0, az, tilt)
+    lat, lon, sr = los.lookAtSpheroid(*lla0, az, tilt)
 
     truth = np.array(
         [

@@ -16,7 +16,7 @@ except ImportError:
     ndarray = typing.Any  # type: ignore
 
     def sign(x: float) -> float:  # type: ignore
-        """ signum function """
+        """signum function"""
         if x < 0:
             y = -1.0
         elif x > 0:

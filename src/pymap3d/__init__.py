@@ -30,7 +30,7 @@ Companion packages exist for:
 """
 
 from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic
-from .ellipsoid import Ellipsoid
+
 from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
 from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
 from .ecef import (
@@ -45,34 +45,7 @@ from .ecef import (
     uvw2enu,
 )
 from .sidereal import datetime2sidereal, greenwichsrt
-from .latitude import (
-    geod2geoc,
-    geoc2geod,
-    geodetic2geocentric,
-    geocentric2geodetic,
-    geodetic2isometric,
-    isometric2geodetic,
-    geodetic2conformal,
-    conformal2geodetic,
-    geodetic2rectifying,
-    rectifying2geodetic,
-    geodetic2authalic,
-    authalic2geodetic,
-    geodetic2parametric,
-    parametric2geodetic,
-)
-from .rcurve import geocentric_radius, rcurve_parallel, rcurve_meridian, rcurve_transverse
-from .rsphere import (
-    rsphere_eqavol,
-    rsphere_authalic,
-    rsphere_rectifying,
-    rsphere_euler,
-    rsphere_curve,
-    rsphere_triaxial,
-    rsphere_biaxial,
-)
-from .lox import meridian_arc, meridian_dist, loxodrome_inverse, loxodrome_direct, departure, meanm
-from .los import lookAtSpheroid
+from .ellipsoid import Ellipsoid
 from .timeconv import str2dt
 
 try:

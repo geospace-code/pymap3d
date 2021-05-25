@@ -12,8 +12,8 @@ except ImportError:
 
 import typing
 from .ellipsoid import Ellipsoid
-from .rcurve import rcurve_parallel
-from .rsphere import rsphere_rectifying
+from . import rcurve
+from . import rsphere
 from .latitude import (
     geodetic2rectifying,
     rectifying2geodetic,
@@ -79,7 +79,7 @@ def meridian_arc(lat1, lat2: ndarray, ell: Ellipsoid = None, deg: bool = True) -
     rlat1 = geodetic2rectifying(lat1, ell, deg=False)
     rlat2 = geodetic2rectifying(lat2, ell, deg=False)
 
-    return rsphere_rectifying(ell) * abs(rlat2 - rlat1)
+    return rsphere.rectifying(ell) * abs(rlat2 - rlat1)
 
 
 def loxodrome_inverse(
@@ -220,7 +220,7 @@ def loxodrome_direct(
 
     # compute the new points
     cosaz = cos(a12)
-    lat2 = reclat + (rng / rsphere_rectifying(ell)) * cosaz  # compute rectifying latitude
+    lat2 = reclat + (rng / rsphere.rectifying(ell)) * cosaz  # compute rectifying latitude
     lat2 = rectifying2geodetic(lat2, ell, deg=False)  # transform to geodetic latitude
 
     newiso = geodetic2isometric(lat2, ell, deg=False)
@@ -265,7 +265,7 @@ def departure(
     if deg:
         lon1, lon2, lat = radians(lon1), radians(lon2), radians(lat)
 
-    return rcurve_parallel(lat, ell, deg=False) * ((lon2 - lon1) % pi)
+    return rcurve.parallel(lat, ell, deg=False) * ((lon2 - lon1) % pi)
 
 
 def meanm(

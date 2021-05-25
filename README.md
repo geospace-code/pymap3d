@@ -112,6 +112,15 @@ Abbreviations:
 * [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
 * [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
 
+### command line
+
+Command line convenience functions provided include:
+
+```sh
+python -m pymap3d.vdist
+python -m pymap3d.vreckon
+```
+
 ### array vs scalar
 
 Use of pymap3d on embedded systems or other streaming data applications often deal with scalar position data.

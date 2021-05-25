@@ -16,7 +16,7 @@ except ImportError as exc:
 
 
 def matlab_func(lat1: float, lon1: float, lat2: float, lon2: float) -> typing.Tuple[float, float]:
-    """ Using Matlab Engine to do same thing as Pymap3d """
+    """Using Matlab Engine to do same thing as Pymap3d"""
     ell = eng.wgs84Ellipsoid()
     return eng.distance(lat1, lon1, lat2, lon2, ell, nargout=2)
 

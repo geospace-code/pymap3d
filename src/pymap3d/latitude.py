@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 import typing
+
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
-from .rcurve import rcurve_transverse
+from . import rcurve
 
 try:
     from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, ndarray
@@ -115,7 +116,7 @@ def geodetic2geocentric(
     Office, Washington, DC, 1987, pp. 13-18.
     """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
-    r = rcurve_transverse(geodetic_lat, ell, deg=False)
+    r = rcurve.transverse(geodetic_lat, ell, deg=False)
     geocentric_lat = atan((1 - ell.eccentricity ** 2 * (r / (r + alt_m))) * tan(geodetic_lat))
 
     return degrees(geocentric_lat) if deg else geocentric_lat
@@ -156,7 +157,7 @@ def geocentric2geodetic(
     Office, Washington, DC, 1987, pp. 13-18.
     """
     geocentric_lat, ell = sanitize(geocentric_lat, ell, deg)
-    r = rcurve_transverse(geocentric_lat, ell, deg=False)
+    r = rcurve.transverse(geocentric_lat, ell, deg=False)
     geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity ** 2 * (r / (r + alt_m))))
 
     return degrees(geodetic_lat) if deg else geodetic_lat

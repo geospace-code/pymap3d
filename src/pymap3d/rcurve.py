@@ -13,7 +13,7 @@ except ImportError:
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
 
-__all__ = ["rcurve_parallel", "rcurve_meridian", "rcurve_transverse", "geocentric_radius"]
+__all__ = ["parallel", "meridian", "transverse", "geocentric_radius"]
 
 
 def geocentric_radius(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
@@ -36,7 +36,7 @@ def geocentric_radius(geodetic_lat: float, ell: Ellipsoid = None, deg: bool = Tr
     )
 
 
-def rcurve_parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
 
@@ -58,10 +58,10 @@ def rcurve_parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> fl
     if deg:
         lat = radians(lat)
 
-    return cos(lat) * rcurve_transverse(lat, ell, deg=False)
+    return cos(lat) * transverse(lat, ell, deg=False)
 
 
-def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
     """computes the meridional radius of curvature for the ellipsoid
 
     like Matlab rcurve('meridian', ...)
@@ -91,7 +91,7 @@ def rcurve_meridian(lat: float, ell: Ellipsoid = None, deg: bool = True) -> floa
     return f1 / sqrt(f2 ** 3)
 
 
-def rcurve_transverse(lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def transverse(lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid

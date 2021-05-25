@@ -2,18 +2,17 @@
 from __future__ import annotations
 import typing
 
+from math import tau
+
 try:
-    from numpy import asarray, radians, sin, cos, hypot, arctan2 as atan2, degrees, pi, ndarray
+    from numpy import asarray, radians, sin, cos, hypot, arctan2 as atan2, degrees, ndarray
 except ImportError:
-    from math import radians, sin, cos, hypot, atan2, degrees, pi  # type: ignore
+    from math import radians, sin, cos, hypot, atan2, degrees  # type: ignore
 
     ndarray = typing.Any  # type: ignore
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
-
-# py < 3.6 compatible
-tau = 2 * pi
 
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
