@@ -16,12 +16,12 @@ PyMap3D is intended for non-interactive use on massively parallel (HPC) and embe
 
 [API docs](https://geospace-code.github.io/pymap3d/)
 
-Thanks to our [contributors](./contributors.md).
+Thanks to our [contributors](./.github/contributors.md).
 
 ## Similar toolboxes in other code languages
 
 * [Matlab, GNU Octave](https://github.com/geospace-code/matmap3d)
-* [Fortran](https://github.com/geospace-code/maptran)
+* [Fortran](https://github.com/geospace-code/maptran3d)
 * [Rust](https://github.com/gberrante/map_3d)
 
 ## Prerequisites
@@ -76,7 +76,7 @@ lla = pm.aer2geodetic(*aer,*obslla)
 
 where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
 
-Example scripts are in the [examples](./examples) directory.
+Example scripts are in the [examples](./Examples) directory.
 
 ### Functions
 
