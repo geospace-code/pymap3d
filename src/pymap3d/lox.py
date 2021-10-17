@@ -164,10 +164,10 @@ def loxodrome_inverse(
 
 
 def loxodrome_direct(
-    lat1: ndarray,
-    lon1: ndarray,
-    rng: ndarray,
-    a12: float,
+    lat1: float | ndarray,
+    lon1: float | ndarray,
+    rng: float | ndarray,
+    a12: float | float,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[ndarray, ndarray]:

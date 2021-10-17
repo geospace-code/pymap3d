@@ -164,7 +164,9 @@ def geocentric2geodetic(
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2isometric(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def geodetic2isometric(
+    geodetic_lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True
+) -> float:
     """
     computes isometric latitude on an ellipsoid
 
@@ -345,7 +347,9 @@ def geodetic2conformal(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool =
 
 
 # %% rectifying
-def geodetic2rectifying(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def geodetic2rectifying(
+    geodetic_lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True
+) -> float:
     """
     converts from geodetic latitude to rectifying latitude
 

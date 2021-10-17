@@ -60,7 +60,9 @@ def sph2cart(az: ndarray, el: ndarray, r: ndarray) -> tuple[ndarray, ndarray, nd
     return x, y, z
 
 
-def sanitize(lat: ndarray, ell: typing.Optional[Ellipsoid], deg: bool) -> tuple[ndarray, Ellipsoid]:
+def sanitize(
+    lat: float | ndarray, ell: typing.Optional[Ellipsoid], deg: bool
+) -> tuple[float | ndarray, Ellipsoid]:
     if ell is None:
         ell = Ellipsoid()
     if asarray is not None:

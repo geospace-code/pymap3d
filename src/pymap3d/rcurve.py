@@ -92,7 +92,7 @@ def meridian(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
     return f1 / sqrt(f2 ** 3)
 
 
-def transverse(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def transverse(lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid

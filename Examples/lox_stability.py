@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from math import isclose, nan
-import numpy as np
 
 from pymap3d.lox import loxodrome_direct
 
@@ -20,13 +19,13 @@ if not eng.has_map_toolbox():
     raise EnvironmentError("Matlab does not have Mapping Toolbox")
 
 
-def matlab_func(lat1, lon1, rng, az) -> tuple[float, float]:
+def matlab_func(lat1: float, lon1: float, rng: float, az: float) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
     return eng.reckon("rh", lat1, lon1, rng, az, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore
 
 
 lat_last, lon_last = nan, nan
-clat, clon, rng = np.array(40.0), np.array(-80.0), np.array(10.0)  # arbitrary
+clat, clon, rng = 40.0, -80.0, 10.0  # arbitrary
 
 for i in range(20):
     azi = 90.0 + 10.0 ** (-i)
