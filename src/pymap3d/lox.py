@@ -4,7 +4,17 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, array, atleast_1d
+    from numpy import (
+        radians,
+        degrees,
+        cos,
+        arctan2 as atan2,
+        tan,
+        pi,
+        array,
+        atleast_1d,
+        broadcast_to,
+    )
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
 
@@ -97,8 +107,6 @@ def loxodrome_inverse(
 
     like Matlab distance('rh',...) and azimuth('rh',...)
 
-    If any of inputs lat1,lon1,lat2,lon2 are arrays, all must be arrays of same shape
-
     Parameters
     ----------
 
@@ -141,6 +149,33 @@ def loxodrome_inverse(
     if deg:
         lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
+    try:
+        lat1 = atleast_1d(lat1)
+        lon1 = atleast_1d(lon1)
+        lat2 = atleast_1d(lat2)
+        lon2 = atleast_1d(lon2)
+
+        if lat1.shape != lon1.shape:
+            if lat1.size == 1:
+                lat1 = broadcast_to(lat1, lon1.shape)
+            elif lon1.size == 1:
+                lon1 = broadcast_to(lon1, lat1.shape)
+            else:
+                raise ValueError("lat1, lon1 must have same shape")
+        if lat2.shape != lon2.shape:
+            if lat2.size == 1:
+                lat2 = broadcast_to(lat2, lon2.shape)
+            elif lon2.size == 1:
+                lon2 = broadcast_to(lon2, lat2.shape)
+            else:
+                raise ValueError("lat2, lon2 must have same shape")
+        if lat2.shape != lat1.shape:
+            lat2 = broadcast_to(lat2, lat1.shape)
+            lon2 = broadcast_to(lon2, lat1.shape)
+
+    except NameError:
+        pass
+
     # compute changes in isometric latitude and longitude between points
     disolat = geodetic2isometric(lat2, deg=False, ell=ell) - geodetic2isometric(
         lat1, deg=False, ell=ell
@@ -165,7 +200,10 @@ def loxodrome_inverse(
     if deg:
         az12 = degrees(az12) % 360.0
 
-    return dist, az12
+    try:
+        return dist.squeeze()[()], az12.squeeze()[()]
+    except AttributeError:
+        return dist, az12
 
 
 def loxodrome_direct(
@@ -181,8 +219,6 @@ def loxodrome_direct(
 
     like Matlab reckon('rh', ...)
     except that "rng" in meters instead of "arclen" degrees of arc
-
-    If any of inputs lat,lon1,rng are arrays, all must be arrays of same shape
 
     Parameters
     ----------
@@ -213,12 +249,20 @@ def loxodrome_direct(
     try:
         lat1 = atleast_1d(lat1)
         rng = atleast_1d(rng)
-        if (abs(lat1) > pi / 2).any():
+
+        if lat1.shape != rng.shape:
+            if rng.size == 1:
+                rng = broadcast_to(rng, lat1.shape)
+            elif lat1.size == 1:
+                lat1 = broadcast_to(lat1, rng.shape)
+            else:
+                raise ValueError("lat1 and rng must each be scalars or same shape")
+        if (abs(lat1) > pi / 2).any():  # type: ignore
             raise ValueError("-90 <= latitude <= 90")
-        if (rng < 0).any():
+        if (rng < 0).any():  # type: ignore
             raise ValueError("ground distance must be >= 0")
     except NameError:
-        if abs(lat1) > pi / 2:
+        if abs(lat1) > pi / 2:  # type: ignore
             raise ValueError("-90 <= latitude <= 90")
         if rng < 0:
             raise ValueError("ground distance must be >= 0")

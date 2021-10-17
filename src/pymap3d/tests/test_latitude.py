@@ -49,7 +49,14 @@ def test_numpy_geodetic_geocentric():
 
 @pytest.mark.parametrize(
     "geodetic_lat, isometric_lat",
-    [(0, 0), (90, inf), (-90, -inf), (45, 50.227466), (-45, -50.227466), (89, 271.275)],
+    [
+        (0, 0),
+        (90, inf),
+        (-90, -inf),
+        (45, 50.227466),
+        (-45, -50.227466),
+        (89, 271.275),
+    ],
 )
 def test_geodetic_isometric(geodetic_lat, isometric_lat):
     isolat = latitude.geodetic2isometric(geodetic_lat)

@@ -69,9 +69,11 @@ def test_loxodrome_inverse(lat1, lon1, lat2, lon2, arclen, az):
 def test_numpy_loxodrome_inverse():
     pytest.importorskip("numpy")
     d, a = lox.loxodrome_inverse([40, 40], [-80, -80], 65, -148)
-
     assert d == approx(5248666.209)
     assert a == approx(302.00567)
+
+    d, a = lox.loxodrome_inverse([40, 40], [-80, -80], [65, 65], -148)
+    d, a = lox.loxodrome_inverse([40, 40], [-80, -80], 65, [-148, -148])
 
 
 @pytest.mark.parametrize(
@@ -98,9 +100,13 @@ def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
 
 def test_numpy_loxodrome_direct():
     pytest.importorskip("numpy")
-    lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], [10000, 10000], [30, 30])
-    assert lat == approx(40.077995)
-    assert lon == approx(-79.941414)
+    lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], [10, 10], [30, 30])
+    assert lat == approx(40.000078)
+    assert lon == approx(-79.99994145)
+
+    lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], 10, 30)
+    lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], [10, 10], 30)
+    lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], 10, [30, 30])
 
 
 @pytest.mark.parametrize("lat,lon", [([0, 45, 90], [0, 45, 90])])

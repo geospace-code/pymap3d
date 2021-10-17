@@ -4,21 +4,23 @@ from __future__ import annotations
 import typing
 
 from .ellipsoid import Ellipsoid
-from .utils import sanitize
+from .utils import sanitize, sign
 from . import rcurve
 
 try:
-    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf
+    from numpy import radians, degrees, tan, sin, cos, exp, pi, sqrt, inf
     from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh  # noqa: A001
 
     use_numpy = True
 except ImportError:
-    from math import atan, radians, degrees, tan, sin, asinh, atanh, exp, pi, sqrt, inf  # type: ignore
+    from math import atan, radians, degrees, tan, sin, cos, asinh, atanh, exp, pi, sqrt, inf  # type: ignore
 
     use_numpy = False
 
 if typing.TYPE_CHECKING:
     from numpy import ndarray
+
+COS_EPS = 1e-9  # tolerance for angles near abs([90, 270])
 
 __all__ = [
     "geodetic2isometric",
@@ -208,16 +210,22 @@ def geodetic2isometric(
     # isometric_lat = log(tan(a2) * (y ** (e / 2)))
     # isometric_lat = log(tan(a2)) + e/2 * log((1-e*sin(geodetic_lat)) / (1+e*sin(geodetic_lat)))
 
-    try:
-        isometric_lat[abs(geodetic_lat - pi / 2) <= 1e-9] = inf  # type: ignore
-        isometric_lat[abs(-geodetic_lat - pi / 2) <= 1e-9] = -inf   # type: ignore
-    except TypeError:
-        if abs(geodetic_lat - pi / 2) <= 1e-9:  # type: ignore
-            isometric_lat = inf
-        elif abs(-geodetic_lat - pi / 2) <= 1e-9:  # type: ignore
-            isometric_lat = -inf
+    coslat = cos(geodetic_lat)
+    i = abs(coslat) <= COS_EPS
 
-    return degrees(isometric_lat) if deg else isometric_lat
+    try:
+        isometric_lat[i] = sign(geodetic_lat[i]) * inf  # type: ignore
+    except TypeError:
+        if i:
+            isometric_lat = sign(geodetic_lat) * inf
+
+    if deg:
+        isometric_lat = degrees(isometric_lat)
+
+    try:
+        return isometric_lat.squeeze()[()]
+    except AttributeError:
+        return isometric_lat
 
 
 def isometric2geodetic(isometric_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
