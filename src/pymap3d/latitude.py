@@ -209,12 +209,12 @@ def geodetic2isometric(
     # isometric_lat = log(tan(a2)) + e/2 * log((1-e*sin(geodetic_lat)) / (1+e*sin(geodetic_lat)))
 
     try:
-        isometric_lat[abs(geodetic_lat - pi / 2) <= 1e-9] = inf
-        isometric_lat[abs(-geodetic_lat - pi / 2) <= 1e-9] = -inf
+        isometric_lat[abs(geodetic_lat - pi / 2) <= 1e-9] = inf  # type: ignore
+        isometric_lat[abs(-geodetic_lat - pi / 2) <= 1e-9] = -inf   # type: ignore
     except TypeError:
-        if abs(geodetic_lat - pi / 2) <= 1e-9:
+        if abs(geodetic_lat - pi / 2) <= 1e-9:  # type: ignore
             isometric_lat = inf
-        elif abs(-geodetic_lat - pi / 2) <= 1e-9:
+        elif abs(-geodetic_lat - pi / 2) <= 1e-9:  # type: ignore
             isometric_lat = -inf
 
     return degrees(isometric_lat) if deg else isometric_lat

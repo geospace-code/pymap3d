@@ -71,10 +71,10 @@ def sanitize(
         lat = radians(lat)
 
     if asarray is not None:
-        if (abs(lat) > pi / 2).any():
+        if (abs(lat) > pi / 2).any():  # type: ignore
             raise ValueError("-pi/2 <= latitude <= pi/2")
     else:
-        if abs(lat) > pi / 2:
+        if abs(lat) > pi / 2:  # type: ignore
             raise ValueError("-pi/2 <= latitude <= pi/2")
 
     return lat, ell

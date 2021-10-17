@@ -97,6 +97,8 @@ def loxodrome_inverse(
 
     like Matlab distance('rh',...) and azimuth('rh',...)
 
+    If any of inputs lat1,lon1,lat2,lon2 are arrays, all must be arrays of same shape
+
     Parameters
     ----------
 
@@ -153,11 +155,11 @@ def loxodrome_inverse(
     dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / aux
 
     # straight east or west
+    i = aux < 1e-9
     try:
-        if (aux < 1e-9).any():
-            dist[aux < 1e-9] = departure(lon2, lon1, lat1, ell, deg=False)
+        dist[i] = departure(lon2[i], lon1[i], lat1[i], ell, deg=False)
     except (AttributeError, TypeError):
-        if aux < 1e-9:
+        if i:
             dist = departure(lon2, lon1, lat1, ell, deg=False)
 
     if deg:
@@ -179,6 +181,8 @@ def loxodrome_direct(
 
     like Matlab reckon('rh', ...)
     except that "rng" in meters instead of "arclen" degrees of arc
+
+    If any of inputs lat,lon1,rng are arrays, all must be arrays of same shape
 
     Parameters
     ----------
@@ -231,7 +235,7 @@ def loxodrome_direct(
     iso = geodetic2isometric(lat1, ell, deg=False)
 
     # stability near singularities
-    i = abs(cos(a12)) < 1e-6
+    i = abs(cos(a12)) < 1e-9
     dlon = tan(a12) * (newiso - iso)
 
     try:
