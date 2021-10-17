@@ -77,7 +77,7 @@ def test_numpy_loxodrome_inverse():
 @pytest.mark.parametrize(
     "lat0,lon0,rng,az,lat1,lon1",
     [
-        (40, -80, 10000, 30, 40.077995, -79.9414144),
+        (40, -80, 10000, 30, 40.0000779959676, -79.9999414477481),
         (0, 0, 0, 0, 0, 0),
         (0, 0, 10018754.17, 90, 0, 90),
         (0, 0, 10018754.17, -90, 0, -90),
@@ -86,9 +86,12 @@ def test_numpy_loxodrome_inverse():
     ],
 )
 def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
+    """
+    reckon('rh', 40, -80, 10, 30, wgs84Ellipsoid)
+    """
     lat2, lon2 = lox.loxodrome_direct(lat0, lon0, rng, az)
-    assert lat2 == approx(lat1, abs=1e-6)
-    assert lon2 == approx(lon1)
+    assert lat2 == approx(lat1, rel=0.005, abs=1e-6)
+    assert lon2 == approx(lon1, rel=0.001)
     assert isinstance(lat2, float)
     assert isinstance(lon2, float)
 

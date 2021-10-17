@@ -18,10 +18,9 @@ if not eng.has_map_toolbox():
     raise EnvironmentError("Matlab does not have Mapping Toolbox")
 
 
-def matlab_func(lat1: float, lon1: float, lat2: float, lon2: float) -> tuple[float, float]:
+def matlab_func(lat1, lon1, lat2, lon2) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
-    ell = eng.wgs84Ellipsoid()  # type: ignore
-    return eng.distance(lat1, lon1, lat2, lon2, ell, nargout=2)  # type: ignore
+    return eng.distance(lat1, lon1, lat2, lon2, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore
 
 
 dlast, alast = nan, nan
