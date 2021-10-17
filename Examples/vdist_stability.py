@@ -2,17 +2,20 @@
 from __future__ import annotations
 from pymap3d.vincenty import vdist
 import sys
+from pathlib import Path
 from math import isclose, nan
 
-eng = None  # don't start engine over and over when script is interactive
-try:
-    import matlab.engine
+import matlab.engine
 
-    if eng is None:
-        eng = matlab.engine.start_matlab("-nojvm")
-except ImportError as exc:
-    print(exc, file=sys.stderr)
-    eng = None
+cwd = Path(__file__).parent
+eng = None  # don't start Matlab engine over and over when script is interactive
+
+if eng is None:
+    eng = matlab.engine.start_matlab("-nojvm")
+    eng.addpath(eng.genpath(str(cwd)), nargout=0)
+
+if not eng.has_map_toolbox():
+    raise EnvironmentError("Matlab does not have Mapping Toolbox")
 
 
 def matlab_func(lat1: float, lon1: float, lat2: float, lon2: float) -> tuple[float, float]:

@@ -341,14 +341,14 @@ def vreckon(
         Lon1 = atleast_1d(Lon1)
         Rng = atleast_1d(Rng)
         Azim = atleast_1d(Azim)
-        if (abs(Lat1) > 90.).any():
+        if (abs(Lat1) > 90.0).any():
             raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
-        if (Rng < 0.).any():
+        if (Rng < 0.0).any():
             raise ValueError("Ground distance must be positive")
     except NameError:
-        if abs(Lat1) > 90.:  # type: ignore
+        if abs(Lat1) > 90.0:  # type: ignore
             raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
-        if Rng < 0.:
+        if Rng < 0.0:
             raise ValueError("Ground distance must be positive")
 
     if ell is not None:

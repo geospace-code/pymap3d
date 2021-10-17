@@ -44,7 +44,7 @@ pip install -e pymap3d
 One can verify Python functionality after installation by:
 
 ```sh
-pytest pymap3d -r a -v
+pytest pymap3d
 ```
 
 ## Usage
