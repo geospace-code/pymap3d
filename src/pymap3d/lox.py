@@ -4,7 +4,7 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, ndarray, atleast_1d
+    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, array, ndarray, atleast_1d
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
 
@@ -270,7 +270,7 @@ def departure(
 
 def meanm(
     lat: ndarray, lon: ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> tuple[float | ndarray, float | ndarray]:
+) -> tuple[ndarray, ndarray]:
     """
     Computes geographic mean for geographic points on an ellipsoid
 
@@ -298,7 +298,7 @@ def meanm(
 
     lat = geodetic2authalic(lat, ell, deg=False)
     assert isinstance(lat, ndarray)
-    x, y, z = sph2cart(lon, lat, 1)
+    x, y, z = sph2cart(lon, lat, array(1.0))
     lonbar, latbar, _ = cart2sph(x.sum(), y.sum(), z.sum())
     latbar = authalic2geodetic(latbar, ell, deg=False)
 

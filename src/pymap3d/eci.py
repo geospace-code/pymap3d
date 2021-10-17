@@ -18,12 +18,7 @@ __all__ = ["eci2ecef", "ecef2eci"]
 
 
 def eci2ecef(
-    x: float | ndarray,
-    y: float | ndarray,
-    z: float | ndarray,
-    time: datetime,
-    *,
-    use_astropy: bool = True
+    x: ndarray, y: ndarray, z: ndarray, time: datetime, *, use_astropy: bool = True
 ) -> tuple[ndarray, ndarray, ndarray]:
     """
     Observer => Point  ECI  =>  ECEF
@@ -81,12 +76,7 @@ def eci2ecef(
 
 
 def ecef2eci(
-    x: float | ndarray,
-    y: float | ndarray,
-    z: float | ndarray,
-    time: datetime,
-    *,
-    use_astropy: bool = True
+    x: ndarray, y: ndarray, z: ndarray, time: datetime, *, use_astropy: bool = True
 ) -> tuple[ndarray, ndarray, ndarray]:
     """
     Point => Point   ECEF => ECI

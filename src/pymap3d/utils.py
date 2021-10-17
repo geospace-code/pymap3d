@@ -40,9 +40,7 @@ def pol2cart(theta: float, rho: float) -> tuple[float, float]:
     return rho * cos(theta), rho * sin(theta)
 
 
-def cart2sph(
-    x: float | ndarray, y: float | ndarray, z: float | ndarray
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+def cart2sph(x: ndarray, y: ndarray, z: ndarray) -> tuple[ndarray, ndarray, ndarray]:
     """Transform Cartesian to spherical coordinates"""
     hxy = hypot(x, y)
     r = hypot(hxy, z)
@@ -51,9 +49,7 @@ def cart2sph(
     return az, el, r
 
 
-def sph2cart(
-    az: float | ndarray, el: float | ndarray, r: float | ndarray
-) -> tuple[float | ndarray, float | ndarray, float | ndarray]:
+def sph2cart(az: ndarray, el: ndarray, r: ndarray) -> tuple[ndarray, ndarray, ndarray]:
     """Transform spherical to Cartesian coordinates"""
     rcos_theta = r * cos(el)
     x = rcos_theta * cos(az)
@@ -62,9 +58,7 @@ def sph2cart(
     return x, y, z
 
 
-def sanitize(
-    lat: float | ndarray, ell: T.Optional[Ellipsoid], deg: bool
-) -> tuple[float | ndarray, Ellipsoid]:
+def sanitize(lat: ndarray, ell: T.Optional[Ellipsoid], deg: bool) -> tuple[ndarray, Ellipsoid]:
     if ell is None:
         ell = Ellipsoid()
     if asarray is not None:

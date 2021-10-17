@@ -141,7 +141,7 @@ def euler(
     return rho * nu / den
 
 
-def curve(lat: float, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> float:
+def curve(lat: ndarray, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> ndarray:
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
