@@ -5,14 +5,15 @@ import typing
 from math import tau
 
 try:
-    from numpy import asarray, radians, sin, cos, hypot, arctan2 as atan2, degrees, ndarray
+    from numpy import asarray, radians, sin, cos, hypot, arctan2 as atan2, degrees
 except ImportError:
     from math import radians, sin, cos, hypot, atan2, degrees  # type: ignore
 
-    ndarray = typing.Any  # type: ignore
-
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 

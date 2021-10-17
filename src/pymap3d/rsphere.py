@@ -4,17 +4,18 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, log, sqrt, degrees, asarray, ndarray
+    from numpy import radians, sin, cos, log, sqrt, degrees, asarray
 except ImportError:
     from math import radians, sin, cos, log, sqrt, degrees  # type: ignore
 
     asarray = None  # type: ignore
-    ndarray = typing.Any  # type: ignore
 
 from .ellipsoid import Ellipsoid
 from . import rcurve
 from .vincenty import vdist
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = [
     "eqavol",

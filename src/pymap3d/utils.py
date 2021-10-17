@@ -3,17 +3,16 @@
 all assume radians"""
 
 from __future__ import annotations
-import typing as T
+import typing
 
 from .ellipsoid import Ellipsoid
 
 try:
-    from numpy import hypot, cos, sin, arctan2 as atan2, radians, pi, asarray, ndarray, sign
+    from numpy import hypot, cos, sin, arctan2 as atan2, radians, pi, asarray, sign
 except ImportError:
     from math import atan2, hypot, cos, sin, radians, pi  # type: ignore
 
     asarray = None  # type: ignore
-    ndarray = T.Any  # type: ignore
 
     def sign(x: float) -> float:  # type: ignore
         """signum function"""
@@ -26,6 +25,9 @@ except ImportError:
 
         return y
 
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart", "sign"]
 
@@ -58,7 +60,7 @@ def sph2cart(az: ndarray, el: ndarray, r: ndarray) -> tuple[ndarray, ndarray, nd
     return x, y, z
 
 
-def sanitize(lat: ndarray, ell: T.Optional[Ellipsoid], deg: bool) -> tuple[ndarray, Ellipsoid]:
+def sanitize(lat: ndarray, ell: typing.Optional[Ellipsoid], deg: bool) -> tuple[ndarray, Ellipsoid]:
     if ell is None:
         ell = Ellipsoid()
     if asarray is not None:

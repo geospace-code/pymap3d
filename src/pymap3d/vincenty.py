@@ -10,7 +10,6 @@ from copy import copy
 
 try:
     from numpy import (
-        ndarray,
         atleast_1d,
         sqrt,
         tan,
@@ -26,10 +25,11 @@ try:
 except ImportError:
     from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees  # type: ignore
 
-    ndarray = typing.Any  # type: ignore
-
 from .ellipsoid import Ellipsoid
 from .utils import sign
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = ["vdist", "vreckon", "track2"]
 

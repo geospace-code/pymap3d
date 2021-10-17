@@ -8,7 +8,7 @@ from .utils import sanitize
 from . import rcurve
 
 try:
-    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf, ndarray
+    from numpy import radians, degrees, tan, sin, exp, pi, sqrt, inf
     from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh  # noqa: A001
 
     use_numpy = True
@@ -16,8 +16,9 @@ except ImportError:
     from math import atan, radians, degrees, tan, sin, asinh, atanh, exp, pi, sqrt, inf  # type: ignore
 
     use_numpy = False
-    ndarray = typing.Any  # type: ignore
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = [
     "geodetic2isometric",

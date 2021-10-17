@@ -3,14 +3,12 @@
 from __future__ import annotations
 import typing
 
-try:
-    from numpy import ndarray
-except ImportError:
-    ndarray = typing.Any  # type: ignore
-
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
 from .ellipsoid import Ellipsoid
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 
 def aer2ned(

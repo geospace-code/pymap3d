@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import typing
 from datetime import datetime
-from numpy import ndarray, array, sin, cos, column_stack, empty, atleast_1d
+from numpy import array, sin, cos, column_stack, empty, atleast_1d
 
 try:
     from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
@@ -13,6 +14,9 @@ except ImportError:
     Time = None
 
 from .sidereal import greenwichsrt, juliandate
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = ["eci2ecef", "ecef2eci"]
 

@@ -4,14 +4,15 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, sqrt, ndarray
+    from numpy import radians, sin, cos, sqrt
 except ImportError:
     from math import radians, sin, cos, sqrt  # type: ignore
 
-    ndarray = typing.Any  # type: ignore
-
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = ["parallel", "meridian", "transverse", "geocentric_radius"]
 

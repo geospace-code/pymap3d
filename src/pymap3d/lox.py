@@ -4,13 +4,10 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, array, ndarray, atleast_1d
+    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, array, atleast_1d
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
 
-    ndarray = typing.Any  # type: ignore
-
-import typing
 from .ellipsoid import Ellipsoid
 from . import rcurve
 from . import rsphere
@@ -22,6 +19,9 @@ from .latitude import (
     authalic2geodetic,
 )
 from .utils import sph2cart, cart2sph
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = [
     "loxodrome_inverse",

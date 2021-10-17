@@ -10,11 +10,11 @@ from .ellipsoid import Ellipsoid
 
 try:
     from .eci import eci2ecef, ecef2eci
-    from numpy import ndarray
 except ImportError:
     eci2ecef = ecef2eci = None  # type: ignore
-    ndarray = typing.Any  # type: ignore
 
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 __all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
 

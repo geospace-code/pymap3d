@@ -4,7 +4,6 @@ import typing
 
 try:
     from numpy import (
-        ndarray,
         radians,
         sin,
         cos,
@@ -19,8 +18,6 @@ try:
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi  # type: ignore
 
-    ndarray = typing.Any  # type: ignore
-
 from datetime import datetime
 
 from .ellipsoid import Ellipsoid
@@ -30,6 +27,9 @@ try:
     from .eci import eci2ecef, ecef2eci
 except ImportError:
     eci2ecef = ecef2eci = None  # type: ignore
+
+if typing.TYPE_CHECKING:
+    from numpy import ndarray
 
 # py < 3.6 compatible
 tau = 2 * pi
