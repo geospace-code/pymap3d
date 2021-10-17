@@ -218,7 +218,7 @@ def geodetic2isometric(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool =
     return degrees(isometric_lat) if deg else isometric_lat
 
 
-def isometric2geodetic(isometric_lat: float, ell: Ellipsoid = None, deg: bool = True) -> float:
+def isometric2geodetic(isometric_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
     """
     converts from isometric latitude to geodetic latitude
 

@@ -297,7 +297,7 @@ def meanm(
         lat, lon = radians(lat), radians(lon)
 
     lat = geodetic2authalic(lat, ell, deg=False)
-    assert isinstance(lat, ndarray)
+
     x, y, z = sph2cart(lon, lat, array(1.0))
     lonbar, latbar, _ = cart2sph(x.sum(), y.sum(), z.sum())
     latbar = authalic2geodetic(latbar, ell, deg=False)
