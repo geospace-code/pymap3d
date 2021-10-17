@@ -9,6 +9,7 @@ except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
 
 from .ellipsoid import Ellipsoid
+from .utils import sign
 from . import rcurve
 from . import rsphere
 from .latitude import (
@@ -146,15 +147,17 @@ def loxodrome_inverse(
 
     # compute azimuth
     az12 = atan2(dlon, disolat)
-    cosaz12 = cos(az12)
+    aux = abs(cos(az12))
 
     # compute distance along loxodromic curve
-    dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / abs(cos(az12))
+    dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / aux
+
+    # straight east or west
     try:
-        if (abs(cosaz12) < 1e-9).any():
-            dist[abs(cosaz12) < 1e-9] = departure(lon2, lon1, lat1, ell, deg=False)
+        if (aux < 1e-9).any():
+            dist[aux < 1e-9] = departure(lon2, lon1, lat1, ell, deg=False)
     except (AttributeError, TypeError):
-        if abs(cosaz12) < 1e-9:  # straight east or west
+        if aux < 1e-9:
             dist = departure(lon2, lon1, lat1, ell, deg=False)
 
     if deg:
@@ -167,14 +170,15 @@ def loxodrome_direct(
     lat1: float | ndarray,
     lon1: float | ndarray,
     rng: float | ndarray,
-    a12: float | float,
+    a12: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray]:
+) -> tuple[float | ndarray, float | ndarray]:
     """
     Given starting lat, lon with arclength and azimuth, compute final lat, lon
 
     like Matlab reckon('rh', ...)
+    except that "rng" in meters instead of "arclen" degrees of arc
 
     Parameters
     ----------
@@ -226,14 +230,23 @@ def loxodrome_direct(
     newiso = geodetic2isometric(lat2, ell, deg=False)
     iso = geodetic2isometric(lat1, ell, deg=False)
 
+    # stability near singularities
+    i = abs(cos(a12)) < 1e-6
     dlon = tan(a12) * (newiso - iso)
+
+    try:
+        dlon[i] = sign(dlon[i]) * rng[i] / rcurve.transverse(lat1[i], ell=ell, deg=False)  # type: ignore
+    except (AttributeError, TypeError):
+        if i:  # straight east or west
+            dlon = sign(dlon) * rng / rcurve.transverse(lat1, ell=ell, deg=False)
+
     lon2 = lon1 + dlon
 
     if deg:
         lat2, lon2 = degrees(lat2), degrees(lon2)
 
     try:
-        return lat2.squeeze()[()], lon2.squeeze()[()]
+        return lat2.squeeze()[()], lon2.squeeze()[()]  # type: ignore
     except AttributeError:
         return lat2, lon2
 

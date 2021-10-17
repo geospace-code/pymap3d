@@ -47,7 +47,7 @@ def enu2aer(
         slant range [meters]
     """
 
-    # 1 millimeter precision for singularity
+    # 1 millimeter precision for singularity stability
 
     try:
         e[abs(e) < 1e-3] = 0.0

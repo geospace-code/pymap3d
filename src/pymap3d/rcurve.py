@@ -53,7 +53,7 @@ def parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     Returns
     -------
     radius: float
-        radius of ellipsoid
+        radius of ellipsoid (meters)
     """
 
     if deg:
@@ -111,7 +111,7 @@ def transverse(lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True) ->
     Returns
     -------
     radius: float
-        radius of ellipsoid
+        radius of ellipsoid (meters)
     """
 
     lat, ell = sanitize(lat, ell, deg)

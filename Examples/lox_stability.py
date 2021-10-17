@@ -28,14 +28,15 @@ lat_last, lon_last = nan, nan
 clat, clon, rng = 40.0, -80.0, 10.0  # arbitrary
 
 for i in range(20):
-    azi = 90.0 + 10.0 ** (-i)
+    for azi in (90 + 10.0 ** (-i), -90 + 10.0 ** (-i), 270 + 10.0 ** (-i), -270 + 10.0 ** (-i)):
+        lat, lon = loxodrome_direct(clat, clon, rng, azi)
 
-    lat, lon = loxodrome_direct(clat, clon, rng, azi)
+        assert lat != lat_last
+        assert lon != lon_last
 
-    assert lat != lat_last
-    assert lon != lon_last
-
-    lat_matlab, lon_matlab = matlab_func(clat, clon, rng, azi)
-    rstr = f"azimuth: {azi} lat,lon: Python: {lat}, {lon}  Matlab: {lat_matlab}, {lon_matlab}"
-    if not (isclose(lat_matlab, lat, rel_tol=0.005) and isclose(lon_matlab, lon, rel_tol=0.001)):
-        logging.error(rstr)
+        lat_matlab, lon_matlab = matlab_func(clat, clon, rng, azi)
+        rstr = f"azimuth: {azi} lat,lon: Python: {lat}, {lon}  Matlab: {lat_matlab}, {lon_matlab}"
+        if not (
+            isclose(lat_matlab, lat, rel_tol=0.005) and isclose(lon_matlab, lon, rel_tol=0.001)
+        ):
+            logging.error(rstr)

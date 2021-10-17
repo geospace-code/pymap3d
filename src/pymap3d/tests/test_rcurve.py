@@ -41,4 +41,4 @@ def test_numpy_meridian():
 
 def test_numpy_transverse():
     pytest.importorskip("numpy")
-    assert rcurve.transverse([0, 90]) == approx([A, 6399593.626])
+    assert rcurve.transverse([-90, 0, 90]) == approx([6399593.6258, A, 6399593.6258])
