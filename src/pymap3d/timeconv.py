@@ -5,11 +5,11 @@ from datetime import datetime
 try:
     from dateutil.parser import parse
 except ImportError:
-    parse = None
+    parse = None  # type: ignore
 try:
     import numpy as np
 except ImportError:
-    np = None
+    np = None  # type: ignore
 
 
 __all__ = ["str2dt"]

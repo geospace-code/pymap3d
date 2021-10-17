@@ -8,7 +8,7 @@ try:
 except ImportError:
     from math import radians, sin, cos, log, sqrt, degrees  # type: ignore
 
-    asarray = None
+    asarray = None  # type: ignore
     ndarray = typing.Any  # type: ignore
 
 from .ellipsoid import Ellipsoid

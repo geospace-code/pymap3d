@@ -12,7 +12,7 @@ try:
     from .eci import eci2ecef, ecef2eci
     from numpy import ndarray
 except ImportError:
-    eci2ecef = ecef2eci = None
+    eci2ecef = ecef2eci = None  # type: ignore
     ndarray = typing.Any  # type: ignore
 
 

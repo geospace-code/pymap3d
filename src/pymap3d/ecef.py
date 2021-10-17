@@ -29,7 +29,7 @@ from .utils import sanitize
 try:
     from .eci import eci2ecef, ecef2eci
 except ImportError:
-    eci2ecef = ecef2eci = None
+    eci2ecef = ecef2eci = None  # type: ignore
 
 # py < 3.6 compatible
 tau = 2 * pi

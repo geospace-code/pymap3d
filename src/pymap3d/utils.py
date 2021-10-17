@@ -3,7 +3,7 @@
 all assume radians"""
 
 from __future__ import annotations
-import typing
+import typing as T
 
 from .ellipsoid import Ellipsoid
 
@@ -12,8 +12,8 @@ try:
 except ImportError:
     from math import atan2, hypot, cos, sin, radians, pi  # type: ignore
 
-    asarray = None
-    ndarray = typing.Any  # type: ignore
+    asarray = None  # type: ignore
+    ndarray = T.Any  # type: ignore
 
     def sign(x: float) -> float:  # type: ignore
         """signum function"""
@@ -62,7 +62,9 @@ def sph2cart(
     return x, y, z
 
 
-def sanitize(lat: float | ndarray, ell: Ellipsoid, deg: bool) -> tuple[float | ndarray, Ellipsoid]:
+def sanitize(
+    lat: float | ndarray, ell: T.Optional[Ellipsoid], deg: bool
+) -> tuple[float | ndarray, Ellipsoid]:
     if ell is None:
         ell = Ellipsoid()
     if asarray is not None:

@@ -5,8 +5,6 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/geospace-code/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/geospace-code/pymap3d/context:python)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci/badge.svg)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci_stdlib_only/badge.svg)
-![CodeQL](https://github.com/geospace-code/pymap3d/workflows/CodeQL/badge.svg)
-[![codecov](https://codecov.io/gh/geospace-code/pymap3d/branch/master/graph/badge.svg)](https://codecov.io/gh/geospace-code/pymap3d)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
 
