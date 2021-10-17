@@ -123,7 +123,7 @@ def vdist(
         if (abs(Lat1) > 90).any() | (abs(Lat2) > 90).any():
             raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     except NameError:
-        if (abs(Lat1) > 90) | (abs(Lat2) > 90):
+        if (abs(Lat1) > 90) | (abs(Lat2) > 90):  # type: ignore
             raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
@@ -170,7 +170,7 @@ def vdist(
             if not warninggiven:
                 logging.warning("Essentially antipodal points--precision may be reduced slightly.")
 
-            lamb = pi
+            lamb = pi  # type: ignore
             break
 
         lambdaold = copy(lamb)
@@ -216,7 +216,7 @@ def vdist(
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
         try:
-            i = (lamb > pi).any()
+            i = (lamb > pi).any()  # type: ignore
         except AttributeError:
             i = lamb > pi
 
@@ -225,11 +225,11 @@ def vdist(
                 "Essentially antipodal points encountered. Precision may be reduced slightly."
             )
             warninggiven = True
-            lambdaold = pi
-            lamb = pi
+            lambdaold = pi  # type: ignore
+            lamb = pi  # type: ignore
 
         try:
-            notdone = (abs(lamb - lambdaold) > 1e-12).any()
+            notdone = (abs(lamb - lambdaold) > 1e-12).any()  # type: ignore
         except AttributeError:
             notdone = abs(lamb - lambdaold) > 1e-12
 
@@ -346,7 +346,7 @@ def vreckon(
         if (Rng < 0.).any():
             raise ValueError("Ground distance must be positive")
     except NameError:
-        if abs(Lat1) > 90.:
+        if abs(Lat1) > 90.:  # type: ignore
             raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
         if Rng < 0.:
             raise ValueError("Ground distance must be positive")
