@@ -4,15 +4,14 @@ all assume radians"""
 
 from __future__ import annotations
 import typing
+from math import pi
 
 from .ellipsoid import Ellipsoid
 
 try:
-    from numpy import hypot, cos, sin, arctan2 as atan2, radians, pi, asarray, sign
+    from numpy import hypot, cos, sin, arctan2 as atan2, radians, asarray, sign
 except ImportError:
-    from math import atan2, hypot, cos, sin, radians, pi  # type: ignore
-
-    asarray = None  # type: ignore
+    from math import atan2, hypot, cos, sin, radians  # type: ignore
 
     def sign(x: float) -> float:  # type: ignore
         """signum function"""
@@ -63,17 +62,22 @@ def sph2cart(az: ndarray, el: ndarray, r: ndarray) -> tuple[ndarray, ndarray, nd
 def sanitize(
     lat: float | ndarray, ell: typing.Optional[Ellipsoid], deg: bool
 ) -> tuple[float | ndarray, Ellipsoid]:
+
     if ell is None:
         ell = Ellipsoid()
-    if asarray is not None:
+
+    try:
         lat = asarray(lat)
+    except NameError:
+        pass
+
     if deg:
         lat = radians(lat)
 
-    if asarray is not None:
+    try:
         if (abs(lat) > pi / 2).any():  # type: ignore
             raise ValueError("-pi/2 <= latitude <= pi/2")
-    else:
+    except AttributeError:
         if abs(lat) > pi / 2:  # type: ignore
             raise ValueError("-pi/2 <= latitude <= pi/2")
 

@@ -8,8 +8,6 @@ try:
 except ImportError:
     from math import radians, sin, cos, log, sqrt, degrees  # type: ignore
 
-    asarray = None  # type: ignore
-
 from .ellipsoid import Ellipsoid
 from . import rcurve
 from .vincenty import vdist
@@ -123,8 +121,11 @@ def euler(
     """
     if not deg:
         lat1, lon1, lat2, lon2 = degrees(lat1), degrees(lon1), degrees(lat2), degrees(lon2)
-    if asarray is not None:
+
+    try:
         lat1, lat2 = asarray(lat1), asarray(lat2)
+    except NameError:
+        pass
 
     latmid = lat1 + (lat2 - lat1) / 2  # compute the midpoint
 
