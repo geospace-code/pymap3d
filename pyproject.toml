@@ -1,6 +1,6 @@
 [project]
 name = "pymap3d"
-version = "2.6.1"
+version = "2.7.2"
 description = "pure Python (no prereqs) coordinate conversions, following convention of several popular Matlab routines."
 readme = "README.md"
 requires-python = ">=3.7"
