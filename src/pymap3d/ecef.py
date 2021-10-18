@@ -4,6 +4,7 @@ import typing
 
 try:
     from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt
+    from .eci import eci2ecef, ecef2eci
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt  # type: ignore
 
@@ -12,11 +13,6 @@ from datetime import datetime
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
-
-try:
-    from .eci import eci2ecef, ecef2eci
-except ImportError:
-    eci2ecef = ecef2eci = None  # type: ignore
 
 if typing.TYPE_CHECKING:
     from numpy import ndarray
@@ -395,10 +391,11 @@ def eci2geodetic(
 
     eci2geodetic() a.k.a. eci2lla()
     """
-    if eci2ecef is None:
-        raise ImportError("pip install numpy")
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
+    try:
+        xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
+    except NameError:
+        raise ImportError("pip install numpy")
 
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
@@ -446,12 +443,13 @@ def geodetic2eci(
 
     geodetic2eci() a.k.a lla2eci()
     """
-    if ecef2eci is None:
-        raise ImportError("pip install numpy")
 
     x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
 
-    return ecef2eci(x, y, z, t, use_astropy=use_astropy)
+    try:
+        return ecef2eci(x, y, z, t, use_astropy=use_astropy)
+    except NameError:
+        raise ImportError("pip install numpy")
 
 
 def enu2ecef(

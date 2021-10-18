@@ -11,7 +11,7 @@ from .ellipsoid import Ellipsoid
 try:
     from .eci import eci2ecef, ecef2eci
 except ImportError:
-    eci2ecef = ecef2eci = None  # type: ignore
+    pass
 
 if typing.TYPE_CHECKING:
     from numpy import ndarray
@@ -212,10 +212,11 @@ def eci2aer(
     srange : float
          slant range [meters]
     """
-    if eci2ecef is None:
-        raise ImportError("pip install numpy")
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
+    try:
+        xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
+    except NameError:
+        raise ImportError("pip install numpy")
 
     return ecef2aer(xecef, yecef, zecef, lat0, lon0, h0, deg=deg)
 
@@ -271,12 +272,13 @@ def aer2eci(
     z : float
         ECEF z coordinate (meters)
     """
-    if ecef2eci is None:
-        raise ImportError("pip install numpy")
 
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg=deg)
 
-    return ecef2eci(x, y, z, t, use_astropy=use_astropy)
+    try:
+        return ecef2eci(x, y, z, t, use_astropy=use_astropy)
+    except NameError:
+        raise ImportError("pip install numpy")
 
 
 def aer2ecef(
