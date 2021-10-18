@@ -4,18 +4,7 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import (
-        radians,
-        degrees,
-        cos,
-        arctan2 as atan2,
-        tan,
-        pi,
-        array,
-        atleast_1d,
-        broadcast_arrays,
-        broadcast_to,
-    )
+    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, array, broadcast_arrays
 except ImportError:
     from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
 
@@ -227,16 +216,7 @@ def loxodrome_direct(
         lat1, lon1, a12 = radians(lat1), radians(lon1), radians(a12)
 
     try:
-        lat1 = atleast_1d(lat1)
-        rng = atleast_1d(rng)
-
-        if lat1.shape != rng.shape:
-            if rng.size == 1:
-                rng = broadcast_to(rng, lat1.shape)
-            elif lat1.size == 1:
-                lat1 = broadcast_to(lat1, rng.shape)
-            else:
-                raise ValueError("lat1 and rng must each be scalars or same shape")
+        lat1, rng = broadcast_arrays(lat1, rng)
         if (abs(lat1) > pi / 2).any():  # type: ignore
             raise ValueError("-90 <= latitude <= 90")
         if (rng < 0).any():  # type: ignore
