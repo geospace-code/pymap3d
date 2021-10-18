@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """ manipulations of sidereal time """
-from math import pi
+from math import tau
 from datetime import datetime
 
 from .timeconv import str2dt
@@ -128,4 +128,4 @@ def greenwichsrt(Jdate: float) -> float:
     )
 
     # 1/86400 and %(2*pi) implied by units of radians
-    return gmst_sec * (2 * pi) / 86400.0 % (2 * pi)
+    return gmst_sec * tau / 86400.0 % tau

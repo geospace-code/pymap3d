@@ -3,21 +3,11 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import (
-        radians,
-        sin,
-        cos,
-        tan,
-        arctan as atan,
-        hypot,
-        degrees,
-        arctan2 as atan2,
-        sqrt,
-        pi,
-    )
+    from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt
 except ImportError:
-    from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt, pi  # type: ignore
+    from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt  # type: ignore
 
+from math import pi
 from datetime import datetime
 
 from .ellipsoid import Ellipsoid
@@ -30,9 +20,6 @@ except ImportError:
 
 if typing.TYPE_CHECKING:
     from numpy import ndarray
-
-# py < 3.6 compatible
-tau = 2 * pi
 
 
 __all__ = [
