@@ -4,9 +4,11 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, pi, array, broadcast_arrays
+    from numpy import radians, degrees, cos, arctan2 as atan2, tan, array, broadcast_arrays
 except ImportError:
-    from math import radians, degrees, cos, atan2, tan, pi  # type: ignore
+    from math import radians, degrees, cos, atan2, tan  # type: ignore
+
+from math import pi, tau
 
 from .ellipsoid import Ellipsoid
 from .utils import sign
@@ -32,6 +34,9 @@ __all__ = [
     "departure",
     "meanm",
 ]
+
+
+COS_EPS = 1e-9
 
 
 def meridian_dist(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
@@ -159,7 +164,7 @@ def loxodrome_inverse(
     dist = meridian_arc(lat2, lat1, deg=False, ell=ell) / aux
 
     # straight east or west
-    i = aux < 1e-9
+    i = aux < COS_EPS
     try:
         dist[i] = departure(lon2[i], lon1[i], lat1[i], ell, deg=False)
     except (AttributeError, TypeError):
@@ -215,8 +220,10 @@ def loxodrome_direct(
     if deg:
         lat1, lon1, a12 = radians(lat1), radians(lon1), radians(a12)
 
+    a12 = a12 % tau
+
     try:
-        lat1, rng = broadcast_arrays(lat1, rng)
+        lat1, rng, a12 = broadcast_arrays(lat1, rng, a12)
         if (abs(lat1) > pi / 2).any():  # type: ignore
             raise ValueError("-90 <= latitude <= 90")
         if (rng < 0).any():  # type: ignore
@@ -239,14 +246,14 @@ def loxodrome_direct(
     iso = geodetic2isometric(lat1, ell, deg=False)
 
     # stability near singularities
-    i = abs(cos(a12)) < 1e-9
+    i = abs(cos(a12)) < COS_EPS
     dlon = tan(a12) * (newiso - iso)
 
     try:
-        dlon[i] = sign(dlon[i]) * rng[i] / rcurve.transverse(lat1[i], ell=ell, deg=False)  # type: ignore
+        dlon[i] = sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell=ell, deg=False)  # type: ignore
     except (AttributeError, TypeError):
         if i:  # straight east or west
-            dlon = sign(dlon) * rng / rcurve.transverse(lat1, ell=ell, deg=False)
+            dlon = sign(pi - a12) * rng / rcurve.parallel(lat1, ell=ell, deg=False)
 
     lon2 = lon1 + dlon
 

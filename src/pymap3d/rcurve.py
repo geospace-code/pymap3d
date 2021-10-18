@@ -4,9 +4,9 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, sqrt
+    from numpy import sin, cos, sqrt
 except ImportError:
-    from math import radians, sin, cos, sqrt  # type: ignore
+    from math import sin, cos, sqrt  # type: ignore
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize
@@ -37,9 +37,11 @@ def geocentric_radius(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = 
     )
 
 
-def parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def parallel(lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
+
+    like Matlab rcurve('parallel', ...)
 
     Parameters
     ----------
@@ -56,8 +58,7 @@ def parallel(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
         radius of ellipsoid (meters)
     """
 
-    if deg:
-        lat = radians(lat)
+    lat, ell = sanitize(lat, ell, deg)
 
     return cos(lat) * transverse(lat, ell, deg=False)
 
@@ -82,10 +83,7 @@ def meridian(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
         radius of ellipsoid
     """
 
-    if ell is None:
-        ell = Ellipsoid()
-    if deg:
-        lat = radians(lat)
+    lat, ell = sanitize(lat, ell, deg)
 
     f1 = ell.semimajor_axis * (1 - ell.eccentricity ** 2)
     f2 = 1 - (ell.eccentricity * sin(lat)) ** 2
