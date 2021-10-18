@@ -13,6 +13,7 @@ try:
         pi,
         array,
         atleast_1d,
+        broadcast_arrays,
         broadcast_to,
     )
 except ImportError:
@@ -150,28 +151,7 @@ def loxodrome_inverse(
         lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
     try:
-        lat1 = atleast_1d(lat1)
-        lon1 = atleast_1d(lon1)
-        lat2 = atleast_1d(lat2)
-        lon2 = atleast_1d(lon2)
-
-        if lat1.shape != lon1.shape:
-            if lat1.size == 1:
-                lat1 = broadcast_to(lat1, lon1.shape)
-            elif lon1.size == 1:
-                lon1 = broadcast_to(lon1, lat1.shape)
-            else:
-                raise ValueError("lat1, lon1 must have same shape")
-        if lat2.shape != lon2.shape:
-            if lat2.size == 1:
-                lat2 = broadcast_to(lat2, lon2.shape)
-            elif lon2.size == 1:
-                lon2 = broadcast_to(lon2, lat2.shape)
-            else:
-                raise ValueError("lat2, lon2 must have same shape")
-        if lat2.shape != lat1.shape:
-            lat2 = broadcast_to(lat2, lat1.shape)
-            lon2 = broadcast_to(lon2, lat1.shape)
+        lat1, lon1, lat2, lon2 = broadcast_arrays(lat1, lon1, lat2, lon2)
 
     except NameError:
         pass
