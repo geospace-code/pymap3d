@@ -15,6 +15,14 @@ B = ELL.semiminor_axis
 
 atol_dist = 1e-6  # 1 micrometer
 
+xyz2lla_testsets = [
+    ((A / 2, 0, 0), (0, 0, -A / 2)),
+    ((0, A / 2, 0), (0, 90, -A / 2)),
+    ((0, 0, B / 2), (90, 0, -B / 2)),
+    ((0, 0, -B / 2), (-90, 0, -B / 2)),
+    ((-A / 2, 0, 0), (0, 180, - A / 2)),
+]
+
 
 @pytest.mark.parametrize("lla", [(42, -82, 200), ([42], [-82], [200])], ids=("scalar", "list"))
 def test_scalar_geodetic2ecef(lla):
@@ -153,19 +161,25 @@ def test_geodetic2ecef(lla, xyz):
 
 @pytest.mark.parametrize(
     "xyz, lla",
-    [
-        ((A - 1, 0, 0), (0, 0, -1)),
-        ((0, A - 1, 0), (0, 90, -1)),
-        ((0, 0, B - 1), (90, 0, -1)),
-        ((0, 0, -B + 1), (-90, 0, -1)),
-        ((-A + 1, 0, 0), (0, 180, -1)),
-    ],
+    xyz2lla_testsets
 )
 def test_ecef2geodetic(xyz, lla):
     lat, lon, alt = pm.ecef2geodetic(*xyz)
     assert lat == approx(lla[0])
     assert lon == approx(lla[1])
     assert alt == approx(lla[2])
+
+
+@pytest.mark.parametrize(
+    "xyz, lla",
+    xyz2lla_testsets
+)
+def test_numpy_ecef2geodetic(xyz, lla):
+    np = pytest.importorskip("numpy")
+    lat, lon, alt = pm.ecef2geodetic(*np.array([[xyz], ], dtype=np.float32).T)
+    assert lat[0] == approx(lla[0])
+    assert lon[0] == approx(lla[1])
+    assert alt[0] == approx(lla[2])
 
 
 @pytest.mark.parametrize(

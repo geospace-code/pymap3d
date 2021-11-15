@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt
+    from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt, finfo, where
     from .eci import eci2ecef, ecef2eci
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt  # type: ignore
@@ -153,6 +153,12 @@ def ecef2geodetic(
     Beta += eps
     # %% final output
     lat = atan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
+    try:
+        lim_pi2 = pi / 2 - 3 * finfo(eps.dtype).eps
+        lat = where(Beta >= lim_pi2, pi / 2, lat)
+        lat = where(Beta <= -lim_pi2, -pi / 2, lat)
+    except (TypeError, AttributeError, NameError):
+        pass
 
     lon = atan2(y, x)
 
