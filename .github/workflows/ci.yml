@@ -7,7 +7,7 @@ on:
     - .github/workflows/ci.yml
     pull-request:
     - "**.py"
-    - .github/workflows/ci_stdlib_only.yml
+    - .github/workflows/ci.yml
 
 jobs:
 
