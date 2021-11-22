@@ -240,3 +240,21 @@ def test_numpy_ecef2geodetic(xyz, lla):
     assert lat[0] == approx(lla[0])
     assert lon[0] == approx(lla[1])
     assert alt[0] == approx(lla[2])
+
+
+@pytest.mark.parametrize("lla, xyz", llaxyz)
+def test_numpy_geodetic2ecef(lla, xyz):
+    np = pytest.importorskip("numpy")
+    x, y, z = pm.geodetic2ecef(
+        *np.array(
+            [
+                [lla],
+            ],
+            dtype=np.float32,
+        ).T
+    )
+
+    atol_dist = 1  # meters
+    assert x[0] == approx(xyz[0], abs=atol_dist)
+    assert y[0] == approx(xyz[1], abs=atol_dist)
+    assert z[0] == approx(xyz[2], abs=atol_dist)

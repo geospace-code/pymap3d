@@ -88,8 +88,7 @@ def geodetic2ecef(
     N = ell.semimajor_axis ** 2 / sqrt(
         ell.semimajor_axis ** 2 * cos(lat) ** 2 + ell.semiminor_axis ** 2 * sin(lat) ** 2
     )
-    # Compute cartesian (geocentric) coordinates given  (curvilinear) geodetic
-    # coordinates.
+    # Compute cartesian (geocentric) coordinates given (curvilinear) geodetic coordinates.
     x = (N + alt) * cos(lat) * cos(lon)
     y = (N + alt) * cos(lat) * sin(lon)
     z = (N * (ell.semiminor_axis / ell.semimajor_axis) ** 2 + alt) * sin(lat)
