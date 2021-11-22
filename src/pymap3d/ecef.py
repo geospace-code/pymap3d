@@ -3,7 +3,19 @@ from __future__ import annotations
 import typing
 
 try:
-    from numpy import radians, sin, cos, tan, arctan as atan, hypot, degrees, arctan2 as atan2, sqrt
+    from numpy import (
+        radians,
+        sin,
+        cos,
+        tan,
+        arctan as atan,
+        hypot,
+        degrees,
+        arctan2 as atan2,
+        sqrt,
+        finfo,
+        where,
+    )
     from .eci import eci2ecef, ecef2eci
 except ImportError:
     from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt  # type: ignore
@@ -146,18 +158,36 @@ def ecef2geodetic(
             Beta = -pi / 2
 
     # eqn. 13
-    eps = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E ** 2) * sin(Beta)) / (
+    dBeta = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E ** 2) * sin(Beta)) / (
         ell.semimajor_axis * huE * 1 / cos(Beta) - E ** 2 * cos(Beta)
     )
 
-    Beta += eps
+    Beta += dBeta
+
+    # eqn. 4c
     # %% final output
     lat = atan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
+
+    try:
+        # patch latitude for float32 precision loss
+        lim_pi2 = pi / 2 - finfo(dBeta.dtype).eps
+        lat = where(Beta >= lim_pi2, pi / 2, lat)
+        lat = where(Beta <= -lim_pi2, -pi / 2, lat)
+    except NameError:
+        pass
 
     lon = atan2(y, x)
 
     # eqn. 7
-    alt = hypot(z - ell.semiminor_axis * sin(Beta), Q - ell.semimajor_axis * cos(Beta))
+    cosBeta = cos(Beta)
+    try:
+        # patch altitude for float32 precision loss
+        cosBeta = where(Beta >= lim_pi2, 0, cosBeta)
+        cosBeta = where(Beta <= -lim_pi2, 0, cosBeta)
+    except NameError:
+        pass
+
+    alt = hypot(z - ell.semiminor_axis * sin(Beta), Q - ell.semimajor_axis * cosBeta)
 
     # inside ellipsoid?
     inside = (

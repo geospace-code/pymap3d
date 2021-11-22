@@ -13,6 +13,28 @@ ELL = pm.Ellipsoid()
 A = ELL.semimajor_axis
 B = ELL.semiminor_axis
 
+xyzlla = [
+    ((A - 1, 0, 0), (0, 0, -1)),
+    ((0, A - 1, 0), (0, 90, -1)),
+    ((0, 0, B - 1), (90, 0, -1)),
+    ((0, 0, B - 1), (89.999999, 0, -1)),
+    ((0, 0, B - 1), (89.99999, 0, -1)),
+    ((0, 0, -B + 1), (-90, 0, -1)),
+    ((0, 0, -B + 1), (-89.999999, 0, -1)),
+    ((0, 0, -B + 1), (-89.99999, 0, -1)),
+    ((-A + 1, 0, 0), (0, 180, -1)),
+]
+
+llaxyz = [
+    ((0, 0, -1), (A - 1, 0, 0)),
+    ((0, 90, -1), (0, A - 1, 0)),
+    ((0, -90, -1), (0, -A + 1, 0)),
+    ((90, 0, -1), (0, 0, B - 1)),
+    ((90, 15, -1), (0, 0, B - 1)),
+    ((-90, 0, -1), (0, 0, -B + 1)),
+]
+
+
 atol_dist = 1e-6  # 1 micrometer
 
 
@@ -94,7 +116,7 @@ def test_xarray():
     xyz = pm.geodetic2ecef(*xr_lla)
 
     assert xyz == approx(xyz0)
-    # %%
+
     xr_xyz = xarray.DataArray(list(xyz0))
 
     lla = pm.ecef2geodetic(*xr_xyz)
@@ -136,31 +158,12 @@ def test_ecef():
     assert pm.ecef2geodetic((A - 1) / sqrt(2), (A - 1) / sqrt(2), 0) == approx([0, 45, -1])
 
 
-@pytest.mark.parametrize(
-    "lla, xyz",
-    [
-        ((0, 0, -1), (A - 1, 0, 0)),
-        ((0, 90, -1), (0, A - 1, 0)),
-        ((0, -90, -1), (0, -A + 1, 0)),
-        ((90, 0, -1), (0, 0, B - 1)),
-        ((90, 15, -1), (0, 0, B - 1)),
-        ((-90, 0, -1), (0, 0, -B + 1)),
-    ],
-)
+@pytest.mark.parametrize("lla, xyz", llaxyz)
 def test_geodetic2ecef(lla, xyz):
     assert pm.geodetic2ecef(*lla) == approx(xyz, abs=atol_dist)
 
 
-@pytest.mark.parametrize(
-    "xyz, lla",
-    [
-        ((A - 1, 0, 0), (0, 0, -1)),
-        ((0, A - 1, 0), (0, 90, -1)),
-        ((0, 0, B - 1), (90, 0, -1)),
-        ((0, 0, -B + 1), (-90, 0, -1)),
-        ((-A + 1, 0, 0), (0, 180, -1)),
-    ],
-)
+@pytest.mark.parametrize("xyz, lla", xyzlla)
 def test_ecef2geodetic(xyz, lla):
     lat, lon, alt = pm.ecef2geodetic(*xyz)
     assert lat == approx(lla[0])
@@ -221,3 +224,19 @@ def test_somenan():
 
     lat, lon, alt = pm.ecef2geodetic(xyz[:, 0], xyz[:, 1], xyz[:, 2])
     assert (lat[0], lon[0], alt[0]) == approx(lla0)
+
+
+@pytest.mark.parametrize("xyz, lla", xyzlla)
+def test_numpy_ecef2geodetic(xyz, lla):
+    np = pytest.importorskip("numpy")
+    lat, lon, alt = pm.ecef2geodetic(
+        *np.array(
+            [
+                [xyz],
+            ],
+            dtype=np.float32,
+        ).T
+    )
+    assert lat[0] == approx(lla[0])
+    assert lon[0] == approx(lla[1])
+    assert alt[0] == approx(lla[2])

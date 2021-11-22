@@ -76,6 +76,9 @@ where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
 
 Example scripts are in the [examples](./Examples) directory.
 
+Native Python float is typically [64 bit](https://docs.python.org/3/library/stdtypes.html#typesnumeric).
+Numpy can select real precision bits: 32, 64, 128, etc.
+
 ### Functions
 
 Popular mapping toolbox functions ported to Python include the
