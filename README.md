@@ -85,18 +85,28 @@ Popular mapping toolbox functions ported to Python include the
 following, where the source coordinate system (before the "2") is
 converted to the desired coordinate system:
 
-    aer2ecef  aer2enu  aer2geodetic  aer2ned
-    ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
-    ecef2eci  eci2ecef eci2aer aer2eci geodetic2eci eci2geodetic
-    enu2aer  enu2ecef   enu2geodetic
-    geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
-    ned2aer  ned2ecef   ned2geodetic
-    azel2radec radec2azel
-    vreckon vdist
-    lookAtSpheroid
-    track2 departure meanm
-    rcurve rsphere
-    geod2geoc geoc2geod
+```
+aer2ecef  aer2enu  aer2geodetic  aer2ned
+ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
+ecef2eci  eci2ecef eci2aer aer2eci geodetic2eci eci2geodetic
+enu2aer  enu2ecef   enu2geodetic
+geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
+ned2aer  ned2ecef   ned2geodetic
+azel2radec radec2azel
+lookAtSpheroid
+track2 departure meanm
+rcurve rsphere
+geod2geoc geoc2geod
+```
+
+Vincenty functions "vincenty.vreckon" and "vincenty.vdist" are accessed like:
+
+```python
+import pymap3d.vincenty as pmv
+
+lat2, lon2 = pmv.vreckon(lat1, lon1, ground_range_m, azimuth_deg)
+dist_m, azimuth_deg = pmv.vdist(lat1, lon1, lat2, lon2)
+```
 
 Additional functions:
 
