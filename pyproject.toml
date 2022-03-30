@@ -1,41 +1,5 @@
-[project]
-name = "pymap3d"
-version = "2.7.2"
-description = "pure Python (no prereqs) coordinate conversions, following convention of several popular Matlab routines."
-readme = "README.md"
-requires-python = ">=3.7"
-license = {file = "LICENSE.txt"}
-keywords = ["geodesy"]
-classifiers = [
-  'Development Status :: 5 - Production/Stable',
-  'Environment :: Console',
-  'Intended Audience :: Science/Research',
-  'Operating System :: OS Independent',
-  'Programming Language :: Python :: 3',
-  'Topic :: Scientific/Engineering :: GIS'
-]
-authors = [{name = "Michael Hirsch"}]
-
-[project.urls]
-homepage = "https://github.com/geospace-code/pymap3d"
-
-[project.optional-dependencies]
-test = [
-  "pytest"
-]
-lint = [
-  "flake8",
-  "flake8-bugbear",
-  "flake8-builtins",
-  "flake8-blind-except",
-  "mypy >= 0.800"
-]
-full = [
-  "python-dateutil",
-  "numpy >= 1.10.0",
-  "astropy",
-  "xarray"
-]
+[build-system]
+requires = ["setuptools", "wheel"]
 
 [tool.black]
 line-length = 100
