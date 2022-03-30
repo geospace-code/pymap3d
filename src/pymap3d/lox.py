@@ -180,7 +180,7 @@ def loxodrome_direct(
     lat1,
     lon1,
     rng,
-    a12: float,
+    a12,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple:
@@ -220,12 +220,12 @@ def loxodrome_direct(
 
     try:
         lat1, rng, a12 = broadcast_arrays(lat1, rng, a12)
-        if (abs(lat1) > pi / 2).any():  # type: ignore
+        if (abs(lat1) > pi / 2).any():
             raise ValueError("-90 <= latitude <= 90")
-        if (rng < 0).any():  # type: ignore
+        if (rng < 0).any():
             raise ValueError("ground distance must be >= 0")
     except NameError:
-        if abs(lat1) > pi / 2:  # type: ignore
+        if abs(lat1) > pi / 2:
             raise ValueError("-90 <= latitude <= 90")
         if rng < 0:
             raise ValueError("ground distance must be >= 0")
