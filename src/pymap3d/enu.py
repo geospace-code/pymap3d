@@ -1,6 +1,5 @@
 """ transforms involving ENU East North Up """
 from __future__ import annotations
-import typing
 
 from math import tau
 
@@ -12,15 +11,10 @@ except ImportError:
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
-
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
 
-def enu2aer(
-    e: ndarray, n: ndarray, u: ndarray, deg: bool = True
-) -> tuple[ndarray, ndarray, ndarray]:
+def enu2aer(e, n, u, deg: bool = True) -> tuple:
     """
     ENU to Azimuth, Elevation, Range
 
@@ -73,9 +67,7 @@ def enu2aer(
     return az, elev, slantRange
 
 
-def aer2enu(
-    az: ndarray, el: ndarray, srange: float | ndarray, deg: bool = True
-) -> tuple[ndarray, ndarray, ndarray]:
+def aer2enu(az, el, srange, deg: bool = True) -> tuple:
     """
     Azimuth, Elevation, Slant range to target to East, North, Up
 
@@ -116,15 +108,15 @@ def aer2enu(
 
 
 def enu2geodetic(
-    e: ndarray,
-    n: ndarray,
-    u: ndarray,
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
+    e,
+    n,
+    u,
+    lat0,
+    lon0,
+    h0,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     East, North, Up to target to geodetic coordinates
 
@@ -164,15 +156,15 @@ def enu2geodetic(
 
 
 def geodetic2enu(
-    lat: ndarray,
-    lon: ndarray,
-    h: ndarray,
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
+    lat,
+    lon,
+    h,
+    lat0,
+    lon0,
+    h0,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     Parameters
     ----------

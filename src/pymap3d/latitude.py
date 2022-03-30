@@ -1,7 +1,6 @@
 """geodetic transforms to auxilary coordinate systems involving latitude"""
 
 from __future__ import annotations
-import typing
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize, sign
@@ -16,9 +15,6 @@ except ImportError:
     from math import atan, radians, degrees, tan, sin, cos, asinh, atanh, exp, pi, sqrt, inf  # type: ignore
 
     use_numpy = False
-
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
 COS_EPS = 1e-9  # tolerance for angles near abs([90, 270])
 
@@ -41,11 +37,11 @@ __all__ = [
 
 
 def geoc2geod(
-    geocentric_lat: ndarray,
-    geocentric_distance: ndarray,
+    geocentric_lat,
+    geocentric_distance,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> float:
+):
     """
     convert geocentric latitude to geodetic latitude, consider mean sea level altitude
 
@@ -87,9 +83,7 @@ def geoc2geod(
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2geocentric(
-    geodetic_lat: ndarray, alt_m: float, ell: Ellipsoid = None, deg: bool = True
-) -> ndarray:
+def geodetic2geocentric(geodetic_lat, alt_m, ell: Ellipsoid = None, deg: bool = True):
     """
     convert geodetic latitude to geocentric latitude on spheroid surface
 
@@ -128,9 +122,7 @@ def geodetic2geocentric(
 geod2geoc = geodetic2geocentric
 
 
-def geocentric2geodetic(
-    geocentric_lat: ndarray, alt_m: float, ell: Ellipsoid = None, deg: bool = True
-) -> ndarray:
+def geocentric2geodetic(geocentric_lat, alt_m, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from geocentric latitude to geodetic latitude
 
@@ -166,9 +158,7 @@ def geocentric2geodetic(
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2isometric(
-    geodetic_lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> float:
+def geodetic2isometric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     computes isometric latitude on an ellipsoid
 
@@ -228,7 +218,7 @@ def geodetic2isometric(
         return isometric_lat
 
 
-def isometric2geodetic(isometric_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def isometric2geodetic(isometric_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from isometric latitude to geodetic latitude
 
@@ -264,7 +254,7 @@ def isometric2geodetic(isometric_lat: ndarray, ell: Ellipsoid = None, deg: bool 
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def conformal2geodetic(conformal_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def conformal2geodetic(conformal_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from conformal latitude to geodetic latitude
 
@@ -309,7 +299,7 @@ def conformal2geodetic(conformal_lat: ndarray, ell: Ellipsoid = None, deg: bool 
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2conformal(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def geodetic2conformal(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from geodetic latitude to conformal latitude
 
@@ -355,9 +345,7 @@ def geodetic2conformal(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool =
 
 
 # %% rectifying
-def geodetic2rectifying(
-    geodetic_lat: float | ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> float:
+def geodetic2rectifying(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from geodetic latitude to rectifying latitude
 
@@ -403,9 +391,7 @@ def geodetic2rectifying(
     return degrees(rectifying_lat) if deg else rectifying_lat
 
 
-def rectifying2geodetic(
-    rectifying_lat: ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> ndarray:
+def rectifying2geodetic(rectifying_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from rectifying latitude to geodetic latitude
 
@@ -451,7 +437,7 @@ def rectifying2geodetic(
 
 
 # %% authalic
-def geodetic2authalic(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def geodetic2authalic(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from geodetic latitude to authalic latitude
 
@@ -495,7 +481,7 @@ def geodetic2authalic(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = 
     return degrees(authalic_lat) if deg else authalic_lat
 
 
-def authalic2geodetic(authalic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def authalic2geodetic(authalic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from authalic latitude to geodetic latitude
 
@@ -538,7 +524,7 @@ def authalic2geodetic(authalic_lat: ndarray, ell: Ellipsoid = None, deg: bool = 
 
 
 # %% parametric
-def geodetic2parametric(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> ndarray:
+def geodetic2parametric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from geodetic latitude to parametric latitude
 
@@ -572,9 +558,7 @@ def geodetic2parametric(geodetic_lat: ndarray, ell: Ellipsoid = None, deg: bool 
     return degrees(parametric_lat) if deg else parametric_lat
 
 
-def parametric2geodetic(
-    parametric_lat: ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> ndarray:
+def parametric2geodetic(parametric_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     converts from parametric latitude to geodetic latitude
 

@@ -1,7 +1,6 @@
 """ compute radii of auxiliary spheres"""
 
 from __future__ import annotations
-import typing
 
 try:
     from numpy import radians, sin, cos, log, sqrt, degrees, asarray
@@ -11,9 +10,6 @@ except ImportError:
 from .ellipsoid import Ellipsoid
 from . import rcurve
 from .vincenty import vdist
-
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
 __all__ = [
     "eqavol",
@@ -93,13 +89,13 @@ def rectifying(ell: Ellipsoid = None) -> float:
 
 
 def euler(
-    lat1: ndarray,
-    lon1: ndarray,
-    lat2: ndarray,
-    lon2: ndarray,
+    lat1,
+    lon1,
+    lat2,
+    lon2,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> ndarray:
+):
     """computes the Euler radii of curvature at the midpoint of the
      great circle arc defined by the endpoints (lat1,lon1) and (lat2,lon2)
 
@@ -143,7 +139,7 @@ def euler(
     return rho * nu / den
 
 
-def curve(lat: ndarray, ell: Ellipsoid = None, deg: bool = True, method: str = "mean") -> ndarray:
+def curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"):
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 

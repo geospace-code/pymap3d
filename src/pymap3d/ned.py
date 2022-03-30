@@ -1,19 +1,13 @@
 """ Transforms involving NED North East Down """
 
 from __future__ import annotations
-import typing
 
 from .enu import geodetic2enu, aer2enu, enu2aer
 from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
 from .ellipsoid import Ellipsoid
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
-
-def aer2ned(
-    az: ndarray, elev: ndarray, slantRange: ndarray, deg: bool = True
-) -> tuple[ndarray, ndarray, ndarray]:
+def aer2ned(az, elev, slantRange, deg: bool = True) -> tuple:
     """
     converts azimuth, elevation, range to target from observer to North, East, Down
 
@@ -43,9 +37,7 @@ def aer2ned(
     return n, e, -u
 
 
-def ned2aer(
-    n: ndarray, e: ndarray, d: ndarray, deg: bool = True
-) -> tuple[ndarray, ndarray, ndarray]:
+def ned2aer(n, e, d, deg: bool = True) -> tuple:
     """
     converts North, East, Down to azimuth, elevation, range
 
@@ -75,15 +67,15 @@ def ned2aer(
 
 
 def ned2geodetic(
-    n: ndarray,
-    e: ndarray,
-    d: ndarray,
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
+    n,
+    e,
+    d,
+    lat0,
+    lon0,
+    h0,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     Converts North, East, Down to target latitude, longitude, altitude
 
@@ -124,15 +116,15 @@ def ned2geodetic(
 
 
 def ned2ecef(
-    n: ndarray,
-    e: ndarray,
-    d: ndarray,
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
+    n,
+    e,
+    d,
+    lat0,
+    lon0,
+    h0,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     North, East, Down to target ECEF coordinates
 
@@ -170,15 +162,15 @@ def ned2ecef(
 
 
 def ecef2ned(
-    x: ndarray,
-    y: ndarray,
-    z: ndarray,
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
+    x,
+    y,
+    z,
+    lat0,
+    lon0,
+    h0,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     Convert ECEF x,y,z to North, East, Down
 
@@ -219,15 +211,15 @@ def ecef2ned(
 
 
 def geodetic2ned(
-    lat: ndarray,
-    lon: ndarray,
-    h: ndarray,
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
+    lat,
+    lon,
+    h,
+    lat0,
+    lon0,
+    h0,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     convert latitude, longitude, altitude of target to North, East, Down from observer
 
@@ -267,9 +259,7 @@ def geodetic2ned(
     return n, e, -u
 
 
-def ecef2nedv(
-    x: float, y: float, z: float, lat0: float, lon0: float, deg: bool = True
-) -> tuple[float, float, float]:
+def ecef2nedv(x, y, z, lat0, lon0, deg: bool = True) -> tuple[float, float, float]:
     """
     for VECTOR between two points
 

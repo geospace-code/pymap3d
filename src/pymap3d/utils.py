@@ -3,7 +3,6 @@
 all assume radians"""
 
 from __future__ import annotations
-import typing
 from math import pi
 
 from .ellipsoid import Ellipsoid
@@ -13,7 +12,7 @@ try:
 except ImportError:
     from math import atan2, hypot, cos, sin, radians  # type: ignore
 
-    def sign(x: float) -> float:  # type: ignore
+    def sign(x) -> float:  # type: ignore
         """signum function"""
         if x < 0:
             y = -1.0
@@ -25,23 +24,20 @@ except ImportError:
         return y
 
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
-
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart", "sign"]
 
 
-def cart2pol(x: float, y: float) -> tuple[float, float]:
+def cart2pol(x, y) -> tuple:
     """Transform Cartesian to polar coordinates"""
     return atan2(y, x), hypot(x, y)
 
 
-def pol2cart(theta: float, rho: float) -> tuple[float, float]:
+def pol2cart(theta, rho) -> tuple:
     """Transform polar to Cartesian coordinates"""
     return rho * cos(theta), rho * sin(theta)
 
 
-def cart2sph(x: ndarray, y: ndarray, z: ndarray) -> tuple[ndarray, ndarray, ndarray]:
+def cart2sph(x, y, z) -> tuple:
     """Transform Cartesian to spherical coordinates"""
     hxy = hypot(x, y)
     r = hypot(hxy, z)
@@ -50,7 +46,7 @@ def cart2sph(x: ndarray, y: ndarray, z: ndarray) -> tuple[ndarray, ndarray, ndar
     return az, el, r
 
 
-def sph2cart(az: ndarray, el: ndarray, r: ndarray) -> tuple[ndarray, ndarray, ndarray]:
+def sph2cart(az, el, r) -> tuple:
     """Transform spherical to Cartesian coordinates"""
     rcos_theta = r * cos(el)
     x = rcos_theta * cos(az)
@@ -59,9 +55,7 @@ def sph2cart(az: ndarray, el: ndarray, r: ndarray) -> tuple[ndarray, ndarray, nd
     return x, y, z
 
 
-def sanitize(
-    lat: float | ndarray, ell: typing.Optional[Ellipsoid], deg: bool
-) -> tuple[float | ndarray, Ellipsoid]:
+def sanitize(lat, ell: Ellipsoid | None, deg: bool) -> tuple:
 
     if ell is None:
         ell = Ellipsoid()

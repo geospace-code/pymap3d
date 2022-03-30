@@ -1,7 +1,6 @@
 """ Line of sight intersection of space observer to ellipsoid """
 
 from __future__ import annotations
-import typing
 
 try:
     from numpy import pi, nan, sqrt, atleast_1d
@@ -12,21 +11,18 @@ from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
-
 __all__ = ["lookAtSpheroid"]
 
 
 def lookAtSpheroid(
-    lat0: ndarray,
-    lon0: ndarray,
-    h0: ndarray,
-    az: ndarray,
-    tilt: ndarray,
+    lat0,
+    lon0,
+    h0,
+    az,
+    tilt,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[ndarray, ndarray, ndarray]:
+) -> tuple:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 

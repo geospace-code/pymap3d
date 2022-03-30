@@ -3,7 +3,7 @@ Vincenty's methods for computing ground distance and reckoning
 """
 
 from __future__ import annotations
-import typing
+
 import logging
 from math import nan, pi
 from copy import copy
@@ -28,19 +28,17 @@ except ImportError:
 from .ellipsoid import Ellipsoid
 from .utils import sign
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
 
 __all__ = ["vdist", "vreckon", "track2"]
 
 
 def vdist(
-    Lat1: float | ndarray,
-    Lon1: float | ndarray,
-    Lat2: float | ndarray,
-    Lon2: float | ndarray,
+    Lat1,
+    Lon1,
+    Lat2,
+    Lon2,
     ell: Ellipsoid = None,
-) -> tuple[ndarray, ndarray]:
+) -> tuple:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -277,8 +275,12 @@ def vdist(
 
 
 def vreckon(
-    Lat1: float | ndarray, Lon1: float | ndarray, Rng: ndarray, Azim: ndarray, ell: Ellipsoid = None
-) -> tuple[ndarray, ndarray]:
+    Lat1,
+    Lon1,
+    Rng,
+    Azim,
+    ell: Ellipsoid = None,
+) -> tuple:
     """
     This is the Vincenty "forward" solution.
 
@@ -457,14 +459,14 @@ def vreckon(
 
 
 def track2(
-    lat1: ndarray,
-    lon1: ndarray,
-    lat2: ndarray,
-    lon2: ndarray,
+    lat1,
+    lon1,
+    lat2,
+    lon2,
     ell: Ellipsoid = None,
     npts: int = 100,
     deg: bool = True,
-) -> tuple[list[ndarray], list[ndarray]]:
+) -> tuple[list, list]:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 

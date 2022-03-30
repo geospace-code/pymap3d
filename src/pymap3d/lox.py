@@ -1,7 +1,6 @@
 """ isometric latitude, meridian distance """
 
 from __future__ import annotations
-import typing
 
 try:
     from numpy import radians, degrees, cos, arctan2 as atan2, tan, array, broadcast_arrays
@@ -23,9 +22,6 @@ from .latitude import (
 )
 from .utils import sph2cart, cart2sph
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
-
 __all__ = [
     "loxodrome_inverse",
     "loxodrome_direct",
@@ -39,7 +35,7 @@ __all__ = [
 COS_EPS = 1e-9
 
 
-def meridian_dist(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def meridian_dist(lat, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     Computes the ground distance on an ellipsoid from the equator to the input latitude.
 
@@ -60,7 +56,7 @@ def meridian_dist(lat: ndarray, ell: Ellipsoid = None, deg: bool = True) -> floa
     return meridian_arc(0.0, lat, ell, deg)
 
 
-def meridian_arc(lat1, lat2: ndarray, ell: Ellipsoid = None, deg: bool = True) -> float:
+def meridian_arc(lat1, lat2, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     Computes the ground distance on an ellipsoid between two latitudes.
 
@@ -89,10 +85,10 @@ def meridian_arc(lat1, lat2: ndarray, ell: Ellipsoid = None, deg: bool = True) -
 
 
 def loxodrome_inverse(
-    lat1: ndarray,
-    lon1: ndarray,
-    lat2: ndarray,
-    lon2: ndarray,
+    lat1,
+    lon1,
+    lat2,
+    lon2,
     ell: Ellipsoid = None,
     deg: bool = True,
 ) -> tuple[float, float]:
@@ -181,13 +177,13 @@ def loxodrome_inverse(
 
 
 def loxodrome_direct(
-    lat1: float | ndarray,
-    lon1: float | ndarray,
-    rng: float | ndarray,
+    lat1,
+    lon1,
+    rng,
     a12: float,
     ell: Ellipsoid = None,
     deg: bool = True,
-) -> tuple[float | ndarray, float | ndarray]:
+) -> tuple:
     """
     Given starting lat, lon with arclength and azimuth, compute final lat, lon
 
@@ -266,9 +262,7 @@ def loxodrome_direct(
         return lat2, lon2
 
 
-def departure(
-    lon1: ndarray, lon2: ndarray, lat: ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> float:
+def departure(lon1, lon2, lat, ell: Ellipsoid = None, deg: bool = True) -> float:
     """
     Computes the distance along a specific parallel between two meridians.
 
@@ -296,9 +290,7 @@ def departure(
     return rcurve.parallel(lat, ell=ell, deg=False) * ((lon2 - lon1) % pi)
 
 
-def meanm(
-    lat: ndarray, lon: ndarray, ell: Ellipsoid = None, deg: bool = True
-) -> tuple[ndarray, ndarray]:
+def meanm(lat, lon, ell: Ellipsoid = None, deg: bool = True) -> tuple:
     """
     Computes geographic mean for geographic points on an ellipsoid
 

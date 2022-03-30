@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import typing
 from datetime import datetime
 from numpy import array, sin, cos, column_stack, empty, atleast_1d
 
@@ -15,15 +14,10 @@ except ImportError:
 
 from .sidereal import greenwichsrt, juliandate
 
-if typing.TYPE_CHECKING:
-    from numpy import ndarray
-
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
-def eci2ecef(
-    x: ndarray, y: ndarray, z: ndarray, time: datetime, *, use_astropy: bool = True
-) -> tuple[ndarray, ndarray, ndarray]:
+def eci2ecef(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -79,9 +73,7 @@ def eci2ecef(
     return x_ecef, y_ecef, z_ecef
 
 
-def ecef2eci(
-    x: ndarray, y: ndarray, z: ndarray, time: datetime, *, use_astropy: bool = True
-) -> tuple[ndarray, ndarray, ndarray]:
+def ecef2eci(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
     """
     Point => Point   ECEF => ECI
 
@@ -139,6 +131,6 @@ def ecef2eci(
     return x_eci, y_eci, z_eci
 
 
-def R3(x: float) -> ndarray:
+def R3(x: float):
     """Rotation matrix for ECI"""
     return array([[cos(x), sin(x), 0], [-sin(x), cos(x), 0], [0, 0, 1]])
