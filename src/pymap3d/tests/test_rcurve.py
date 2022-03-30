@@ -12,12 +12,12 @@ A = ell.semimajor_axis
     "lat,curvature", [(0, A), (90, 0), (-90, 0), (45.0, 4517590.87884893), (-45, 4517590.87884893)]
 )
 def test_rcurve_parallel(lat, curvature):
-    assert rcurve.parallel(lat) == approx(curvature, abs=1e-9)
+    assert rcurve.parallel(lat) == approx(curvature, abs=1e-9, rel=1e-6)
 
 
 def test_numpy_parallel():
     pytest.importorskip("numpy")
-    assert rcurve.parallel([0, 90]) == approx([A, 0], abs=1e-9)
+    assert rcurve.parallel([0, 90]) == approx([A, 0], abs=1e-9, rel=1e-6)
 
 
 @pytest.mark.parametrize(
