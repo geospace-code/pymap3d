@@ -13,11 +13,17 @@ jobs:
 
   full:
     runs-on: ubuntu-latest
+
+    name: Python ${{ matrix.python-version }}
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.10' ]
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.python-version }}
 
     - run: pip install .[full,tests,lint]
 
