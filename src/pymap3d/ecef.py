@@ -14,6 +14,7 @@ try:
         sqrt,
         finfo,
         where,
+        asarray,
     )
     from .eci import eci2ecef, ecef2eci
 except ImportError:
@@ -131,6 +132,13 @@ def ecef2geodetic(
 
     if ell is None:
         ell = Ellipsoid()
+
+    try:
+        x = asarray(x)
+        y = asarray(y)
+        z = asarray(z)
+    except NameError:
+        pass
 
     r = sqrt(x**2 + y**2 + z**2)
 

@@ -18,16 +18,21 @@ def test_scalar_enu(xyz):
         pytest.importorskip("numpy")
 
     enu = pm.ecef2enu(*xyz, 0, 90, -100)
+    assert pm.enu2ecef(*enu, 0, 90, -100) == approx(xyz)
 
-    assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])
 
-
-def test_3d_enu():
+def test_array_enu():
     np = pytest.importorskip("numpy")
-    xyz = (np.atleast_3d(0), np.atleast_3d(A), np.atleast_3d(50))
 
-    enu = pm.ecef2enu(*xyz, 0, 90, -100)
-    assert pm.enu2ecef(*enu, 0, 90, -100) == approx([0, A, 50])
+    xyz = (np.asarray(0), np.asarray(A), np.asarray(50))
+    llh = (np.asarray(0), np.asarray(90), np.asarray(-100))
+    enu = pm.ecef2enu(*xyz, *llh)
+    assert pm.enu2ecef(*enu, *llh) == approx(xyz)
+
+    xyz = (np.atleast_1d(0), np.atleast_1d(A), np.atleast_1d(50))
+    llh = (np.atleast_1d(0), np.atleast_1d(90), np.atleast_1d(-100))
+    enu = pm.ecef2enu(*xyz, *llh)
+    assert pm.enu2ecef(*enu, *llh) == approx(xyz)
 
 
 @pytest.mark.parametrize(

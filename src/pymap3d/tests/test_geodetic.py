@@ -38,49 +38,68 @@ llaxyz = [
 atol_dist = 1e-6  # 1 micrometer
 
 
-@pytest.mark.parametrize("lla", [(42, -82, 200), ([42], [-82], [200])], ids=("scalar", "list"))
+@pytest.mark.parametrize("lla", [lla0, ([lla0[0]], [lla0[1]], [lla0[2]])], ids=("scalar", "list"))
 def test_scalar_geodetic2ecef(lla):
     """
     verify we can handle the wide variety of input data type users might use
     """
+
     if isinstance(lla[0], list):
-        pytest.importorskip("numpy")
+        np = pytest.importorskip("numpy")
 
-    x0, y0, z0 = pm.geodetic2ecef(*lla)
+    xyz = pm.geodetic2ecef(*lla)
+    lla1 = pm.ecef2geodetic(*xyz)
 
-    assert (x0, y0, z0) == approx(xyz0)
+    try:
+        assert np.isclose(lla1, lla, rtol=1e-4).all()
+    except NameError:
+        assert lla1 == approx(lla, rel=1e-4)
 
 
-def test_3d_geodetic2ecef():
+def test_array_geodetic2ecef():
     np = pytest.importorskip("numpy")
-    lla = (np.atleast_3d(42), np.atleast_3d(-82), np.atleast_3d(200))
-    x0, y0, z0 = pm.geodetic2ecef(*lla)
 
-    assert (x0, y0, z0) == approx(xyz0)
+    lla = (np.asarray(lla0[0]), np.asarray(lla0[1]), np.asarray(lla0[2]))
+    xyz = pm.geodetic2ecef(*lla)
+    assert np.isclose(pm.ecef2geodetic(*xyz), lla).all()
+
+    lla = (np.atleast_1d(lla0[0]), np.atleast_1d(lla0[1]), np.atleast_1d(lla0[2]))
+    xyz = pm.geodetic2ecef(*lla)
+    assert np.isclose(pm.ecef2geodetic(*xyz), lla).all()
 
 
-def test_scalar_ecef2geodetic():
+@pytest.mark.parametrize("xyz", [xyz0, ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list"))
+def test_scalar_ecef2geodetic(xyz):
     """
     verify we can handle the wide variety of input data type users might use
     """
-    lat, lon, alt = pm.ecef2geodetic(xyz0[0], xyz0[1], xyz0[2])
 
-    assert [lat, lon, alt] == approx(lla0, rel=1e-4)
+    if isinstance(xyz[0], list):
+        np = pytest.importorskip("numpy")
 
+    lla = pm.ecef2geodetic(*xyz)
+    xyz1 = pm.geodetic2ecef(*lla)
 
-def test_3d_ecef2geodetic():
-    np = pytest.importorskip("numpy")
-    xyz = (np.atleast_3d(xyz0[0]), np.atleast_3d(xyz0[1]), np.atleast_3d(xyz0[2]))
-
-    lat, lon, alt = pm.ecef2geodetic(*xyz)
-
-    assert [lat, lon, alt] == approx(lla0, rel=1e-4)
+    try:
+        assert np.isclose(xyz1, xyz, rtol=1e-4).all()
+    except NameError:
+        assert xyz1 == approx(xyz, rel=1e-4)
 
 
 def test_array_ecef2geodetic():
-    """
-    tests ecef2geodetic can handle numpy array data in addition to singular floats
-    """
+    np = pytest.importorskip("numpy")
+
+    xyz = (np.asarray(xyz0[0]), np.asarray(xyz0[1]), np.asarray(xyz0[2]))
+    lla = pm.ecef2geodetic(*xyz)
+    assert np.isclose(pm.geodetic2ecef(*lla), xyz).all()
+
+    xyz = (np.atleast_1d(xyz0[0]), np.atleast_1d(xyz0[1]), np.atleast_1d(xyz0[2]))
+    lla = pm.ecef2geodetic(*xyz)
+    assert np.isclose(pm.geodetic2ecef(*lla), xyz).all()
+
+
+def test_inside_ecef2geodetic():
+
     np = pytest.importorskip("numpy")
     # test values with no points inside ellipsoid
     lla0_array = (
