@@ -139,24 +139,17 @@ def test_xarray_ecef():
     assert isinstance(xyz[2], xarray.DataArray)
 
     lla1 = pm.ecef2geodetic(*xyz)
-
-    assert lla1 == approx(lla0)
+    assert lla1 == approx(lla)
 
 
 def test_pandas_ecef():
     pandas = pytest.importorskip("pandas")
-    pd_lla = pandas.Series(lla0)
+    lla = pandas.Series(lla0)
 
-    xyz = pm.geodetic2ecef(*pd_lla)
+    xyz = pm.geodetic2ecef(*lla)
 
-    assert xyz == approx(xyz0)
-    # %% dataframe degenerates to series
-    pd_lla = pandas.DataFrame([[*lla0], [*lla0]], columns=["lat", "lon", "alt_m"])
-    xyz = pm.geodetic2ecef(pd_lla["lat"], pd_lla["lon"], pd_lla["alt_m"])
-
-    assert xyz[0].values == approx(xyz0[0])
-    assert xyz[1].values == approx(xyz0[1])
-    assert xyz[2].values == approx(xyz0[2])
+    lla1 = pm.ecef2geodetic(*xyz)
+    assert lla1 == approx(lla)
 
 
 def test_ecef():
