@@ -85,8 +85,6 @@ def geodetic2spherical(
     sinlat = sin(lat)
     coslat = sqrt(1 - sinlat**2)
 
-    first_eccentricity = _calculate_first_eccentricity(ell)
-
     # radius of curvature of the prime vertical section
     N = ell.semimajor_axis**2 / hypot(
         ell.semimajor_axis * coslat, ell.semiminor_axis * sinlat,
@@ -95,7 +93,7 @@ def geodetic2spherical(
     # Instead of computing X and Y, we only compute the projection on the XY
     # plane: xy_projection = sqrt( X**2 + Y**2 )
     xy_projection = (alt + N) * coslat
-    z_cartesian = (alt + (1 - first_eccentricity**2) * N) * sinlat
+    z_cartesian = (alt + (1 - ell.eccentricity**2) * N) * sinlat
     radius = hypot(xy_projection, z_cartesian)
     slat = asin(z_cartesian / radius)
 
@@ -152,32 +150,24 @@ def spherical2geodetic(
     sinlat = sin(lat)
     coslat = sqrt(1 - sinlat**2)
 
-    first_eccentricity = _calculate_first_eccentricity(ell)
     Z = radius * sinlat
     p_0 = pow(radius, 2) * coslat**2 / ell.semimajor_axis**2
-    q_0 = (1 - first_eccentricity**2) / ell.semimajor_axis**2 * Z**2
-    r_0 = (p_0 + q_0 - first_eccentricity**4) / 6
-    s_0 = first_eccentricity**4 * p_0 * q_0 / 4 / r_0**3
+    q_0 = (1 - ell.eccentricity**2) / ell.semimajor_axis**2 * Z**2
+    r_0 = (p_0 + q_0 - ell.eccentricity**4) / 6
+    s_0 = ell.eccentricity**4 * p_0 * q_0 / 4 / r_0**3
     t_0 = cbrt(1 + s_0 + sqrt(2 * s_0 + s_0**2))
     u_0 = r_0 * (1 + t_0 + 1 / t_0)
-    v_0 = sqrt(u_0**2 + q_0 * first_eccentricity**4)
-    w_0 = first_eccentricity**2 * (u_0 + v_0 - q_0) / 2 / v_0
+    v_0 = sqrt(u_0**2 + q_0 * ell.eccentricity**4)
+    w_0 = ell.eccentricity**2 * (u_0 + v_0 - q_0) / 2 / v_0
     k = sqrt(u_0 + v_0 + w_0**2) - w_0
-    D = k * radius * coslat / (k + first_eccentricity**2)
+    D = k * radius * coslat / (k + ell.eccentricity**2)
     hypotDZ = hypot(D, Z)
 
     glat = 2 * atan2(Z, (D + hypotDZ))
-    alt = (k + first_eccentricity**2 - 1) / k * hypotDZ
+    alt = (k + ell.eccentricity**2 - 1) / k * hypotDZ
 
     if deg:
         glat = degrees(glat)
         lon = degrees(lon)
 
     return glat, lon, alt
-
-
-def _calculate_first_eccentricity(ell):
-    """
-    Calculate the first eccentricity of an ellipsoid.
-    """
-    return sqrt(ell.semimajor_axis**2 - ell.semiminor_axis**2) / ell.semimajor_axis
