@@ -61,16 +61,17 @@ def lookAtSpheroid(
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
 
-    if h0 < 0:
-        raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
-
     if ell is None:
         ell = Ellipsoid()
 
     try:
+        h0 = asarray(h0)
         tilt = asarray(tilt)
+        if (h0 < 0).any():
+            raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
     except NameError:
-        pass
+        if h0 < 0:
+            raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
 
     a = ell.semimajor_axis
     b = ell.semimajor_axis

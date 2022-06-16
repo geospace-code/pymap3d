@@ -54,3 +54,6 @@ def test_array():
     )
 
     assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
+
+    lat, lon, sr = los.lookAtSpheroid([lla0[0]] * 3, [lla0[1]] * 3, [lla0[2]] * 3, az, tilt)
+    assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
