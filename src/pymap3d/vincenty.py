@@ -209,7 +209,7 @@ def vdist(
         C = f / 16 * cos(alpha) ** 2 * (4 + f * (4 - 3 * cos(alpha) ** 2))
 
         lamb = L + (1 - C) * f * sin(alpha) * (
-            sigma + C * sin(sigma) * (cos2sigmam + C * cos(sigma) * (-1 + 2.0 * cos2sigmam ** 2))
+            sigma + C * sin(sigma) * (cos2sigmam + C * cos(sigma) * (-1 + 2.0 * cos2sigmam**2))
         )
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
@@ -231,7 +231,7 @@ def vdist(
         except AttributeError:
             notdone = abs(lamb - lambdaold) > 1e-12
 
-    u2 = cos(alpha) ** 2 * (a ** 2 - b ** 2) / b ** 2
+    u2 = cos(alpha) ** 2 * (a**2 - b**2) / b**2
     A = 1 + u2 / 16384 * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)))
     B = u2 / 1024 * (256 + u2 * (-128 + u2 * (74 - 47 * u2)))
     deltasigma = (
@@ -242,8 +242,8 @@ def vdist(
             + B
             / 4
             * (
-                cos(sigma) * (-1 + 2 * cos2sigmam ** 2)
-                - B / 6 * cos2sigmam * (-3 + 4 * sin(sigma) ** 2) * (-3 + 4 * cos2sigmam ** 2)
+                cos(sigma) * (-1 + 2 * cos2sigmam**2)
+                - B / 6 * cos2sigmam * (-3 + 4 * sin(sigma) ** 2) * (-3 + 4 * cos2sigmam**2)
             )
         )
     )
@@ -378,12 +378,12 @@ def vreckon(
     cosAlpha1 = cos(alpha1)
 
     tanU1 = (1 - f) * tan(lat1)
-    cosU1 = 1 / sqrt(1 + tanU1 ** 2)
+    cosU1 = 1 / sqrt(1 + tanU1**2)
     sinU1 = tanU1 * cosU1
     sigma1 = atan2(tanU1, cosAlpha1)
     sinAlpha = cosU1 * sinAlpha1
     cosSqAlpha = 1 - sinAlpha * sinAlpha
-    uSq = cosSqAlpha * (a ** 2 - b ** 2) / b ** 2
+    uSq = cosSqAlpha * (a**2 - b**2) / b**2
     A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)))
     B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)))
 
@@ -430,7 +430,7 @@ def vreckon(
     tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1
     lat2 = atan2(
         sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1,
-        (1 - f) * sqrt(sinAlpha * sinAlpha + tmp ** 2),
+        (1 - f) * sqrt(sinAlpha * sinAlpha + tmp**2),
     )
 
     lamb = atan2(sinSigma * sinAlpha1, cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1)

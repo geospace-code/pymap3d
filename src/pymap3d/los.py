@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from math import pi, nan
+
 try:
-    from numpy import pi, nan, sqrt, atleast_1d
+    from numpy import sqrt, asarray
 except ImportError:
-    from math import pi, nan, sqrt  # type: ignore
+    from math import sqrt  # type: ignore
 
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
@@ -66,9 +68,7 @@ def lookAtSpheroid(
         ell = Ellipsoid()
 
     try:
-        lat0 = atleast_1d(lat0)
-        lon0 = atleast_1d(lon0)
-        tilt = atleast_1d(tilt)
+        tilt = asarray(tilt)
     except NameError:
         pass
 
@@ -78,31 +78,34 @@ def lookAtSpheroid(
 
     el = tilt - 90.0 if deg else tilt - pi / 2
 
-    e, n, u = aer2enu(az, el, srange=1.0, deg=deg)  # fixed 1 km slant range
+    e, n, u = aer2enu(az, el, srange=1.0, deg=deg)
+    # fixed 1 km slant range
+
     u, v, w = enu2uvw(e, n, u, lat0, lon0, deg=deg)
     x, y, z = geodetic2ecef(lat0, lon0, h0, deg=deg)
 
-    value = -(a ** 2) * b ** 2 * w * z - a ** 2 * c ** 2 * v * y - b ** 2 * c ** 2 * u * x
+    value = -(a**2) * b**2 * w * z - a**2 * c**2 * v * y - b**2 * c**2 * u * x
     radical = (
-        a ** 2 * b ** 2 * w ** 2
-        + a ** 2 * c ** 2 * v ** 2
-        - a ** 2 * v ** 2 * z ** 2
-        + 2 * a ** 2 * v * w * y * z
-        - a ** 2 * w ** 2 * y ** 2
-        + b ** 2 * c ** 2 * u ** 2
-        - b ** 2 * u ** 2 * z ** 2
-        + 2 * b ** 2 * u * w * x * z
-        - b ** 2 * w ** 2 * x ** 2
-        - c ** 2 * u ** 2 * y ** 2
-        + 2 * c ** 2 * u * v * x * y
-        - c ** 2 * v ** 2 * x ** 2
+        a**2 * b**2 * w**2
+        + a**2 * c**2 * v**2
+        - a**2 * v**2 * z**2
+        + 2 * a**2 * v * w * y * z
+        - a**2 * w**2 * y**2
+        + b**2 * c**2 * u**2
+        - b**2 * u**2 * z**2
+        + 2 * b**2 * u * w * x * z
+        - b**2 * w**2 * x**2
+        - c**2 * u**2 * y**2
+        + 2 * c**2 * u * v * x * y
+        - c**2 * v**2 * x**2
     )
 
-    magnitude = a ** 2 * b ** 2 * w ** 2 + a ** 2 * c ** 2 * v ** 2 + b ** 2 * c ** 2 * u ** 2
+    magnitude = a**2 * b**2 * w**2 + a**2 * c**2 * v**2 + b**2 * c**2 * u**2
 
     # %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     try:
         d = (value - a * b * c * sqrt(radical)) / magnitude
+        # above line can return ValueError: math domain error for sqrt < 0
         d[radical < 0] = nan
         d[d < 0] = nan
     except ValueError:

@@ -123,8 +123,8 @@ def greenwichsrt(Jdate: float) -> float:
     gmst_sec = (
         67310.54841
         + (876600 * 3600 + 8640184.812866) * tUT1
-        + 0.093104 * tUT1 ** 2
-        - 6.2e-6 * tUT1 ** 3
+        + 0.093104 * tUT1**2
+        - 6.2e-6 * tUT1**3
     )
 
     # 1/86400 and %(2*pi) implied by units of radians

@@ -25,7 +25,7 @@ def azel2radec(
     lon_deg: float,
     time: datetime,
     *,
-    use_astropy: bool = True
+    use_astropy: bool = True,
 ) -> tuple[float, float]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
@@ -75,7 +75,7 @@ def radec2azel(
     lon_deg: float,
     time: datetime,
     *,
-    use_astropy: bool = False
+    use_astropy: bool = False,
 ) -> tuple[float, float]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)

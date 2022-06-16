@@ -23,8 +23,8 @@ def geocentric_radius(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
 
     return sqrt(
         (
-            (ell.semimajor_axis ** 2 * cos(geodetic_lat)) ** 2
-            + (ell.semiminor_axis ** 2 * sin(geodetic_lat)) ** 2
+            (ell.semimajor_axis**2 * cos(geodetic_lat)) ** 2
+            + (ell.semiminor_axis**2 * sin(geodetic_lat)) ** 2
         )
         / (
             (ell.semimajor_axis * cos(geodetic_lat)) ** 2
@@ -81,9 +81,9 @@ def meridian(lat, ell: Ellipsoid = None, deg: bool = True):
 
     lat, ell = sanitize(lat, ell, deg)
 
-    f1 = ell.semimajor_axis * (1 - ell.eccentricity ** 2)
+    f1 = ell.semimajor_axis * (1 - ell.eccentricity**2)
     f2 = 1 - (ell.eccentricity * sin(lat)) ** 2
-    return f1 / sqrt(f2 ** 3)
+    return f1 / sqrt(f2**3)
 
 
 def transverse(lat, ell: Ellipsoid = None, deg: bool = True):

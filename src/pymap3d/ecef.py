@@ -81,8 +81,8 @@ def geodetic2ecef(
         lon = radians(lon)
 
     # radius of curvature of the prime vertical section
-    N = ell.semimajor_axis ** 2 / sqrt(
-        ell.semimajor_axis ** 2 * cos(lat) ** 2 + ell.semiminor_axis ** 2 * sin(lat) ** 2
+    N = ell.semimajor_axis**2 / sqrt(
+        ell.semimajor_axis**2 * cos(lat) ** 2 + ell.semiminor_axis**2 * sin(lat) ** 2
     )
     # Compute cartesian (geocentric) coordinates given (curvilinear) geodetic coordinates.
     x = (N + alt) * cos(lat) * cos(lon)
@@ -132,12 +132,12 @@ def ecef2geodetic(
     if ell is None:
         ell = Ellipsoid()
 
-    r = sqrt(x ** 2 + y ** 2 + z ** 2)
+    r = sqrt(x**2 + y**2 + z**2)
 
-    E = sqrt(ell.semimajor_axis ** 2 - ell.semiminor_axis ** 2)
+    E = sqrt(ell.semimajor_axis**2 - ell.semiminor_axis**2)
 
     # eqn. 4a
-    u = sqrt(0.5 * (r ** 2 - E ** 2) + 0.5 * sqrt((r ** 2 - E ** 2) ** 2 + 4 * E ** 2 * z ** 2))
+    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2) ** 2 + 4 * E**2 * z**2))
 
     Q = hypot(x, y)
 
@@ -153,8 +153,8 @@ def ecef2geodetic(
             Beta = -pi / 2
 
     # eqn. 13
-    dBeta = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E ** 2) * sin(Beta)) / (
-        ell.semimajor_axis * huE * 1 / cos(Beta) - E ** 2 * cos(Beta)
+    dBeta = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)) / (
+        ell.semimajor_axis * huE * 1 / cos(Beta) - E**2 * cos(Beta)
     )
 
     Beta += dBeta
@@ -186,9 +186,9 @@ def ecef2geodetic(
 
     # inside ellipsoid?
     inside = (
-        x ** 2 / ell.semimajor_axis ** 2
-        + y ** 2 / ell.semimajor_axis ** 2
-        + z ** 2 / ell.semiminor_axis ** 2
+        x**2 / ell.semimajor_axis**2
+        + y**2 / ell.semimajor_axis**2
+        + z**2 / ell.semiminor_axis**2
         < 1
     )
 

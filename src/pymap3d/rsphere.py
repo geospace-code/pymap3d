@@ -40,7 +40,7 @@ def eqavol(ell: Ellipsoid = None) -> float:
 
     f = ell.flattening
 
-    return ell.semimajor_axis * (1 - f / 3 - f ** 2 / 9)
+    return ell.semimajor_axis * (1 - f / 3 - f**2 / 9)
 
 
 def authalic(ell: Ellipsoid = None) -> float:
@@ -62,8 +62,8 @@ def authalic(ell: Ellipsoid = None) -> float:
     e = ell.eccentricity
 
     if e > 0:
-        f1 = ell.semimajor_axis ** 2 / 2
-        f2 = (1 - e ** 2) / (2 * e)
+        f1 = ell.semimajor_axis**2 / 2
+        f2 = (1 - e**2) / (2 * e)
         f3 = log((1 + e) / (1 - e))
         return sqrt(f1 * (1 + f2 * f3))
     else:
@@ -196,7 +196,7 @@ def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     if method == "mean":
         return (2 * ell.semimajor_axis + ell.semiminor_axis) / 3
     elif method == "norm":
-        return (ell.semimajor_axis ** 2 * ell.semiminor_axis) ** (1 / 3)
+        return (ell.semimajor_axis**2 * ell.semiminor_axis) ** (1 / 3)
     else:
         raise ValueError("method must be mean or norm")
 

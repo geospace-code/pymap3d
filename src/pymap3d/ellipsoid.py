@@ -70,4 +70,4 @@ class Ellipsoid:
         self.thirdflattening = (self.semimajor_axis - self.semiminor_axis) / (
             self.semimajor_axis + self.semiminor_axis
         )
-        self.eccentricity = sqrt(2 * self.flattening - self.flattening ** 2)
+        self.eccentricity = sqrt(2 * self.flattening - self.flattening**2)

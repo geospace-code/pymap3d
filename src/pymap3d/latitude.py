@@ -77,7 +77,7 @@ def geoc2geod(
     geodetic_lat = (
         geocentric_lat
         + (sin(2 * geocentric_lat) / r) * ell.flattening
-        + ((1 / r ** 2 + 1 / (4 * r)) * sin(4 * geocentric_lat)) * ell.flattening ** 2
+        + ((1 / r**2 + 1 / (4 * r)) * sin(4 * geocentric_lat)) * ell.flattening**2
     )
 
     return degrees(geodetic_lat) if deg else geodetic_lat
@@ -114,7 +114,7 @@ def geodetic2geocentric(geodetic_lat, alt_m, ell: Ellipsoid = None, deg: bool = 
     """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
     r = rcurve.transverse(geodetic_lat, ell, deg=False)
-    geocentric_lat = atan((1 - ell.eccentricity ** 2 * (r / (r + alt_m))) * tan(geodetic_lat))
+    geocentric_lat = atan((1 - ell.eccentricity**2 * (r / (r + alt_m))) * tan(geodetic_lat))
 
     return degrees(geocentric_lat) if deg else geocentric_lat
 
@@ -153,7 +153,7 @@ def geocentric2geodetic(geocentric_lat, alt_m, ell: Ellipsoid = None, deg: bool 
     """
     geocentric_lat, ell = sanitize(geocentric_lat, ell, deg)
     r = rcurve.transverse(geocentric_lat, ell, deg=False)
-    geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity ** 2 * (r / (r + alt_m))))
+    geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity**2 * (r / (r + alt_m))))
 
     return degrees(geodetic_lat) if deg else geodetic_lat
 
@@ -283,10 +283,10 @@ def conformal2geodetic(conformal_lat, ell: Ellipsoid = None, deg: bool = True):
     conformal_lat, ell = sanitize(conformal_lat, ell, deg)
 
     e = ell.eccentricity
-    f1 = e ** 2 / 2 + 5 * e ** 4 / 24 + e ** 6 / 12 + 13 * e ** 8 / 360
-    f2 = 7 * e ** 4 / 48 + 29 * e ** 6 / 240 + 811 * e ** 8 / 11520
-    f3 = 7 * e ** 6 / 120 + 81 * e ** 8 / 1120
-    f4 = 4279 * e ** 8 / 161280
+    f1 = e**2 / 2 + 5 * e**4 / 24 + e**6 / 12 + 13 * e**8 / 360
+    f2 = 7 * e**4 / 48 + 29 * e**6 / 240 + 811 * e**8 / 11520
+    f3 = 7 * e**6 / 120 + 81 * e**8 / 1120
+    f4 = 4279 * e**8 / 161280
 
     geodetic_lat = (
         conformal_lat
@@ -375,10 +375,10 @@ def geodetic2rectifying(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     n = ell.thirdflattening
-    f1 = 3 * n / 2 - 9 * n ** 3 / 16
-    f2 = 15 * n ** 2 / 16 - 15 * n ** 4 / 32
-    f3 = 35 * n ** 3 / 48
-    f4 = 315 * n ** 4 / 512
+    f1 = 3 * n / 2 - 9 * n**3 / 16
+    f2 = 15 * n**2 / 16 - 15 * n**4 / 32
+    f3 = 35 * n**3 / 48
+    f4 = 315 * n**4 / 512
 
     rectifying_lat = (
         geodetic_lat
@@ -420,10 +420,10 @@ def rectifying2geodetic(rectifying_lat, ell: Ellipsoid = None, deg: bool = True)
     rectifying_lat, ell = sanitize(rectifying_lat, ell, deg)
 
     n = ell.thirdflattening
-    f1 = 3 * n / 2 - 27 * n ** 3 / 32
-    f2 = 21 * n ** 2 / 16 - 55 * n ** 4 / 32
-    f3 = 151 * n ** 3 / 96
-    f4 = 1097 * n ** 4 / 512
+    f1 = 3 * n / 2 - 27 * n**3 / 32
+    f2 = 21 * n**2 / 16 - 55 * n**4 / 32
+    f3 = 151 * n**3 / 96
+    f4 = 1097 * n**4 / 512
 
     geodetic_lat = (
         rectifying_lat
@@ -467,9 +467,9 @@ def geodetic2authalic(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
     e = ell.eccentricity
-    f1 = e ** 2 / 3 + 31 * e ** 4 / 180 + 59 * e ** 6 / 560
-    f2 = 17 * e ** 4 / 360 + 61 * e ** 6 / 1260
-    f3 = 383 * e ** 6 / 45360
+    f1 = e**2 / 3 + 31 * e**4 / 180 + 59 * e**6 / 560
+    f2 = 17 * e**4 / 360 + 61 * e**6 / 1260
+    f3 = 383 * e**6 / 45360
 
     authalic_lat = (
         geodetic_lat
@@ -509,9 +509,9 @@ def authalic2geodetic(authalic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     authalic_lat, ell = sanitize(authalic_lat, ell, deg)
     e = ell.eccentricity
-    f1 = e ** 2 / 3 + 31 * e ** 4 / 180 + 517 * e ** 6 / 5040
-    f2 = 23 * e ** 4 / 360 + 251 * e ** 6 / 3780
-    f3 = 761 * e ** 6 / 45360
+    f1 = e**2 / 3 + 31 * e**4 / 180 + 517 * e**6 / 5040
+    f2 = 23 * e**4 / 360 + 251 * e**6 / 3780
+    f3 = 761 * e**6 / 45360
 
     geodetic_lat = (
         authalic_lat

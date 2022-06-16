@@ -26,7 +26,7 @@ def azel2radec(
     lon_deg: float,
     time: datetime,
     *,
-    use_astropy: bool = True
+    use_astropy: bool = True,
 ) -> tuple[float, float]:
     """
     converts azimuth, elevation to right ascension, declination
@@ -86,7 +86,7 @@ def radec2azel(
     lon_deg: float,
     time: datetime,
     *,
-    use_astropy: bool = True
+    use_astropy: bool = True,
 ) -> tuple[float, float]:
     """
     converts right ascension, declination to azimuth, elevation

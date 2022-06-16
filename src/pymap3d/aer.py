@@ -219,7 +219,7 @@ def aer2eci(
     ell=None,
     *,
     deg: bool = True,
-    use_astropy: bool = True
+    use_astropy: bool = True,
 ) -> tuple:
     """
     gives ECI of a point from an observer at az, el, slant range
