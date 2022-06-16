@@ -97,6 +97,7 @@ lookAtSpheroid
 track2 departure meanm
 rcurve rsphere
 geod2geoc geoc2geod
+geodetic2spherical spherical2geodetic
 ```
 
 Vincenty functions "vincenty.vreckon" and "vincenty.vdist" are accessed like:

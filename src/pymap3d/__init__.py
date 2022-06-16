@@ -49,6 +49,7 @@ from .ecef import (
 from .sidereal import datetime2sidereal, greenwichsrt
 from .ellipsoid import Ellipsoid
 from .timeconv import str2dt
+from .spherical import spherical2geodetic, geodetic2spherical
 
 try:
     from .azelradec import radec2azel, azel2radec
