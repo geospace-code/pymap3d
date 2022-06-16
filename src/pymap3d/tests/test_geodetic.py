@@ -128,22 +128,22 @@ def test_inside_ecef2geodetic():
     assert alts == approx(lla0_array_inside[2])
 
 
-def test_xarray():
+def test_xarray_ecef():
     xarray = pytest.importorskip("xarray")
-    xr_lla = xarray.DataArray(list(lla0))
 
-    xyz = pm.geodetic2ecef(*xr_lla)
+    lla = xarray.DataArray(list(lla0))
 
-    assert xyz == approx(xyz0)
+    xyz = pm.geodetic2ecef(*lla)
+    assert isinstance(xyz[0], xarray.DataArray)
+    assert isinstance(xyz[1], xarray.DataArray)
+    assert isinstance(xyz[2], xarray.DataArray)
 
-    xr_xyz = xarray.DataArray(list(xyz0))
+    lla1 = pm.ecef2geodetic(*xyz)
 
-    lla = pm.ecef2geodetic(*xr_xyz)
-
-    assert lla == approx(lla0)
+    assert lla1 == approx(lla0)
 
 
-def test_pandas():
+def test_pandas_ecef():
     pandas = pytest.importorskip("pandas")
     pd_lla = pandas.Series(lla0)
 
