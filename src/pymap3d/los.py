@@ -104,17 +104,18 @@ def lookAtSpheroid(
 
     # %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     try:
-        d = (value - a * b * c * sqrt(radical)) / magnitude
-        # above line can return ValueError: math domain error for sqrt < 0
-        d[radical < 0] = nan
-        d[d < 0] = nan
-    except ValueError:
+        radical[radical < 0] = nan
+    except TypeError:
         if radical < 0:
-            d = nan
+            radical = nan
+
+    d = (value - a * b * c * sqrt(radical)) / magnitude
+
+    try:
+        d[d < 0] = nan
+    except TypeError:
         if d < 0:
             d = nan
-    except TypeError:
-        pass
 
     # %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
