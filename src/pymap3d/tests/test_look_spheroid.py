@@ -73,3 +73,16 @@ def test_xarray_los():
     assert lat == approx(42.00103959)
     assert lon == approx(lla0[1])
     assert sr == approx(230.9413173)
+
+
+def test_pandas_los():
+    pandas = pytest.importorskip("pandas")
+
+    lla = pandas.Series(lla0)
+    az = pandas.Series([0.0] * 2)
+    tilt = pandas.Series([30.0] * 2)
+
+    lat, lon, sr = los.lookAtSpheroid(*lla, az, tilt)
+    assert lat == approx(42.00103959)
+    assert lon == approx(lla0[1])
+    assert sr == approx(230.9413173)
