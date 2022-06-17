@@ -29,7 +29,7 @@ Companion packages exist for:
 * Fortran: [Maptran3D](https://github.com/geospace-code/maptran3d)
 """
 
-__version__ = "2.8.0"
+__version__ = "2.9.0"
 
 from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic
 
