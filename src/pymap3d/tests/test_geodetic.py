@@ -134,10 +134,6 @@ def test_xarray_ecef():
     lla = xarray.DataArray(list(lla0))
 
     xyz = pm.geodetic2ecef(*lla)
-    assert isinstance(xyz[0], xarray.DataArray)
-    assert isinstance(xyz[1], xarray.DataArray)
-    assert isinstance(xyz[2], xarray.DataArray)
-
     lla1 = pm.ecef2geodetic(*xyz)
     assert lla1 == approx(lla)
 

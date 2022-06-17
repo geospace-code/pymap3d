@@ -65,7 +65,10 @@ def lookAtSpheroid(
         ell = Ellipsoid()
 
     try:
+        lat0 = asarray(lat0)
+        lon0 = asarray(lon0)
         h0 = asarray(h0)
+        az = asarray(az)
         tilt = asarray(tilt)
         if (h0 < 0).any():
             raise ValueError("Intersection calculation requires altitude  [0, Infinity)")

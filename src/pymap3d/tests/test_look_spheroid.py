@@ -6,6 +6,9 @@ from math import nan
 import pymap3d.los as los
 
 
+lla0 = (42, -82, 200)
+
+
 @pytest.mark.parametrize(
     "az,tilt,lat,lon,sr",
     [
@@ -37,12 +40,12 @@ def test_badval():
         los.lookAtSpheroid(0, 0, -1, 0, 0)
 
 
-def test_array():
+def test_array_los():
     np = pytest.importorskip("numpy")
 
     az = [0.0, 10.0, 125.0]
     tilt = [30.0, 45.0, 90.0]
-    lla0 = (42, -82, 200)
+
     lat, lon, sr = los.lookAtSpheroid(*lla0, az, tilt)
 
     truth = np.array(
@@ -57,3 +60,16 @@ def test_array():
 
     lat, lon, sr = los.lookAtSpheroid([lla0[0]] * 3, [lla0[1]] * 3, [lla0[2]] * 3, az, tilt)
     assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
+
+
+def test_xarray_los():
+    xarray = pytest.importorskip("xarray")
+
+    lla = xarray.DataArray(list(lla0))
+    az = xarray.DataArray([0.0] * 2)
+    tilt = xarray.DataArray([30.0] * 2)
+
+    lat, lon, sr = los.lookAtSpheroid(*lla, az, tilt)
+    assert lat == approx(42.00103959)
+    assert lon == approx(lla0[1])
+    assert sr == approx(230.9413173)
