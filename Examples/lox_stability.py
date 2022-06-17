@@ -26,6 +26,7 @@ def matlab_func(lat1: float, lon1: float, rng: float, az: float) -> tuple[float,
 
 clat, clon, rng = 35.0, 140.0, 50000.0  # arbitrary
 
+Nerr = 0
 for i in range(20):
     for azi in (90 + 10.0 ** (-i), -90 + 10.0 ** (-i), 270 + 10.0 ** (-i), -270 + 10.0 ** (-i)):
         lat, lon = loxodrome_direct(clat, clon, rng, azi)
@@ -35,4 +36,8 @@ for i in range(20):
         if not (
             isclose(lat_matlab, lat, rel_tol=0.005) and isclose(lon_matlab, lon, rel_tol=0.001)
         ):
+            Nerr += 1
             logging.error(rstr)
+
+if Nerr == 0:
+    print("lox_stability: comparison OK")
