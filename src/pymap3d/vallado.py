@@ -9,11 +9,7 @@ Michael Hirsch implementation of algorithms from D. Vallado
 from __future__ import annotations
 from datetime import datetime
 
-try:
-    from numpy import sin, cos, degrees, radians, arcsin as asin, arctan2 as atan2
-except ImportError:
-    from math import sin, cos, degrees, radians, asin, atan2  # type: ignore
-
+from .mathfun import sin, cos, degrees, radians, asin, atan2
 from .sidereal import datetime2sidereal
 
 __all__ = ["azel2radec", "radec2azel"]

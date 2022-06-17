@@ -9,22 +9,11 @@ from math import nan, pi
 from copy import copy
 
 try:
-    from numpy import (
-        atleast_1d,
-        sqrt,
-        tan,
-        sin,
-        cos,
-        isnan,
-        arctan as atan,
-        arctan2 as atan2,
-        arcsin as asin,
-        radians,
-        degrees,
-    )
+    from numpy import atleast_1d
 except ImportError:
-    from math import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees  # type: ignore
+    pass
 
+from .mathfun import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees
 from .ellipsoid import Ellipsoid
 from .utils import sign
 

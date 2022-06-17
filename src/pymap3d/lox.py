@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 try:
-    from numpy import radians, degrees, cos, arctan2 as atan2, tan, array, broadcast_arrays
+    from numpy import array, broadcast_arrays
 except ImportError:
-    from math import radians, degrees, cos, atan2, tan  # type: ignore
+    pass
 
 from math import pi, tau
 
 from .ellipsoid import Ellipsoid
+from .mathfun import radians, degrees, cos, atan2, tan
 from .utils import sign
 from . import rcurve
 from . import rsphere

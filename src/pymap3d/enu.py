@@ -4,12 +4,13 @@ from __future__ import annotations
 from math import tau
 
 try:
-    from numpy import asarray, radians, sin, cos, hypot, arctan2 as atan2, degrees
+    from numpy import asarray
 except ImportError:
-    from math import radians, sin, cos, hypot, atan2, degrees  # type: ignore
+    pass
 
 from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
+from .mathfun import radians, sin, cos, hypot, atan2, degrees
 
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 

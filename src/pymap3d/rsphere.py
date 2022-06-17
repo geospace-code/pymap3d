@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 try:
-    from numpy import radians, sin, cos, log, sqrt, degrees, asarray
+    from numpy import asarray
 except ImportError:
-    from math import radians, sin, cos, log, sqrt, degrees  # type: ignore
+    pass
 
 from .ellipsoid import Ellipsoid
+from .mathfun import radians, sin, cos, log, sqrt, degrees
 from . import rcurve
 from .vincenty import vdist
 

@@ -2,28 +2,16 @@
 from __future__ import annotations
 
 try:
-    from numpy import (
-        radians,
-        sin,
-        cos,
-        tan,
-        arctan as atan,
-        hypot,
-        degrees,
-        arctan2 as atan2,
-        sqrt,
-        finfo,
-        where,
-        asarray,
-    )
+    from numpy import finfo, where, asarray
     from .eci import eci2ecef, ecef2eci
 except ImportError:
-    from math import radians, sin, cos, tan, atan, hypot, degrees, atan2, sqrt  # type: ignore
+    pass
 
 from math import pi
 from datetime import datetime
 
 from .ellipsoid import Ellipsoid
+from .mathfun import radians, degrees, sin, cos, tan, atan2, hypot, sqrt, atan
 from .utils import sanitize
 
 

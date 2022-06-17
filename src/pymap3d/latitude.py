@@ -2,19 +2,12 @@
 
 from __future__ import annotations
 
+from math import pi
+
 from .ellipsoid import Ellipsoid
+from .mathfun import atan, radians, degrees, tan, sin, cos, asinh, atanh, exp, sqrt, inf
 from .utils import sanitize, sign
 from . import rcurve
-
-try:
-    from numpy import radians, degrees, tan, sin, cos, exp, pi, sqrt, inf
-    from numpy import arctan as atan, arcsinh as asinh, arctanh as atanh  # noqa: A001
-
-    use_numpy = True
-except ImportError:
-    from math import atan, radians, degrees, tan, sin, cos, asinh, atanh, exp, pi, sqrt, inf  # type: ignore
-
-    use_numpy = False
 
 COS_EPS = 1e-9  # tolerance for angles near abs([90, 270])
 

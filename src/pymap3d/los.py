@@ -5,13 +5,14 @@ from __future__ import annotations
 from math import pi, nan
 
 try:
-    from numpy import sqrt, asarray
+    from numpy import asarray
 except ImportError:
-    from math import sqrt  # type: ignore
+    pass
 
 from .aer import aer2enu
 from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
+from .mathfun import sqrt
 
 __all__ = ["lookAtSpheroid"]
 

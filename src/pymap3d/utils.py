@@ -6,11 +6,11 @@ from __future__ import annotations
 from math import pi
 
 from .ellipsoid import Ellipsoid
+from .mathfun import atan2, hypot, cos, sin, radians
 
 try:
-    from numpy import hypot, cos, sin, arctan2 as atan2, radians, asarray, sign, cbrt
+    from numpy import asarray, sign, cbrt
 except ImportError:
-    from math import atan2, hypot, cos, sin, radians  # type: ignore
 
     def sign(x) -> float:  # type: ignore
         """signum function"""

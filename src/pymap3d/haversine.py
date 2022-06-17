@@ -9,16 +9,12 @@ and gives virtually identical result
 within double precision arithmetic limitations
 """
 
-
-try:
-    from numpy import cos, arcsin, sqrt, radians, degrees
-except ImportError:
-    from math import cos, sqrt, radians, degrees, asin as arcsin  # type: ignore
-
 try:
     from astropy.coordinates.angle_utilities import angular_separation
 except ImportError:
     pass
+
+from .mathfun import cos, asin, sqrt, radians, degrees
 
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
@@ -63,7 +59,7 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
         lon1 = radians(lon1)
         lat1 = radians(lat1)
 
-    sep_rad = 2 * arcsin(
+    sep_rad = 2 * asin(
         sqrt(haversine(lat0 - lat1) + cos(lat0) * cos(lat1) * haversine(lon0 - lon1))
     )
 

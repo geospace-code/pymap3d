@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-try:
-    from numpy import sin, cos, sqrt
-except ImportError:
-    from math import sin, cos, sqrt  # type: ignore
-
 from .ellipsoid import Ellipsoid
+from .mathfun import cos, sin, sqrt
 from .utils import sanitize
 
 __all__ = ["parallel", "meridian", "transverse", "geocentric_radius"]

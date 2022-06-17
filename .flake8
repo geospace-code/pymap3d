@@ -4,3 +4,4 @@ ignore = E501, W503, W504
 exclude = .git,__pycache__,.eggs/,doc/,docs/,build/,dist/,archive/
 per-file-ignores =
     __init__.py:F401, F403
+    mathfun.py:F401

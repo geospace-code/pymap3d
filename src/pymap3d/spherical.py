@@ -5,20 +5,7 @@ radius).
 """
 from __future__ import annotations
 
-try:
-    from numpy import (  # noqa: A001
-        radians,
-        sin,
-        arcsin as asin,
-        hypot,
-        degrees,
-        arctan2 as atan2,
-        sqrt,
-        power as pow,
-    )
-except ImportError:
-    from math import radians, sin, hypot, degrees, atan2, asin, sqrt  # type: ignore
-
+from .mathfun import radians, sin, hypot, degrees, atan2, asin, sqrt, power
 
 from .ellipsoid import Ellipsoid
 from .utils import sanitize, cbrt
@@ -148,7 +135,7 @@ def spherical2geodetic(
     coslat = sqrt(1 - sinlat**2)
 
     Z = radius * sinlat
-    p_0 = pow(radius, 2) * coslat**2 / ell.semimajor_axis**2
+    p_0 = power(radius, 2) * coslat**2 / ell.semimajor_axis**2
     q_0 = (1 - ell.eccentricity**2) / ell.semimajor_axis**2 * Z**2
     r_0 = (p_0 + q_0 - ell.eccentricity**4) / 6
     s_0 = ell.eccentricity**4 * p_0 * q_0 / 4 / r_0**3
