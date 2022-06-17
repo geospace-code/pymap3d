@@ -12,14 +12,10 @@ sra = 2.90658
 ha = 45.482789587392013
 
 
-@pytest.mark.parametrize(
-    "time, use_astropy", [(t0, False), (t0, True), ([t0], False), ([t0], True)]
-)
-def test_sidereal(time, use_astropy):
-    if use_astropy:
-        pytest.importorskip("astropy")
+@pytest.mark.parametrize("time", [t0, [t0]])
+def test_sidereal(time):
     # http://www.jgiesen.de/astro/astroJS/siderealClock/
-    tsr = pmd.datetime2sidereal(time, radians(lon), use_astropy=use_astropy)
+    tsr = pmd.datetime2sidereal(time, radians(lon))
     if isinstance(tsr, list):
         tsr = tsr[0]
     assert tsr == approx(sra, rel=1e-5)

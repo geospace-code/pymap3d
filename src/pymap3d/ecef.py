@@ -377,9 +377,7 @@ def uvw2enu(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
     return East, North, Up
 
 
-def eci2geodetic(
-    x, y, z, t: datetime, ell: Ellipsoid = None, *, deg: bool = True, use_astropy: bool = True
-) -> tuple:
+def eci2geodetic(x, y, z, t: datetime, ell: Ellipsoid = None, *, deg: bool = True) -> tuple:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
 
@@ -399,8 +397,6 @@ def eci2geodetic(
         planet ellipsoid model
     deg : bool, optional
         if True, degrees. if False, radians
-    use_astropy : bool, optional
-        use AstroPy (recommended)
 
     Results
     -------
@@ -415,16 +411,14 @@ def eci2geodetic(
     """
 
     try:
-        xecef, yecef, zecef = eci2ecef(x, y, z, t, use_astropy=use_astropy)
+        xecef, yecef, zecef = eci2ecef(x, y, z, t)
     except NameError:
         raise ImportError("pip install numpy")
 
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
 
-def geodetic2eci(
-    lat, lon, alt, t: datetime, ell: Ellipsoid = None, *, deg: bool = True, use_astropy: bool = True
-) -> tuple:
+def geodetic2eci(lat, lon, alt, t: datetime, ell: Ellipsoid = None, *, deg: bool = True) -> tuple:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
 
@@ -444,8 +438,6 @@ def geodetic2eci(
         planet ellipsoid model
     deg : bool, optional
         if True, degrees. if False, radians
-    use_astropy: bool, optional
-        use AstroPy (recommended)
 
     Results
     -------
@@ -462,7 +454,7 @@ def geodetic2eci(
     x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
 
     try:
-        return ecef2eci(x, y, z, t, use_astropy=use_astropy)
+        return ecef2eci(x, y, z, t)
     except NameError:
         raise ImportError("pip install numpy")
 

@@ -141,7 +141,9 @@ def test_xarray_ecef():
 def test_pandas_ecef():
     pandas = pytest.importorskip("pandas")
 
-    x, y, z = pm.geodetic2ecef(pandas.Series(lla0[0]), pandas.Series(lla0[1]), pandas.Series(lla0[2]))
+    x, y, z = pm.geodetic2ecef(
+        pandas.Series(lla0[0]), pandas.Series(lla0[1]), pandas.Series(lla0[2])
+    )
 
     lat, lon, alt = pm.ecef2geodetic(pandas.Series(x), pandas.Series(y), pandas.Series(z))
     assert lat == approx(lla0[0])

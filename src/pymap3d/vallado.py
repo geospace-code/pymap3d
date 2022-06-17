@@ -25,8 +25,6 @@ def azel2radec(
     lat_deg: float,
     lon_deg: float,
     time: datetime,
-    *,
-    use_astropy: bool = True,
 ) -> tuple[float, float]:
     """
     converts azimuth, elevation to right ascension, declination
@@ -44,8 +42,7 @@ def azel2radec(
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
-    use_astropy : bool, optional
-        use AstroPy
+
 
     Results
     -------
@@ -73,7 +70,7 @@ def azel2radec(
         -(sin(az) * cos(el)) / cos(dec), (sin(el) - sin(lat) * sin(dec)) / (cos(dec) * cos(lat))
     )
 
-    lst = datetime2sidereal(time, lon, use_astropy=use_astropy)  # lon, ra in RADIANS
+    lst = datetime2sidereal(time, lon)  # lon, ra in RADIANS
 
     """ by definition right ascension [0, 360) degrees """
     return degrees(lst - lha) % 360, degrees(dec)
@@ -85,8 +82,6 @@ def radec2azel(
     lat_deg: float,
     lon_deg: float,
     time: datetime,
-    *,
-    use_astropy: bool = True,
 ) -> tuple[float, float]:
     """
     converts right ascension, declination to azimuth, elevation
@@ -104,8 +99,6 @@ def radec2azel(
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
-    use_astropy : bool, optional
-        use Astropy if available
 
     Results
     -------
@@ -127,7 +120,7 @@ def radec2azel(
     lat = radians(lat_deg)
     lon = radians(lon_deg)
 
-    lst = datetime2sidereal(time, lon, use_astropy=use_astropy)  # RADIANS
+    lst = datetime2sidereal(time, lon)  # RADIANS
     # %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
     lha = lst - ra
     # %% #Eq. 4-12 p. 267

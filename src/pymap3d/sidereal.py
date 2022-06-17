@@ -10,17 +10,13 @@ try:
     import astropy.units as u
     from astropy.coordinates import Longitude
 except ImportError:
-    Time = None
+    pass
 
-"""
-The "usevallado" datetime to julian runs 4 times faster than astropy.
-However, AstroPy is more accurate.
-"""
 
 __all__ = ["datetime2sidereal", "juliandate", "greenwichsrt"]
 
 
-def datetime2sidereal(time: datetime, lon_radians: float, *, use_astropy: bool = True) -> float:
+def datetime2sidereal(time: datetime, lon_radians: float) -> float:
     """
     Convert ``datetime`` to local sidereal time
 
@@ -31,8 +27,6 @@ def datetime2sidereal(time: datetime, lon_radians: float, *, use_astropy: bool =
         time to convert
     lon_radians : float
         longitude (radians)
-    use_astropy : bool, optional
-        use AstroPy for conversion (False is Vallado)
 
     Results
     -------
@@ -43,13 +37,13 @@ def datetime2sidereal(time: datetime, lon_radians: float, *, use_astropy: bool =
     if isinstance(time, (tuple, list)):
         return [datetime2sidereal(t, lon_radians) for t in time]
 
-    if use_astropy and Time is not None:
+    try:
         tsr = (
             Time(time)
             .sidereal_time(kind="apparent", longitude=Longitude(lon_radians, unit=u.radian))
             .radian
         )
-    else:
+    except NameError:
         jd = juliandate(str2dt(time))
         # %% Greenwich Sidereal time RADIANS
         gst = greenwichsrt(jd)

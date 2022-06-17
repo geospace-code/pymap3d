@@ -7,17 +7,16 @@ from numpy import array, sin, cos, column_stack, empty, atleast_1d
 
 try:
     from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
-    from astropy.time import Time
     import astropy.units as u
 except ImportError:
-    Time = None
+    pass
 
 from .sidereal import greenwichsrt, juliandate
 
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
-def eci2ecef(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
+def eci2ecef(x, y, z, time: datetime) -> tuple:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -33,8 +32,6 @@ def eci2ecef(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
         ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
-    use_astropy: bool, optional
-        use AstroPy (much more accurate)
 
     Results
     -------
@@ -46,14 +43,14 @@ def eci2ecef(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
         z ECEF coordinate
     """
 
-    if use_astropy and Time is not None:
+    try:
         gcrs = GCRS(CartesianRepresentation(x * u.m, y * u.m, z * u.m), obstime=time)
         itrs = gcrs.transform_to(ITRS(obstime=time))
 
         x_ecef = itrs.x.value
         y_ecef = itrs.y.value
         z_ecef = itrs.z.value
-    else:
+    except NameError:
         x = atleast_1d(x)
         y = atleast_1d(y)
         z = atleast_1d(z)
@@ -73,7 +70,7 @@ def eci2ecef(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
     return x_ecef, y_ecef, z_ecef
 
 
-def ecef2eci(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
+def ecef2eci(x, y, z, time: datetime) -> tuple:
     """
     Point => Point   ECEF => ECI
 
@@ -90,8 +87,6 @@ def ecef2eci(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
         target z ECEF coordinate
     time : datetime.datetime
         time of observation
-    use_astropy: bool, optional
-        use AstroPy (much more accurate)
 
     Results
     -------
@@ -103,7 +98,7 @@ def ecef2eci(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
         z ECI coordinate
     """
 
-    if use_astropy and Time is not None:
+    try:
         itrs = ITRS(CartesianRepresentation(x * u.m, y * u.m, z * u.m), obstime=time)
         gcrs = itrs.transform_to(GCRS(obstime=time))
         eci = EarthLocation(*gcrs.cartesian.xyz)
@@ -111,7 +106,7 @@ def ecef2eci(x, y, z, time: datetime, *, use_astropy: bool = True) -> tuple:
         x_eci = eci.x.value
         y_eci = eci.y.value
         z_eci = eci.z.value
-    else:
+    except NameError:
         x = atleast_1d(x)
         y = atleast_1d(y)
         z = atleast_1d(z)

@@ -9,14 +9,16 @@ and gives virtually identical result
 within double precision arithmetic limitations
 """
 
+
 try:
     from numpy import cos, arcsin, sqrt, radians, degrees
 except ImportError:
     from math import cos, sqrt, radians, degrees, asin as arcsin  # type: ignore
+
 try:
     from astropy.coordinates.angle_utilities import angular_separation
 except ImportError:
-    angular_separation = None
+    pass
 
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
@@ -93,8 +95,6 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
     For reference, this is from astropy astropy/coordinates/angle_utilities.py
     Angular separation between two points on a sphere.
     """
-    if angular_separation is None:
-        raise ImportError("angledist requires AstroPy. Try angledis_meeus")
 
     if deg:
         lon0 = radians(lon0)
@@ -102,7 +102,10 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
         lon1 = radians(lon1)
         lat1 = radians(lat1)
 
-    sep_rad = angular_separation(lon0, lat0, lon1, lat1)
+    try:
+        sep_rad = angular_separation(lon0, lat0, lon1, lat1)
+    except NameError:
+        sep_rad = anglesep_meeus(lon0, lat0, lon1, lat1, deg=False)
 
     return degrees(sep_rad) if deg else sep_rad
 
