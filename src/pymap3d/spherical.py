@@ -14,18 +14,14 @@ try:
         degrees,
         arctan2 as atan2,
         sqrt,
-        cbrt,
         power as pow,
     )
 except ImportError:
     from math import radians, sin, hypot, degrees, atan2, asin, sqrt  # type: ignore
 
-    def cbrt(x):  # type: ignore
-        "Backup cube root function in case of no numpy"
-        return x ** (1 / 3)
 
 from .ellipsoid import Ellipsoid
-from .utils import sanitize
+from .utils import sanitize, cbrt
 
 
 __all__ = [
@@ -87,7 +83,8 @@ def geodetic2spherical(
 
     # radius of curvature of the prime vertical section
     N = ell.semimajor_axis**2 / hypot(
-        ell.semimajor_axis * coslat, ell.semiminor_axis * sinlat,
+        ell.semimajor_axis * coslat,
+        ell.semiminor_axis * sinlat,
     )
 
     # Instead of computing X and Y, we only compute the projection on the XY

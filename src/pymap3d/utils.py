@@ -8,7 +8,7 @@ from math import pi
 from .ellipsoid import Ellipsoid
 
 try:
-    from numpy import hypot, cos, sin, arctan2 as atan2, radians, asarray, sign
+    from numpy import hypot, cos, sin, arctan2 as atan2, radians, asarray, sign, cbrt
 except ImportError:
     from math import atan2, hypot, cos, sin, radians  # type: ignore
 
@@ -22,6 +22,10 @@ except ImportError:
             y = 0.0
 
         return y
+
+    def cbrt(x) -> float:  # type: ignore
+        """math.cbrt was added in Python 3.11"""
+        return x ** (1 / 3)
 
 
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart", "sign"]

@@ -2,12 +2,13 @@ import pytest
 from pytest import approx
 
 try:
-    import numpy.array as nparray
+    from numpy import asarray
 except ImportError:
 
-    def nparray(*args):
+    def asarray(*args):  # type: ignore
         "dummy function to convert values to arrays"
         return args
+
 
 import pymap3d as pm
 
@@ -36,8 +37,8 @@ llallr = [
 ]
 llallr_list = [([[i] for i in lla], llr) for lla, llr in llallr]
 llrlla_list = [([[i] for i in llr], lla) for llr, lla in llrlla]
-llallr_array = [([nparray(i) for i in lla], llr) for lla, llr in llallr]
-llrlla_array = [([nparray(i) for i in llr], lla) for llr, lla in llrlla]
+llallr_array = [([asarray(i) for i in lla], llr) for lla, llr in llallr]
+llrlla_array = [([asarray(i) for i in llr], lla) for llr, lla in llrlla]
 
 atol_dist = 1e-6  # 1 micrometer
 
