@@ -31,7 +31,7 @@ def bench_vreckon(N: int) -> float:
     az = np.random.random(N)
 
     tic = time.monotonic()
-    a, b = vreckon(ll0[0], ll0[1], sr, az)
+    _, _ = vreckon(ll0[0], ll0[1], sr, az)
 
     return time.monotonic() - tic
 
@@ -41,7 +41,7 @@ def bench_vdist(N: int) -> float:
     lon = np.random.random(N)
 
     tic = time.monotonic()
-    asr, aaz = vdist(ll0[0], ll0[1], lat, lon)
+    _, _ = vdist(ll0[0], ll0[1], lat, lon)
 
     return time.monotonic() - tic
 

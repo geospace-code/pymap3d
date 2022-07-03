@@ -17,7 +17,7 @@ def bench(N: int) -> float:
     z = np.random.random(N)
 
     tic = time.monotonic()
-    lat, lon, alt = ecef2geodetic(x, y, z)
+    _, _, _ = ecef2geodetic(x, y, z)
 
     return time.monotonic() - tic
 
