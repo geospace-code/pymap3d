@@ -5,30 +5,15 @@ all assume radians"""
 from __future__ import annotations
 from math import pi
 
+try:
+    from numpy import asarray
+except ImportError:
+    pass
+
 from .ellipsoid import Ellipsoid
 from .mathfun import atan2, hypot, cos, sin, radians
 
-try:
-    from numpy import asarray, sign, cbrt
-except ImportError:
-
-    def sign(x) -> float:  # type: ignore
-        """signum function"""
-        if x < 0:
-            y = -1.0
-        elif x > 0:
-            y = 1.0
-        else:
-            y = 0.0
-
-        return y
-
-    def cbrt(x) -> float:  # type: ignore
-        """math.cbrt was added in Python 3.11"""
-        return x ** (1 / 3)
-
-
-__all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart", "sign"]
+__all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart"]
 
 
 def cart2pol(x, y) -> tuple:

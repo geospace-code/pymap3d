@@ -10,8 +10,7 @@ except ImportError:
 from math import pi, tau
 
 from .ellipsoid import Ellipsoid
-from .mathfun import radians, degrees, cos, atan2, tan
-from .utils import sign
+from .mathfun import radians, degrees, cos, atan2, tan, sign
 from . import rcurve
 from . import rsphere
 from .latitude import (

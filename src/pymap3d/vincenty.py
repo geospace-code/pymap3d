@@ -13,9 +13,8 @@ try:
 except ImportError:
     pass
 
-from .mathfun import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees
+from .mathfun import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees, sign
 from .ellipsoid import Ellipsoid
-from .utils import sign
 
 
 __all__ = ["vdist", "vreckon", "track2"]

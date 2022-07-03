@@ -5,8 +5,8 @@ from __future__ import annotations
 from math import pi
 
 from .ellipsoid import Ellipsoid
-from .mathfun import atan, radians, degrees, tan, sin, cos, asinh, atanh, exp, sqrt, inf
-from .utils import sanitize, sign
+from .mathfun import atan, radians, degrees, tan, sin, cos, asinh, atanh, exp, sqrt, inf, sign
+from .utils import sanitize
 from . import rcurve
 
 COS_EPS = 1e-9  # tolerance for angles near abs([90, 270])

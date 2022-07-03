@@ -5,10 +5,10 @@ radius).
 """
 from __future__ import annotations
 
-from .mathfun import radians, sin, hypot, degrees, atan2, asin, sqrt, power
+from .mathfun import radians, sin, hypot, degrees, atan2, asin, sqrt, power, cbrt
 
 from .ellipsoid import Ellipsoid
-from .utils import sanitize, cbrt
+from .utils import sanitize
 
 
 __all__ = [
