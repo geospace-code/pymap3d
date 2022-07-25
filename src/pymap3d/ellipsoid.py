@@ -72,7 +72,7 @@ class Ellipsoid:
             )
             return False
 
-        self.get_secondary_characteristics()
+        self.get_parameters()
 
         return True
 
