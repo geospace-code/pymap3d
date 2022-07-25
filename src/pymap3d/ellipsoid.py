@@ -1,5 +1,6 @@
 """Minimal class for planetary ellipsoids"""
 from math import sqrt
+import warnings
 
 
 class Ellipsoid:
@@ -13,7 +14,7 @@ class Ellipsoid:
     as everywhere else in this program, distance units are METERS
     """
 
-    def __init__(self, model: str = "wgs84"):
+    def __init__(self, model: str = "wgs84") -> bool:
         """
         feel free to suggest additional ellipsoids
 
@@ -21,6 +22,10 @@ class Ellipsoid:
         ----------
         model : str
                 name of ellipsoid
+        
+        Returns
+        -------
+        bool : whether the initialization went correctly
         """
 
         if model == "wgs84":
@@ -62,9 +67,17 @@ class Ellipsoid:
             self.semimajor_axis = 1187000.0
             self.semiminor_axis = self.semimajor_axis
         else:
-            raise NotImplementedError(
+            warnings.warn(
                 f"{model} model not implemented, let us know and we will add it (or make a pull request)"
             )
+            return False
+
+        self.get_secondary_characteristics()
+
+        return True
+
+    def get_parameters(self):
+        """Compute ellipsoid parameters derived from the minor and major axes."""
 
         self.flattening = (self.semimajor_axis - self.semiminor_axis) / self.semimajor_axis
         self.thirdflattening = (self.semimajor_axis - self.semiminor_axis) / (
