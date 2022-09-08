@@ -118,7 +118,7 @@ def loxodrome_inverse(
     -------
 
     lox_s : float
-        distance along loxodrome
+        distance along loxodrome (meters)
     az12 : float
         azimuth of loxodrome (degrees/radians)
 
