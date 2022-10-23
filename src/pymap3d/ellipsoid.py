@@ -61,6 +61,10 @@ class Ellipsoid:
         elif model == "pluto":
             self.semimajor_axis = 1187000.0
             self.semiminor_axis = self.semimajor_axis
+        elif model == "wgs84_mean":
+            """https://en.wikipedia.org/wiki/Earth_radius#Mean_radii"""
+            self.semimajor_axis = 6371008.7714
+            self.semiminor_axis = self.semimajor_axis
         else:
             raise NotImplementedError(
                 f"{model} model not implemented, let us know and we will add it (or make a pull request)"

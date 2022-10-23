@@ -1,6 +1,6 @@
+import pymap3d as pm
 import pytest
 from pytest import approx
-import pymap3d as pm
 
 xyz0 = (660e3, -4700e3, 4247e3)
 
@@ -9,6 +9,7 @@ xyz0 = (660e3, -4700e3, 4247e3)
     "model,f",
     [
         ("wgs84", 3.352810664747480e-03),
+        ("wgs84_mean", 0.0),
         ("wgs72", 3.352779454167505e-03),
         ("grs80", 3.352810681182319e-03),
         ("clarke1866", 3.390075303928791e-03),
@@ -23,6 +24,9 @@ def test_ellipsoid():
 
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid("wgs84")) == approx(
         [42.014670535, -82.0064785, 276.9136916]
+    )
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid("wgs84_mean")) == approx(
+        [41.823366301, -82.0064785, -2.13061272e3]
     )
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid("grs80")) == approx(
         [42.014670536, -82.0064785, 276.9137385]
