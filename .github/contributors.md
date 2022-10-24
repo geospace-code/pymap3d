@@ -7,4 +7,5 @@ Thanks to those who contributed code and ideas, including:
 @jprMesh  (more conversion functions)
 @Fil (docs)
 @SamuelMarks (docs)
+@Yozh2 (numerous ellipsoids and tests)
 ```
