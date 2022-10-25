@@ -124,6 +124,28 @@ Abbreviations:
 * [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
 * [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
 
+### Ellipsoid
+
+Numerous functions in pymap3d use an ellipsoid model.
+The default is WGS84 Ellipsoid.
+Numerous other ellipsoids are available in pymap3d.Ellipsoid.
+
+Print available ellipsoid models:
+
+```python
+import pymap3d as pm
+
+print(pm.Ellipsoid.models)
+```
+
+Specify GRS80 ellipsoid:
+
+```python
+import pymap3d as pm
+
+ell = pm.Ellipsoid.from_name('grs80')
+```
+
 ### command line
 
 Command line convenience functions provided include:
