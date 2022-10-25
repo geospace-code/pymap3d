@@ -13,12 +13,16 @@ $ python tests/benchmark_vincenty.py 10000
 0.3325080871582031
 0.02107095718383789
 """
+
+from pathlib import Path
 import time
 from pymap3d.vincenty import vreckon, vdist
 import numpy as np
 import argparse
 import subprocess
 import shutil
+
+R = Path(__file__).parent
 
 MATLAB = shutil.which("matlab")
 
@@ -48,7 +52,7 @@ def bench_vdist(N: int) -> float:
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("N", type=int)
+    p.add_argument("N", help="number of iterations", type=int)
     p = p.parse_args()
     N = p.N
 
@@ -56,7 +60,7 @@ if __name__ == "__main__":
     print(f"vdist: {bench_vdist(N):.3f}")
 
     if MATLAB:
+        print(f"matlab path {R}")
         subprocess.check_call(
-            f'matlab -batch "f = @() distance({ll0[0]}, {ll0[1]}, rand({N},1), rand({N},1));  t = timeit(f); disp(t)"',
-            timeout=45,
+            f'matlab -batch "helper_vdist({ll0[0]}, {ll0[1]}, {N})"', text=True, timeout=90, cwd=R
         )

@@ -3,15 +3,11 @@
 .mypy_cache/
 .pytest_cache/
 
-bin/
+
 doctrees/
 .buildinfo
 
-
-*.out
-*.mod
-*.smod
-*~
+*.asv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
