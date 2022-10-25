@@ -13,6 +13,7 @@ else:
 
 class Model(TypedDict):
     """Ellipsoid parameters"""
+
     name: str
     a: float
     b: float
