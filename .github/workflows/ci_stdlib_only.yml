@@ -5,6 +5,7 @@ on:
     paths:
     - "**.py"
     - .github/workflows/ci_stdlib_only.yml
+    - "!scripts/"
     pull-request:
     - "**.py"
     - .github/workflows/ci_stdlib_only.yml
