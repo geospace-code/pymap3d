@@ -39,6 +39,8 @@ class Ellipsoid:
 
     wgs84: https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84
 
+    wgs84_mean: https://en.wikipedia.org/wiki/Earth_radius#Mean_radii
+
     grs80: https://en.wikipedia.org/wiki/GRS_80
 
     io: https://doi.org/10.1006/icar.1998.5987
@@ -112,6 +114,7 @@ class Ellipsoid:
             "wgs72": {"name": "WGS-72 (1972)", "a": 6378135.0, "b": 6356750.52001609},
             "grs80": {"name": "GRS-80 (1979)", "a": 6378137.0, "b": 6356752.31414036},
             "wgs84": {"name": "WGS-84 (1984)", "a": 6378137.0, "b": 6356752.31424518},
+            "wgs84_mean": {"name": "WGS-84 (1984) Mean", "a": 6371008.7714, "b": 6371008.7714},
             "iers1989": {"name": "IERS (1989)", "a": 6378136.0, "b": 6356751.302},
             "pz90.11": {"name": "ПЗ-90 (2011)", "a": 6378136.0, "b": 6356751.3618},
             "iers2003": {"name": "IERS (2003)", "a": 6378136.6, "b": 6356751.9},
