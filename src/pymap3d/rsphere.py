@@ -37,7 +37,7 @@ def eqavol(ell: Ellipsoid = None) -> float:
         radius of sphere
     """
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     f = ell.flattening
 
@@ -58,7 +58,7 @@ def authalic(ell: Ellipsoid = None) -> float:
         radius of sphere
     """
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     e = ell.eccentricity
 
@@ -85,7 +85,7 @@ def rectifying(ell: Ellipsoid = None) -> float:
         radius of sphere
     """
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
     return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
@@ -192,7 +192,7 @@ def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     """
 
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     if method == "mean":
         return (2 * ell.semimajor_axis + ell.semiminor_axis) / 3
@@ -219,7 +219,7 @@ def biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     """
 
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     if method == "mean":
         return (ell.semimajor_axis + ell.semiminor_axis) / 2

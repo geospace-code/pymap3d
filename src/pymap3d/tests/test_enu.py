@@ -4,7 +4,7 @@ from pytest import approx
 
 import pymap3d as pm
 
-ELL = pm.Ellipsoid()
+ELL = pm.Ellipsoid.from_name("wgs84")
 A = ELL.semimajor_axis
 B = ELL.semiminor_axis
 

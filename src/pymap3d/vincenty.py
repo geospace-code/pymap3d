@@ -99,7 +99,7 @@ def vdist(
     """
 
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
     # %% Input check:
     try:
         Lat1 = atleast_1d(Lat1)
@@ -488,7 +488,7 @@ def track2(
     """
 
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     if npts < 2:
         raise ValueError("npts must be greater than 1")

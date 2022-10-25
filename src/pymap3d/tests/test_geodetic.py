@@ -9,7 +9,7 @@ rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])
 
 xyz0 = (660675.2518247, -4700948.68316, 4245737.66222)
 
-ELL = pm.Ellipsoid()
+ELL = pm.Ellipsoid.from_name("wgs84")
 A = ELL.semimajor_axis
 B = ELL.semiminor_axis
 

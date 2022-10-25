@@ -5,7 +5,7 @@ import pymap3d as pm
 import pymap3d.rsphere as rsphere
 import pymap3d.rcurve as rcurve
 
-ell = pm.Ellipsoid()
+ell = pm.Ellipsoid.from_name("wgs84")
 A = ell.semimajor_axis
 
 

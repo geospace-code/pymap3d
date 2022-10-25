@@ -4,7 +4,7 @@ import pymap3d as pm
 lla0 = (42, -82, 200)
 aer0 = (33, 70, 1000)
 
-ELL = pm.Ellipsoid()
+ELL = pm.Ellipsoid.from_name("wgs84")
 A = ELL.semimajor_axis
 B = ELL.semiminor_axis
 

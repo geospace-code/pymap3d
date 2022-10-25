@@ -4,6 +4,7 @@ from __future__ import annotations
 from math import sqrt
 from dataclasses import dataclass
 import sys
+import warnings
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -20,11 +21,11 @@ class Model(TypedDict):
 
 
 @dataclass(frozen=False)
-class Ellipsoid:
+class Ellipsoid(object):
     """
     generate reference ellipsoid parameters
 
-    as everywhere else in this program, distance units are METERS
+    as everywhere else in pymap3d, distance units are METERS
 
     Ellipsoid sources
     -----------------
@@ -58,25 +59,45 @@ class Ellipsoid:
     feel free to suggest additional ellipsoids
     """
 
-    model: str
-    name: str
-    a: float
-    b: float
+    model: str  # short name
+    name: str  # name for printing
     semimajor_axis: float
     semiminor_axis: float
     flattening: float
     thirdflattening: float
     eccentricity: float
 
-    def __init__(self, model: str = "wgs84"):
+    def __init__(
+        self, semimajor_axis: float, semiminor_axis: float, name: str = None, model: str = None
+    ):
         """
-        feel free to suggest additional ellipsoids
+        Ellipsoidal model of world
 
         Parameters
         ----------
-        model : str
-                name of ellipsoid
+        semimajor_axis : float
+            semimajor axis in meters
+        semiminor_axis : float
+            semiminor axis in meters
+        name: str, optional
+            Human-friendly name for the ellipsoid
+        model: str, optional
+            Short name for the ellipsoid
         """
+
+        self.flattening = (semimajor_axis - semiminor_axis) / semimajor_axis
+        assert self.flattening >= 0, "flattening must be >= 0"
+        self.thirdflattening = (semimajor_axis - semiminor_axis) / (semimajor_axis + semiminor_axis)
+        self.eccentricity = sqrt(2 * self.flattening - self.flattening**2)
+
+        self.name = name
+        self.model = model
+        self.semimajor_axis = semimajor_axis
+        self.semiminor_axis = semiminor_axis
+
+    @classmethod
+    def from_name(cls, name: str) -> Ellipsoid | None:
+        """Create an Ellipsoid from a name."""
 
         models: dict[str, Model] = {
             # Earth ellipsoids
@@ -119,7 +140,7 @@ class Ellipsoid:
             "pz90.11": {"name": "ПЗ-90 (2011)", "a": 6378136.0, "b": 6356751.3618},
             "iers2003": {"name": "IERS (2003)", "a": 6378136.6, "b": 6356751.9},
             "gsk2011": {"name": "ГСК (2011)", "a": 6378136.5, "b": 6356751.758},
-            # Other planets
+            # Other worlds
             "mercury": {"name": "Mercury", "a": 2440500.0, "b": 2438300.0},
             "venus": {"name": "Venus", "a": 6051800.0, "b": 6051800.0},
             "moon": {"name": "Moon", "a": 1738100.0, "b": 1736000.0},
@@ -132,17 +153,8 @@ class Ellipsoid:
             "pluto": {"name": "Pluto", "a": 1188000.0, "b": 1188000.0},
         }
 
-        if model not in models:
-            raise NotImplementedError(
-                f"{model} model not implemented, let us know and we will add it (or make a pull request)"
-            )
+        if name not in models:
+            warnings.warn(f"{name} model not implemented")
+            return None
 
-        self.model = model  # short name
-        self.name = models[model]["name"]  # name for printing
-        self.semimajor_axis = models[model]["a"]
-        self.semiminor_axis = models[model]["b"]
-        self.flattening = (self.semimajor_axis - self.semiminor_axis) / self.semimajor_axis
-        self.thirdflattening = (self.semimajor_axis - self.semiminor_axis) / (
-            self.semimajor_axis + self.semiminor_axis
-        )
-        self.eccentricity = sqrt(2 * self.flattening - self.flattening**2)
+        return cls(models[name]["a"], models[name]["b"], name=models[name]["name"])

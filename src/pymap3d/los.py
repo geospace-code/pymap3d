@@ -63,7 +63,7 @@ def lookAtSpheroid(
     """
 
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     try:
         lat0 = asarray(lat0)

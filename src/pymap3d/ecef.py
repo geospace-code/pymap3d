@@ -119,7 +119,7 @@ def ecef2geodetic(
     """
 
     if ell is None:
-        ell = Ellipsoid()
+        ell = Ellipsoid.from_name("wgs84")
 
     try:
         x = asarray(x)
