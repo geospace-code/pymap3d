@@ -26,9 +26,9 @@ For Python, increased performance and accuracy is optionally available for certa
 Numpy is optional to enable multi-dimensional array inputs, but most of the functions work with Python alone (without Numpy).
 Other functions that are iterative could possibly be sped up with modules such as Cython or Numba.
 
-PyMap3D is targeted for users needing conversions between coordinate systems for observation platforms near Earth's surface, 
+PyMap3D is targeted for users needing conversions between coordinate systems for observation platforms near Earth's surface,
 whether underwater, ground-based or space-based platforms.
-This includes rocket launches, orbiting spacecrafts, UAVs, cameras, radars and many more. 
+This includes rocket launches, orbiting spacecrafts, UAVs, cameras, radars and many more.
 By adding ellipsoid parameters, it could be readily be used for other planets as well.
 The coordinate systems included are:
 * ECEF (Earth centered, Earth fixed)
