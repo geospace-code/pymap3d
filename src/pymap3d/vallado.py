@@ -7,9 +7,10 @@ Michael Hirsch implementation of algorithms from D. Vallado
 """
 
 from __future__ import annotations
+
 from datetime import datetime
 
-from .mathfun import sin, cos, degrees, radians, asin, atan2
+from .mathfun import asin, atan2, cos, degrees, radians, sin
 from .sidereal import datetime2sidereal
 
 __all__ = ["azel2radec", "radec2azel"]

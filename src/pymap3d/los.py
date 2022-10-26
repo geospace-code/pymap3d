@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from math import pi, nan
+from math import nan, pi
 
 try:
     from numpy import asarray
@@ -10,7 +10,7 @@ except ImportError:
     pass
 
 from .aer import aer2enu
-from .ecef import enu2uvw, geodetic2ecef, ecef2geodetic
+from .ecef import ecef2geodetic, enu2uvw, geodetic2ecef
 from .ellipsoid import Ellipsoid
 from .mathfun import sqrt
 

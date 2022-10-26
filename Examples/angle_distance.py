@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-from pymap3d.haversine import anglesep, anglesep_meeus
 from argparse import ArgumentParser
-from pytest import approx
 
+from pymap3d.haversine import anglesep, anglesep_meeus
+from pytest import approx
 
 p = ArgumentParser(description="angular distance between two sky points")
 p.add_argument("r0", help="right ascension: first point [deg]", type=float)

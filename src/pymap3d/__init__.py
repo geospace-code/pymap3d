@@ -31,29 +31,36 @@ Companion packages exist for:
 
 __version__ = "2.10.0"
 
-from .aer import ecef2aer, aer2ecef, geodetic2aer, aer2geodetic
-
-from .enu import enu2geodetic, geodetic2enu, aer2enu, enu2aer
-from .ned import ned2ecef, ned2geodetic, geodetic2ned, ecef2nedv, ned2aer, aer2ned, ecef2ned
+from .aer import aer2ecef, aer2geodetic, ecef2aer, geodetic2aer
 from .ecef import (
-    geodetic2ecef,
+    ecef2enu,
+    ecef2enuv,
     ecef2geodetic,
     eci2geodetic,
-    geodetic2eci,
-    ecef2enuv,
     enu2ecef,
-    ecef2enu,
     enu2uvw,
+    geodetic2ecef,
+    geodetic2eci,
     uvw2enu,
 )
-from .sidereal import datetime2sidereal, greenwichsrt
 from .ellipsoid import Ellipsoid
+from .enu import aer2enu, enu2aer, enu2geodetic, geodetic2enu
+from .ned import (
+    aer2ned,
+    ecef2ned,
+    ecef2nedv,
+    geodetic2ned,
+    ned2aer,
+    ned2ecef,
+    ned2geodetic,
+)
+from .sidereal import datetime2sidereal, greenwichsrt
+from .spherical import geodetic2spherical, spherical2geodetic
 from .timeconv import str2dt
-from .spherical import spherical2geodetic, geodetic2spherical
 
 try:
-    from .azelradec import radec2azel, azel2radec
-    from .eci import eci2ecef, ecef2eci
-    from .aer import eci2aer, aer2eci
+    from .aer import aer2eci, eci2aer
+    from .azelradec import azel2radec, radec2azel
+    from .eci import ecef2eci, eci2ecef
 except ImportError:
-    from .vallado import radec2azel, azel2radec
+    from .vallado import azel2radec, radec2azel

@@ -14,7 +14,7 @@ try:
 except ImportError:
     pass
 
-from .mathfun import cos, asin, sqrt, radians, degrees
+from .mathfun import asin, cos, degrees, radians, sqrt
 
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 

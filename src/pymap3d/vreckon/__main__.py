@@ -1,6 +1,6 @@
-from .. import vincenty
 import argparse
 
+from .. import vincenty
 
 p = argparse.ArgumentParser(
     description="Given starting latitude, longitude: find final lat,lon for distance and azimuth"

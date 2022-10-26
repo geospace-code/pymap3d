@@ -1,5 +1,5 @@
-from pytest import approx
 import pymap3d as pm
+from pytest import approx
 
 lla0 = (42, -82, 200)
 aer0 = (33, 70, 1000)

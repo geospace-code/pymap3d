@@ -1,8 +1,8 @@
-import pytest
-from pytest import approx
-from math import radians, nan, sqrt, isnan
+from math import isnan, nan, radians, sqrt
 
 import pymap3d as pm
+import pytest
+from pytest import approx
 
 lla0 = (42, -82, 200)
 rlla0 = (radians(lla0[0]), radians(lla0[1]), lla0[2])

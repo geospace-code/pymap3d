@@ -1,7 +1,8 @@
+from datetime import datetime
+
+import pymap3d as pm
 import pytest
 from pytest import approx
-from datetime import datetime
-import pymap3d as pm
 
 lat, lon = (65, -148)
 lla0 = (42, -82, 200)

@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-from pymap3d.vincenty import vdist
+
 import sys
-from pathlib import Path
 from math import isclose, nan
+from pathlib import Path
 
 import matlab.engine
+from pymap3d.vincenty import vdist
 
 cwd = Path(__file__).parent
 eng = None  # don't start Matlab engine over and over when script is interactive

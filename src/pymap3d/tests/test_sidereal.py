@@ -1,10 +1,10 @@
+from datetime import datetime
+from math import radians
+
+import pymap3d.haversine as pmh
+import pymap3d.sidereal as pmd
 import pytest
 from pytest import approx
-from math import radians
-from datetime import datetime
-
-import pymap3d.sidereal as pmd
-import pymap3d.haversine as pmh
 
 lon = -148
 t0 = datetime(2014, 4, 6, 8)

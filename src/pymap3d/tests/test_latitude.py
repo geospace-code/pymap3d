@@ -1,9 +1,9 @@
-import pytest
-from pytest import approx
-from math import radians, inf
+from math import inf, radians
 
 import pymap3d.latitude as latitude
 import pymap3d.rcurve as rcurve
+import pytest
+from pytest import approx
 
 
 @pytest.mark.parametrize(

@@ -1,8 +1,7 @@
-import pytest
-from pytest import approx
-
 import pymap3d as pm
 import pymap3d.rcurve as rcurve
+import pytest
+from pytest import approx
 
 ell = pm.Ellipsoid.from_name("wgs84")
 A = ell.semimajor_axis

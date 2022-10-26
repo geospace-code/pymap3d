@@ -1,14 +1,14 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """ manipulations of sidereal time """
-from math import tau
 from datetime import datetime
+from math import tau
 
 from .timeconv import str2dt
 
 try:
-    from astropy.time import Time
     import astropy.units as u
     from astropy.coordinates import Longitude
+    from astropy.time import Time
 except ImportError:
     pass
 

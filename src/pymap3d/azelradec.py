@@ -5,13 +5,15 @@ Azimuth / elevation <==> Right ascension, declination
 from __future__ import annotations
 
 from datetime import datetime
-from .vallado import azel2radec as vazel2radec, radec2azel as vradec2azel
+
 from .timeconv import str2dt  # astropy can't handle xarray times (yet)
+from .vallado import azel2radec as vazel2radec
+from .vallado import radec2azel as vradec2azel
 
 try:
-    from astropy.time import Time
     from astropy import units as u
-    from astropy.coordinates import Angle, SkyCoord, EarthLocation, AltAz, ICRS
+    from astropy.coordinates import ICRS, AltAz, Angle, EarthLocation, SkyCoord
+    from astropy.time import Time
 except ImportError:
     pass
 

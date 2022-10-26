@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import logging
-from pathlib import Path
-from math import isclose
 
-from pymap3d.lox import loxodrome_direct
+import logging
+from math import isclose
+from pathlib import Path
 
 import matlab.engine
+from pymap3d.lox import loxodrome_direct
 
 cwd = Path(__file__).parent
 eng = None  # don't start Matlab engine over and over when script is interactive

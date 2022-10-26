@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from numpy import array, sin, cos, column_stack, empty, atleast_1d
+
+from numpy import array, atleast_1d, column_stack, cos, empty, sin
 
 try:
-    from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
     import astropy.units as u
+    from astropy.coordinates import GCRS, ITRS, CartesianRepresentation, EarthLocation
 except ImportError:
     pass
 

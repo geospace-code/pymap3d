@@ -1,10 +1,8 @@
-import pytest
-from pytest import approx
-
 from math import nan
 
 import pymap3d.los as los
-
+import pytest
+from pytest import approx
 
 lla0 = (42, -82, 200)
 

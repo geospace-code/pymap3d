@@ -8,9 +8,9 @@ try:
 except ImportError:
     pass
 
-from .ecef import geodetic2ecef, ecef2geodetic, enu2ecef, uvw2enu
+from .ecef import ecef2geodetic, enu2ecef, geodetic2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
-from .mathfun import radians, sin, cos, hypot, atan2, degrees
+from .mathfun import atan2, cos, degrees, hypot, radians, sin
 
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 

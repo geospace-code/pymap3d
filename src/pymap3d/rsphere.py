@@ -7,9 +7,9 @@ try:
 except ImportError:
     pass
 
-from .ellipsoid import Ellipsoid
-from .mathfun import radians, sin, cos, log, sqrt, degrees
 from . import rcurve
+from .ellipsoid import Ellipsoid
+from .mathfun import cos, degrees, log, radians, sin, sqrt
 from .vincenty import vdist
 
 __all__ = [

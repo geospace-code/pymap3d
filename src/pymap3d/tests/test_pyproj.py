@@ -1,7 +1,7 @@
-import pytest
-from pytest import approx
-from pymap3d.vincenty import vreckon
 import pymap3d as pm
+import pytest
+from pymap3d.vincenty import vreckon
+from pytest import approx
 
 lla0 = [42, -82, 200]
 

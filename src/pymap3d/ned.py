@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from .enu import geodetic2enu, aer2enu, enu2aer
-from .ecef import ecef2geodetic, ecef2enuv, ecef2enu, enu2ecef
+from .ecef import ecef2enu, ecef2enuv, ecef2geodetic, enu2ecef
 from .ellipsoid import Ellipsoid
+from .enu import aer2enu, enu2aer, geodetic2enu
 
 
 def aer2ned(az, elev, slantRange, deg: bool = True) -> tuple:

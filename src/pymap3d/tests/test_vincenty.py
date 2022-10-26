@@ -1,5 +1,5 @@
-from pytest import approx
 import pymap3d.vincenty as vincenty
+from pytest import approx
 
 
 def test_track2():

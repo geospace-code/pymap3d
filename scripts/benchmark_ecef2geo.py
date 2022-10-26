@@ -2,10 +2,11 @@
 """
 benchmark ecef2geodetic
 """
-import time
-from pymap3d.ecef import ecef2geodetic
-import numpy as np
 import argparse
+import time
+
+import numpy as np
+from pymap3d.ecef import ecef2geodetic
 
 ll0 = (42.0, 82.0)
 

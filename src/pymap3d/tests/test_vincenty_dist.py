@@ -1,6 +1,6 @@
+import pymap3d.vincenty as vincenty
 import pytest
 from pytest import approx
-import pymap3d.vincenty as vincenty
 
 
 @pytest.mark.parametrize(

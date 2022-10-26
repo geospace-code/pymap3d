@@ -3,6 +3,7 @@
 all assume radians"""
 
 from __future__ import annotations
+
 from math import pi
 
 try:
@@ -11,7 +12,7 @@ except ImportError:
     pass
 
 from .ellipsoid import Ellipsoid
-from .mathfun import atan2, hypot, cos, sin, radians
+from .mathfun import atan2, cos, hypot, radians, sin
 
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart"]
 

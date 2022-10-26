@@ -4,9 +4,9 @@ Example Kitt Peak
 
 ./demo_azel2radec.py 264.9183 37.911388 31.9583 -111.597 2014-12-25T22:00:00MST
 """
-from pymap3d import azel2radec
 from argparse import ArgumentParser
 
+from pymap3d import azel2radec
 
 p = ArgumentParser(
     description="convert azimuth and elevation to " "right ascension and declination"

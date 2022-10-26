@@ -5,11 +5,9 @@ radius).
 """
 from __future__ import annotations
 
-from .mathfun import radians, sin, hypot, degrees, atan2, asin, sqrt, power, cbrt
-
 from .ellipsoid import Ellipsoid
+from .mathfun import asin, atan2, cbrt, degrees, hypot, power, radians, sin, sqrt
 from .utils import sanitize
-
 
 __all__ = [
     "geodetic2spherical",

@@ -14,13 +14,14 @@ $ python tests/benchmark_vincenty.py 10000
 0.02107095718383789
 """
 
-from pathlib import Path
-import time
-from pymap3d.vincenty import vreckon, vdist
-import numpy as np
 import argparse
-import subprocess
 import shutil
+import subprocess
+import time
+from pathlib import Path
+
+import numpy as np
+from pymap3d.vincenty import vdist, vreckon
 
 R = Path(__file__).parent
 

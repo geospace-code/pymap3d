@@ -9,18 +9,17 @@ except ImportError:
 
 from math import pi, tau
 
+from . import rcurve, rsphere
 from .ellipsoid import Ellipsoid
-from .mathfun import radians, degrees, cos, atan2, tan, sign
-from . import rcurve
-from . import rsphere
 from .latitude import (
+    authalic2geodetic,
+    geodetic2authalic,
+    geodetic2isometric,
     geodetic2rectifying,
     rectifying2geodetic,
-    geodetic2isometric,
-    geodetic2authalic,
-    authalic2geodetic,
 )
-from .utils import sph2cart, cart2sph
+from .mathfun import atan2, cos, degrees, radians, sign, tan
+from .utils import cart2sph, sph2cart
 
 __all__ = [
     "loxodrome_inverse",

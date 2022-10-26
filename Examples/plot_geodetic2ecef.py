@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import pymap3d as pm
-import matplotlib.pyplot as mpl
-import numpy as np
 import argparse
 
+import matplotlib.pyplot as mpl
+import numpy as np
+import pymap3d as pm
 
 p = argparse.ArgumentParser()
 p.add_argument("alt_m", help="altitude [meters]", type=float, default=0.0, nargs="?")

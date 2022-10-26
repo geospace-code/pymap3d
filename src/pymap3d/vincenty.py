@@ -5,17 +5,28 @@ Vincenty's methods for computing ground distance and reckoning
 from __future__ import annotations
 
 import logging
-from math import nan, pi
 from copy import copy
+from math import nan, pi
 
 try:
     from numpy import atleast_1d
 except ImportError:
     pass
 
-from .mathfun import sqrt, tan, sin, cos, isnan, atan, atan2, asin, radians, degrees, sign
 from .ellipsoid import Ellipsoid
-
+from .mathfun import (
+    asin,
+    atan,
+    atan2,
+    cos,
+    degrees,
+    isnan,
+    radians,
+    sign,
+    sin,
+    sqrt,
+    tan,
+)
 
 __all__ = ["vdist", "vreckon", "track2"]
 

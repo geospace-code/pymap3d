@@ -1,7 +1,8 @@
 from math import radians
+
+import pymap3d as pm
 import pytest
 from pytest import approx
-import pymap3d as pm
 
 ELL = pm.Ellipsoid.from_name("wgs84")
 A = ELL.semimajor_axis

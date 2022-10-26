@@ -1,6 +1,6 @@
+import pymap3d.vincenty as vincenty
 import pytest
 from pytest import approx
-import pymap3d.vincenty as vincenty
 
 ll0 = [10, 20]
 lat2 = [10.02137267, 10.01917819]

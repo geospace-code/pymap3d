@@ -8,14 +8,13 @@ This requires a Google Cloud key, and costs a couple US cents per query.
 
 TODO: Would like to instead query a larger region, would OSM be an option?
 """
-from pathlib import Path
-from argparse import ArgumentParser
-import requests
 import functools
+from argparse import ArgumentParser
+from pathlib import Path
+
 import pandas
-
+import requests
 from pymap3d.vincenty import vdist
-
 
 URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
 

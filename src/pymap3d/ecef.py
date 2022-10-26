@@ -2,18 +2,18 @@
 from __future__ import annotations
 
 try:
-    from numpy import finfo, where, asarray
-    from .eci import eci2ecef, ecef2eci
+    from numpy import asarray, finfo, where
+
+    from .eci import ecef2eci, eci2ecef
 except ImportError:
     pass
 
-from math import pi
 from datetime import datetime
+from math import pi
 
 from .ellipsoid import Ellipsoid
-from .mathfun import radians, degrees, sin, cos, tan, atan2, hypot, sqrt, atan
+from .mathfun import atan, atan2, cos, degrees, hypot, radians, sin, sqrt, tan
 from .utils import sanitize
-
 
 __all__ = [
     "geodetic2ecef",

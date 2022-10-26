@@ -1,9 +1,9 @@
-import pytest
-from pytest import approx
 from datetime import datetime
 
-from pymap3d.timeconv import str2dt
 import pymap3d.sidereal as pms
+import pytest
+from pymap3d.timeconv import str2dt
+from pytest import approx
 
 t0 = datetime(2014, 4, 6, 8)
 

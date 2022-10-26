@@ -1,7 +1,6 @@
+import pymap3d.lox as lox
 import pytest
 from pytest import approx
-
-import pymap3d.lox as lox
 
 
 @pytest.mark.parametrize("lat,dist", [(0, 0), (90, 10001965.729)])
