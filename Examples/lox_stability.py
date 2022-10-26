@@ -16,7 +16,7 @@ if eng is None:
     eng.addpath(eng.genpath(str(cwd)), nargout=0)
 
 if not eng.has_map_toolbox():
-    raise EnvironmentError("Matlab does not have Mapping Toolbox")
+    raise OSError("Matlab does not have Mapping Toolbox")
 
 
 def matlab_func(lat1: float, lon1: float, rng: float, az: float) -> tuple[float, float]:
