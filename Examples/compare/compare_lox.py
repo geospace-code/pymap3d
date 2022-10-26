@@ -5,11 +5,9 @@ import logging
 from math import isclose
 from pathlib import Path
 
-from matlab_mapping import matlab_mapping
-
 import matlab.engine
+from matlab_mapping import matlab_mapping
 from pymap3d.lox import loxodrome_direct
-
 
 cwd = Path(__file__).parent
 eng = matlab.engine.start_matlab("-nojvm")

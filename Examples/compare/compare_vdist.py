@@ -3,12 +3,11 @@ from __future__ import annotations
 
 import sys
 from math import isclose, nan
-import numpy as np
 from pathlib import Path
 
-from matlab_mapping import matlab_mapping
-
 import matlab.engine
+import numpy as np
+from matlab_mapping import matlab_mapping
 from pymap3d.vincenty import vdist
 
 cwd = Path(__file__).parent
