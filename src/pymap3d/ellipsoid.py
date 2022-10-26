@@ -5,6 +5,7 @@ from math import sqrt
 from dataclasses import dataclass, field
 import sys
 import warnings
+from typing import Dict  # for Python < 3.9
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -66,7 +67,7 @@ class Ellipsoid:
     flattening: float
     thirdflattening: float
     eccentricity: float
-    models = field(default_factory=dict[str, Model])
+    models = field(default_factory=Dict[str, Model])
 
     def __init__(
         self, semimajor_axis: float, semiminor_axis: float, name: str = None, model: str = None
