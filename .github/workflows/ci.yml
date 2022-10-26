@@ -7,11 +7,10 @@ on:
     - .github/workflows/ci.yml
     - "!scripts/"
     pull-request:
-    - "**.py"
-    - .github/workflows/ci.yml
+      - "**.py"
+      - .github/workflows/ci.yml
 
 jobs:
-
   full:
     runs-on: ${{ matrix.os }}
 
@@ -34,13 +33,14 @@ jobs:
 
     - run: pip install .[full,tests,lint]
 
-    - run: flake8
-    - run: mypy
+      - run: pip install .[full,tests,lint]
 
-    - run: pytest
+      - run: flake8
+      - run: mypy
 
+      - run: pytest
 # codecov coverage
-    # - run: pip install codecov pytest-cov
-    # - run: pytest --cov --cov-report=xml
-    # - name: Upload coverage to Codecov
-    #   uses: codecov/codecov-action@v1
+# - run: pip install codecov pytest-cov
+# - run: pytest --cov --cov-report=xml
+# - name: Upload coverage to Codecov
+#   uses: codecov/codecov-action@v1

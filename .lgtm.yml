@@ -1,6 +1,6 @@
 path_classifiers:
   test:
-  - exclude: scripts
+    - exclude: scripts
 
 extraction:
   python:

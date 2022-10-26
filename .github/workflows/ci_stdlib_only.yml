@@ -7,11 +7,10 @@ on:
     - .github/workflows/ci_stdlib_only.yml
     - "!scripts/"
     pull-request:
-    - "**.py"
-    - .github/workflows/ci_stdlib_only.yml
+      - "**.py"
+      - .github/workflows/ci_stdlib_only.yml
 
 jobs:
-
   stdlib_only:
     runs-on: ${{ matrix.os }}
 
@@ -32,6 +31,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - run: pip install .[tests]
+      - run: pip install .[tests]
 
-    - run: pytest
+      - run: pytest

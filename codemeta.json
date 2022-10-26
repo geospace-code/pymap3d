@@ -15,21 +15,17 @@
   "applicationCategory": "geospace",
   "developmentStatus": "active",
   "funder": {
-      "@type": "Organization",
-      "name": "AFOSR"
+    "@type": "Organization",
+    "name": "AFOSR"
   },
-  "keywords": [
-      "coordinate transformation"
-  ],
-  "programmingLanguage": [
-      "Python"
-  ],
+  "keywords": ["coordinate transformation"],
+  "programmingLanguage": ["Python"],
   "author": [
-      {
-          "@type": "Person",
-          "@id": "https://orcid.org/0000-0002-1637-6526",
-          "givenName": "Michael",
-          "familyName": "Hirsch"
-      }
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0000-0002-1637-6526",
+      "givenName": "Michael",
+      "familyName": "Hirsch"
+    }
   ]
 }
