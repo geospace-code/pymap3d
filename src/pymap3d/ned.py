@@ -1,5 +1,4 @@
 """ Transforms involving NED North East Down """
-
 from __future__ import annotations
 
 from .ecef import ecef2enu, ecef2enuv, ecef2geodetic, enu2ecef
@@ -73,7 +72,7 @@ def ned2geodetic(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -122,7 +121,7 @@ def ned2ecef(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -168,7 +167,7 @@ def ecef2ned(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -217,7 +216,7 @@ def geodetic2ned(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """

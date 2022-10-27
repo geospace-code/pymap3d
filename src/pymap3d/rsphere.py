@@ -23,7 +23,7 @@ __all__ = [
 ]
 
 
-def eqavol(ell: Ellipsoid = None) -> float:
+def eqavol(ell: Ellipsoid | None = None) -> float:
     """computes the radius of the sphere with equal volume as the ellipsoid
 
     Parameters
@@ -44,7 +44,7 @@ def eqavol(ell: Ellipsoid = None) -> float:
     return ell.semimajor_axis * (1 - f / 3 - f**2 / 9)
 
 
-def authalic(ell: Ellipsoid = None) -> float:
+def authalic(ell: Ellipsoid | None = None) -> float:
     """computes the radius of the sphere with equal surface area as the ellipsoid
 
     Parameters
@@ -71,7 +71,7 @@ def authalic(ell: Ellipsoid = None) -> float:
         return ell.semimajor_axis
 
 
-def rectifying(ell: Ellipsoid = None) -> float:
+def rectifying(ell: Ellipsoid | None = None) -> float:
     """computes the radius of the sphere with equal meridional distances as the ellipsoid
 
     Parameters
@@ -94,7 +94,7 @@ def euler(
     lon1,
     lat2,
     lon2,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ):
     """computes the Euler radii of curvature at the midpoint of the
@@ -140,7 +140,7 @@ def euler(
     return rho * nu / den
 
 
-def curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"):
+def curve(lat, ell: Ellipsoid | None = None, deg: bool = True, method: str = "mean"):
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
@@ -175,7 +175,7 @@ def curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"):
         raise ValueError("method must be mean or norm")
 
 
-def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+def triaxial(ell: Ellipsoid | None = None, method: str = "mean") -> float:
     """computes triaxial average of the semimajor and semiminor axes of the ellipsoid
 
     Parameters
@@ -202,7 +202,7 @@ def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
         raise ValueError("method must be mean or norm")
 
 
-def biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+def biaxial(ell: Ellipsoid | None = None, method: str = "mean") -> float:
     """computes biaxial average of the semimajor and semiminor axes of the ellipsoid
 
     Parameters

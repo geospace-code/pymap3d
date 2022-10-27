@@ -15,3 +15,4 @@ files = ["src", "Examples", "scripts"]
 ignore_missing_imports = true
 strict_optional = false
 show_column_numbers = true
+show_error_codes = true

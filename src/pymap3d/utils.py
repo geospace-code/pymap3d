@@ -8,6 +8,7 @@ from math import pi
 
 try:
     from numpy import asarray
+    from numpy.typing import ArrayLike
 except ImportError:
     pass
 
@@ -45,7 +46,7 @@ def sph2cart(az, el, r) -> tuple:
     return x, y, z
 
 
-def sanitize(lat, ell: Ellipsoid | None, deg: bool) -> tuple:
+def sanitize(lat, ell: Ellipsoid | None, deg: bool) -> tuple[float | ArrayLike, Ellipsoid]:
 
     if ell is None:
         ell = Ellipsoid.from_name("wgs84")

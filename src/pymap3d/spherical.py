@@ -19,7 +19,7 @@ def geodetic2spherical(
     lat,
     lon,
     alt,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -90,7 +90,7 @@ def spherical2geodetic(
     lat,
     lon,
     radius,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
