@@ -61,3 +61,26 @@ except ImportError:
     def cbrt(x) -> float:  # type: ignore
         """math.cbrt was added in Python 3.11"""
         return x ** (1 / 3)
+
+
+__all__ = [
+    "asin",
+    "asinh",
+    "atan",
+    "atan2",
+    "atanh",
+    "cbrt",
+    "cos",
+    "degrees",
+    "exp",
+    "hypot",
+    "inf",
+    "isnan",
+    "log",
+    "power",
+    "radians",
+    "sign",
+    "sin",
+    "sqrt",
+    "tan",
+]
