@@ -23,7 +23,7 @@ def ecef2aer(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -72,7 +72,7 @@ def geodetic2aer(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -120,7 +120,7 @@ def aer2geodetic(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -269,7 +269,7 @@ def aer2ecef(
     lat0,
     lon0,
     alt0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """

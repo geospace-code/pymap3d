@@ -36,7 +36,7 @@ def vdist(
     Lon1,
     Lat2,
     Lon2,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
 ) -> tuple:
     """
     Using the reference ellipsoid, compute the distance between two points
@@ -278,7 +278,7 @@ def vreckon(
     Lon1,
     Rng,
     Azim,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
 ) -> tuple:
     """
     This is the Vincenty "forward" solution.
@@ -462,7 +462,7 @@ def track2(
     lon1,
     lat2,
     lon2,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     npts: int = 100,
     deg: bool = True,
 ) -> tuple[list, list]:

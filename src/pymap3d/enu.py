@@ -15,7 +15,7 @@ from .mathfun import atan2, cos, degrees, hypot, radians, sin
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
 
-def enu2aer(e, n, u, deg: bool = True) -> tuple:
+def enu2aer(e, n, u, deg=True):
     """
     ENU to Azimuth, Elevation, Range
 
@@ -115,7 +115,7 @@ def enu2geodetic(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -163,7 +163,7 @@ def geodetic2enu(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """

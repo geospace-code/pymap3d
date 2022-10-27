@@ -23,7 +23,7 @@ def lookAtSpheroid(
     h0,
     az,
     tilt,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """

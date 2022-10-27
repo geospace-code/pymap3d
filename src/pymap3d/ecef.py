@@ -32,7 +32,7 @@ def geodetic2ecef(
     lat,
     lon,
     alt,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -85,7 +85,7 @@ def ecef2geodetic(
     x,
     y,
     z,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -253,7 +253,7 @@ def ecef2enu(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
@@ -365,7 +365,7 @@ def uvw2enu(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
     return East, North, Up
 
 
-def eci2geodetic(x, y, z, t: datetime, ell: Ellipsoid = None, *, deg: bool = True) -> tuple:
+def eci2geodetic(x, y, z, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True) -> tuple:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
 
@@ -406,7 +406,9 @@ def eci2geodetic(x, y, z, t: datetime, ell: Ellipsoid = None, *, deg: bool = Tru
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
 
-def geodetic2eci(lat, lon, alt, t: datetime, ell: Ellipsoid = None, *, deg: bool = True) -> tuple:
+def geodetic2eci(
+    lat, lon, alt, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True
+) -> tuple:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
 
@@ -454,7 +456,7 @@ def enu2ecef(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
