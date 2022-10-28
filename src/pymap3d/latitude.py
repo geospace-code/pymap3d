@@ -6,8 +6,8 @@ from math import pi
 from typing import Any, Sequence, overload
 
 try:
+    from numpy import asarray
     from numpy.typing import NDArray
-    from nupy import asarray
 except ImportError:
     pass
 
