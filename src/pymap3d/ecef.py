@@ -1,8 +1,11 @@
 """ Transforms involving ECEF: earth-centered, earth-fixed frame """
 from __future__ import annotations
 
+from typing import Any, Sequence, overload
+
 try:
     from numpy import asarray, finfo, where
+    from numpy.typing import NDArray
 
     from .eci import ecef2eci, eci2ecef
 except ImportError:
@@ -11,6 +14,7 @@ except ImportError:
 from datetime import datetime
 from math import pi
 
+from ._types import ArrayLike
 from .ellipsoid import Ellipsoid
 from .mathfun import atan, atan2, cos, degrees, hypot, radians, sin, sqrt, tan
 from .utils import sanitize
@@ -28,13 +32,35 @@ __all__ = [
 ]
 
 
+@overload
 def geodetic2ecef(
-    lat,
-    lon,
-    alt,
+    lat: float,
+    lon: float,
+    alt: float,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def geodetic2ecef(
+    lat: ArrayLike,
+    lon: ArrayLike,
+    alt: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def geodetic2ecef(
+    lat: float | ArrayLike,
+    lon: float | ArrayLike,
+    alt: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84) to ECEF
 
@@ -81,13 +107,35 @@ def geodetic2ecef(
     return x, y, z
 
 
+@overload
 def ecef2geodetic(
-    x,
-    y,
-    z,
+    x: float,
+    y: float,
+    z: float,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def ecef2geodetic(
+    x: ArrayLike,
+    y: ArrayLike,
+    z: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def ecef2geodetic(
+    x: float | ArrayLike,
+    y: float | ArrayLike,
+    z: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     convert ECEF (meters) to geodetic coordinates
 
@@ -127,6 +175,10 @@ def ecef2geodetic(
         z = asarray(z)
     except NameError:
         pass
+
+    assert (
+        not isinstance(x, Sequence) and not isinstance(y, Sequence) and not isinstance(z, Sequence)
+    )
 
     r = sqrt(x**2 + y**2 + z**2)
 
@@ -189,7 +241,7 @@ def ecef2geodetic(
     )
 
     try:
-        if inside.any():  # type: ignore
+        if inside.any():  # type: ignore[union-attr]
             # avoid all false assignment bug
             alt[inside] = -alt[inside]
     except (TypeError, AttributeError):
@@ -203,7 +255,38 @@ def ecef2geodetic(
     return lat, lon, alt
 
 
-def ecef2enuv(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
+@overload
+def ecef2enuv(
+    u: float,
+    v: float,
+    w: float,
+    lat0: float,
+    lon0: float,
+    deg: bool = True,
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def ecef2enuv(
+    u: ArrayLike,
+    v: ArrayLike,
+    w: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def ecef2enuv(
+    u: float | ArrayLike,
+    v: float | ArrayLike,
+    w: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     VECTOR from observer to target  ECEF => ENU
 
@@ -246,16 +329,44 @@ def ecef2enuv(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
     return uEast, vNorth, wUp
 
 
+@overload
 def ecef2enu(
-    x,
-    y,
-    z,
-    lat0,
-    lon0,
-    h0,
+    x: float,
+    y: float,
+    z: float,
+    lat0: float,
+    lon0: float,
+    h0: float,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def ecef2enu(
+    x: ArrayLike,
+    y: ArrayLike,
+    z: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def ecef2enu(
+    x: float | ArrayLike,
+    y: float | ArrayLike,
+    z: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    h0: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     from observer to target, ECEF => ENU
 
@@ -288,19 +399,44 @@ def ecef2enu(
         target up ENU coordinate (meters)
 
     """
-    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
 
-    return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)  # type: ignore[misc, arg-type]
+
+    return uvw2enu(x - x0, y - y0, z - z0, lat0, lon0, deg=deg)  # type: ignore[misc, arg-type, operator]
+
+
+@overload
+def enu2uvw(
+    east: float,
+    north: float,
+    up: float,
+    lat0: float,
+    lon0: float,
+    deg: bool = True,
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def enu2uvw(
+    east: ArrayLike,
+    north: ArrayLike,
+    up: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
 
 
 def enu2uvw(
-    east,
-    north,
-    up,
-    lat0,
-    lon0,
+    east: float | ArrayLike,
+    north: float | ArrayLike,
+    up: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Parameters
     ----------
@@ -333,7 +469,38 @@ def enu2uvw(
     return u, v, w
 
 
-def uvw2enu(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
+@overload
+def uvw2enu(
+    u: float,
+    v: float,
+    w: float,
+    lat0: float,
+    lon0: float,
+    deg: bool = True,
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def uvw2enu(
+    u: ArrayLike,
+    v: ArrayLike,
+    w: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def uvw2enu(
+    u: float | ArrayLike,
+    v: float | ArrayLike,
+    w: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Parameters
     ----------
@@ -365,7 +532,35 @@ def uvw2enu(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
     return East, North, Up
 
 
-def eci2geodetic(x, y, z, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True) -> tuple:
+@overload
+def eci2geodetic(
+    x: float, y: float, z: float, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def eci2geodetic(
+    x: ArrayLike,
+    y: ArrayLike,
+    z: ArrayLike,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def eci2geodetic(
+    x: float | ArrayLike,
+    y: float | ArrayLike,
+    z: float | ArrayLike,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
 
@@ -399,16 +594,48 @@ def eci2geodetic(x, y, z, t: datetime, ell: Ellipsoid | None = None, *, deg: boo
     """
 
     try:
-        xecef, yecef, zecef = eci2ecef(x, y, z, t)
+        xecef, yecef, zecef = eci2ecef(x, y, z, t)  # type: ignore[arg-type]
     except NameError:
         raise ImportError("pip install numpy")
 
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
 
+@overload
 def geodetic2eci(
-    lat, lon, alt, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True
-) -> tuple:
+    lat: float,
+    lon: float,
+    alt: float,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def geodetic2eci(
+    lat: ArrayLike,
+    lon: ArrayLike,
+    alt: ArrayLike,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def geodetic2eci(
+    lat: float | ArrayLike,
+    lon: float | ArrayLike,
+    alt: float | ArrayLike,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
 
@@ -441,7 +668,7 @@ def geodetic2eci(
     geodetic2eci() a.k.a lla2eci()
     """
 
-    x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
+    x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)  # type: ignore[misc, arg-type]
 
     try:
         return ecef2eci(x, y, z, t)
@@ -449,16 +676,44 @@ def geodetic2eci(
         raise ImportError("pip install numpy")
 
 
+@overload
 def enu2ecef(
-    e1,
-    n1,
-    u1,
-    lat0,
-    lon0,
-    h0,
+    e1: float,
+    n1: float,
+    u1: float,
+    lat0: float,
+    lon0: float,
+    h0: float,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def enu2ecef(
+    e1: ArrayLike,
+    n1: ArrayLike,
+    u1: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def enu2ecef(
+    e1: float | ArrayLike,
+    n1: float | ArrayLike,
+    u1: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    h0: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     ENU to ECEF
 
@@ -492,7 +747,7 @@ def enu2ecef(
     z
         target z ECEF coordinate (meters)
     """
-    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
-    dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)
+    x0, y0, z0 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)  # type: ignore[misc, arg-type]
+    dx, dy, dz = enu2uvw(e1, n1, u1, lat0, lon0, deg=deg)  # type: ignore[misc, arg-type]
 
     return x0 + dx, y0 + dy, z0 + dz

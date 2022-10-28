@@ -1,6 +1,6 @@
+import pymap3d as pm
 import pytest
 from pytest import approx
-import pymap3d as pm
 
 xyz0 = (660e3, -4700e3, 4247e3)
 
@@ -44,11 +44,19 @@ xyz0 = (660e3, -4700e3, 4247e3)
         ("pluto", 0.0),
     ],
 )
-def test_reference(model, f):
+def test_reference(model: str, f: float) -> None:
     assert pm.Ellipsoid.from_name(model).flattening == approx(f)
 
 
-def test_ellipsoid():
+@pytest.mark.parametrize("name", ["foo", "bar", "baz"])
+def test_bad_reference(name: str) -> None:
+    with pytest.raises(ValueError) as excinfo:
+        pm.Ellipsoid.from_name(name)
+
+    assert str(excinfo.value) == f"{name} model not implemented"
+
+
+def test_ellipsoid() -> None:
 
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("maupertuis")) == approx(
         [42.123086280313906, -82.00647850636021, -13462.822154350226]

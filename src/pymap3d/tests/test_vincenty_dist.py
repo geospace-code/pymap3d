@@ -21,7 +21,7 @@ from pytest import approx
         (90, 0, -90, 0, 2.000393145e7, 180),
     ],
 )
-def test_unit(lat, lon, lat1, lon1, srange, az):
+def test_unit(lat: float, lon: float, lat1: float, lon1: float, srange: float, az: float) -> None:
     dist, az1 = vincenty.vdist(lat, lon, lat1, lon1)
     assert dist == approx(srange, rel=0.005)
     assert az1 == approx(az)
@@ -30,7 +30,7 @@ def test_unit(lat, lon, lat1, lon1, srange, az):
     assert isinstance(az1, float)
 
 
-def test_vector():
+def test_vector() -> None:
     pytest.importorskip("numpy")
     asr, aaz = vincenty.vdist(10, 20, [10.02137267, 10.01917819], [20.0168471, 20.0193493])
 
@@ -39,7 +39,7 @@ def test_vector():
 
 
 @pytest.mark.parametrize("lat,lon,slantrange,az", [(10, 20, 3e3, 38), (0, 0, 0, 0)])
-def test_identity(lat, lon, slantrange, az):
+def test_identity(lat: float, lon: float, slantrange: float, az: float) -> None:
     lat1, lon1 = vincenty.vreckon(lat, lon, slantrange, az)
 
     dist, az1 = vincenty.vdist(lat, lon, lat1, lon1)

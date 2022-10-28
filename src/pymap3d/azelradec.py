@@ -5,7 +5,14 @@ Azimuth / elevation <==> Right ascension, declination
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any, overload
 
+try:
+    from numpy.typing import NDArray
+except ImportError:
+    pass
+
+from ._types import ArrayLike
 from .timeconv import str2dt  # astropy can't handle xarray times (yet)
 from .vallado import azel2radec as vazel2radec
 from .vallado import radec2azel as vradec2azel
@@ -20,6 +27,7 @@ except ImportError:
 __all__ = ["radec2azel", "azel2radec"]
 
 
+@overload
 def azel2radec(
     az_deg: float,
     el_deg: float,
@@ -27,6 +35,27 @@ def azel2radec(
     lon_deg: float,
     time: datetime,
 ) -> tuple[float, float]:
+    pass
+
+
+@overload
+def azel2radec(
+    az_deg: ArrayLike,
+    el_deg: ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def azel2radec(
+    az_deg: float | ArrayLike,
+    el_deg: float | ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[float, float] | tuple[NDArray[Any], NDArray[Any]]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
 
@@ -63,9 +92,10 @@ def azel2radec(
 
         return sky.ra.deg, sky.dec.deg
     except NameError:
-        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)
+        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)  # type: ignore[arg-type]
 
 
+@overload
 def radec2azel(
     ra_deg: float,
     dec_deg: float,
@@ -73,6 +103,27 @@ def radec2azel(
     lon_deg: float,
     time: datetime,
 ) -> tuple[float, float]:
+    pass
+
+
+@overload
+def radec2azel(
+    ra_deg: ArrayLike,
+    dec_deg: ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def radec2azel(
+    ra_deg: float | ArrayLike,
+    dec_deg: float | ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[float, float] | tuple[NDArray[Any], NDArray[Any]]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
 
@@ -104,4 +155,4 @@ def radec2azel(
 
         return altaz.az.degree, altaz.alt.degree
     except NameError:
-        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
+        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)  # type: ignore[arg-type]

@@ -6,7 +6,7 @@ from pytest import approx
 lla0 = [42, -82, 200]
 
 
-def test_compare_vicenty():
+def test_compare_vicenty() -> None:
     taz, tsr = 38, 3000
     pyproj = pytest.importorskip("pyproj")
 
@@ -20,10 +20,10 @@ def test_compare_vicenty():
     assert (p4az, p4sr) == approx((taz, tsr))
 
 
-def test_compare_geodetic():
+def test_compare_geodetic() -> None:
     pyproj = pytest.importorskip("pyproj")
 
-    xyz = pm.geodetic2ecef(*lla0)
+    xyz = pm.geodetic2ecef(*lla0)  # type: ignore[call-overload]
 
     ecef = pyproj.Proj(proj="geocent", ellps="WGS84", datum="WGS84")
     lla = pyproj.Proj(proj="latlong", ellps="WGS84", datum="WGS84")

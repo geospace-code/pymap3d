@@ -1,10 +1,10 @@
 """Minimal class for planetary ellipsoids"""
 
 from __future__ import annotations
-from math import sqrt
-from dataclasses import dataclass, field
+
 import sys
-import warnings
+from dataclasses import dataclass, field
+from math import sqrt
 from typing import Dict  # for Python < 3.9
 
 if sys.version_info >= (3, 8):
@@ -71,7 +71,7 @@ class Ellipsoid:
 
     def __init__(
         self, semimajor_axis: float, semiminor_axis: float, name: str = "", model: str = ""
-    ):
+    ) -> None:
         """
         Ellipsoidal model of world
 
@@ -152,12 +152,11 @@ class Ellipsoid:
     }
 
     @classmethod
-    def from_name(cls, name: str) -> Ellipsoid | None:
+    def from_name(cls, name: str) -> Ellipsoid:
         """Create an Ellipsoid from a name."""
 
         if name not in cls.models:
-            warnings.warn(f"{name} model not implemented")
-            return None
+            raise ValueError(f"{name} model not implemented")
 
         return cls(
             cls.models[name]["a"], cls.models[name]["b"], name=cls.models[name]["name"], model=name

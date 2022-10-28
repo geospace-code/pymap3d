@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from math import radians
 
 import pymap3d as pm
@@ -10,35 +12,41 @@ B = ELL.semiminor_axis
 
 
 @pytest.mark.parametrize("xyz", [(0, A, 50), ([0], [A], [50])], ids=("scalar", "list"))
-def test_scalar_enu(xyz):
+def test_scalar_enu(
+    xyz: tuple[float, float, float] | tuple[list[float], list[float], list[float]]
+) -> None:
     """
     verify we can handle the wide variety of input data type users might use
     """
     if isinstance(xyz[0], list):
         pytest.importorskip("numpy")
 
-    enu = pm.ecef2enu(*xyz, 0, 90, -100)
-    assert pm.enu2ecef(*enu, 0, 90, -100) == approx(xyz)
+    enu = pm.ecef2enu(*xyz, 0, 90, -100)  # type: ignore[call-overload]
+    assert pm.enu2ecef(*enu, 0, 90, -100) == approx(xyz)  # type: ignore[call-overload]
 
 
-def test_array_enu():
+def test_array_enu() -> None:
     np = pytest.importorskip("numpy")
 
     xyz = (np.asarray(0), np.asarray(A), np.asarray(50))
     llh = (np.asarray(0), np.asarray(90), np.asarray(-100))
     enu = pm.ecef2enu(*xyz, *llh)
-    assert pm.enu2ecef(*enu, *llh) == approx(xyz)
+    assert pm.enu2ecef(*enu, *llh) == approx(xyz)  # type: ignore[call-overload]
 
     xyz = (np.atleast_1d(0), np.atleast_1d(A), np.atleast_1d(50))
     llh = (np.atleast_1d(0), np.atleast_1d(90), np.atleast_1d(-100))
     enu = pm.ecef2enu(*xyz, *llh)
-    assert pm.enu2ecef(*enu, *llh) == approx(xyz)
+    assert pm.enu2ecef(*enu, *llh) == approx(xyz)  # type: ignore[call-overload]
 
 
 @pytest.mark.parametrize(
     "enu,lla,xyz", [((0, 0, 0), (0, 0, 0), (A, 0, 0)), ((0, 0, 1000), (0, 0, 0), (A + 1000, 0, 0))]
 )
-def test_enu_ecef(enu, lla, xyz):
+def test_enu_ecef(
+    enu: tuple[float, float, float],
+    lla: tuple[float, float, float],
+    xyz: tuple[float, float, float],
+) -> None:
     x, y, z = pm.enu2ecef(*enu, *lla)
     assert x == approx(xyz[0])
     assert y == approx(xyz[1])

@@ -56,3 +56,9 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
       - id: trailing-whitespace
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+      - id: python-check-blanket-type-ignore
+      - id: python-no-eval

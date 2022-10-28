@@ -10,11 +10,11 @@ A = ell.semimajor_axis
 @pytest.mark.parametrize(
     "lat,curvature", [(0, A), (90, 0), (-90, 0), (45.0, 4517590.87884893), (-45, 4517590.87884893)]
 )
-def test_rcurve_parallel(lat, curvature):
+def test_rcurve_parallel(lat: float, curvature: float) -> None:
     assert rcurve.parallel(lat) == approx(curvature, abs=1e-9, rel=1e-6)
 
 
-def test_numpy_parallel():
+def test_numpy_parallel() -> None:
     pytest.importorskip("numpy")
     assert rcurve.parallel([0, 90]) == approx([A, 0], abs=1e-9, rel=1e-6)
 
@@ -29,15 +29,15 @@ def test_numpy_parallel():
         (-45, 6367381.8156),
     ],
 )
-def test_rcurve_meridian(lat, curvature):
+def test_rcurve_meridian(lat: float, curvature: float) -> None:
     assert rcurve.meridian(lat) == approx(curvature)
 
 
-def test_numpy_meridian():
+def test_numpy_meridian() -> None:
     pytest.importorskip("numpy")
     assert rcurve.meridian([0, 90]) == approx([6335439.327, 6399593.6258])
 
 
-def test_numpy_transverse():
+def test_numpy_transverse() -> None:
     pytest.importorskip("numpy")
     assert rcurve.transverse([-90, 0, 90]) == approx([6399593.6258, A, 6399593.6258])

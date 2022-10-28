@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from math import radians
 
 import pymap3d as pm
@@ -12,7 +14,11 @@ B = ELL.semiminor_axis
 @pytest.mark.parametrize(
     "aer,lla,xyz", [((33, 70, 1000), (42, -82, 200), (660930.2, -4701424.0, 4246579.6))]
 )
-def test_aer2ecef(aer, lla, xyz):
+def test_aer2ecef(
+    aer: tuple[float, float, float],
+    lla: tuple[float, float, float],
+    xyz: tuple[float, float, float],
+) -> None:
     x, y, z = pm.aer2ecef(*aer, *lla)
     assert x == approx(xyz[0])
     assert y == approx(xyz[1])
@@ -41,7 +47,11 @@ def test_aer2ecef(aer, lla, xyz):
         ((660930.19276, -4701424.22296, 4246579.60463), (42, -82, 200), (33, 70, 1000)),
     ],
 )
-def test_ecef2aer(xyz, lla, aer):
+def test_ecef2aer(
+    xyz: tuple[float, float, float],
+    lla: tuple[float, float, float],
+    aer: tuple[float, float, float],
+) -> None:
     assert pm.ecef2aer(*xyz, *lla) == approx(aer)
 
     rlla = (radians(lla[0]), radians(lla[1]), lla[2])
@@ -50,7 +60,7 @@ def test_ecef2aer(xyz, lla, aer):
 
 
 @pytest.mark.parametrize("aer,enu", [((33, 70, 1000), (186.2775, 286.8422, 939.6926))])
-def test_aer_enu(aer, enu):
+def test_aer_enu(aer: tuple[float, float, float], enu: tuple[float, float, float]) -> None:
     e, n, u = pm.aer2enu(*aer)
     assert e == approx(enu[0])
     assert n == approx(enu[1])
@@ -76,8 +86,33 @@ def test_aer_enu(aer, enu):
     assert pm.enu2aer(*enu, deg=False) == approx(raer)
 
 
+@pytest.mark.parametrize("aer,enu", [(([33], [70], [1000]), ([186.2775], [286.8422], [939.6926]))])
+def test_aer_enu_list(
+    aer: tuple[list[float], list[float], list[float]],
+    enu: tuple[list[float], list[float], list[float]],
+) -> None:
+    np = pytest.importorskip("numpy")
+
+    enu1 = pm.aer2enu(*aer)
+    assert np.isclose(enu1, enu).all()
+
+    raer = ([radians(aer[0][0])], [radians(aer[1][0])], aer[2])
+
+    enu1 = pm.aer2enu(*raer, deg=False)
+    assert np.isclose(enu1, enu).all()
+
+    with pytest.raises(ValueError):
+        pm.aer2enu(aer[0], aer[1], [-1])
+
+    aer1 = pm.enu2aer(*enu)
+    assert np.isclose(aer1, aer).all()
+
+    raer1 = pm.enu2aer(*enu, deg=False)
+    assert np.isclose(raer1, raer).all()
+
+
 @pytest.mark.parametrize("aer,ned", [((33, 70, 1000), (286.8422, 186.2775, -939.6926))])
-def test_aer_ned(aer, ned):
+def test_aer_ned(aer: tuple[float, float, float], ned: tuple[float, float, float]) -> None:
     assert pm.aer2ned(*aer) == approx(ned)
 
     with pytest.raises(ValueError):

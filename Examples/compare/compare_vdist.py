@@ -18,13 +18,13 @@ eng.addpath(eng.genpath(str(cwd)), nargout=0)
 has_map = matlab_mapping(eng)
 
 
-def distance(lat1, lon1, lat2, lon2) -> tuple[float, float]:
+def distance(lat1: float, lon1: float, lat2: float, lon2: float) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
 
     if has_map:
-        return eng.distance(lat1, lon1, lat2, lon2, eng.wgs84Ellipsoid(), nargout=2)
+        return eng.distance(lat1, lon1, lat2, lon2, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore[no-any-return]
     else:
-        return eng.matmap3d.vdist(lat1, lon1, lat2, lon2, nargout=2)
+        return eng.matmap3d.vdist(lat1, lon1, lat2, lon2, nargout=2)  # type: ignore[no-any-return]
 
 
 dlast, alast = nan, nan

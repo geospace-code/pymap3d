@@ -8,18 +8,56 @@ The Meeus algorithm is about 9.5% faster than Astropy/Vicenty on my PC,
 and gives virtually identical result
 within double precision arithmetic limitations
 """
+from __future__ import annotations
+
+from typing import Any, Sequence, overload
 
 try:
     from astropy.coordinates.angle_utilities import angular_separation
 except ImportError:
     pass
 
+try:
+    from numpy import asarray
+    from numpy.typing import NDArray
+except ImportError:
+    pass
+
+from ._types import ArrayLike
 from .mathfun import asin, cos, degrees, radians, sqrt
 
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
 
-def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
+@overload
+def anglesep_meeus(
+    lon0: float,
+    lat0: float,
+    lon1: float,
+    lat1: float,
+    deg: bool = True,
+) -> float:
+    pass
+
+
+@overload
+def anglesep_meeus(
+    lon0: ArrayLike,
+    lat0: ArrayLike,
+    lon1: ArrayLike,
+    lat1: ArrayLike,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+def anglesep_meeus(
+    lon0: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon1: float | ArrayLike,
+    lat1: float | ArrayLike,
+    deg: bool = True,
+) -> float | NDArray[Any]:
     """
     Parameters
     ----------
@@ -58,15 +96,57 @@ def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool
         lat0 = radians(lat0)
         lon1 = radians(lon1)
         lat1 = radians(lat1)
+    else:
+        try:
+            lon0 = asarray(lon0)
+            lat0 = asarray(lat0)
+            lon1 = asarray(lon1)
+            lat1 = asarray(lat1)
+        except NameError:
+            pass
+    assert (
+        not isinstance(lon0, Sequence)
+        and not isinstance(lat0, Sequence)
+        and not isinstance(lon1, Sequence)
+        and not isinstance(lat1, Sequence)
+    )
 
     sep_rad = 2 * asin(
         sqrt(haversine(lat0 - lat1) + cos(lat0) * cos(lat1) * haversine(lon0 - lon1))
     )
 
-    return degrees(sep_rad) if deg else sep_rad
+    return degrees(sep_rad) if deg else sep_rad  # type: ignore[no-any-return]
 
 
-def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
+@overload
+def anglesep(
+    lon0: float,
+    lat0: float,
+    lon1: float,
+    lat1: float,
+    deg: bool = True,
+) -> float:
+    pass
+
+
+@overload
+def anglesep(
+    lon0: ArrayLike,
+    lat0: ArrayLike,
+    lon1: ArrayLike,
+    lat1: ArrayLike,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+def anglesep(
+    lon0: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon1: float | ArrayLike,
+    lat1: float | ArrayLike,
+    deg: bool = True,
+) -> float | NDArray[Any]:
     """
     Parameters
     ----------
@@ -97,16 +177,40 @@ def anglesep(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = Tru
         lat0 = radians(lat0)
         lon1 = radians(lon1)
         lat1 = radians(lat1)
+    else:
+        try:
+            lon0 = asarray(lon0)
+            lat0 = asarray(lat0)
+            lon1 = asarray(lon1)
+            lat1 = asarray(lat1)
+        except NameError:
+            pass
+    assert (
+        not isinstance(lon0, Sequence)
+        and not isinstance(lat0, Sequence)
+        and not isinstance(lon1, Sequence)
+        and not isinstance(lat1, Sequence)
+    )
 
     try:
         sep_rad = angular_separation(lon0, lat0, lon1, lat1)
     except NameError:
-        sep_rad = anglesep_meeus(lon0, lat0, lon1, lat1, deg=False)
+        sep_rad = anglesep_meeus(lon0, lat0, lon1, lat1, deg=False)  # type: ignore[arg-type]
 
-    return degrees(sep_rad) if deg else sep_rad
+    return degrees(sep_rad) if deg else sep_rad  # type: ignore[no-any-return]
 
 
+@overload
 def haversine(theta: float) -> float:
+    pass
+
+
+@overload
+def haversine(theta: ArrayLike) -> NDArray[Any]:
+    pass
+
+
+def haversine(theta: float | ArrayLike) -> float | NDArray[Any]:
     """
     Compute haversine
 

@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 from math import tau
+from typing import Any, overload
 
 try:
     from numpy import asarray
+    from numpy.typing import NDArray
 except ImportError:
     pass
 
+from ._types import ArrayLike
 from .ecef import ecef2geodetic, enu2ecef, geodetic2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
 from .mathfun import atan2, cos, degrees, hypot, radians, sin
@@ -15,7 +18,29 @@ from .mathfun import atan2, cos, degrees, hypot, radians, sin
 __all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu"]
 
 
-def enu2aer(e, n, u, deg=True):
+@overload
+def enu2aer(
+    e: float,
+    n: float,
+    u: float,
+    deg: bool = True,
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def enu2aer(
+    e: ArrayLike,
+    n: ArrayLike,
+    u: ArrayLike,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def enu2aer(
+    e: float | ArrayLike, n: float | ArrayLike, u: float | ArrayLike, deg: bool = True
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     ENU to Azimuth, Elevation, Range
 
@@ -45,16 +70,20 @@ def enu2aer(e, n, u, deg=True):
     # 1 millimeter precision for singularity stability
 
     try:
+        e = asarray(e)
+        n = asarray(n)
+        u = asarray(u)
         e[abs(e) < 1e-3] = 0.0
         n[abs(n) < 1e-3] = 0.0
         u[abs(u) < 1e-3] = 0.0
-    except TypeError:
+    except (TypeError, NameError):
+        assert isinstance(e, float) and isinstance(n, float) and isinstance(u, float)
         if abs(e) < 1e-3:
-            e = 0.0  # type: ignore
+            e = 0.0
         if abs(n) < 1e-3:
-            n = 0.0  # type: ignore
+            n = 0.0
         if abs(u) < 1e-3:
-            u = 0.0  # type: ignore
+            u = 0.0
 
     r = hypot(e, n)
     slantRange = hypot(r, u)
@@ -68,7 +97,29 @@ def enu2aer(e, n, u, deg=True):
     return az, elev, slantRange
 
 
-def aer2enu(az, el, srange, deg: bool = True) -> tuple:
+@overload
+def aer2enu(
+    az: float,
+    el: float,
+    srange: float,
+    deg: bool = True,
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def aer2enu(
+    az: ArrayLike,
+    el: ArrayLike,
+    srange: ArrayLike,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def aer2enu(
+    az: float | ArrayLike, el: float | ArrayLike, srange: float | ArrayLike, deg: bool = True
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Azimuth, Elevation, Slant range to target to East, North, Up
 
@@ -100,6 +151,7 @@ def aer2enu(az, el, srange, deg: bool = True) -> tuple:
         if (asarray(srange) < 0).any():
             raise ValueError("Slant range  [0, Infinity)")
     except NameError:
+        assert isinstance(srange, int) or isinstance(srange, float)
         if srange < 0:
             raise ValueError("Slant range  [0, Infinity)")
 
@@ -108,16 +160,44 @@ def aer2enu(az, el, srange, deg: bool = True) -> tuple:
     return r * sin(az), r * cos(az), srange * sin(el)
 
 
+@overload
 def enu2geodetic(
-    e,
-    n,
-    u,
-    lat0,
-    lon0,
-    h0,
+    e: float,
+    n: float,
+    u: float,
+    lat0: float,
+    lon0: float,
+    h0: float,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def enu2geodetic(
+    e: ArrayLike,
+    n: ArrayLike,
+    u: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def enu2geodetic(
+    e: float | ArrayLike,
+    n: float | ArrayLike,
+    u: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    h0: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     East, North, Up to target to geodetic coordinates
 
@@ -151,21 +231,49 @@ def enu2geodetic(
           altitude above ellipsoid  (meters)
     """
 
-    x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell, deg=deg)
+    x, y, z = enu2ecef(e, n, u, lat0, lon0, h0, ell, deg=deg)  # type: ignore[misc, arg-type]
 
     return ecef2geodetic(x, y, z, ell, deg=deg)
 
 
+@overload
 def geodetic2enu(
-    lat,
-    lon,
-    h,
-    lat0,
-    lon0,
-    h0,
+    lat: float,
+    lon: float,
+    h: float,
+    lat0: float,
+    lon0: float,
+    h0: float,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def geodetic2enu(
+    lat: ArrayLike,
+    lon: ArrayLike,
+    h: ArrayLike,
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def geodetic2enu(
+    lat: float | ArrayLike,
+    lon: float | ArrayLike,
+    h: float | ArrayLike,
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    h0: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Parameters
     ----------
@@ -196,7 +304,7 @@ def geodetic2enu(
     u : float
         Up ENU
     """
-    x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)
-    x2, y2, z2 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)
+    x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)  # type: ignore[misc, arg-type]
+    x2, y2, z2 = geodetic2ecef(lat0, lon0, h0, ell, deg=deg)  # type: ignore[misc, arg-type]
 
-    return uvw2enu(x1 - x2, y1 - y2, z1 - z2, lat0, lon0, deg=deg)
+    return uvw2enu(x1 - x2, y1 - y2, z1 - z2, lat0, lon0, deg=deg)  # type: ignore[arg-type]

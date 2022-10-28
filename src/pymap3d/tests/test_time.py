@@ -1,4 +1,13 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import cast
+
+try:
+    from numpy import datetime64
+    from numpy.typing import NDArray
+except ImportError:
+    pass
 
 import pymap3d.sidereal as pms
 import pytest
@@ -8,11 +17,11 @@ from pytest import approx
 t0 = datetime(2014, 4, 6, 8)
 
 
-def test_juliantime():
+def test_juliantime() -> None:
     assert pms.juliandate(t0) == approx(2.456753833333e6)
 
 
-def test_types():
+def test_types() -> None:
     np = pytest.importorskip("numpy")
     assert str2dt(t0) == t0  # passthrough
     assert str2dt("2014-04-06T08:00:00") == t0
@@ -24,16 +33,17 @@ def test_types():
     assert (np.asarray(str2dt(t1)) == t0).all()
 
 
-def test_datetime64():
+def test_datetime64() -> None:
     np = pytest.importorskip("numpy")
-    t1 = np.datetime64(t0)
+    t1: datetime64 | NDArray[datetime64]
+    t1 = cast(datetime64, np.datetime64(t0))
     assert str2dt(t1) == t0
 
-    t1 = np.array([np.datetime64(t0), np.datetime64(t0)])
+    t1 = cast(NDArray[datetime64], np.array([np.datetime64(t0), np.datetime64(t0)]))
     assert (str2dt(t1) == t0).all()
 
 
-def test_xarray_time():
+def test_xarray_time() -> None:
     xarray = pytest.importorskip("xarray")
 
     t = {"time": t0}
@@ -45,7 +55,7 @@ def test_xarray_time():
     assert (str2dt(ds["time"]) == t0).all()
 
 
-def test_pandas_time():
+def test_pandas_time() -> None:
     pandas = pytest.importorskip("pandas")
 
     t = pandas.Series(t0)

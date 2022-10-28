@@ -10,7 +10,7 @@ from pytest import approx
     "geodetic_lat,alt_m,geocentric_lat",
     [(0, 0, 0), (90, 0, 90), (-90, 0, -90), (45, 0, 44.80757678), (-45, 0, -44.80757678)],
 )
-def test_geodetic_alt_geocentric(geodetic_lat, alt_m, geocentric_lat):
+def test_geodetic_alt_geocentric(geodetic_lat: float, alt_m: float, geocentric_lat: float) -> None:
     assert latitude.geod2geoc(geodetic_lat, alt_m) == approx(geocentric_lat)
 
     r = rcurve.geocentric_radius(geodetic_lat)
@@ -18,6 +18,8 @@ def test_geodetic_alt_geocentric(geodetic_lat, alt_m, geocentric_lat):
     assert latitude.geoc2geod(geocentric_lat, 1e5 + r) == approx(
         latitude.geocentric2geodetic(geocentric_lat, 1e5 + alt_m)
     )
+
+    assert latitude.geoc2geod([geocentric_lat], [r]) == approx(geodetic_lat)
 
     assert latitude.geod2geoc(geodetic_lat, 1e5 + alt_m) == approx(
         latitude.geodetic2geocentric(geodetic_lat, 1e5 + alt_m)
@@ -28,7 +30,7 @@ def test_geodetic_alt_geocentric(geodetic_lat, alt_m, geocentric_lat):
     "geodetic_lat,geocentric_lat",
     [(0, 0), (90, 90), (-90, -90), (45, 44.80757678), (-45, -44.80757678)],
 )
-def test_geodetic_geocentric(geodetic_lat, geocentric_lat):
+def test_geodetic_geocentric(geodetic_lat: float, geocentric_lat: float) -> None:
 
     assert latitude.geodetic2geocentric(geodetic_lat, 0) == approx(geocentric_lat)
     assert latitude.geodetic2geocentric(radians(geodetic_lat), 0, deg=False) == approx(
@@ -41,7 +43,7 @@ def test_geodetic_geocentric(geodetic_lat, geocentric_lat):
     )
 
 
-def test_numpy_geodetic_geocentric():
+def test_numpy_geodetic_geocentric() -> None:
     pytest.importorskip("numpy")
     assert latitude.geodetic2geocentric([45, 0], 0) == approx([44.80757678, 0])
     assert latitude.geocentric2geodetic([44.80757678, 0], 0) == approx([45, 0])
@@ -58,7 +60,7 @@ def test_numpy_geodetic_geocentric():
         (89, 271.275),
     ],
 )
-def test_geodetic_isometric(geodetic_lat, isometric_lat):
+def test_geodetic_isometric(geodetic_lat: float, isometric_lat: float) -> None:
     isolat = latitude.geodetic2isometric(geodetic_lat)
     assert isolat == approx(isometric_lat)
     assert isinstance(isolat, float)
@@ -73,7 +75,7 @@ def test_geodetic_isometric(geodetic_lat, isometric_lat):
     )
 
 
-def test_numpy_geodetic_isometric():
+def test_numpy_geodetic_isometric() -> None:
     pytest.importorskip("numpy")
     assert latitude.geodetic2isometric([45, 0]) == approx([50.227466, 0])
     assert latitude.isometric2geodetic([50.227466, 0]) == approx([45, 0])
@@ -83,7 +85,7 @@ def test_numpy_geodetic_isometric():
     "geodetic_lat,conformal_lat",
     [(0, 0), (90, 90), (-90, -90), (45, 44.80768406), (-45, -44.80768406), (89, 88.99327)],
 )
-def test_geodetic_conformal(geodetic_lat, conformal_lat):
+def test_geodetic_conformal(geodetic_lat: float, conformal_lat: float) -> None:
     clat = latitude.geodetic2conformal(geodetic_lat)
     assert clat == approx(conformal_lat)
     assert isinstance(clat, float)
@@ -98,7 +100,7 @@ def test_geodetic_conformal(geodetic_lat, conformal_lat):
     )
 
 
-def test_numpy_geodetic_conformal():
+def test_numpy_geodetic_conformal() -> None:
     pytest.importorskip("numpy")
     assert latitude.geodetic2conformal([45, 0]) == approx([44.80768406, 0])
     assert latitude.conformal2geodetic([44.80768406, 0]) == approx([45, 0])
@@ -108,7 +110,7 @@ def test_numpy_geodetic_conformal():
     "geodetic_lat,rectifying_lat",
     [(0, 0), (90, 90), (-90, -90), (45, 44.855682), (-45, -44.855682)],
 )
-def test_geodetic_rectifying(geodetic_lat, rectifying_lat):
+def test_geodetic_rectifying(geodetic_lat: float, rectifying_lat: float) -> None:
     assert latitude.geodetic2rectifying(geodetic_lat) == approx(rectifying_lat)
     assert latitude.geodetic2rectifying(radians(geodetic_lat), deg=False) == approx(
         radians(rectifying_lat)
@@ -120,7 +122,7 @@ def test_geodetic_rectifying(geodetic_lat, rectifying_lat):
     )
 
 
-def test_numpy_geodetic_rectifying():
+def test_numpy_geodetic_rectifying() -> None:
     pytest.importorskip("numpy")
     assert latitude.geodetic2rectifying([45, 0]) == approx([44.855682, 0])
     assert latitude.rectifying2geodetic([44.855682, 0]) == approx([45, 0])
@@ -130,7 +132,7 @@ def test_numpy_geodetic_rectifying():
     "geodetic_lat,authalic_lat",
     [(0, 0), (90, 90), (-90, -90), (45, 44.87170288), (-45, -44.87170288)],
 )
-def test_geodetic_authalic(geodetic_lat, authalic_lat):
+def test_geodetic_authalic(geodetic_lat: float, authalic_lat: float) -> None:
     assert latitude.geodetic2authalic(geodetic_lat) == approx(authalic_lat)
     assert latitude.geodetic2authalic(radians(geodetic_lat), deg=False) == approx(
         radians(authalic_lat)
@@ -142,7 +144,7 @@ def test_geodetic_authalic(geodetic_lat, authalic_lat):
     )
 
 
-def test_numpy_geodetic_authalic():
+def test_numpy_geodetic_authalic() -> None:
     pytest.importorskip("numpy")
     assert latitude.geodetic2authalic([45, 0]) == approx([44.87170288, 0])
     assert latitude.authalic2geodetic([44.87170288, 0]) == approx([45, 0])
@@ -152,7 +154,7 @@ def test_numpy_geodetic_authalic():
     "geodetic_lat,parametric_lat",
     [(0, 0), (90, 90), (-90, -90), (45, 44.9037878), (-45, -44.9037878)],
 )
-def test_geodetic_parametric(geodetic_lat, parametric_lat):
+def test_geodetic_parametric(geodetic_lat: float, parametric_lat: float) -> None:
     assert latitude.geodetic2parametric(geodetic_lat) == approx(parametric_lat)
     assert latitude.geodetic2parametric(radians(geodetic_lat), deg=False) == approx(
         radians(parametric_lat)
@@ -164,14 +166,14 @@ def test_geodetic_parametric(geodetic_lat, parametric_lat):
     )
 
 
-def test_numpy_geodetic_parametric():
+def test_numpy_geodetic_parametric() -> None:
     pytest.importorskip("numpy")
     assert latitude.geodetic2parametric([45, 0]) == approx([44.9037878, 0])
     assert latitude.parametric2geodetic([44.9037878, 0]) == approx([45, 0])
 
 
 @pytest.mark.parametrize("lat", [91, -91])
-def test_badvals(lat):
+def test_badvals(lat: float) -> None:
     # geodetic_isometric is not included on purpose
     with pytest.raises(ValueError):
         latitude.geodetic2geocentric(lat, 0)
