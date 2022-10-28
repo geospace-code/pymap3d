@@ -19,11 +19,21 @@ def test_geodetic_alt_geocentric(geodetic_lat: float, alt_m: float, geocentric_l
         latitude.geocentric2geodetic(geocentric_lat, 1e5 + alt_m)
     )
 
-    assert latitude.geoc2geod([geocentric_lat], [r]) == approx(geodetic_lat)
-
     assert latitude.geod2geoc(geodetic_lat, 1e5 + alt_m) == approx(
         latitude.geodetic2geocentric(geodetic_lat, 1e5 + alt_m)
     )
+
+
+@pytest.mark.parametrize(
+    "geodetic_lat,alt_m,geocentric_lat",
+    [(0, 0, 0), (90, 0, 90), (-90, 0, -90), (45, 0, 44.80757678), (-45, 0, -44.80757678)],
+)
+def test_geodetic_alt_geocentric_list(
+    geodetic_lat: float, alt_m: float, geocentric_lat: float
+) -> None:
+    pytest.importorskip("numpy")
+    r = rcurve.geocentric_radius(geodetic_lat)
+    assert latitude.geoc2geod([geocentric_lat], [r]) == approx(geodetic_lat)
 
 
 @pytest.mark.parametrize(
