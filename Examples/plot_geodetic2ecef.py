@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import argparse
+from typing import Any
 
 import matplotlib.pyplot as mpl
 import numpy as np
@@ -15,7 +18,7 @@ lat, lon = np.meshgrid(np.arange(-90, 90, 0.1), np.arange(-180, 180, 0.2))
 x, y, z = pm.geodetic2ecef(lat, lon, args.alt_m)
 
 
-def panel(ax, val, name: str, cmap: str = None):
+def panel(ax: Any, val: Any, name: str, cmap: str | None = None) -> None:
     hi = ax.pcolormesh(lon, lat, val, cmap=cmap)
     ax.set_title(name)
     fg.colorbar(hi, ax=ax).set_label(name + " [m]")

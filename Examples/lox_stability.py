@@ -21,7 +21,7 @@ if not eng.has_map_toolbox():
 
 def matlab_func(lat1: float, lon1: float, rng: float, az: float) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
-    return eng.reckon("rh", lat1, lon1, rng, az, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore
+    return eng.reckon("rh", lat1, lon1, rng, az, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore[no-any-return, union-attr]
 
 
 clat, clon, rng = 35.0, 140.0, 50000.0  # arbitrary

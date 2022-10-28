@@ -17,7 +17,7 @@ lla0 = (42, -82, 200)
         (125, 45, 9.99481382, -19.992528, 1.414324671e3),
     ],
 )
-def test_losint(az, tilt, lat, lon, sr):
+def test_losint(az: float, tilt: float, lat: float, lon: float, sr: float) -> None:
 
     lla0 = (10, -20, 1e3)
     lat1, lon1, sr1 = los.lookAtSpheroid(*lla0, az, tilt=tilt)
@@ -32,19 +32,19 @@ def test_losint(az, tilt, lat, lon, sr):
     assert isinstance(sr1, float)
 
 
-def test_badval():
+def test_badval() -> None:
 
     with pytest.raises(ValueError):
         los.lookAtSpheroid(0, 0, -1, 0, 0)
 
 
-def test_array_los():
+def test_array_los() -> None:
     np = pytest.importorskip("numpy")
 
     az = [0.0, 10.0, 125.0]
     tilt = [30.0, 45.0, 90.0]
 
-    lat, lon, sr = los.lookAtSpheroid(*lla0, az, tilt)
+    lat, lon, sr = los.lookAtSpheroid(*lla0, az, tilt)  # type: ignore[call-overload]
 
     truth = np.array(
         [
@@ -60,27 +60,27 @@ def test_array_los():
     assert np.column_stack((lat, lon, sr)) == approx(truth, nan_ok=True)
 
 
-def test_xarray_los():
+def test_xarray_los() -> None:
     xarray = pytest.importorskip("xarray")
 
     lla = xarray.DataArray(list(lla0))
     az = xarray.DataArray([0.0] * 2)
     tilt = xarray.DataArray([30.0] * 2)
 
-    lat, lon, sr = los.lookAtSpheroid(*lla, az, tilt)
+    lat, lon, sr = los.lookAtSpheroid(*lla, az, tilt)  # type: ignore[call-overload]
     assert lat == approx(42.00103959)
     assert lon == approx(lla0[1])
     assert sr == approx(230.9413173)
 
 
-def test_pandas_los():
+def test_pandas_los() -> None:
     pandas = pytest.importorskip("pandas")
 
     lla = pandas.Series(lla0)
     az = pandas.Series([0.0] * 2)
     tilt = pandas.Series([30.0] * 2)
 
-    lat, lon, sr = los.lookAtSpheroid(*lla, az, tilt)
+    lat, lon, sr = los.lookAtSpheroid(*lla, az, tilt)  # type: ignore[call-overload]
     assert lat == approx(42.00103959)
     assert lon == approx(lla0[1])
     assert sr == approx(230.9413173)

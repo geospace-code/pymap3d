@@ -36,7 +36,7 @@ def bench_vreckon(N: int) -> float:
     az = np.random.random(N)
 
     tic = time.monotonic()
-    _, _ = vreckon(ll0[0], ll0[1], sr, az)
+    _, _ = vreckon(ll0[0], ll0[1], sr, az)  # type: ignore[call-overload]
 
     return time.monotonic() - tic
 
