@@ -31,20 +31,31 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
-    - run: pip install .[full,tests,lint]
+      - name: Install tests and lint dependencies
+        run: pip install .[tests,lint]
 
-      - run: pip install .[full,tests,lint]
+      - name: Lint
+        run: flake8
+      - name: Type check
+        run: mypy
 
-      - run: flake8
-      - run: mypy
+      - name: Test stdlib and collect coverage
+        run: pytest --cov=src --cov-report=xml
 
-      - run: pytest
-# codecov coverage
-# - run: pip install codecov pytest-cov
-# - run: pytest --cov --cov-report=xml
-# - name: Upload coverage to Codecov
-#   uses: codecov/codecov-action@v1
+      - name: Install NumPy
+        run: pip install numpy
+      - name: Test with NumPy and collect coverage
+        run: pytest --cov=src --cov-report=xml --cov-append
+
+      - name: Install full dependencies
+        run: pip install .[full]
+      - name: Test with full dependencies and collect coverage
+        run: pytest --cov=src --cov-report=xml --cov-append
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3

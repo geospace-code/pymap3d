@@ -3,9 +3,7 @@
 branch = True
 source = src/
 
-omit =
-    archive/*
-    */.local/*
+# Do not omit tests folder as the tests coverage could not be 100%
 
 [report]
 # Regexes for lines to exclude from consideration
@@ -25,7 +23,8 @@ exclude_lines =
     if 0:
     if __name__ == .__main__.:
 
-ignore_errors = True
+    # Don't complain about function overloading
+    @overload
 
 [html]
 directory = coverage_html_report
