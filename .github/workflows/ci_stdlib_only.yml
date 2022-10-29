@@ -3,10 +3,14 @@ name: ci_stdlib_only
 on:
   push:
     paths:
-    - "**.py"
-    - .github/workflows/ci_stdlib_only.yml
-    - "!scripts/"
-    pull-request:
+      - "**.py"
+      - .github/workflows/ci_stdlib_only.yml
+      - "!scripts/"
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
       - "**.py"
       - .github/workflows/ci_stdlib_only.yml
 
