@@ -6,7 +6,11 @@ on:
       - "**.py"
       - .github/workflows/ci_stdlib_only.yml
       - "!scripts/"
-    pull-request:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
       - "**.py"
       - .github/workflows/ci_stdlib_only.yml
 
