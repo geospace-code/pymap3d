@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from importlib.util import find_spec
 from typing import cast
 
 try:
@@ -15,6 +16,9 @@ from pymap3d.timeconv import str2dt
 from pytest import approx
 
 t0 = datetime(2014, 4, 6, 8)
+t1 = datetime(2014, 4, 6, 8, 1, 2)
+t0_str = "2014-04-06T08:00:00"
+t1_str = "2014-04-06T08:01:02"
 
 
 def test_juliantime() -> None:
@@ -24,13 +28,25 @@ def test_juliantime() -> None:
 def test_types() -> None:
     np = pytest.importorskip("numpy")
     assert str2dt(t0) == t0  # passthrough
-    assert str2dt("2014-04-06T08:00:00") == t0
-    ti = [str2dt("2014-04-06T08:00:00"), str2dt("2014-04-06T08:01:02")]
-    to = [t0, datetime(2014, 4, 6, 8, 1, 2)]
-    assert ti == to  # even though ti is numpy array of datetime and to is list of datetime
 
-    t1 = [t0, t0]
-    assert (np.asarray(str2dt(t1)) == t0).all()
+    if find_spec("dateutil"):
+        assert str2dt(t0_str) == t0
+    else:
+        with pytest.raises(ImportError) as excinfo:
+            str2dt(t0_str)
+        assert str(excinfo.value) == "pip install python-dateutil"
+
+    if find_spec("dateutil"):
+        ti = str2dt([t0_str, t1_str])
+        to = [t0, t1]
+        assert ti == to
+    else:
+        with pytest.raises(ImportError) as excinfo:
+            str2dt([t0_str, t1_str])
+        assert str(excinfo.value) == "pip install python-dateutil"
+
+    t2 = [t0, t0]
+    assert (np.asarray(str2dt(t2)) == t0).all()
 
 
 def test_datetime64() -> None:

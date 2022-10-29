@@ -58,7 +58,7 @@ def str2dt(
         try:
             return dateutil.parser.parse(time)
         except NameError:
-            raise ImportError("pip install dateutil")
+            raise ImportError("pip install python-dateutil")
 
     # some sort of iterable
     if isinstance(time, list):
@@ -68,7 +68,7 @@ def str2dt(
             elif isinstance(time[0], str):
                 return [dateutil.parser.parse(cast(str, t)) for t in time]
         except NameError:
-            raise ImportError("pip install dateutil")
+            raise ImportError("pip install python-dateutil")
 
     # pandas/xarray
     try:
