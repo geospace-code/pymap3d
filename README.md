@@ -3,10 +3,13 @@
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/geospace-code/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/geospace-code/pymap3d/context:python)
+[![coverage](https://img.shields.io/codecov/c/github/geospace-code/pymap3d)](https://codecov.io/gh/geospace-code/pymap3d)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci/badge.svg)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci_stdlib_only/badge.svg)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
+![mypy](https://img.shields.io/badge/mypy-checked-blue)
+![black](https://img.shields.io/badge/code%20style-black-black)
 
 Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions and geodesy.
 API similar to popular $1000 Matlab Mapping Toolbox routines for Python
