@@ -37,7 +37,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install tests and lint dependencies
-        run: pip install .[tests,lint]
+        run: pip install -e .[tests,lint]
 
       - name: Lint
         run: flake8
@@ -53,7 +53,7 @@ jobs:
         run: pytest --cov=src --cov-report=xml --cov-append
 
       - name: Install full dependencies
-        run: pip install .[full]
+        run: pip install -e .[full]
       - name: Test with full dependencies and collect coverage
         run: pytest --cov=src --cov-report=xml --cov-append
 
