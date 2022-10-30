@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.0.0
+    rev: v3.2.0
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -11,7 +11,7 @@ repos:
       - id: isort
 
   - repo: https://github.com/psf/black
-    rev: 22.8.0
+    rev: 22.10.0
     hooks:
       - id: black
 
@@ -25,7 +25,7 @@ repos:
           - flake8-builtins
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.981
+    rev: v0.982
     hooks:
       - id: mypy
         additional_dependencies:
@@ -36,12 +36,12 @@ repos:
           - xarray
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.3.2
+    rev: v3.0.0-alpha.4
     hooks:
       - id: prettier
 
   - repo: https://github.com/markdownlint/markdownlint
-    rev: v0.11.0
+    rev: v0.12.0
     hooks:
       - id: markdownlint
         args: ["--rules", "~MD013,~MD032"]
