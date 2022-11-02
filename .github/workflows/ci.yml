@@ -7,9 +7,6 @@ on:
       - .github/workflows/ci.yml
       - "!scripts/"
   pull_request:
-    types:
-      - opened
-      - synchronize
     paths:
       - "**.py"
       - .github/workflows/ci.yml
