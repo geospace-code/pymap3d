@@ -26,7 +26,7 @@ def bench(N: int) -> float:
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("N", type=int)
-    p = p.parse_args()
-    N = p.N
+    args = p.parse_args()
+    N = args.N
 
     print(f"ecef2geodetic: {bench(N):.3f} seconds")

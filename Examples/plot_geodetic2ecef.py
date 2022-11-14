@@ -8,11 +8,11 @@ import pymap3d as pm
 
 p = argparse.ArgumentParser()
 p.add_argument("alt_m", help="altitude [meters]", type=float, default=0.0, nargs="?")
-p = p.parse_args()
+args = p.parse_args()
 
 lat, lon = np.meshgrid(np.arange(-90, 90, 0.1), np.arange(-180, 180, 0.2))
 
-x, y, z = pm.geodetic2ecef(lat, lon, p.alt_m)
+x, y, z = pm.geodetic2ecef(lat, lon, args.alt_m)
 
 
 def panel(ax, val, name: str, cmap: str = None):

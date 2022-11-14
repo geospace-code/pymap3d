@@ -54,8 +54,8 @@ def bench_vdist(N: int) -> float:
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("N", help="number of iterations", type=int)
-    p = p.parse_args()
-    N = p.N
+    args = p.parse_args()
+    N = args.N
 
     print(f"vreckon: {bench_vreckon(N):.3f}")
     print(f"vdist: {bench_vdist(N):.3f}")
