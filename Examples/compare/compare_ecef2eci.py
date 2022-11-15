@@ -20,16 +20,16 @@ has_aero = matlab_aerospace(eng)
 
 def test_ecef_eci():
 
-    ecef = [-5762640, -1682738, 3156028]
+    ecef = [-5762640.0, -1682738.0, 3156028.0]
     utc = datetime(2019, 1, 4, 12)
 
     eci = ecef2eci(*ecef, utc)
 
     utc_matlab = eng.datetime(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
     if has_aero:
-        eci_matlab = eng.ecef2eci(utc_matlab, *ecef, nargout=3)  # type: ignore
+        eci_matlab = eng.ecef2eci(utc_matlab, *ecef, nargout=3)
     else:
-        eci_matlab = eng.matmap3d.ecef2eci(utc_matlab, *ecef, nargout=3)  # type: ignore
+        eci_matlab = eng.matmap3d.ecef2eci(utc_matlab, *ecef, nargout=3)
 
     assert eci == approx(eci_matlab, rel=0.01)
 

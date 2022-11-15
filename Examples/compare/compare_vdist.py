@@ -3,25 +3,29 @@ from __future__ import annotations
 
 import sys
 from math import isclose, nan
+import numpy as np
 from pathlib import Path
+
+from matlab_mapping import matlab_mapping
 
 import matlab.engine
 from pymap3d.vincenty import vdist
 
 cwd = Path(__file__).parent
-eng = None  # don't start Matlab engine over and over when script is interactive
 
-if eng is None:
-    eng = matlab.engine.start_matlab("-nojvm")
-    eng.addpath(eng.genpath(str(cwd)), nargout=0)
+eng = matlab.engine.start_matlab("-nojvm")
+eng.addpath(eng.genpath(str(cwd)), nargout=0)
 
-if not eng.has_map_toolbox():
-    raise EnvironmentError("Matlab does not have Mapping Toolbox")
+has_map = matlab_mapping(eng)
 
 
-def matlab_func(lat1, lon1, lat2, lon2) -> tuple[float, float]:
+def distance(lat1, lon1, lat2, lon2) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
-    return eng.distance(lat1, lon1, lat2, lon2, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore
+
+    if has_map:
+        return eng.distance(lat1, lon1, lat2, lon2, eng.wgs84Ellipsoid(), nargout=2)
+    else:
+        return eng.matmap3d.vdist(lat1, lon1, lat2, lon2, nargout=2)
 
 
 dlast, alast = nan, nan
@@ -34,7 +38,11 @@ for i in range(20):
     assert dist_m != dlast
     assert az_deg != alast
     mat_match = True
-    dist_matlab, az_matlab = matlab_func(lat1, lon1, lat2, lon2)
+    dist_matlab, az_matlab = distance(lat1, lon1, lat2, lon2)
+
+    assert np.isreal(dist_m), f"Python vdist distance is not real for input latitude {lat1}"
+    assert np.isreal(dist_matlab), f"Matlab distance is not real for input latitude {lat1}"
+
     if not isclose(dist_matlab, dist_m):
         mat_match = False
         print(

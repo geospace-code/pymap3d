@@ -6,9 +6,9 @@ import matlab.engine
 def matlab_mapping(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
 
     if eng.has_map_toolbox():
-        has_aero = True
+        has = True
     else:
-        has_aero = False
+        has = False
 
         cwd = Path(__file__).parent
         d = cwd.parents[2] / "matmap3d"
@@ -17,4 +17,4 @@ def matlab_mapping(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
         else:
             raise EnvironmentError(f"Matlab {eng.version()} does not have Mapping Toolbox")
 
-    return has_aero
+    return has
