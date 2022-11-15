@@ -26,7 +26,7 @@ try:
         tan,
     )
 except ImportError:
-    from math import (  # type: ignore[misc]
+    from math import (  # type: ignore[assignment]
         asin,
         asinh,
         atan,
