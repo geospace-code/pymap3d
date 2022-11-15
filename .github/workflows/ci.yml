@@ -39,8 +39,41 @@ jobs:
 
     - run: pytest
 
-# codecov coverage
-    # - run: pip install codecov pytest-cov
-    # - run: pytest --cov --cov-report=xml
-    # - name: Upload coverage to Codecov
-    #   uses: codecov/codecov-action@v1
+  coverage:
+    runs-on: ubuntu-latest
+    name: Python ${{ matrix.python-version }}
+
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install tests and lint dependencies
+        run: pip install -e .[tests,coverage]
+
+      - name: Collect coverage without NumPy
+        run: pytest --cov=src --cov-report=xml
+
+      - name: Install NumPy
+        run: pip install -e .[core]
+
+      - name: Collect coverage with NumPy
+        run: pytest --cov=src --cov-report=xml --cov-append
+
+      # - name: Install full dependencies
+      #   run: pip install -e .[full]
+      # - name: Test with full dependencies and collect coverage
+      #   run: pytest --cov=src --cov-report=xml --cov-append
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          name: Python ${{ matrix.python-version }}
