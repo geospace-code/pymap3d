@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from pathlib import Path
 from datetime import datetime
-from pytest import approx
+from pathlib import Path
 
 import matlab.engine
-from pymap3d.eci import ecef2eci, eci2ecef
-
 from matlab_aerospace import matlab_aerospace
+from pymap3d.eci import ecef2eci, eci2ecef
+from pytest import approx
 
 cwd = Path(__file__).parent
 
@@ -18,14 +17,15 @@ eng.addpath(eng.genpath(str(cwd)), nargout=0)
 has_aero = matlab_aerospace(eng)
 
 
-def test_ecef_eci():
+def test_ecef_eci() -> None:
 
-    ecef = [-5762640.0, -1682738.0, 3156028.0]
+    ecef = (-5762640.0, -1682738.0, 3156028.0)
     utc = datetime(2019, 1, 4, 12)
 
     eci = ecef2eci(*ecef, utc)
 
     utc_matlab = eng.datetime(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+    eci_matlab: tuple[float, float, float]
     if has_aero:
         eci_matlab = eng.ecef2eci(utc_matlab, *ecef, nargout=3)
     else:
@@ -38,7 +38,7 @@ def test_ecef_eci():
     ecef = eci2ecef(*eci_matlab, utc)
 
     if has_aero:
-        ecef_matlab = eng.eci2ecef(utc_matlab, *eci_matlab, nargout=3)  # type: ignore
+        ecef_matlab = eng.eci2ecef(utc_matlab, *eci_matlab, nargout=3)
     else:
         ecef_matlab = eng.matmap3d.eci2ecef(utc_matlab, *eci_matlab, nargout=3)
 
