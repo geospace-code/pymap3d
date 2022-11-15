@@ -146,15 +146,6 @@ import pymap3d as pm
 ell = pm.Ellipsoid.from_name('grs80')
 ```
 
-### command line
-
-Command line convenience functions provided include:
-
-```sh
-python -m pymap3d.vdist
-python -m pymap3d.vreckon
-```
-
 ### array vs scalar
 
 Use of pymap3d on embedded systems or other streaming data applications often deal with scalar position data.
