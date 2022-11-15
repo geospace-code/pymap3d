@@ -70,7 +70,7 @@ class Ellipsoid:
     models = field(default_factory=Dict[str, Model])
 
     def __init__(
-        self, semimajor_axis: float, semiminor_axis: float, name: str = None, model: str = None
+        self, semimajor_axis: float, semiminor_axis: float, name: str = "", model: str = ""
     ):
         """
         Ellipsoidal model of world
