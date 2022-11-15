@@ -37,16 +37,3 @@ exclude_lines = [
     # Don't complain about function overloading
     "@overload",
 ]
-
-[tool.coverage.run]
-branch = true
-source = "src/"
-
-[tool.coverage.report]
-# Regexes for lines to exclude from consideration
-exclude_lines = [
-    # Have to re-enable the standard pragma
-    "pragma: no cover",
-    # Don't complain about function overloading
-    "@overload",
-]
