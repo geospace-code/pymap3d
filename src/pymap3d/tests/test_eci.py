@@ -58,34 +58,25 @@ def test_geodetic2eci():
     assert eci == approx([-2981784, 5207055, 3161595], rel=rel)
 
 
-def test_eci2aer():
+def test_eci_aer():
     # test coords from Matlab eci2aer
     pytest.importorskip("numpy")
-    t = datetime(1969, 7, 20, 21, 17, 40)
+    t = datetime(2022, 1, 2, 3, 4, 5)
 
-    eci = [-384535788.2, -51009524.3, -32566759.8]
-    lla = [28.4, -80.5, 2.7]
+    eci = [4500000, -45000000, 3000000]
+    lla = [28, -80, 100]
 
     aer = pm.eci2aer(*eci, *lla, t)
 
     rel = 0.01 if astropy is None else 0.0001
 
-    assert aer == approx([162.55, 55.12, 384013940.9], rel=rel)
+    assert aer == approx([314.9945, -53.0089, 5.026e7], rel=rel)
 
-
-def test_aer2eci():
-    # test coords from Matlab aer2eci
-    pytest.importorskip("numpy")
-
-    aer = [162.55, 55.12, 384013940.9]
-    lla = [28.4, -80.5, 2.7]
-    t = datetime(1969, 7, 20, 21, 17, 40)
-
-    eci = pm.aer2eci(*aer, *lla, t)
+    eci2 = pm.aer2eci(*aer, *lla, t)
 
     rel = 0.1 if astropy is None else 0.001
 
-    assert eci == approx([-384535788.2, -51009524.3, -32566759.8], rel=rel)
+    assert eci2 == approx(eci, rel=rel)
 
     with pytest.raises(ValueError):
         pm.aer2eci(aer[0], aer[1], -1, *lla, t)
