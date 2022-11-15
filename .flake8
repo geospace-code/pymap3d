@@ -1,3 +1,5 @@
 [flake8]
 ignore = E501, W503
 exclude = .git,__pycache__,.eggs/,doc/,docs/,build/,dist/,archive/,env/
+per-file-ignores =
+    test_eci.py:F401
