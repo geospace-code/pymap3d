@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import sys
-from dataclasses import dataclass, field
 from math import sqrt
-from typing import Dict  # for Python < 3.9
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -21,7 +19,6 @@ class Model(TypedDict):
     b: float
 
 
-@dataclass
 class Ellipsoid:
     """
     generate reference ellipsoid parameters
@@ -60,15 +57,6 @@ class Ellipsoid:
     feel free to suggest additional ellipsoids
     """
 
-    model: str  # short name
-    name: str  # name for printing
-    semimajor_axis: float
-    semiminor_axis: float
-    flattening: float
-    thirdflattening: float
-    eccentricity: float
-    models = field(default_factory=Dict[str, Model])
-
     def __init__(
         self, semimajor_axis: float, semiminor_axis: float, name: str = "", model: str = ""
     ) -> None:
@@ -97,7 +85,7 @@ class Ellipsoid:
         self.semimajor_axis = semimajor_axis
         self.semiminor_axis = semiminor_axis
 
-    models = {
+    models: dict[str, Model] = {
         # Earth ellipsoids
         "maupertuis": {"name": "Maupertuis (1738)", "a": 6397300.0, "b": 6363806.283},
         "plessis": {"name": "Plessis (1817)", "a": 6376523.0, "b": 6355862.9333},
