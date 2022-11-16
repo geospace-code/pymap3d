@@ -9,6 +9,9 @@ line-length = 100
 profile = "black"
 known_third_party = ["pymap3d"]
 
+[tool.ruff]
+ignore = ["E501"]
+
 [tool.mypy]
 files = ["src", "Examples", "scripts"]
 
