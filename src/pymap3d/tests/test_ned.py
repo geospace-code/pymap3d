@@ -59,8 +59,8 @@ def test_ned_geodetic() -> None:
 def test_ned_geodetic_list() -> None:
     np = pytest.importorskip("numpy")
 
-    lla1 = tuple(map(lambda z: [z], lla0))
-    aer1 = tuple(map(lambda z: [z], aer0))
+    lla1 = tuple([z] for z in lla0)
+    aer1 = tuple([z] for z in aer0)
 
     lla2 = pm.aer2geodetic(*aer1, *lla1)  # type: ignore[call-overload]
 

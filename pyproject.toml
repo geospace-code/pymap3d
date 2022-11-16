@@ -10,7 +10,19 @@ profile = "black"
 known_third_party = ["pymap3d"]
 
 [tool.ruff]
-ignore = ["E501"]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "S",   # flake8-bandit
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "C",   # flake8-comprehensions
+    "Q",   # flake8-quotes
+    "YTT", # flake8-2020
+    "M",   # Meta rules
+]
+ignore = ["E501", "S101"]
 
 [tool.mypy]
 files = ["src", "Examples", "scripts"]
