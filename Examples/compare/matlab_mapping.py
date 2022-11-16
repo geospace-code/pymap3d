@@ -15,6 +15,6 @@ def matlab_mapping(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
         if d.is_dir():
             eng.addpath(str(d), nargout=0)
         else:
-            raise EnvironmentError(f"Matlab {eng.version()} does not have Mapping Toolbox")
+            raise OSError(f"Matlab {eng.version()} does not have Mapping Toolbox")
 
     return has

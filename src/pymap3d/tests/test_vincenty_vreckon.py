@@ -26,7 +26,7 @@ az3 = (218.00292856, 225.0011203)
         (0, 0, 2.00375e7, -90, 0, 180),
     ],
 )
-def test_unit(lat, lon, srange, az, lato, lono):
+def test_unit(lat: float, lon: float, srange: float, az: float, lato: float, lono: float) -> None:
     lat1, lon1 = vincenty.vreckon(lat, lon, srange, az)
 
     assert lat1 == approx(lato)
@@ -36,15 +36,15 @@ def test_unit(lat, lon, srange, az, lato, lono):
     assert isinstance(lon1, float)
 
 
-def test_az_vector():
+def test_az_vector() -> None:
     pytest.importorskip("numpy")
-    a, b = vincenty.vreckon(*ll0, sr1[0], az1)
+    a, b = vincenty.vreckon(*ll0, sr1[0], az1)  # type: ignore[call-overload]
     assert a == approx(lat2)
     assert b == approx(lon2)
 
 
-def test_both_vector():
+def test_both_vector() -> None:
     pytest.importorskip("numpy")
-    a, b = vincenty.vreckon(10, 20, sr1, az1)
+    a, b = vincenty.vreckon(10, 20, sr1, az1)  # type: ignore[call-overload]
     assert a == approx(lat3)
     assert b == approx(lon3)

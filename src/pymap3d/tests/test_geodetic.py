@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from math import isnan, nan, radians, sqrt
 
 import pymap3d as pm
@@ -39,7 +41,9 @@ atol_dist = 1e-6  # 1 micrometer
 
 
 @pytest.mark.parametrize("lla", [lla0, ([lla0[0]], [lla0[1]], [lla0[2]])], ids=("scalar", "list"))
-def test_scalar_geodetic2ecef(lla):
+def test_scalar_geodetic2ecef(
+    lla: tuple[float, float, float] | tuple[list[float], list[float], list[float]]
+) -> None:
     """
     verify we can handle the wide variety of input data type users might use
     """
@@ -56,7 +60,7 @@ def test_scalar_geodetic2ecef(lla):
         assert lla1 == approx(lla, rel=1e-4)
 
 
-def test_array_geodetic2ecef():
+def test_array_geodetic2ecef() -> None:
     np = pytest.importorskip("numpy")
 
     lla = (np.asarray(lla0[0]), np.asarray(lla0[1]), np.asarray(lla0[2]))
@@ -69,7 +73,9 @@ def test_array_geodetic2ecef():
 
 
 @pytest.mark.parametrize("xyz", [xyz0, ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list"))
-def test_scalar_ecef2geodetic(xyz):
+def test_scalar_ecef2geodetic(
+    xyz: tuple[float, float, float] | tuple[list[float], list[float], list[float]]
+) -> None:
     """
     verify we can handle the wide variety of input data type users might use
     """
@@ -86,7 +92,7 @@ def test_scalar_ecef2geodetic(xyz):
         assert xyz1 == approx(xyz, rel=1e-4)
 
 
-def test_array_ecef2geodetic():
+def test_array_ecef2geodetic() -> None:
     np = pytest.importorskip("numpy")
 
     xyz = (np.asarray(xyz0[0]), np.asarray(xyz0[1]), np.asarray(xyz0[2]))
@@ -98,7 +104,7 @@ def test_array_ecef2geodetic():
     assert np.isclose(pm.geodetic2ecef(*lla), xyz).all()
 
 
-def test_inside_ecef2geodetic():
+def test_inside_ecef2geodetic() -> None:
 
     np = pytest.importorskip("numpy")
     # test values with no points inside ellipsoid
@@ -128,7 +134,7 @@ def test_inside_ecef2geodetic():
     assert alts == approx(lla0_array_inside[2])
 
 
-def test_xarray_ecef():
+def test_xarray_ecef() -> None:
     xarray = pytest.importorskip("xarray")
 
     lla = xarray.DataArray(list(lla0))
@@ -138,7 +144,7 @@ def test_xarray_ecef():
     assert lla1 == approx(lla)
 
 
-def test_pandas_ecef():
+def test_pandas_ecef() -> None:
     pandas = pytest.importorskip("pandas")
 
     x, y, z = pm.geodetic2ecef(
@@ -151,7 +157,7 @@ def test_pandas_ecef():
     assert alt == approx(lla0[2])
 
 
-def test_ecef():
+def test_ecef() -> None:
     xyz = pm.geodetic2ecef(*lla0)
 
     assert xyz == approx(xyz0)
@@ -170,12 +176,12 @@ def test_ecef():
 
 
 @pytest.mark.parametrize("lla, xyz", llaxyz)
-def test_geodetic2ecef(lla, xyz):
+def test_geodetic2ecef(lla: tuple[float, float, float], xyz: tuple[float, float, float]) -> None:
     assert pm.geodetic2ecef(*lla) == approx(xyz, abs=atol_dist)
 
 
 @pytest.mark.parametrize("xyz, lla", xyzlla)
-def test_ecef2geodetic(xyz, lla):
+def test_ecef2geodetic(xyz: tuple[float, float, float], lla: tuple[float, float, float]) -> None:
     lat, lon, alt = pm.ecef2geodetic(*xyz)
     assert lat == approx(lla[0])
     assert lon == approx(lla[1])
@@ -189,7 +195,11 @@ def test_ecef2geodetic(xyz, lla):
         ((0, 90, 10000), (0, 0, 10000), (0, 0, 0)),
     ],
 )
-def test_aer_geodetic(aer, lla, lla0):
+def test_aer_geodetic(
+    aer: tuple[float, float, float],
+    lla: tuple[float, float, float],
+    lla0: tuple[float, float, float],
+) -> None:
     lat1, lon1, alt1 = pm.aer2geodetic(*aer, *lla0)
     assert lat1 == approx(lla[0])
     assert lon1 == approx(lla[1])
@@ -213,7 +223,7 @@ def test_aer_geodetic(aer, lla, lla0):
     )
 
 
-def test_scalar_nan():
+def test_scalar_nan() -> None:
     a, e, r = pm.geodetic2aer(nan, nan, nan, *lla0)
     assert isnan(a) and isnan(e) and isnan(r)
 
@@ -221,7 +231,7 @@ def test_scalar_nan():
     assert isnan(lat) and isnan(lon) and isnan(alt)
 
 
-def test_allnan():
+def test_allnan() -> None:
     np = pytest.importorskip("numpy")
     anan = np.empty((10, 10))
     anan.fill(nan)
@@ -229,7 +239,7 @@ def test_allnan():
     assert np.isnan(pm.aer2geodetic(anan, anan, anan, *lla0)).all()
 
 
-def test_somenan():
+def test_somenan() -> None:
     np = pytest.importorskip("numpy")
     xyz = np.stack((xyz0, (nan, nan, nan)))
 
@@ -238,7 +248,9 @@ def test_somenan():
 
 
 @pytest.mark.parametrize("xyz, lla", xyzlla)
-def test_numpy_ecef2geodetic(xyz, lla):
+def test_numpy_ecef2geodetic(
+    xyz: tuple[float, float, float], lla: tuple[float, float, float]
+) -> None:
     np = pytest.importorskip("numpy")
     lat, lon, alt = pm.ecef2geodetic(
         *np.array(
@@ -254,7 +266,9 @@ def test_numpy_ecef2geodetic(xyz, lla):
 
 
 @pytest.mark.parametrize("lla, xyz", llaxyz)
-def test_numpy_geodetic2ecef(lla, xyz):
+def test_numpy_geodetic2ecef(
+    lla: tuple[float, float, float], xyz: tuple[float, float, float]
+) -> None:
     np = pytest.importorskip("numpy")
     x, y, z = pm.geodetic2ecef(
         *np.array(

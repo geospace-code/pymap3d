@@ -1,10 +1,12 @@
+from math import radians
+
 import pymap3d.lox as lox
 import pytest
 from pytest import approx
 
 
 @pytest.mark.parametrize("lat,dist", [(0, 0), (90, 10001965.729)])
-def test_meridian_dist(lat, dist):
+def test_meridian_dist(lat: float, dist: float) -> None:
     assert lox.meridian_dist(lat) == approx(dist)
 
 
@@ -18,7 +20,7 @@ def test_meridian_dist(lat, dist):
         (40, 80, 4455610.84159),
     ],
 )
-def test_meridian_arc(lat1, lat2, arclen):
+def test_meridian_arc(lat1: float, lat2: float, arclen: float) -> None:
     """
     meridianarc(deg2rad(40), deg2rad(80), wgs84Ellipsoid)
     """
@@ -36,8 +38,9 @@ def test_meridian_arc(lat1, lat2, arclen):
         (-90, 0, 0, 10018754.1714),
     ],
 )
-def test_departure(lon1, lon2, lat, dist):
+def test_departure(lon1: float, lon2: float, lat: float, dist: float) -> None:
     assert lox.departure(lon1, lon2, lat) == approx(dist)
+    # assert lox.departure([lon1], [lon2], [lat]) == approx(dist)
 
 
 @pytest.mark.parametrize(
@@ -52,7 +55,9 @@ def test_departure(lon1, lon2, lat, dist):
         (-1, 0, 0, 0, 110574.4, 0),
     ],
 )
-def test_loxodrome_inverse(lat1, lon1, lat2, lon2, arclen, az):
+def test_loxodrome_inverse(
+    lat1: float, lon1: float, lat2: float, lon2: float, arclen: float, az: float
+) -> None:
     """
     distance('rh', 40, -80, 65, -148, wgs84Ellipsoid)
     azimuth('rh', 40, -80, 65, -148, wgs84Ellipsoid)
@@ -65,7 +70,7 @@ def test_loxodrome_inverse(lat1, lon1, lat2, lon2, arclen, az):
     assert isinstance(rhaz, float)
 
 
-def test_numpy_loxodrome_inverse():
+def test_numpy_loxodrome_inverse() -> None:
     pytest.importorskip("numpy")
     d, a = lox.loxodrome_inverse([40, 40], [-80, -80], 65, -148)
     assert d == approx(5248666.209)
@@ -75,7 +80,7 @@ def test_numpy_loxodrome_inverse():
     d, a = lox.loxodrome_inverse([40, 40], [-80, -80], 65, [-148, -148])
 
 
-def test_numpy_2d_loxodrome_inverse():
+def test_numpy_2d_loxodrome_inverse() -> None:
     pytest.importorskip("numpy")
     d, a = lox.loxodrome_inverse([[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, -148)
     assert d == approx(5248666.209)
@@ -105,7 +110,9 @@ def test_numpy_2d_loxodrome_inverse():
         (-1, 0, 110574.4, 0, 0, 0),
     ],
 )
-def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
+def test_loxodrome_direct(
+    lat0: float, lon0: float, rng: float, az: float, lat1: float, lon1: float
+) -> None:
     """
     reckon('rh', 40, -80, 10, 30, wgs84Ellipsoid)
     """
@@ -116,11 +123,15 @@ def test_loxodrome_direct(lat0, lon0, rng, az, lat1, lon1):
     assert isinstance(lon2, float)
 
 
-def test_numpy_loxodrome_direct():
+def test_numpy_loxodrome_direct() -> None:
     pytest.importorskip("numpy")
     lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], [10, 10], [30, 30])
     assert lat == approx(40.000078)
     assert lon == approx(-79.99994145)
+
+    lat, lon = lox.loxodrome_direct(
+        [radians(40)], [radians(-80)], [radians(10)], [radians(30)], deg=False
+    )
 
     lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], 10, 30)
     lat, lon = lox.loxodrome_direct([40, 40], [-80, -80], [10, 10], 30)
@@ -128,6 +139,6 @@ def test_numpy_loxodrome_direct():
 
 
 @pytest.mark.parametrize("lat,lon", [([0, 45, 90], [0, 45, 90])])
-def test_meanm(lat, lon):
+def test_meanm(lat: float, lon: float) -> None:
     pytest.importorskip("numpy")
     assert lox.meanm(lat, lon) == approx([47.26967, 18.460557])

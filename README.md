@@ -8,6 +8,8 @@
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci_stdlib_only/badge.svg)
 [![image](https://img.shields.io/pypi/pyversions/pymap3d.svg)](https://pypi.python.org/pypi/pymap3d)
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
+![mypy](https://img.shields.io/badge/mypy-checked-blue)
+![black](https://img.shields.io/badge/code%20style-black-black)
 
 Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions and geodesy.
 API similar to popular $1000 Matlab Mapping Toolbox routines for Python
@@ -19,9 +21,9 @@ Thanks to our [contributors](./.github/contributors.md).
 
 ## Similar toolboxes in other code languages
 
-* [Matlab, GNU Octave](https://github.com/geospace-code/matmap3d)
-* [Fortran](https://github.com/geospace-code/maptran3d)
-* [Rust](https://github.com/gberrante/map_3d)
+- [Matlab, GNU Octave](https://github.com/geospace-code/matmap3d)
+- [Fortran](https://github.com/geospace-code/maptran3d)
+- [Rust](https://github.com/gberrante/map_3d)
 
 ## Prerequisites
 
@@ -112,18 +114,18 @@ dist_m, azimuth_deg = pmv.vdist(lat1, lon1, lat2, lon2)
 
 Additional functions:
 
-* loxodrome_inverse: rhumb line distance and azimuth between ellipsoid points (lat,lon)  akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
-* loxodrome_direct
-* geodetic latitude transforms to/from: parametric, authalic, isometric, and more in pymap3d.latitude
+- loxodrome_inverse: rhumb line distance and azimuth between ellipsoid points (lat,lon) akin to Matlab `distance('rh', ...)` and `azimuth('rh', ...)`
+- loxodrome_direct
+- geodetic latitude transforms to/from: parametric, authalic, isometric, and more in pymap3d.latitude
 
 Abbreviations:
 
-* [AER: Azimuth, Elevation, Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
-* [ECEF: Earth-centered, Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
-* [ECI: Earth-centered Inertial using IERS](https://www.iers.org/IERS/EN/Home/home_node.html) via `astropy`
-* [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
-* [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
-* [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
+- [AER: Azimuth, Elevation, Range](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
+- [ECEF: Earth-centered, Earth-fixed](https://en.wikipedia.org/wiki/ECEF)
+- [ECI: Earth-centered Inertial using IERS](https://www.iers.org/IERS/EN/Home/home_node.html) via `astropy`
+- [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
+- [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
+- [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
 
 ### Ellipsoid
 
@@ -160,20 +162,20 @@ As noted above, use list comprehension if you need vector data without Numpy.
 
 ### Caveats
 
-* Atmospheric effects neglected in all functions not invoking AstroPy.
+- Atmospheric effects neglected in all functions not invoking AstroPy.
   Would need to update code to add these input parameters (just start a GitHub Issue to request).
-* Planetary perturbations and nutation etc. not fully considered.
+- Planetary perturbations and nutation etc. not fully considered.
 
 ## Notes
 
 As compared to [PyProj](https://github.com/jswhit/pyproj):
 
-* PyMap3D does not require anything beyond pure Python for most transforms
-* Astronomical conversions are done using (optional) AstroPy for established accuracy
-* PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
-* PyMap3D intrinsically handles local coordinate systems such as ENU,
+- PyMap3D does not require anything beyond pure Python for most transforms
+- Astronomical conversions are done using (optional) AstroPy for established accuracy
+- PyMap3D API is similar to Matlab Mapping Toolbox, while PyProj's interface is quite distinct
+- PyMap3D intrinsically handles local coordinate systems such as ENU,
   while PyProj ENU requires some [additional effort](https://github.com/jswhit/pyproj/issues/105).
-* PyProj is oriented towards points on the planet surface, while PyMap3D handles points on or above the planet surface equally well, particularly important for airborne vehicles and remote sensing.
+- PyProj is oriented towards points on the planet surface, while PyMap3D handles points on or above the planet surface equally well, particularly important for airborne vehicles and remote sensing.
 
 ### AstroPy.Units.Quantity
 

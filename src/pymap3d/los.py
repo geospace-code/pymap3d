@@ -3,29 +3,58 @@
 from __future__ import annotations
 
 from math import nan, pi
+from typing import Any, Sequence, overload
 
 try:
     from numpy import asarray
+    from numpy.typing import NDArray
 except ImportError:
     pass
 
-from .aer import aer2enu
+from ._types import ArrayLike
 from .ecef import ecef2geodetic, enu2uvw, geodetic2ecef
 from .ellipsoid import Ellipsoid
+from .enu import aer2enu
 from .mathfun import sqrt
 
 __all__ = ["lookAtSpheroid"]
 
 
+@overload
 def lookAtSpheroid(
-    lat0,
-    lon0,
-    h0,
-    az,
-    tilt,
-    ell: Ellipsoid = None,
+    lat0: float,
+    lon0: float,
+    h0: float,
+    az: float,
+    tilt: float,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+@overload
+def lookAtSpheroid(
+    lat0: ArrayLike,
+    lon0: ArrayLike,
+    h0: ArrayLike,
+    az: ArrayLike,
+    tilt: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def lookAtSpheroid(
+    lat0: float | ArrayLike,
+    lon0: float | ArrayLike,
+    h0: float | ArrayLike,
+    az: float | ArrayLike,
+    tilt: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Calculates line-of-sight intersection with Earth (or other ellipsoid) surface from above surface / orbit
 
@@ -74,8 +103,10 @@ def lookAtSpheroid(
         if (h0 < 0).any():
             raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
     except NameError:
-        if h0 < 0:
+        if h0 < 0:  # type: ignore[operator]
             raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
+
+    assert not isinstance(tilt, Sequence)
 
     a = ell.semimajor_axis
     b = ell.semimajor_axis
@@ -83,11 +114,11 @@ def lookAtSpheroid(
 
     el = tilt - 90.0 if deg else tilt - pi / 2
 
-    e, n, u = aer2enu(az, el, srange=1.0, deg=deg)
+    e, n, u = aer2enu(az, el, srange=1.0, deg=deg)  # type: ignore[arg-type]
     # fixed 1 km slant range
 
-    u, v, w = enu2uvw(e, n, u, lat0, lon0, deg=deg)
-    x, y, z = geodetic2ecef(lat0, lon0, h0, deg=deg)
+    u, v, w = enu2uvw(e, n, u, lat0, lon0, deg=deg)  # type: ignore[arg-type]
+    x, y, z = geodetic2ecef(lat0, lon0, h0, deg=deg)  # type: ignore[arg-type]
 
     value = -(a**2) * b**2 * w * z - a**2 * c**2 * v * y - b**2 * c**2 * u * x
     radical = (
@@ -109,7 +140,7 @@ def lookAtSpheroid(
 
     # %%   Return nan if radical < 0 or d < 0 because LOS vector does not point towards Earth
     try:
-        radical[radical < 0] = nan
+        radical[radical < 0] = nan  # type: ignore[index]
     except TypeError:
         if radical < 0:
             radical = nan

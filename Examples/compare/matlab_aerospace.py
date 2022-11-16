@@ -15,6 +15,6 @@ def matlab_aerospace(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
         if d.is_dir():
             eng.addpath(str(d), nargout=0)
         else:
-            raise EnvironmentError(f"Matlab {eng.version()} does not have Aerospace Toolbox")
+            raise OSError(f"Matlab {eng.version()} does not have Aerospace Toolbox")
 
     return has_aero

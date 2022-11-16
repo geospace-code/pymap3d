@@ -1,6 +1,7 @@
 """
 import from Numpy, and if not available fallback to math stdlib
 """
+from typing import cast
 
 try:
     from numpy import arcsin as asin
@@ -25,7 +26,7 @@ try:
         tan,
     )
 except ImportError:
-    from math import (  # type: ignore
+    from math import (  # type: ignore[assignment]
         asin,
         asinh,
         atan,
@@ -44,10 +45,10 @@ except ImportError:
         tan,
     )
 
-    def power(x, y):  # type: ignore
-        return pow(x, y)
+    def power(x: float, y: float) -> float:  # type: ignore[misc]
+        return cast(float, pow(x, y))
 
-    def sign(x) -> float:  # type: ignore
+    def sign(x: float) -> float:  # type: ignore[misc]
         """signum function"""
         if x < 0:
             y = -1.0
@@ -58,9 +59,9 @@ except ImportError:
 
         return y
 
-    def cbrt(x) -> float:  # type: ignore
+    def cbrt(x: float) -> float:  # type: ignore[misc]
         """math.cbrt was added in Python 3.11"""
-        return x ** (1 / 3)
+        return cast(float, x ** (1 / 3))
 
 
 __all__ = [

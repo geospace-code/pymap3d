@@ -3,21 +3,40 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any, overload
 
 from numpy import array, atleast_1d, column_stack, cos, empty, sin
+from numpy.typing import NDArray
 
 try:
     import astropy.units as u
     from astropy.coordinates import GCRS, ITRS, CartesianRepresentation, EarthLocation
 except ImportError:
     pass
-
+from ._types import ArrayLike
 from .sidereal import greenwichsrt, juliandate
 
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
-def eci2ecef(x, y, z, time: datetime) -> tuple:
+@overload
+def eci2ecef(x: float, y: float, z: float, time: datetime) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def eci2ecef(
+    x: ArrayLike, y: ArrayLike, z: ArrayLike, time: datetime
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def eci2ecef(
+    x: float | ArrayLike,
+    y: float | ArrayLike,
+    z: float | ArrayLike,
+    time: datetime,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -71,7 +90,24 @@ def eci2ecef(x, y, z, time: datetime) -> tuple:
     return x_ecef, y_ecef, z_ecef
 
 
-def ecef2eci(x, y, z, time: datetime) -> tuple:
+@overload
+def ecef2eci(x: float, y: float, z: float, time: datetime) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def ecef2eci(
+    x: ArrayLike, y: ArrayLike, z: ArrayLike, time: datetime
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def ecef2eci(
+    x: float | ArrayLike,
+    y: float | ArrayLike,
+    z: float | ArrayLike,
+    time: datetime,
+) -> tuple[float, float, float] | tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Point => Point   ECEF => ECI
 
@@ -127,6 +163,6 @@ def ecef2eci(x, y, z, time: datetime) -> tuple:
     return x_eci, y_eci, z_eci
 
 
-def R3(x: float):
+def R3(x: float) -> NDArray[Any]:
     """Rotation matrix for ECI"""
     return array([[cos(x), sin(x), 0], [-sin(x), cos(x), 0], [0, 0, 1]])

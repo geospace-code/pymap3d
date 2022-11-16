@@ -3,8 +3,16 @@
 from __future__ import annotations
 
 from math import pi
+from typing import Any, Sequence, overload
+
+try:
+    from numpy import asarray
+    from numpy.typing import NDArray
+except ImportError:
+    pass
 
 from . import rcurve
+from ._types import ArrayLike
 from .ellipsoid import Ellipsoid
 from .mathfun import (
     asinh,
@@ -42,12 +50,32 @@ __all__ = [
 ]
 
 
+@overload
 def geoc2geod(
-    geocentric_lat,
-    geocentric_distance,
-    ell: Ellipsoid = None,
+    geocentric_lat: float,
+    geocentric_distance: float,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
-):
+) -> float:
+    pass
+
+
+@overload
+def geoc2geod(
+    geocentric_lat: ArrayLike,
+    geocentric_distance: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+def geoc2geod(
+    geocentric_lat: float | ArrayLike,
+    geocentric_distance: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> float | NDArray[Any]:
     """
     convert geocentric latitude to geodetic latitude, consider mean sea level altitude
 
@@ -78,6 +106,12 @@ def geoc2geod(
     """
     geocentric_lat, ell = sanitize(geocentric_lat, ell, deg)
 
+    try:
+        geocentric_distance = asarray(geocentric_distance)
+    except NameError:
+        pass
+    assert not isinstance(geocentric_distance, Sequence)
+
     r = geocentric_distance / ell.semimajor_axis
 
     geodetic_lat = (
@@ -89,7 +123,42 @@ def geoc2geod(
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2geocentric(geodetic_lat, alt_m, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geodetic2geocentric(
+    geodetic_lat: float,
+    alt_m: float,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> float:
+    pass
+
+
+@overload
+def geodetic2geocentric(
+    geodetic_lat: ArrayLike,
+    alt_m: float,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+@overload
+def geodetic2geocentric(
+    geodetic_lat: ArrayLike,
+    alt_m: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+def geodetic2geocentric(
+    geodetic_lat: float | ArrayLike,
+    alt_m: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> float | NDArray[Any]:
     """
     convert geodetic latitude to geocentric latitude on spheroid surface
 
@@ -120,15 +189,50 @@ def geodetic2geocentric(geodetic_lat, alt_m, ell: Ellipsoid = None, deg: bool = 
     """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
     r = rcurve.transverse(geodetic_lat, ell, deg=False)
-    geocentric_lat = atan((1 - ell.eccentricity**2 * (r / (r + alt_m))) * tan(geodetic_lat))
+    geocentric_lat = atan((1 - ell.eccentricity**2 * (r / (r + alt_m))) * tan(geodetic_lat))  # type: ignore[operator]
 
-    return degrees(geocentric_lat) if deg else geocentric_lat
+    return degrees(geocentric_lat) if deg else geocentric_lat  # type: ignore[no-any-return]
 
 
 geod2geoc = geodetic2geocentric
 
 
-def geocentric2geodetic(geocentric_lat, alt_m, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geocentric2geodetic(
+    geocentric_lat: float,
+    alt_m: float,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> float:
+    pass
+
+
+@overload
+def geocentric2geodetic(
+    geocentric_lat: ArrayLike,
+    alt_m: float,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+@overload
+def geocentric2geodetic(
+    geocentric_lat: ArrayLike,
+    alt_m: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> NDArray[Any]:
+    pass
+
+
+def geocentric2geodetic(
+    geocentric_lat: float | ArrayLike,
+    alt_m: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> float | NDArray[Any]:
     """
     converts from geocentric latitude to geodetic latitude
 
@@ -159,12 +263,28 @@ def geocentric2geodetic(geocentric_lat, alt_m, ell: Ellipsoid = None, deg: bool 
     """
     geocentric_lat, ell = sanitize(geocentric_lat, ell, deg)
     r = rcurve.transverse(geocentric_lat, ell, deg=False)
-    geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity**2 * (r / (r + alt_m))))
+    geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity**2 * (r / (r + alt_m))))  # type: ignore[operator]
 
-    return degrees(geodetic_lat) if deg else geodetic_lat
+    return degrees(geodetic_lat) if deg else geodetic_lat  # type: ignore[no-any-return]
 
 
-def geodetic2isometric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geodetic2isometric(
+    geodetic_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def geodetic2isometric(
+    geodetic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def geodetic2isometric(
+    geodetic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     computes isometric latitude on an ellipsoid
 
@@ -210,7 +330,7 @@ def geodetic2isometric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     i = abs(coslat) <= COS_EPS
 
     try:
-        isometric_lat[i] = sign(geodetic_lat[i]) * inf  # type: ignore
+        isometric_lat[i] = sign(geodetic_lat[i]) * inf  # type: ignore[index]
     except TypeError:
         if i:
             isometric_lat = sign(geodetic_lat) * inf
@@ -219,12 +339,28 @@ def geodetic2isometric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
         isometric_lat = degrees(isometric_lat)
 
     try:
-        return isometric_lat.squeeze()[()]
+        return isometric_lat.squeeze()[()]  # type: ignore[no-any-return]
     except AttributeError:
-        return isometric_lat
+        return isometric_lat  # type: ignore[no-any-return]
 
 
-def isometric2geodetic(isometric_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def isometric2geodetic(
+    isometric_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def isometric2geodetic(
+    isometric_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def isometric2geodetic(
+    isometric_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from isometric latitude to geodetic latitude
 
@@ -257,10 +393,26 @@ def isometric2geodetic(isometric_lat, ell: Ellipsoid = None, deg: bool = True):
     conformal_lat = 2 * atan(exp(isometric_lat)) - (pi / 2)
     geodetic_lat = conformal2geodetic(conformal_lat, ell, deg=False)
 
-    return degrees(geodetic_lat) if deg else geodetic_lat
+    return degrees(geodetic_lat) if deg else geodetic_lat  # type: ignore[no-any-return]
 
 
-def conformal2geodetic(conformal_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def conformal2geodetic(
+    conformal_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def conformal2geodetic(
+    conformal_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def conformal2geodetic(
+    conformal_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from conformal latitude to geodetic latitude
 
@@ -302,10 +454,26 @@ def conformal2geodetic(conformal_lat, ell: Ellipsoid = None, deg: bool = True):
         + f4 * sin(8 * conformal_lat)
     )
 
-    return degrees(geodetic_lat) if deg else geodetic_lat
+    return degrees(geodetic_lat) if deg else geodetic_lat  # type: ignore[no-any-return]
 
 
-def geodetic2conformal(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geodetic2conformal(
+    geodetic_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def geodetic2conformal(
+    geodetic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def geodetic2conformal(
+    geodetic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from geodetic latitude to conformal latitude
 
@@ -347,11 +515,27 @@ def geodetic2conformal(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     except ZeroDivisionError:
         conformal_lat = pi / 2
 
-    return degrees(conformal_lat) if deg else conformal_lat
+    return degrees(conformal_lat) if deg else conformal_lat  # type: ignore[no-any-return]
 
 
 # %% rectifying
-def geodetic2rectifying(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geodetic2rectifying(
+    geodetic_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def geodetic2rectifying(
+    geodetic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def geodetic2rectifying(
+    geodetic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from geodetic latitude to rectifying latitude
 
@@ -380,6 +564,8 @@ def geodetic2rectifying(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     """
     geodetic_lat, ell = sanitize(geodetic_lat, ell, deg)
 
+    assert isinstance(ell, Ellipsoid)
+
     n = ell.thirdflattening
     f1 = 3 * n / 2 - 9 * n**3 / 16
     f2 = 15 * n**2 / 16 - 15 * n**4 / 32
@@ -394,10 +580,26 @@ def geodetic2rectifying(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
         + f4 * sin(8 * geodetic_lat)
     )
 
-    return degrees(rectifying_lat) if deg else rectifying_lat
+    return degrees(rectifying_lat) if deg else rectifying_lat  # type: ignore[no-any-return]
 
 
-def rectifying2geodetic(rectifying_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def rectifying2geodetic(
+    rectifying_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def rectifying2geodetic(
+    rectifying_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def rectifying2geodetic(
+    rectifying_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from rectifying latitude to geodetic latitude
 
@@ -439,11 +641,25 @@ def rectifying2geodetic(rectifying_lat, ell: Ellipsoid = None, deg: bool = True)
         + f4 * sin(8 * rectifying_lat)
     )
 
-    return degrees(geodetic_lat) if deg else geodetic_lat
+    return degrees(geodetic_lat) if deg else geodetic_lat  # type: ignore[no-any-return]
 
 
 # %% authalic
-def geodetic2authalic(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geodetic2authalic(geodetic_lat: float, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+    pass
+
+
+@overload
+def geodetic2authalic(
+    geodetic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def geodetic2authalic(
+    geodetic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from geodetic latitude to authalic latitude
 
@@ -484,10 +700,24 @@ def geodetic2authalic(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
         - f3 * sin(6 * geodetic_lat)
     )
 
-    return degrees(authalic_lat) if deg else authalic_lat
+    return degrees(authalic_lat) if deg else authalic_lat  # type: ignore[no-any-return]
 
 
-def authalic2geodetic(authalic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def authalic2geodetic(authalic_lat: float, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+    pass
+
+
+@overload
+def authalic2geodetic(
+    authalic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def authalic2geodetic(
+    authalic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from authalic latitude to geodetic latitude
 
@@ -526,11 +756,27 @@ def authalic2geodetic(authalic_lat, ell: Ellipsoid = None, deg: bool = True):
         + f3 * sin(6 * authalic_lat)
     )
 
-    return degrees(geodetic_lat) if deg else geodetic_lat
+    return degrees(geodetic_lat) if deg else geodetic_lat  # type: ignore[no-any-return]
 
 
 # %% parametric
-def geodetic2parametric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geodetic2parametric(
+    geodetic_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def geodetic2parametric(
+    geodetic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def geodetic2parametric(
+    geodetic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from geodetic latitude to parametric latitude
 
@@ -561,10 +807,26 @@ def geodetic2parametric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
 
     parametric_lat = atan(sqrt(1 - (ell.eccentricity) ** 2) * tan(geodetic_lat))
 
-    return degrees(parametric_lat) if deg else parametric_lat
+    return degrees(parametric_lat) if deg else parametric_lat  # type: ignore[no-any-return]
 
 
-def parametric2geodetic(parametric_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def parametric2geodetic(
+    parametric_lat: float, ell: Ellipsoid | None = None, deg: bool = True
+) -> float:
+    pass
+
+
+@overload
+def parametric2geodetic(
+    parametric_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def parametric2geodetic(
+    parametric_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     converts from parametric latitude to geodetic latitude
 
@@ -594,4 +856,4 @@ def parametric2geodetic(parametric_lat, ell: Ellipsoid = None, deg: bool = True)
 
     geodetic_lat = atan(tan(parametric_lat) / sqrt(1 - (ell.eccentricity) ** 2))
 
-    return degrees(geodetic_lat) if deg else geodetic_lat
+    return degrees(geodetic_lat) if deg else geodetic_lat  # type: ignore[no-any-return]

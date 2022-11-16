@@ -5,6 +5,15 @@ radius).
 """
 from __future__ import annotations
 
+from typing import Any, Sequence, overload
+
+try:
+    from numpy import asarray
+    from numpy.typing import NDArray
+except ImportError:
+    pass
+
+from ._types import ArrayLike
 from .ellipsoid import Ellipsoid
 from .mathfun import asin, atan2, cbrt, degrees, hypot, power, radians, sin, sqrt
 from .utils import sanitize
@@ -15,13 +24,35 @@ __all__ = [
 ]
 
 
+@overload
 def geodetic2spherical(
-    lat,
-    lon,
-    alt,
-    ell: Ellipsoid = None,
+    lat: float,
+    lon: float,
+    alt: float,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def geodetic2spherical(
+    lat: ArrayLike,
+    lon: ArrayLike,
+    alt: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def geodetic2spherical(
+    lat: float | ArrayLike,
+    lon: float | ArrayLike,
+    alt: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float | NDArray[Any], float | NDArray[Any], float | NDArray[Any]]:
     """
     point transformation from Geodetic of specified ellipsoid (default WGS-84)
     to geocentric spherical of the same ellipsoid
@@ -61,6 +92,12 @@ def geodetic2spherical(
     lat, ell = sanitize(lat, ell, deg)
     if deg:
         lon = radians(lon)
+    else:
+        try:
+            lon = asarray(lon)
+        except NameError:
+            pass
+        assert not isinstance(lon, Sequence)
 
     # Pre-compute to avoid repeated trigonometric functions
     sinlat = sin(lat)
@@ -86,13 +123,35 @@ def geodetic2spherical(
     return slat, lon, radius
 
 
+@overload
 def spherical2geodetic(
-    lat,
-    lon,
-    radius,
-    ell: Ellipsoid = None,
+    lat: float,
+    lon: float,
+    radius: float,
+    ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple:
+) -> tuple[float, float, float]:
+    pass
+
+
+@overload
+def spherical2geodetic(
+    lat: ArrayLike,
+    lon: ArrayLike,
+    radius: ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def spherical2geodetic(
+    lat: float | ArrayLike,
+    lon: float | ArrayLike,
+    radius: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+) -> tuple[float | NDArray[Any], float | NDArray[Any], float | NDArray[Any]]:
     """
     point transformation from geocentric spherical of specified ellipsoid
     (default WGS-84) to geodetic of the same ellipsoid
@@ -127,6 +186,12 @@ def spherical2geodetic(
     lat, ell = sanitize(lat, ell, deg)
     if deg:
         lon = radians(lon)
+    else:
+        try:
+            lon = asarray(lon)
+        except NameError:
+            pass
+        assert not isinstance(lon, Sequence)
 
     # Pre-compute to avoid repeated trigonometric functions
     sinlat = sin(lat)

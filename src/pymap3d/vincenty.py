@@ -7,12 +7,15 @@ from __future__ import annotations
 import logging
 from copy import copy
 from math import nan, pi
+from typing import Any, Sequence, overload
 
 try:
     from numpy import atleast_1d
+    from numpy.typing import NDArray
 except ImportError:
     pass
 
+from ._types import ArrayLike
 from .ellipsoid import Ellipsoid
 from .mathfun import (
     asin,
@@ -31,13 +34,34 @@ from .mathfun import (
 __all__ = ["vdist", "vreckon", "track2"]
 
 
+@overload
 def vdist(
-    Lat1,
-    Lon1,
-    Lat2,
-    Lon2,
-    ell: Ellipsoid = None,
-) -> tuple:
+    Lat1: float, Lon1: float, Lat2: float, Lon2: float, ell: Ellipsoid | None = None
+) -> tuple[float, float] | tuple[NDArray[Any], NDArray[Any]]:
+    pass
+
+
+@overload
+def vdist(
+    Lat1: float, Lon1: float, Lat2: ArrayLike, Lon2: ArrayLike, ell: Ellipsoid | None = None
+) -> tuple[float, NDArray[Any]]:
+    pass
+
+
+@overload
+def vdist(
+    Lat1: ArrayLike, Lon1: ArrayLike, Lat2: ArrayLike, Lon2: ArrayLike, ell: Ellipsoid | None = None
+) -> tuple[NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def vdist(
+    Lat1: float | ArrayLike,
+    Lon1: float | ArrayLike,
+    Lat2: float | ArrayLike,
+    Lon2: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+) -> tuple[float | NDArray[Any], float | NDArray[Any]]:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -120,7 +144,7 @@ def vdist(
         if (abs(Lat1) > 90).any() | (abs(Lat2) > 90).any():
             raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     except NameError:
-        if (abs(Lat1) > 90) | (abs(Lat2) > 90):  # type: ignore
+        if (abs(Lat1) > 90) | (abs(Lat2) > 90):  # type: ignore[operator, arg-type]
             raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
@@ -149,15 +173,15 @@ def vdist(
     U2 = atan((1 - f) * tan(lat2))
     lon1 = lon1 % (2 * pi)
     lon2 = lon2 % (2 * pi)
-    L = abs(lon2 - lon1)
+    L: NDArray[Any] = abs(lon2 - lon1)
 
     try:
         L[L > pi] = 2 * pi - L[L > pi]
     except TypeError:
         if L > pi:
-            L = 2 * pi - L  # type: ignore
+            L = 2 * pi - L
 
-    lamb = copy(L)  # NOTE: program will fail without copy!
+    lamb: NDArray[Any] | float = copy(L)  # NOTE: program will fail without copy!
     itercount = 0
     warninggiven = False
     notdone = True
@@ -167,7 +191,7 @@ def vdist(
             if not warninggiven:
                 logging.warning("Essentially antipodal points--precision may be reduced slightly.")
 
-            lamb = pi  # type: ignore
+            lamb = pi
             break
 
         lambdaold = copy(lamb)
@@ -213,20 +237,20 @@ def vdist(
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
         try:
-            i = (lamb > pi).any()  # type: ignore
+            i = (lamb > pi).any()  # type: ignore[union-attr, assignment]
         except AttributeError:
-            i = lamb > pi
+            i = lamb > pi  # type: ignore[assignment]
 
         if i:
             logging.warning(
                 "Essentially antipodal points encountered. Precision may be reduced slightly."
             )
             warninggiven = True
-            lambdaold = pi  # type: ignore
-            lamb = pi  # type: ignore
+            lambdaold = pi
+            lamb = pi
 
         try:
-            notdone = (abs(lamb - lambdaold) > 1e-12).any()  # type: ignore
+            notdone = (abs(lamb - lambdaold) > 1e-12).any()
         except AttributeError:
             notdone = abs(lamb - lambdaold) > 1e-12
 
@@ -251,11 +275,11 @@ def vdist(
 
     # %% From point #1 to point #2
     # correct sign of lambda for azimuth calcs:
-    lamb = abs(lamb)
+    lamb = abs(lamb)  # type: ignore[assignment]
 
     try:
         i = sign(sin(lon2 - lon1)) * sign(sin(lamb)) < 0
-        lamb[i] = -lamb[i]
+        lamb[i] = -lamb[i]  # type: ignore[index]
     except TypeError:
         if sign(sin(lon2 - lon1)) * sign(sin(lamb)) < 0:
             lamb = -lamb
@@ -273,13 +297,35 @@ def vdist(
         return dist_m, az
 
 
+@overload
 def vreckon(
-    Lat1,
-    Lon1,
-    Rng,
-    Azim,
-    ell: Ellipsoid = None,
-) -> tuple:
+    Lat1: float,
+    Lon1: float,
+    Rng: float,
+    Azim: float,
+    ell: Ellipsoid | None = None,
+) -> tuple[float, float]:
+    pass
+
+
+@overload
+def vreckon(
+    Lat1: ArrayLike,
+    Lon1: ArrayLike,
+    Rng: ArrayLike,
+    Azim: ArrayLike,
+    ell: Ellipsoid | None = None,
+) -> tuple[NDArray[Any] | NDArray[Any]]:
+    pass
+
+
+def vreckon(
+    Lat1: float | ArrayLike,
+    Lon1: float | ArrayLike,
+    Rng: float | ArrayLike,
+    Azim: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+) -> tuple[float, float] | tuple[NDArray[Any] | NDArray[Any]]:
     """
     This is the Vincenty "forward" solution.
 
@@ -347,9 +393,9 @@ def vreckon(
         if (Rng < 0.0).any():
             raise ValueError("Ground distance must be positive")
     except NameError:
-        if abs(Lat1) > 90.0:  # type: ignore
+        if abs(Lat1) > 90.0:  # type: ignore[operator, arg-type]
             raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
-        if Rng < 0.0:
+        if Rng < 0.0:  # type: ignore[operator]
             raise ValueError("Ground distance must be positive")
 
     if ell is not None:
@@ -457,15 +503,41 @@ def vreckon(
         return degrees(lat2), lon2
 
 
+@overload
 def track2(
-    lat1,
-    lon1,
-    lat2,
-    lon2,
-    ell: Ellipsoid = None,
+    lat1: float,
+    lon1: float,
+    lat2: float,
+    lon2: float,
+    ell: Ellipsoid | None = None,
     npts: int = 100,
     deg: bool = True,
-) -> tuple[list, list]:
+) -> tuple[list[float], list[float]]:
+    pass
+
+
+@overload
+def track2(
+    lat1: ArrayLike,
+    lon1: ArrayLike,
+    lat2: ArrayLike,
+    lon2: ArrayLike,
+    ell: Ellipsoid | None = None,
+    npts: int = 100,
+    deg: bool = True,
+) -> tuple[list[NDArray[Any]], list[NDArray[Any]]]:
+    pass
+
+
+def track2(
+    lat1: float | ArrayLike,
+    lon1: float | ArrayLike,
+    lat2: float | ArrayLike,
+    lon2: float | ArrayLike,
+    ell: Ellipsoid | None = None,
+    npts: int = 100,
+    deg: bool = True,
+) -> tuple[list[float], list[float]] | tuple[list[NDArray[Any]], list[NDArray[Any]]]:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 
@@ -504,14 +576,28 @@ def track2(
     if npts < 2:
         raise ValueError("npts must be greater than 1")
 
+    try:
+        lat1 = atleast_1d(lat1)
+        lon1 = atleast_1d(lon1)
+        lat2 = atleast_1d(lat2)
+        lon2 = atleast_1d(lon2)
+    except NameError:
+        pass
+    assert (
+        not isinstance(lat1, Sequence)
+        and not isinstance(lon1, Sequence)
+        and not isinstance(lat2, Sequence)
+        and not isinstance(lon2, Sequence)
+    )
+
     if npts == 2:
-        return [lat1, lat2], [lon1, lon2]
+        return [lat1, lat2], [lon1, lon2]  # type: ignore[return-value]
 
     if deg:
-        rlat1 = radians(lat1)
-        rlon1 = radians(lon1)
-        rlat2 = radians(lat2)
-        rlon2 = radians(lon2)
+        rlat1: float | NDArray[Any] = radians(lat1)
+        rlon1: float | NDArray[Any] = radians(lon1)
+        rlat2: float | NDArray[Any] = radians(lat2)
+        rlon2: float | NDArray[Any] = radians(lon2)
     else:
         rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
 
@@ -527,7 +613,7 @@ def track2(
             "cannot compute intermediate points on a great circle whose endpoints are antipodal"
         )
 
-    distance, azimuth = vdist(lat1, lon1, lat2, lon2)
+    distance, azimuth = vdist(lat1, lon1, lat2, lon2)  # type: ignore[arg-type]
     incdist = distance / (npts - 1)
 
     latpt = lat1
@@ -535,8 +621,8 @@ def track2(
     lons = [lonpt]
     lats = [latpt]
     for _ in range(npts - 2):
-        latptnew, lonptnew = vreckon(latpt, lonpt, incdist, azimuth)
-        azimuth = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)[1]
+        latptnew, lonptnew = vreckon(latpt, lonpt, incdist, azimuth)  # type: ignore[arg-type]
+        azimuth = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)[1]  # type: ignore[arg-type]
         lats.append(latptnew)
         lons.append(lonptnew)
         latpt = latptnew
@@ -548,4 +634,4 @@ def track2(
         lats = list(map(radians, lats))
         lons = list(map(radians, lons))
 
-    return lats, lons
+    return lats, lons  # type: ignore[return-value]

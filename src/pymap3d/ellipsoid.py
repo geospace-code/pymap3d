@@ -1,11 +1,9 @@
 """Minimal class for planetary ellipsoids"""
 
 from __future__ import annotations
-from math import sqrt
-from dataclasses import dataclass, field
+
 import sys
-import warnings
-from typing import Dict  # for Python < 3.9
+from math import sqrt
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -21,7 +19,6 @@ class Model(TypedDict):
     b: float
 
 
-@dataclass
 class Ellipsoid:
     """
     generate reference ellipsoid parameters
@@ -60,18 +57,9 @@ class Ellipsoid:
     feel free to suggest additional ellipsoids
     """
 
-    model: str  # short name
-    name: str  # name for printing
-    semimajor_axis: float
-    semiminor_axis: float
-    flattening: float
-    thirdflattening: float
-    eccentricity: float
-    models = field(default_factory=Dict[str, Model])
-
     def __init__(
         self, semimajor_axis: float, semiminor_axis: float, name: str = "", model: str = ""
-    ):
+    ) -> None:
         """
         Ellipsoidal model of world
 
@@ -97,7 +85,7 @@ class Ellipsoid:
         self.semimajor_axis = semimajor_axis
         self.semiminor_axis = semiminor_axis
 
-    models = {
+    models: dict[str, Model] = {
         # Earth ellipsoids
         "maupertuis": {"name": "Maupertuis (1738)", "a": 6397300.0, "b": 6363806.283},
         "plessis": {"name": "Plessis (1817)", "a": 6376523.0, "b": 6355862.9333},
@@ -152,12 +140,11 @@ class Ellipsoid:
     }
 
     @classmethod
-    def from_name(cls, name: str) -> Ellipsoid | None:
+    def from_name(cls, name: str) -> Ellipsoid:
         """Create an Ellipsoid from a name."""
 
         if name not in cls.models:
-            warnings.warn(f"{name} model not implemented")
-            return None
+            raise ValueError(f"{name} model not implemented")
 
         return cls(
             cls.models[name]["a"], cls.models[name]["b"], name=cls.models[name]["name"], model=name

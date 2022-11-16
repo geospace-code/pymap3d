@@ -5,11 +5,9 @@ import logging
 from math import isclose
 from pathlib import Path
 
-from matlab_mapping import matlab_mapping
-
 import matlab.engine
+from matlab_mapping import matlab_mapping
 from pymap3d.lox import loxodrome_direct
-
 
 cwd = Path(__file__).parent
 eng = matlab.engine.start_matlab("-nojvm")
@@ -21,9 +19,9 @@ has_map = matlab_mapping(eng)
 def reckon(lat1: float, lon1: float, rng: float, az: float) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
     if has_map:
-        return eng.reckon("rh", lat1, lon1, rng, az, eng.wgs84Ellipsoid(), nargout=2)
+        return eng.reckon("rh", lat1, lon1, rng, az, eng.wgs84Ellipsoid(), nargout=2)  # type: ignore[no-any-return]
     else:
-        return eng.matmap3d.vreckon(lat1, lon1, rng, az, nargout=2)
+        return eng.matmap3d.vreckon(lat1, lon1, rng, az, nargout=2)  # type: ignore[no-any-return]
 
 
 clat, clon, rng = 35.0, 140.0, 50000.0  # arbitrary

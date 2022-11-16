@@ -9,13 +9,21 @@ Michael Hirsch implementation of algorithms from D. Vallado
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any, overload
 
+try:
+    from numpy.typing import NDArray
+except ImportError:
+    pass
+
+from ._types import ArrayLike
 from .mathfun import asin, atan2, cos, degrees, radians, sin
 from .sidereal import datetime2sidereal
 
 __all__ = ["azel2radec", "radec2azel"]
 
 
+@overload
 def azel2radec(
     az_deg: float,
     el_deg: float,
@@ -23,6 +31,27 @@ def azel2radec(
     lon_deg: float,
     time: datetime,
 ) -> tuple[float, float]:
+    pass
+
+
+@overload
+def azel2radec(
+    az_deg: ArrayLike,
+    el_deg: ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def azel2radec(
+    az_deg: float | ArrayLike,
+    el_deg: float | ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[float, float] | tuple[NDArray[Any], NDArray[Any]]:
     """
     converts azimuth, elevation to right ascension, declination
 
@@ -73,6 +102,7 @@ def azel2radec(
     return degrees(lst - lha) % 360, degrees(dec)
 
 
+@overload
 def radec2azel(
     ra_deg: float,
     dec_deg: float,
@@ -80,6 +110,27 @@ def radec2azel(
     lon_deg: float,
     time: datetime,
 ) -> tuple[float, float]:
+    pass
+
+
+@overload
+def radec2azel(
+    ra_deg: ArrayLike,
+    dec_deg: ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[NDArray[Any], NDArray[Any]]:
+    pass
+
+
+def radec2azel(
+    ra_deg: float | ArrayLike,
+    dec_deg: float | ArrayLike,
+    lat_deg: float,
+    lon_deg: float,
+    time: datetime,
+) -> tuple[float, float] | tuple[NDArray[Any], NDArray[Any]]:
     """
     converts right ascension, declination to azimuth, elevation
 

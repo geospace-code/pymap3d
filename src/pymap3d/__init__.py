@@ -100,4 +100,4 @@ try:
 
     __all__ += ["aer2eci", "eci2aer", "ecef2eci", "eci2ecef"]
 except ImportError:
-    from .vallado import azel2radec, radec2azel
+    from .vallado import azel2radec, radec2azel  # type: ignore[no-redef]

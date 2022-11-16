@@ -1,7 +1,10 @@
 # Copyright (c) 2014-2018 Michael Hirsch, Ph.D.
 """ manipulations of sidereal time """
+from __future__ import annotations
+
 from datetime import datetime
 from math import tau
+from typing import Sequence, cast, overload
 
 from .timeconv import str2dt
 
@@ -16,7 +19,19 @@ except ImportError:
 __all__ = ["datetime2sidereal", "juliandate", "greenwichsrt"]
 
 
+@overload
 def datetime2sidereal(time: datetime, lon_radians: float) -> float:
+    pass
+
+
+@overload
+def datetime2sidereal(time: Sequence[datetime], lon_radians: float) -> list[float]:
+    pass
+
+
+def datetime2sidereal(
+    time: datetime | Sequence[datetime], lon_radians: float
+) -> float | list[float]:
     """
     Convert ``datetime`` to local sidereal time
 
@@ -34,14 +49,15 @@ def datetime2sidereal(time: datetime, lon_radians: float) -> float:
     tsr : float
         Local sidereal time
     """
-    if isinstance(time, (tuple, list)):
+    if isinstance(time, Sequence):
         return [datetime2sidereal(t, lon_radians) for t in time]
 
     try:
-        tsr = (
+        tsr = cast(
+            float,
             Time(time)
             .sidereal_time(kind="apparent", longitude=Longitude(lon_radians, unit=u.radian))
-            .radian
+            .radian,
         )
     except NameError:
         jd = juliandate(str2dt(time))
@@ -53,7 +69,17 @@ def datetime2sidereal(time: datetime, lon_radians: float) -> float:
     return tsr
 
 
+@overload
 def juliandate(time: datetime) -> float:
+    pass
+
+
+@overload
+def juliandate(time: Sequence[datetime]) -> list[float]:
+    pass
+
+
+def juliandate(time: datetime | Sequence[datetime]) -> float | list[float]:
     """
     Python datetime to Julian time (days since Jan 1, 4713 BCE)
 
@@ -72,7 +98,7 @@ def juliandate(time: datetime) -> float:
     jd : float
         Julian date (days since Jan 1, 4713 BCE)
     """
-    if isinstance(time, (tuple, list)):
+    if isinstance(time, Sequence):
         return list(map(juliandate, time))
 
     if time.month < 3:
@@ -89,7 +115,17 @@ def juliandate(time: datetime) -> float:
     return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
 
+@overload
 def greenwichsrt(Jdate: float) -> float:
+    pass
+
+
+@overload
+def greenwichsrt(Jdate: Sequence[float]) -> list[float]:
+    pass
+
+
+def greenwichsrt(Jdate: float | Sequence[float]) -> float | list[float]:
     """
     Convert Julian time to sidereal time
 
@@ -107,7 +143,7 @@ def greenwichsrt(Jdate: float) -> float:
     tsr : float
         Sidereal time
     """
-    if isinstance(Jdate, (tuple, list)):
+    if isinstance(Jdate, Sequence):
         return list(map(greenwichsrt, Jdate))
 
     # %% Vallado Eq. 3-42 p. 184, Seidelmann 3.311-1

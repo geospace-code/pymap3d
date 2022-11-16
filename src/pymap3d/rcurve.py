@@ -2,6 +2,14 @@
 
 from __future__ import annotations
 
+from typing import Any, overload
+
+try:
+    from numpy.typing import NDArray
+except ImportError:
+    pass
+
+from ._types import ArrayLike
 from .ellipsoid import Ellipsoid
 from .mathfun import cos, sin, sqrt
 from .utils import sanitize
@@ -9,7 +17,21 @@ from .utils import sanitize
 __all__ = ["parallel", "meridian", "transverse", "geocentric_radius"]
 
 
-def geocentric_radius(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def geocentric_radius(geodetic_lat: float, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+    pass
+
+
+@overload
+def geocentric_radius(
+    geodetic_lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> NDArray[Any]:
+    pass
+
+
+def geocentric_radius(
+    geodetic_lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     compute geocentric radius at geodetic latitude
 
@@ -29,7 +51,19 @@ def geocentric_radius(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     )
 
 
-def parallel(lat, ell: Ellipsoid = None, deg: bool = True) -> float:
+@overload
+def parallel(lat: float, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+    pass
+
+
+@overload
+def parallel(lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True) -> NDArray[Any]:
+    pass
+
+
+def parallel(
+    lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
 
@@ -55,7 +89,19 @@ def parallel(lat, ell: Ellipsoid = None, deg: bool = True) -> float:
     return cos(lat) * transverse(lat, ell, deg=False)
 
 
-def meridian(lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def meridian(lat: float, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+    pass
+
+
+@overload
+def meridian(lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True) -> NDArray[Any]:
+    pass
+
+
+def meridian(
+    lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """computes the meridional radius of curvature for the ellipsoid
 
     like Matlab rcurve('meridian', ...)
@@ -79,10 +125,22 @@ def meridian(lat, ell: Ellipsoid = None, deg: bool = True):
 
     f1 = ell.semimajor_axis * (1 - ell.eccentricity**2)
     f2 = 1 - (ell.eccentricity * sin(lat)) ** 2
-    return f1 / sqrt(f2**3)
+    return f1 / sqrt(f2**3)  # type: ignore[no-any-return]
 
 
-def transverse(lat, ell: Ellipsoid = None, deg: bool = True):
+@overload
+def transverse(lat: float, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+    pass
+
+
+@overload
+def transverse(lat: ArrayLike, ell: Ellipsoid | None = None, deg: bool = True) -> NDArray[Any]:
+    pass
+
+
+def transverse(
+    lat: float | ArrayLike, ell: Ellipsoid | None = None, deg: bool = True
+) -> float | NDArray[Any]:
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid
@@ -106,4 +164,4 @@ def transverse(lat, ell: Ellipsoid = None, deg: bool = True):
 
     lat, ell = sanitize(lat, ell, deg)
 
-    return ell.semimajor_axis / sqrt(1 - (ell.eccentricity * sin(lat)) ** 2)
+    return ell.semimajor_axis / sqrt(1 - (ell.eccentricity * sin(lat)) ** 2)  # type: ignore[no-any-return]
