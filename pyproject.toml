@@ -1,6 +1,35 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pymap3d"
+description = "pure Python (no prereqs) coordinate conversions, following convention of several popular Matlab routines."
+keywords = ["coordinate-conversion", "geodesy"]
+classifiers = ["Development Status :: 5 - Production/Stable",
+ "Environment :: Console",
+ "Intended Audience :: Science/Research",
+ "License :: OSI Approved :: BSD License",
+ "Operating System :: OS Independent",
+ "Programming Language :: Python :: 3",
+ "Topic :: Scientific/Engineering :: GIS"
+]
+requires-python = ">=3.7"
+dynamic = ["version", "readme"]
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"], content-type = "text/markdown"}
+version = {attr = "pymap3d.__version__"}
+
+[project.optional-dependencies]
+tests = ["pytest", "pytest-timeout"]
+lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "mypy",
+  "types-python-dateutil", "types-requests"]
+coverage = ["pytest-cov"]
+format = ["black[jupyter]", "isort"]
+core = ["python-dateutil", "numpy >= 1.10.0"]
+full = ["astropy", "xarray"]
+proj = ["pyproj"]
 
 [tool.black]
 line-length = 100
