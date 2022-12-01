@@ -2,7 +2,6 @@
 
 [![image](https://zenodo.org/badge/DOI/10.5281/zenodo.213676.svg)](https://doi.org/10.5281/zenodo.213676)
 [![image](http://joss.theoj.org/papers/10.21105/joss.00580/status.svg)](https://doi.org/10.21105/joss.00580)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/geospace-code/pymap3d.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/geospace-code/pymap3d/context:python)
 [![codecov](https://codecov.io/gh/geospace-code/pymap3d/branch/main/graph/badge.svg?token=DFWBW6TKNr)](https://codecov.io/gh/geospace-code/pymap3d)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci/badge.svg)
 ![Actions Status](https://github.com/geospace-code/pymap3d/workflows/ci_stdlib_only/badge.svg)

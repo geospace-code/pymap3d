@@ -1,8 +1,0 @@
-path_classifiers:
-  test:
-  - exclude: scripts
-
-extraction:
-  python:
-    python_setup:
-      version: 3
