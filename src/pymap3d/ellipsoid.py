@@ -156,7 +156,7 @@ class Ellipsoid:
         """Create an Ellipsoid from a name."""
 
         if name not in cls.models:
-            warnings.warn(f"{name} model not implemented")
+            warnings.warn(f"{name} model not implemented", stacklevel=2)
             return None
 
         return cls(
