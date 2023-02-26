@@ -34,7 +34,7 @@ def str2dt(time: str | datetime) -> datetime:
         try:
             return dateutil.parser.parse(time)
         except NameError:
-            raise ImportError("pip install dateutil")
+            raise ImportError("pip install python-dateutil")
 
     # some sort of iterable
     try:
@@ -45,7 +45,7 @@ def str2dt(time: str | datetime) -> datetime:
     except IndexError:
         pass
     except NameError:
-        raise ImportError("pip install dateutil")
+        raise ImportError("pip install python-dateutil")
 
     # pandas/xarray
     try:

@@ -120,7 +120,7 @@ def vdist(
         if (abs(Lat1) > 90).any() | (abs(Lat2) > 90).any():
             raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     except NameError:
-        if (abs(Lat1) > 90) | (abs(Lat2) > 90):  # type: ignore
+        if (abs(Lat1) > 90) | (abs(Lat2) > 90):
             raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
@@ -155,7 +155,7 @@ def vdist(
         L[L > pi] = 2 * pi - L[L > pi]
     except TypeError:
         if L > pi:
-            L = 2 * pi - L  # type: ignore
+            L = 2 * pi - L
 
     lamb = copy(L)  # NOTE: program will fail without copy!
     itercount = 0
@@ -167,7 +167,7 @@ def vdist(
             if not warninggiven:
                 logging.warning("Essentially antipodal points--precision may be reduced slightly.")
 
-            lamb = pi  # type: ignore
+            lamb = pi
             break
 
         lambdaold = copy(lamb)
@@ -213,7 +213,7 @@ def vdist(
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
         try:
-            i = (lamb > pi).any()  # type: ignore
+            i = (lamb > pi).any()
         except AttributeError:
             i = lamb > pi
 
@@ -222,11 +222,11 @@ def vdist(
                 "Essentially antipodal points encountered. Precision may be reduced slightly."
             )
             warninggiven = True
-            lambdaold = pi  # type: ignore
-            lamb = pi  # type: ignore
+            lambdaold = pi
+            lamb = pi
 
         try:
-            notdone = (abs(lamb - lambdaold) > 1e-12).any()  # type: ignore
+            notdone = (abs(lamb - lambdaold) > 1e-12).any()
         except AttributeError:
             notdone = abs(lamb - lambdaold) > 1e-12
 
@@ -347,7 +347,7 @@ def vreckon(
         if (Rng < 0.0).any():
             raise ValueError("Ground distance must be positive")
     except NameError:
-        if abs(Lat1) > 90.0:  # type: ignore
+        if abs(Lat1) > 90.0:
             raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
         if Rng < 0.0:
             raise ValueError("Ground distance must be positive")

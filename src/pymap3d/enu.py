@@ -50,11 +50,11 @@ def enu2aer(e, n, u, deg: bool = True) -> tuple:
         u[abs(u) < 1e-3] = 0.0
     except TypeError:
         if abs(e) < 1e-3:
-            e = 0.0  # type: ignore
+            e = 0.0
         if abs(n) < 1e-3:
-            n = 0.0  # type: ignore
+            n = 0.0
         if abs(u) < 1e-3:
-            u = 0.0  # type: ignore
+            u = 0.0
 
     r = hypot(e, n)
     slantRange = hypot(r, u)

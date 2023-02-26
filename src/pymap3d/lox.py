@@ -245,7 +245,7 @@ def loxodrome_direct(
     dlon = tan(a12) * (newiso - iso)
 
     try:
-        dlon[i] = sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell=ell, deg=False)  # type: ignore
+        dlon[i] = sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell=ell, deg=False)
     except (AttributeError, TypeError):
         if i:  # straight east or west
             dlon = sign(pi - a12) * rng / rcurve.parallel(lat1, ell=ell, deg=False)
@@ -256,7 +256,7 @@ def loxodrome_direct(
         lat2, lon2 = degrees(lat2), degrees(lon2)
 
     try:
-        return lat2.squeeze()[()], lon2.squeeze()[()]  # type: ignore
+        return lat2.squeeze()[()], lon2.squeeze()[()]
     except AttributeError:
         return lat2, lon2
 

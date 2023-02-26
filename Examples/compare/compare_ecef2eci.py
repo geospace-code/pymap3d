@@ -38,7 +38,7 @@ def test_ecef_eci():
     ecef = eci2ecef(*eci_matlab, utc)
 
     if has_aero:
-        ecef_matlab = eng.eci2ecef(utc_matlab, *eci_matlab, nargout=3)  # type: ignore
+        ecef_matlab = eng.eci2ecef(utc_matlab, *eci_matlab, nargout=3)
     else:
         ecef_matlab = eng.matmap3d.eci2ecef(utc_matlab, *eci_matlab, nargout=3)
 

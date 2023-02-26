@@ -210,7 +210,7 @@ def geodetic2isometric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     i = abs(coslat) <= COS_EPS
 
     try:
-        isometric_lat[i] = sign(geodetic_lat[i]) * inf  # type: ignore
+        isometric_lat[i] = sign(geodetic_lat[i]) * inf
     except TypeError:
         if i:
             isometric_lat = sign(geodetic_lat) * inf

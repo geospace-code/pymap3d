@@ -191,7 +191,7 @@ def ecef2geodetic(
     )
 
     try:
-        if inside.any():  # type: ignore
+        if inside.any():
             # avoid all false assignment bug
             alt[inside] = -alt[inside]
     except (TypeError, AttributeError):

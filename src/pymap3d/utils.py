@@ -59,10 +59,10 @@ def sanitize(lat, ell: Ellipsoid | None, deg: bool) -> tuple:
         lat = radians(lat)
 
     try:
-        if (abs(lat) > pi / 2).any():  # type: ignore
+        if (abs(lat) > pi / 2).any():
             raise ValueError("-pi/2 <= latitude <= pi/2")
     except AttributeError:
-        if abs(lat) > pi / 2:  # type: ignore
+        if abs(lat) > pi / 2:
             raise ValueError("-pi/2 <= latitude <= pi/2")
 
     return lat, ell
