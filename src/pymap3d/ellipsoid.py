@@ -3,13 +3,13 @@
 from __future__ import annotations
 from math import sqrt
 from dataclasses import dataclass, field
+from typing import TypedDict
 import sys
-from typing import Dict  # for Python < 3.9
 
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
+if sys.version_info < (3, 9):
+    from typing import Dict
 else:
-    from typing_extensions import TypedDict
+    Dict = dict
 
 
 class Model(TypedDict):

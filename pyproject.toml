@@ -14,7 +14,7 @@ classifiers = ["Development Status :: 5 - Production/Stable",
  "Programming Language :: Python :: 3",
  "Topic :: Scientific/Engineering :: GIS"
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dynamic = ["version", "readme"]
 
 [tool.setuptools.dynamic]
