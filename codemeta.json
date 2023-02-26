@@ -9,7 +9,6 @@
   "dateModified": "2020-05-10",
   "issueTracker": "https://github.com/geospace-code/pymap3d/issues",
   "name": "PyMap3d",
-  "version": "2.4.1",
   "identifier": "10.5281/zenodo.3262738",
   "description": "pure-Python (Numpy optional) 3D coordinate conversions for geospace",
   "applicationCategory": "geospace",

@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+authors:
+  - family-names: Hirsch
+    given-names: Michael
+    orcid: 0000-0002-1637-6526
+title: PyGemini
+doi: 10.5281/zenodo.3262738
