@@ -12,7 +12,7 @@ from datetime import datetime
 from math import pi
 
 from .ellipsoid import Ellipsoid
-from .mathfun import atan, atan2, cos, degrees, hypot, radians, sin, sqrt, tan
+from .mathfun import atan, atan2, cos, degrees, hypot, isclose, radians, sin, sqrt, tan
 from .utils import sanitize
 
 __all__ = [
@@ -70,8 +70,8 @@ def geodetic2ecef(
         lon = radians(lon)
 
     # radius of curvature of the prime vertical section
-    N = ell.semimajor_axis**2 / sqrt(
-        ell.semimajor_axis**2 * cos(lat) ** 2 + ell.semiminor_axis**2 * sin(lat) ** 2
+    N = ell.semimajor_axis**2 / hypot(
+        ell.semimajor_axis * cos(lat), ell.semiminor_axis * sin(lat)
     )
     # Compute cartesian (geocentric) coordinates given (curvilinear) geodetic coordinates.
     x = (N + alt) * cos(lat) * cos(lon)
@@ -133,7 +133,7 @@ def ecef2geodetic(
     E = sqrt(ell.semimajor_axis**2 - ell.semiminor_axis**2)
 
     # eqn. 4a
-    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * sqrt((r**2 - E**2) ** 2 + 4 * E**2 * z**2))
+    u = sqrt(0.5 * (r**2 - E**2) + 0.5 * hypot(r**2 - E**2, 2 * E * z))
 
     Q = hypot(x, y)
 
@@ -142,8 +142,10 @@ def ecef2geodetic(
     # eqn. 4b
     try:
         Beta = atan(huE / u * z / hypot(x, y))
-    except ZeroDivisionError:
-        if z >= 0:
+    except ArithmeticError:
+        if isclose(z, 0):
+            Beta = 0
+        elif z > 0:
             Beta = pi / 2
         else:
             Beta = -pi / 2

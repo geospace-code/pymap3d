@@ -15,6 +15,7 @@ try:
         exp,
         hypot,
         inf,
+        isclose,
         isnan,
         log,
         power,
@@ -36,6 +37,7 @@ except ImportError:
         exp,
         hypot,
         inf,
+        isclose,
         isnan,
         log,
         radians,
@@ -48,7 +50,7 @@ except ImportError:
         return pow(x, y)
 
     def sign(x) -> float:  # type: ignore
-        """signum function"""
+        """signum"""
         if x < 0:
             y = -1.0
         elif x > 0:
@@ -58,9 +60,12 @@ except ImportError:
 
         return y
 
-    def cbrt(x) -> float:  # type: ignore
-        """math.cbrt was added in Python 3.11"""
-        return x ** (1 / 3)
+    try:
+        import math.cbrt as cbrt  # type: ignore
+    except ImportError:
+
+        def cbrt(x) -> float:  # type: ignore
+            return x ** (1 / 3)
 
 
 __all__ = [
@@ -75,6 +80,7 @@ __all__ = [
     "exp",
     "hypot",
     "inf",
+    "isclose",
     "isnan",
     "log",
     "power",

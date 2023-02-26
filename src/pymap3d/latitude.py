@@ -344,7 +344,7 @@ def geodetic2conformal(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
     #  compute conformal latitudes with correction for points at +90
     try:
         conformal_lat = 2 * atan(sqrt((f4 / f3) * ((f1 / f2) ** e))) - (pi / 2)
-    except ZeroDivisionError:
+    except ArithmeticError:
         conformal_lat = pi / 2
 
     return degrees(conformal_lat) if deg else conformal_lat

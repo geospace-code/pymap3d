@@ -190,10 +190,10 @@ def vdist(
             alpha[isnan(sinAlpha)] = 0
             alpha[(sinAlpha > 1) | (abs(sinAlpha - 1) < 1e-16)] = pi / 2
 
-        except (ZeroDivisionError, TypeError, ValueError):
+        except (ArithmeticError, TypeError, ValueError):
             try:
                 sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
-            except ZeroDivisionError:
+            except ArithmeticError:
                 sinAlpha = 0.0
 
             if isnan(sinAlpha):

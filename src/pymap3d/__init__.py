@@ -29,7 +29,7 @@ Companion packages exist for:
 * Fortran: [Maptran3D](https://github.com/geospace-code/maptran3d)
 """
 
-__version__ = "2.10.0"
+__version__ = "3.0.0"
 
 from .aer import aer2ecef, aer2geodetic, ecef2aer, geodetic2aer
 from .ecef import (
@@ -94,6 +94,10 @@ __all__ = [
 ]
 
 try:
+    import numpy as np
+
+    np.seterr(all="raise")
+
     from .aer import aer2eci, eci2aer
     from .azelradec import azel2radec, radec2azel
     from .eci import ecef2eci, eci2ecef
