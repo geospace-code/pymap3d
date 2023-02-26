@@ -48,6 +48,11 @@ def test_reference(model, f):
     assert pm.Ellipsoid.from_name(model).flattening == approx(f)
 
 
+def test_bad_name():
+    with pytest.raises(KeyError):
+        pm.Ellipsoid.from_name("badname")
+
+
 def test_ellipsoid():
 
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("maupertuis")) == approx(

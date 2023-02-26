@@ -4,7 +4,6 @@ from __future__ import annotations
 from math import sqrt
 from dataclasses import dataclass, field
 import sys
-import warnings
 from typing import Dict  # for Python < 3.9
 
 if sys.version_info >= (3, 8):
@@ -154,10 +153,6 @@ class Ellipsoid:
     @classmethod
     def from_name(cls, name: str) -> Ellipsoid | None:
         """Create an Ellipsoid from a name."""
-
-        if name not in cls.models:
-            warnings.warn(f"{name} model not implemented", stacklevel=2)
-            return None
 
         return cls(
             cls.models[name]["a"], cls.models[name]["b"], name=cls.models[name]["name"], model=name

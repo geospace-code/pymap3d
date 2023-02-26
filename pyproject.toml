@@ -55,7 +55,7 @@ filterwarnings = [
 
 [tool.coverage.run]
 branch = true
-source = "src/"
+source = ["src/"]
 
 [tool.coverage.report]
 # Regexes for lines to exclude from consideration
