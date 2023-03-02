@@ -94,10 +94,6 @@ __all__ = [
 ]
 
 try:
-    import numpy as np
-
-    np.seterr(all="raise")
-
     from .aer import aer2eci, eci2aer
     from .azelradec import azel2radec, radec2azel
     from .eci import ecef2eci, eci2ecef

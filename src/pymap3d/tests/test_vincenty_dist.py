@@ -21,7 +21,7 @@ from pytest import approx
         (90, 0, -90, 0, 2.000393145e7, 180),
     ],
 )
-def test_unit(lat, lon, lat1, lon1, srange, az):
+def test_unit_vdist(lat, lon, lat1, lon1, srange, az):
     dist, az1 = vincenty.vdist(lat, lon, lat1, lon1)
     assert dist == approx(srange, rel=0.005)
     assert az1 == approx(az)

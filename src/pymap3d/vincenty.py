@@ -4,6 +4,8 @@ Vincenty's methods for computing ground distance and reckoning
 
 from __future__ import annotations
 
+import warnings
+
 import logging
 from copy import copy
 from math import nan, pi
@@ -184,16 +186,20 @@ def vdist(
         sigma = atan2(sinsigma, cossigma)
 
         try:
-            sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
+            with warnings.catch_warnings(record=True):
+                warnings.simplefilter("error")
+                sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
 
-            alpha = asin(sinAlpha)
+                alpha = asin(sinAlpha)
             alpha[isnan(sinAlpha)] = 0
             alpha[(sinAlpha > 1) | (abs(sinAlpha - 1) < 1e-16)] = pi / 2
 
-        except (ArithmeticError, TypeError, ValueError):
+        except (ArithmeticError, RuntimeWarning, TypeError, ValueError):
             try:
-                sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
-            except ArithmeticError:
+                with warnings.catch_warnings(record=True):
+                    warnings.simplefilter("error")
+                    sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
+            except (ArithmeticError, RuntimeWarning):
                 sinAlpha = 0.0
 
             if isnan(sinAlpha):

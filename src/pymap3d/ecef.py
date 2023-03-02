@@ -1,5 +1,8 @@
 """ Transforms involving ECEF: earth-centered, earth-fixed frame """
+
 from __future__ import annotations
+
+import warnings
 
 try:
     from numpy import asarray, finfo, where
@@ -141,8 +144,10 @@ def ecef2geodetic(
 
     # eqn. 4b
     try:
-        Beta = atan(huE / u * z / hypot(x, y))
-    except ArithmeticError:
+        with warnings.catch_warnings(record=True):
+            warnings.simplefilter("error")
+            Beta = atan(huE / u * z / hypot(x, y))
+    except (ArithmeticError, RuntimeWarning):
         if isclose(z, 0):
             Beta = 0
         elif z > 0:
