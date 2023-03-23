@@ -148,7 +148,7 @@ def ecef2geodetic(
             warnings.simplefilter("error")
             Beta = atan(huE / u * z / hypot(x, y))
     except (ArithmeticError, RuntimeWarning):
-        if isclose(z, 0):
+        if any(isclose(z, 0)):
             Beta = 0
         elif z > 0:
             Beta = pi / 2
