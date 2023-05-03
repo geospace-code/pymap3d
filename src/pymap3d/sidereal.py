@@ -84,7 +84,7 @@ def juliandate(time: datetime) -> float:
 
     A = int(year / 100.0)
     B = 2 - A + int(A / 4.0)
-    C = ((time.second / 60.0 + time.minute) / 60.0 + time.hour) / 24.0
+    C = (((time.second + time.microsecond / 1e6) / 60.0 + time.minute) / 60.0 + time.hour) / 24.0
 
     return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
