@@ -175,7 +175,7 @@ def geodetic2isometric(geodetic_lat, ell: Ellipsoid = None, deg: bool = True):
 
     Parameters
     ----------
-    lat : float
+    geodetic_lat : float
          geodetic latitude
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
