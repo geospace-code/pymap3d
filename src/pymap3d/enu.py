@@ -74,9 +74,9 @@ def aer2enu(az, el, srange, deg: bool = True) -> tuple:
 
     Parameters
     ----------
-    azimuth : float
+    az : float
             azimuth clockwise from north (degrees)
-    elevation : float
+    el : float
         elevation angle above horizon, neglecting aberrations (degrees)
     srange : float
         slant range [meters]

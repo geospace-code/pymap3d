@@ -4,7 +4,6 @@ import matlab.engine
 
 
 def matlab_aerospace(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
-
     if eng.has_aerospace_toolbox():
         has_aero = True
     else:

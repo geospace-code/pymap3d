@@ -146,14 +146,14 @@ def curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"):
 
     Parameters
     ----------
-    lat1 : float
+    lat : float
         geodetic latitudes (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
-    method: str, optional
-        "mean" or "norm"
     deg : bool, optional
           degrees input/output  (False: radians in/out)
+    method: str, optional
+        "mean" or "norm"
 
     Returns
     -------

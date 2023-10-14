@@ -478,13 +478,13 @@ def track2(
     Parameters
     ----------
 
-    Lat1 : float
+    lat1 : float
         Geodetic latitude of first point (degrees)
-    Lon1 : float
+    lon1 : float
         Geodetic longitude of first point (degrees)
-    Lat2 : float
+    lat2 : float
         Geodetic latitude of second point (degrees)
-    Lon2 : float
+    lon2 : float
         Geodetic longitude of second point (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid

@@ -31,7 +31,6 @@ ll0 = (42.0, 82.0)
 
 
 def bench_vreckon(N: int) -> float:
-
     sr = np.random.random(N)
     az = np.random.random(N)
 

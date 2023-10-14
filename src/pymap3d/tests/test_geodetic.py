@@ -111,7 +111,6 @@ def test_array_ecef2geodetic():
 
 
 def test_inside_ecef2geodetic():
-
     np = pytest.importorskip("numpy")
     # test values with no points inside ellipsoid
     lla0_array = (

@@ -287,7 +287,7 @@ def aer2ecef(
            Observer geodetic latitude
     lon0 : float
            Observer geodetic longitude
-    h0 : float
+    alt0 : float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid

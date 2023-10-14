@@ -54,7 +54,6 @@ def test_bad_name():
 
 
 def test_ellipsoid():
-
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("maupertuis")) == approx(
         [42.123086280313906, -82.00647850636021, -13462.822154350226]
     )

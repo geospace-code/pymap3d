@@ -18,7 +18,6 @@ lla0 = (42, -82, 200)
     ],
 )
 def test_losint(az, tilt, lat, lon, sr):
-
     lla0 = (10, -20, 1e3)
     lat1, lon1, sr1 = los.lookAtSpheroid(*lla0, az, tilt=tilt)
 
@@ -33,7 +32,6 @@ def test_losint(az, tilt, lat, lon, sr):
 
 
 def test_badval():
-
     with pytest.raises(ValueError):
         los.lookAtSpheroid(0, 0, -1, 0, 0)
 

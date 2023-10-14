@@ -29,7 +29,6 @@ def test_geodetic_alt_geocentric(geodetic_lat, alt_m, geocentric_lat):
     [(0, 0), (90, 90), (-90, -90), (45, 44.80757678), (-45, -44.80757678)],
 )
 def test_geodetic_geocentric(geodetic_lat, geocentric_lat):
-
     assert latitude.geodetic2geocentric(geodetic_lat, 0) == approx(geocentric_lat)
     assert latitude.geodetic2geocentric(radians(geodetic_lat), 0, deg=False) == approx(
         radians(geocentric_lat)

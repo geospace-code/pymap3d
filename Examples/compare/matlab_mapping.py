@@ -4,7 +4,6 @@ import matlab.engine
 
 
 def matlab_mapping(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
-
     if eng.has_map_toolbox():
         has = True
     else:

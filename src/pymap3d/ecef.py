@@ -48,7 +48,7 @@ def geodetic2ecef(
            target geodetic latitude
     lon
            target geodetic longitude
-    h
+    alt
          target altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -226,8 +226,6 @@ def ecef2enuv(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
            Observer geodetic latitude
     lon0
            Observer geodetic longitude
-    h0
-         observer altitude above geodetic ellipsoid (meters)
     deg : bool, optional
           degrees input/output  (False: radians in/out)
 
@@ -312,12 +310,18 @@ def enu2uvw(
     Parameters
     ----------
 
-    e1
+    east
         target east ENU coordinate (meters)
-    n1
+    north
         target north ENU coordinate (meters)
-    u1
+    up
         target up ENU coordinate (meters)
+    lat0
+           Observer geodetic latitude
+    lon0
+           Observer geodetic longitude
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
     Results
     -------
@@ -346,9 +350,17 @@ def uvw2enu(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
     ----------
 
     u
+        target x ECEF coordinate (meters)
     v
+        target y ECEF coordinate (meters)
     w
-
+        target z ECEF coordinate (meters)
+    lat0
+           Observer geodetic latitude
+    lon0
+           Observer geodetic longitude
+    deg : bool, optional
+          degrees input/output  (False: radians in/out)
 
     Results
     -------

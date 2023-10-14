@@ -33,7 +33,7 @@ def geodetic2spherical(
            target geodetic latitude
     lon
            target geodetic longitude
-    h
+    alt
          target altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid

@@ -46,7 +46,6 @@ def sph2cart(az, el, r) -> tuple:
 
 
 def sanitize(lat, ell: Ellipsoid | None, deg: bool) -> tuple:
-
     if ell is None:
         ell = Ellipsoid.from_name("wgs84")
 

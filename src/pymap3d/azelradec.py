@@ -52,7 +52,6 @@ def azel2radec(
     """
 
     try:
-
         obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
         direc = AltAz(

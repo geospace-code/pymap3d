@@ -12,7 +12,6 @@ ll0 = (42.0, 82.0)
 
 
 def bench(N: int) -> float:
-
     x = np.random.random(N)
     y = np.random.random(N)
     z = np.random.random(N)

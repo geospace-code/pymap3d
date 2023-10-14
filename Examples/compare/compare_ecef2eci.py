@@ -19,7 +19,6 @@ has_aero = matlab_aerospace(eng)
 
 
 def test_ecef_eci():
-
     ecef = [-5762640.0, -1682738.0, 3156028.0]
     utc = datetime(2019, 1, 4, 12)
 
