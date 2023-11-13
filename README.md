@@ -21,6 +21,7 @@ Thanks to our [contributors](./.github/contributors.md).
 * [Matlab, GNU Octave](https://github.com/geospace-code/matmap3d)
 * [Fortran](https://github.com/geospace-code/maptran3d)
 * [Rust](https://github.com/gberrante/map_3d)
+* [C++](https://github.com/ClancyWalters/cppmap3d)
 
 ## Prerequisites
 
