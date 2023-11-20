@@ -5,7 +5,7 @@ from __future__ import annotations
 import warnings
 
 try:
-    from numpy import asarray, finfo, full_like, logical_and, logical_or, ndarray, where
+    from numpy import asarray, empty_like, finfo, full_like, logical_and, logical_or, where
 
     from .eci import ecef2eci, eci2ecef
 except ImportError:
@@ -145,15 +145,19 @@ def ecef2geodetic(
     # eqn. 4b
     try:
         calculated_idx = full_like(z, False)
-        Beta = ndarray(z.shape)
+        Beta = empty_like(z)
         with warnings.catch_warnings(record=True):
             warnings.simplefilter("error")
             # Preempt any possible divide-by-zero errors by only calculating values that will succeed. Then, below, use
             # the fallback Beta values for any values that would have failed.
             xy_hypot = hypot(x, y)
             calculated_idx = ~logical_or(isclose(u, 0), isclose(xy_hypot, 0))
-            Beta[calculated_idx] = atan(huE[calculated_idx] / u[calculated_idx] * z[calculated_idx] /
-                                        xy_hypot[calculated_idx])
+            Beta[calculated_idx] = atan(
+                huE[calculated_idx]
+                / u[calculated_idx]
+                * z[calculated_idx]
+                / xy_hypot[calculated_idx]
+            )
     except (ArithmeticError, RuntimeWarning):
         pass
 
