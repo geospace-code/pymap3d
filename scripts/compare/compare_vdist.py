@@ -4,25 +4,19 @@ from __future__ import annotations
 import sys
 from math import isclose, nan
 import numpy as np
-from pathlib import Path
 
+from matlab_engine import matlab_engine
 from matlab_mapping import matlab_mapping
 
-import matlab.engine
 from pymap3d.vincenty import vdist
-
-cwd = Path(__file__).parent
-
-eng = matlab.engine.start_matlab("-nojvm")
-eng.addpath(eng.genpath(str(cwd)), nargout=0)
-
-has_map = matlab_mapping(eng)
 
 
 def distance(lat1, lon1, lat2, lon2) -> tuple[float, float]:
     """Using Matlab Engine to do same thing as Pymap3d"""
 
-    if has_map:
+    eng = matlab_engine()
+
+    if matlab_mapping(eng):
         return eng.distance(lat1, lon1, lat2, lon2, eng.wgs84Ellipsoid(), nargout=2)
     else:
         return eng.matmap3d.vdist(lat1, lon1, lat2, lon2, nargout=2)

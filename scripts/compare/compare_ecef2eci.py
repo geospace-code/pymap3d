@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from pathlib import Path
 from datetime import datetime
+
 from pytest import approx
 
-import matlab.engine
 from pymap3d.eci import ecef2eci, eci2ecef
 
 from matlab_aerospace import matlab_aerospace
-
-cwd = Path(__file__).parent
-
-eng = matlab.engine.start_matlab("-nojvm")
-eng.addpath(eng.genpath(str(cwd)), nargout=0)
-
-has_aero = matlab_aerospace(eng)
+from matlab_engine import matlab_engine
 
 
 def test_ecef_eci():
@@ -24,8 +17,10 @@ def test_ecef_eci():
 
     eci = ecef2eci(*ecef, utc)
 
+    eng = matlab_engine()
+
     utc_matlab = eng.datetime(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
-    if has_aero:
+    if matlab_aerospace(eng):
         eci_matlab = eng.ecef2eci(utc_matlab, *ecef, nargout=3)
     else:
         eci_matlab = eng.matmap3d.ecef2eci(utc_matlab, *ecef, nargout=3)
@@ -36,7 +31,7 @@ def test_ecef_eci():
 
     ecef = eci2ecef(*eci_matlab, utc)
 
-    if has_aero:
+    if matlab_aerospace(eng):
         ecef_matlab = eng.eci2ecef(utc_matlab, *eci_matlab, nargout=3)
     else:
         ecef_matlab = eng.matmap3d.eci2ecef(utc_matlab, *eci_matlab, nargout=3)

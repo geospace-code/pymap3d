@@ -1,8 +1,10 @@
 from pathlib import Path
+import functools
 
 import matlab.engine
 
 
+@functools.cache
 def matlab_aerospace(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
     if eng.has_aerospace_toolbox():
         has_aero = True
