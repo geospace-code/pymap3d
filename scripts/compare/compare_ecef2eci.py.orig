@@ -25,9 +25,13 @@ if matlab_aerospace(eng):
 else:
     eci_matlab = eng.matmap3d.ecef2eci(utc_matlab, *ecef, nargout=3)
 
+<<<<<<< HEAD
+eci_good = np.isclose(eci_py, eci_matlab, rtol=0.01).all()
+=======
 eci_m = np.array(eci_matlab.tomemoryview()).reshape(eci_matlab.size, order="F")
 
 eci_good = np.isclose(eci_py, eci_m, rtol=0.01).all()
+>>>>>>> 3b1c510 (f)
 
 if eci_good:
     print("OK: PyMap3d ecef2eci vs. Matlab ecef2eci")
@@ -37,7 +41,11 @@ else:
 ecef_py = eci2ecef(eci_m[0], eci_m[1], eci_m[2], utc)
 
 if matlab_aerospace(eng):
+<<<<<<< HEAD
+    ecef_matlab = eng.eci2ecef(utc_matlab, *eci_matlab, nargout=3)
+=======
     ecef_matlab = eng.eci2ecef(utc_matlab, eci_m, nargout=1)
+>>>>>>> 3b1c510 (f)
 else:
     ecef_matlab = eng.matmap3d.eci2ecef(utc_matlab, *eci_m, nargout=3)
 

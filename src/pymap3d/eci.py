@@ -56,7 +56,7 @@ def eci2ecef(x, y, z, time: datetime) -> tuple:
         y = atleast_1d(y)
         z = atleast_1d(z)
         gst = atleast_1d(greenwichsrt(juliandate(time)))
-        assert x.shape == y.shape == z.shape
+        assert x.shape == y.shape == z.shape, f"shape mismatch: x: ${x.shape}  y: {y.shape}  z: {z.shape}"
         assert x.size == gst.size
 
         eci = column_stack((x.ravel(), y.ravel(), z.ravel()))
