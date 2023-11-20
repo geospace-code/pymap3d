@@ -5,7 +5,7 @@ from __future__ import annotations
 import warnings
 
 try:
-    from numpy import asarray, finfo, where
+    from numpy import asarray, empty_like, finfo, where
 
     from .eci import ecef2eci, eci2ecef
 except ImportError:
@@ -144,16 +144,28 @@ def ecef2geodetic(
 
     # eqn. 4b
     try:
-        with warnings.catch_warnings(record=True):
-            warnings.simplefilter("error")
-            Beta = atan(huE / u * z / hypot(x, y))
-    except (ArithmeticError, RuntimeWarning):
-        if any(isclose(z, 0)):
-            Beta = 0
-        elif z > 0:
-            Beta = pi / 2
-        else:
-            Beta = -pi / 2
+        Beta = empty_like(r)
+        ibad = isclose(u, 0) | isclose(Q, 0)
+        Beta[~ibad] = atan(huE[~ibad] / u[~ibad] * z[~ibad] / Q[~ibad])
+        iz = ibad & isclose(z, 0)
+        i1 = ibad & ~iz & (z > 0)
+        i2 = ibad & ~iz & ~i1
+
+        Beta[iz] = 0
+        Beta[i1] = pi / 2
+        Beta[i2] = -pi / 2
+    except NameError:
+        try:
+            with warnings.catch_warnings(record=True):
+                warnings.simplefilter("error")
+                Beta = atan(huE / u * z / Q)
+        except (ArithmeticError, RuntimeWarning):
+            if isclose(z, 0):
+                Beta = 0
+            elif z > 0:
+                Beta = pi / 2
+            else:
+                Beta = -pi / 2
 
     # eqn. 13
     dBeta = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)) / (
