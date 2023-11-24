@@ -4,7 +4,7 @@ Compare with Matlab Mapping Toolbox reckon()
 """
 
 from __future__ import annotations
-
+import argparse
 import logging
 from math import isclose, nan
 import numpy as np
@@ -80,9 +80,15 @@ distance: Python: {srng88}  Matlab: {srng88}
     return ok
 
 
+p = argparse.ArgumentParser(description="compare vreckon")
+p.add_argument(
+    "-f", "--force_matmap3d", help="use matmap3d instead of Matlab OEM Toolbox", action="store_true"
+)
+P = p.parse_args()
+
 eng = matlab_engine()
 
-print("Mapping Toolbox:", has_mapping(eng))
+print("Mapping Toolbox:", has_mapping(eng, P.force_matmap3d))
 
 if unit(eng) and stability(eng):
     print("OK: vreckon compare")

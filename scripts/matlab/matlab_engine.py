@@ -41,7 +41,14 @@ def has_matmap3d(eng) -> bool:
 
 
 @functools.cache
-def has_aerospace(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
+def has_aerospace(
+    eng: matlab.engine.matlabengine.MatlabEngine, force_matmap3d: bool = False
+) -> bool:
+    if force_matmap3d:
+        if not has_matmap3d(eng):
+            raise EnvironmentError("did not find MatMap3d")
+        return False
+
     if eng.matlab_toolbox()["aerospace"]:
         return True
 
@@ -51,7 +58,12 @@ def has_aerospace(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
     return False
 
 
-def has_mapping(eng: matlab.engine.matlabengine.MatlabEngine) -> bool:
+def has_mapping(eng: matlab.engine.matlabengine.MatlabEngine, force_matmap3d: bool = False) -> bool:
+    if force_matmap3d:
+        if not has_matmap3d(eng):
+            raise EnvironmentError("did not find MatMap3d")
+        return False
+
     if eng.matlab_toolbox()["mapping"]:
         return True
 

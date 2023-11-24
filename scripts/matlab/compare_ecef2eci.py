@@ -4,6 +4,7 @@ Compare ecef2eci() with Matlab Aerospace Toolbox
 """
 
 from __future__ import annotations
+import argparse
 import logging
 from datetime import datetime
 
@@ -56,13 +57,19 @@ def compare_eci2ecef(eng, eci, utc) -> bool:
     return ok
 
 
-eng = matlab_engine()
-
 ecef = [-5762640.0, -1682738.0, 3156028.0]
 eci = [-3009680.518620539, 5194367.153184303, 3156028.0]
 utc_py = datetime(2019, 1, 4, 12)
 
-print("Aerospace Toolbox:", has_aerospace(eng))
+p = argparse.ArgumentParser(description="compare ecef eci")
+p.add_argument(
+    "-f", "--force_matmap3d", help="use matmap3d instead of Matlab OEM Toolbox", action="store_true"
+)
+P = p.parse_args()
+
+eng = matlab_engine()
+
+print("Mapping Toolbox:", has_aerospace(eng, P.force_matmap3d))
 
 if ecef2eci_ok := compare_ecef2eci(eng, ecef, utc_py):
     print("OK: PyMap3d ecef2eci vs. Matlab ecef2eci")

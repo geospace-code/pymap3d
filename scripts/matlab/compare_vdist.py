@@ -4,7 +4,7 @@ Compare with Matlab Mapping Toolbox distance()
 """
 
 from __future__ import annotations
-
+import argparse
 import logging
 from math import isclose, nan
 import numpy as np
@@ -53,9 +53,15 @@ def stability(eng) -> bool:
     return ok
 
 
+p = argparse.ArgumentParser(description="compare vdist")
+p.add_argument(
+    "-f", "--force_matmap3d", help="use matmap3d instead of Matlab OEM Toolbox", action="store_true"
+)
+P = p.parse_args()
+
 eng = matlab_engine()
 
-print("Mapping Toolbox:", has_mapping(eng))
+print("Mapping Toolbox:", has_mapping(eng, P.force_matmap3d))
 
 if stability(eng):
     print("OK: vdist compare")
