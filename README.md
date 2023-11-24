@@ -166,9 +166,14 @@ As noted above, use list comprehension if you need vector data without Numpy.
 
 ## Compare to Matlab Mapping and Aerospace Toolbox
 
-In the
-[./scripts/matlab/](scripts/matlab/)
-directory are "compare_*.py" Python scripts that use
+The tests in files tests/test_matlab*.py selected by
+
+```sh
+pytest -k matlab
+# run from pymap3d/ top-level directory
+```
+
+use
 [Matlab Engine for Python](https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)
 to compare Python PyMap3D output with Matlab output using Matlab functions.
 
