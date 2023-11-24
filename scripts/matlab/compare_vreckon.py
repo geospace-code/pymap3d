@@ -53,11 +53,38 @@ def stability(eng) -> bool:
     return ok
 
 
+def unit(eng) -> bool:
+    """
+    Test various extrema and other values of interest
+    """
+
+    latlon88 = 52.22610277777778, -1.2696583333333333
+    srng88 = 839.63
+    az88 = 63.02
+
+    # issue 88
+    lat_p, lon_p = pymap3d.vincenty.vreckon(*latlon88, srng88, az88)
+
+    lat_m, lon_m = reckon(eng, *latlon88, srng88, az88)
+
+    ok = isclose(lat_p, lat_m) and isclose(lon_p, lon_m)
+
+    if not ok:
+        logging.error(
+            f"""MISMATCH: lat/lon {latlon88[0]} {latlon88[1]}
+azimuth: Python: {az88}  Matlab: {az88}
+distance: Python: {srng88}  Matlab: {srng88}
+"""
+        )
+
+    return ok
+
+
 eng = matlab_engine()
 
 print("Mapping Toolbox:", has_mapping(eng))
 
-if stability(eng):
+if unit(eng) and stability(eng):
     print("OK: vreckon compare")
 else:
     raise ValueError("FAIL: vreckon compare")
