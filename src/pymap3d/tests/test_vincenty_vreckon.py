@@ -1,4 +1,7 @@
+from math import radians
+
 import pymap3d.vincenty as vincenty
+
 import pytest
 from pytest import approx
 
@@ -14,6 +17,7 @@ lon3 = (20.0168471, 20.00644951)
 az3 = (218.00292856, 225.0011203)
 
 
+@pytest.mark.parametrize("deg", [True, False])
 @pytest.mark.parametrize(
     "lat,lon,srange,az,lato,lono",
     [
@@ -26,8 +30,11 @@ az3 = (218.00292856, 225.0011203)
         (0, 0, 2.00375e7, -90, 0, 180),
     ],
 )
-def test_unit(lat, lon, srange, az, lato, lono):
-    lat1, lon1 = vincenty.vreckon(lat, lon, srange, az)
+def test_vreckon_unit(deg, lat, lon, srange, az, lato, lono):
+    if not deg:
+        lat, lon, az, lato, lono = map(radians, (lat, lon, az, lato, lono))
+
+    lat1, lon1 = vincenty.vreckon(lat, lon, srange, az, deg=deg)
 
     assert lat1 == approx(lato)
     assert isinstance(lat1, float)

@@ -2,6 +2,8 @@
 import from Numpy, and if not available fallback to math stdlib
 """
 
+from __future__ import annotations
+
 try:
     from numpy import arcsin as asin
     from numpy import arcsinh as asinh
@@ -17,6 +19,7 @@ try:
         inf,
         isclose,
         isnan,
+        linspace,
         log,
         power,
         radians,
@@ -45,6 +48,14 @@ except ImportError:
         sqrt,
         tan,
     )
+
+    def linspace(start: float, stop: float, num: int) -> list[float]:  # type: ignore
+        """
+        create a list of "num" evenly spaced numbers using range and increment,
+        including endpoint "stop"
+        """
+        step = (stop - start) / (num - 1)
+        return [start + i * step for i in range(num)]
 
     def power(x, y):  # type: ignore
         return pow(x, y)

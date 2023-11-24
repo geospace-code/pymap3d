@@ -8,7 +8,7 @@ import warnings
 
 import logging
 from copy import copy
-from math import nan, pi
+from math import nan, pi, tau
 
 try:
     from numpy import atleast_1d
@@ -23,6 +23,7 @@ from .mathfun import (
     cos,
     degrees,
     isnan,
+    linspace,
     radians,
     sign,
     sin,
@@ -33,13 +34,7 @@ from .mathfun import (
 __all__ = ["vdist", "vreckon", "track2"]
 
 
-def vdist(
-    Lat1,
-    Lon1,
-    Lat2,
-    Lon2,
-    ell: Ellipsoid = None,
-) -> tuple:
+def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid = None, deg: bool = True) -> tuple:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -113,26 +108,35 @@ def vdist(
 
     if ell is None:
         ell = Ellipsoid.from_name("wgs84")
+
     # %% Input check:
     try:
         Lat1 = atleast_1d(Lat1)
         Lon1 = atleast_1d(Lon1)
         Lat2 = atleast_1d(Lat2)
         Lon2 = atleast_1d(Lon2)
-        if (abs(Lat1) > 90).any() | (abs(Lat2) > 90).any():
-            raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     except NameError:
-        if (abs(Lat1) > 90) | (abs(Lat2) > 90):
-            raise ValueError("Input latitudes must be in [-90, 90] degrees.")
+        pass
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
     b = ell.semiminor_axis
     f = ell.flattening
-    # %% convert inputs in degrees to radians:
-    lat1 = radians(Lat1)
-    lon1 = radians(Lon1)
-    lat2 = radians(Lat2)
-    lon2 = radians(Lon2)
+
+    if deg:
+        Lat1 = radians(Lat1)
+        Lon1 = radians(Lon1)
+        Lat2 = radians(Lat2)
+        Lon2 = radians(Lon2)
+
+    # keep old variable names in case someone is using them
+    lat1, lon1, lat2, lon2 = Lat1, Lon1, Lat2, Lon2
+
+    try:
+        if (abs(lat1) > pi / 2).any() | (abs(lat2) > pi / 2).any():
+            raise ValueError("Input latitudes must be in [-90, 90] degrees.")
+    except AttributeError:
+        if abs(lat1) > pi / 2 or abs(lat2) > pi / 2:
+            raise ValueError("Input latitudes must be in [-90, 90] degrees.")
     # %% correct for errors at exact poles by adjusting 0.6 millimeters:
     try:
         i = abs(pi / 2 - abs(lat1)) < 1e-10
@@ -269,23 +273,18 @@ def vdist(
     numer = cos(U2) * sin(lamb)
     denom = cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)
     a12 = atan2(numer, denom)
-    a12 %= 2 * pi
+    a12 %= tau
 
-    az = degrees(a12)
+    if deg:
+        a12 = degrees(a12)
 
     try:
-        return dist_m.squeeze()[()], az.squeeze()[()]
+        return dist_m.squeeze()[()], a12.squeeze()[()]
     except AttributeError:
-        return dist_m, az
+        return dist_m, a12
 
 
-def vreckon(
-    Lat1,
-    Lon1,
-    Rng,
-    Azim,
-    ell: Ellipsoid = None,
-) -> tuple:
+def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid = None, deg: bool = True) -> tuple:
     """
     This is the Vincenty "forward" solution.
 
@@ -310,6 +309,8 @@ def vreckon(
         intial azimuth (degrees) clockwide from north.
     ell : Ellipsoid, optional
           reference ellipsoid
+    deg : bool, optional
+          angular units degrees (default) or radians
 
     Results
     -------
@@ -348,13 +349,9 @@ def vreckon(
         Lon1 = atleast_1d(Lon1)
         Rng = atleast_1d(Rng)
         Azim = atleast_1d(Azim)
-        if (abs(Lat1) > 90.0).any():
-            raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
         if (Rng < 0.0).any():
             raise ValueError("Ground distance must be positive")
     except NameError:
-        if abs(Lat1) > 90.0:
-            raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
         if Rng < 0.0:
             raise ValueError("Ground distance must be positive")
 
@@ -367,8 +364,20 @@ def vreckon(
         b = 6356752.31424518  # WGS84 earth flattening coefficient definition
         f = (a - b) / a
 
-    lat1 = radians(Lat1)  # intial latitude in radians
-    lon1 = radians(Lon1)  # intial longitude in radians
+    if deg:
+        Lat1 = radians(Lat1)  # intial latitude in radians
+        Lon1 = radians(Lon1)  # intial longitude in radians
+        Azim = radians(Azim)
+
+    # in case someone is using the old variable names
+    lat1, lon1 = Lat1, Lon1
+
+    try:
+        if (abs(lat1) > pi / 2).any():
+            raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
+    except AttributeError:
+        if abs(lat1) > pi / 2:
+            raise ValueError("Input lat. must be between -90 and 90 deg., inclusive.")
 
     # correct for errors at exact poles by adjusting 0.6 millimeters:
     try:
@@ -378,7 +387,7 @@ def vreckon(
         if abs(pi / 2 - abs(lat1)) < 1e-10:
             lat1 = sign(lat1) * (pi / 2 - (1e-10))
 
-    alpha1 = radians(Azim)  # inital azimuth in radians
+    alpha1 = Azim  # inital azimuth in radians
     sinAlpha1 = sin(alpha1)
     cosAlpha1 = cos(alpha1)
 
@@ -448,19 +457,22 @@ def vreckon(
         * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)))
     )
 
-    lon2 = degrees(lon1 + L)
-
+    lon2 = lon1 + L
     # Truncates angles into the [-pi pi] range
     # if lon2 > pi:
     #    lon2 = pi*((absolute(lon2)/pi) -
     #       2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
-    lon2 = lon2 % 360  # follow [0, 360) convention
+    lon2 %= tau  # follow [0, 360) convention
+
+    if deg:
+        lat2 = degrees(lat2)
+        lon2 = degrees(lon2)
 
     try:
-        return degrees(lat2).squeeze()[()], lon2.squeeze()[()]
+        return lat2.squeeze()[()], lon2.squeeze()[()]
     except AttributeError:
-        return degrees(lat2), lon2
+        return lat2, lon2
 
 
 def track2(
@@ -491,7 +503,7 @@ def track2(
     npts : int, optional
         number of points (default is 100)
     deg : bool, optional
-        degrees input/output  (False: radians in/out)
+          angular units degrees (default) or radians
 
     Results
     -------
@@ -509,23 +521,17 @@ def track2(
 
     if npts < 2:
         raise ValueError("npts must be greater than 1")
-
     if npts == 2:
         return [lat1, lat2], [lon1, lon2]
 
     if deg:
-        rlat1 = radians(lat1)
-        rlon1 = radians(lon1)
-        rlat2 = radians(lat2)
-        rlon2 = radians(lon2)
-    else:
-        rlat1, rlon1, rlat2, rlon2 = lat1, lon1, lat2, lon2
+        lat1 = radians(lat1)
+        lon1 = radians(lon1)
+        lat2 = radians(lat2)
+        lon2 = radians(lon2)
 
     gcarclen = 2.0 * asin(
-        sqrt(
-            (sin((rlat1 - rlat2) / 2)) ** 2
-            + cos(rlat1) * cos(rlat2) * (sin((rlon1 - rlon2) / 2)) ** 2
-        )
+        sqrt((sin((lat1 - lat2) / 2)) ** 2 + cos(lat1) * cos(lat2) * (sin((lon1 - lon2) / 2)) ** 2)
     )
     # check to see if points are antipodal (if so, route is undefined).
     if abs(gcarclen - pi) < 1e-12:
@@ -533,25 +539,13 @@ def track2(
             "cannot compute intermediate points on a great circle whose endpoints are antipodal"
         )
 
-    distance, azimuth = vdist(lat1, lon1, lat2, lon2)
-    incdist = distance / (npts - 1)
+    distance, azimuth = vdist(lat1, lon1, lat2, lon2, ell, deg=False)
+    dists = linspace(0, distance, npts)
 
-    latpt = lat1
-    lonpt = lon1
-    lons = [lonpt]
-    lats = [latpt]
-    for _ in range(npts - 2):
-        latptnew, lonptnew = vreckon(latpt, lonpt, incdist, azimuth)
-        azimuth = vdist(latptnew, lonptnew, lat2, lon2, ell=ell)[1]
-        lats.append(latptnew)
-        lons.append(lonptnew)
-        latpt = latptnew
-        lonpt = lonptnew
-    lons.append(lon2)
-    lats.append(lat2)
+    lats, lons = vreckon(lat1, lon1, dists, azimuth, ell, deg=False)
 
-    if not deg:
-        lats = list(map(radians, lats))
-        lons = list(map(radians, lons))
+    if deg:
+        lats = degrees(lats)
+        lons = degrees(lons)
 
     return lats, lons
