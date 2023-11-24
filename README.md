@@ -9,7 +9,7 @@
 [![PyPi Download stats](http://pepy.tech/badge/pymap3d)](http://pepy.tech/project/pymap3d)
 
 Pure Python (no prerequistes beyond Python itself) 3-D geographic coordinate conversions and geodesy.
-API similar to popular $1000 Matlab Mapping Toolbox routines for Python
+Function syntax is roughly similar to Matlab Mapping Toolbox.
 PyMap3D is intended for non-interactive use on massively parallel (HPC) and embedded systems.
 
 [API docs](https://geospace-code.github.io/pymap3d/)
@@ -68,9 +68,9 @@ shaped N-D arrays:
 
 ```python
 aer = (az,el,slantrange)
-obslla = (obs_lat,obs_lon,obs_alt)
+obslla = (obs_lat ,obs_lon, obs_alt)
 
-lla = pm.aer2geodetic(*aer,*obslla)
+lla = pm.aer2geodetic(*aer, *obslla)
 ```
 
 where tuple `lla` is comprised of scalar or N-D arrays `(lat,lon,alt)`.
@@ -163,6 +163,14 @@ As noted above, use list comprehension if you need vector data without Numpy.
 * Atmospheric effects neglected in all functions not invoking AstroPy.
   Would need to update code to add these input parameters (just start a GitHub Issue to request).
 * Planetary perturbations and nutation etc. not fully considered.
+
+## Compare to Matlab Mapping and Aerospace Toolbox
+
+In the
+[./scripts/matlab/](scripts/matlab/)
+directory are "compare_*.py" Python scripts that use
+[Matlab Engine for Python](https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)
+to compare Python PyMap3D output with Matlab output using Matlab functions.
 
 ## Notes
 
