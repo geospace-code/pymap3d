@@ -18,7 +18,7 @@ jobs:
     name: ${{ matrix.os }} Python ${{ matrix.python-version }}
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         os: [ubuntu-latest]
         include:
         - os: macos-latest
@@ -35,7 +35,9 @@ jobs:
     - run: pip install .[full,tests,lint]
 
     - run: flake8
+
     - run: mypy
+      if: ${{ matrix.python-version >= '3.9' }}
 
     - run: pytest
 
@@ -45,7 +47,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.12"]
 
     steps:
       - uses: actions/checkout@v4
