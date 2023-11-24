@@ -5,10 +5,7 @@ on:
     paths:
     - "**.py"
     - .github/workflows/ci.yml
-    - "!scripts/"
-    pull-request:
-    - "**.py"
-    - .github/workflows/ci.yml
+    - "!scripts/**"
 
 jobs:
 
