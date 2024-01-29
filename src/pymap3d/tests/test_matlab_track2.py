@@ -13,6 +13,8 @@ try:
     from .matlab_engine import matlab_engine, has_mapping
 except ImportError:
     pytest.skip("Matlab Engine not found", allow_module_level=True)
+except RuntimeError:
+    pytest.skip("Matlab Engine configuration error", allow_module_level=True)
 
 
 import pymap3d.vincenty

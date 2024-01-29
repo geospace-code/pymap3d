@@ -12,6 +12,9 @@ try:
     from .matlab_engine import matlab_engine, has_mapping, has_matmap3d
 except ImportError:
     pytest.skip("Matlab Engine not found", allow_module_level=True)
+except RuntimeError:
+    pytest.skip("Matlab Engine configuration error", allow_module_level=True)
+
 
 from pymap3d.vincenty import vdist
 

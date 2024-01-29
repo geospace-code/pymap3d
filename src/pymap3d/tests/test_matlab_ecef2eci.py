@@ -15,6 +15,8 @@ try:
     from .matlab_engine import matlab_engine, has_aerospace, has_matmap3d, pydt2matdt
 except ImportError:
     pytest.skip("Matlab Engine not found", allow_module_level=True)
+except RuntimeError:
+    pytest.skip("Matlab Engine configuration error", allow_module_level=True)
 
 
 def ecef2eci(eng, matmap3d: bool, utc_m, ecef):
