@@ -218,6 +218,12 @@ def ecef2geodetic(
     if deg:
         lat = degrees(lat)
         lon = degrees(lon)
+    else:
+        try:
+            lat = lat.squeeze()[()]
+            # ensures scalar in, scalar out
+        except AttributeError:
+            pass
 
     return lat, lon, alt
 
