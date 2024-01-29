@@ -14,10 +14,8 @@ def test_ecef_ned():
     ned = (enu[1], enu[0], -enu[2])
     xyz = pm.aer2ecef(*aer0, *lla0)
 
-    n, e, d = pm.ecef2ned(*xyz, *lla0)
-    assert n == approx(ned[0])
-    assert e == approx(ned[1])
-    assert d == approx(ned[2])
+    ned1 = pm.ecef2ned(*xyz, *lla0)
+    assert ned1 == approx(ned)
 
     assert pm.ned2ecef(*ned, *lla0) == approx(xyz)
 
@@ -31,25 +29,17 @@ def test_enuv_nedv():
 
 
 def test_ned_geodetic():
-    lat1, lon1, alt1 = pm.aer2geodetic(*aer0, *lla0)
+    lla1 = pm.aer2geodetic(*aer0, *lla0)
 
-    enu3 = pm.geodetic2enu(lat1, lon1, alt1, *lla0)
+    enu3 = pm.geodetic2enu(*lla1, *lla0)
     ned3 = (enu3[1], enu3[0], -enu3[2])
 
-    assert pm.geodetic2ned(lat1, lon1, alt1, *lla0) == approx(ned3)
+    assert pm.geodetic2ned(*lla1, *lla0) == approx(ned3)
 
-    lat, lon, alt = pm.enu2geodetic(*enu3, *lla0)
-    assert lat == approx(lat1)
-    assert lon == approx(lon1)
-    assert alt == approx(alt1)
-    assert isinstance(lat, float)
-    assert isinstance(lon, float)
-    assert isinstance(alt, float)
+    lla2 = pm.enu2geodetic(*enu3, *lla0)
+    assert lla2 == approx(lla1)
+    assert all(isinstance(n, float) for n in lla2)
 
-    lat, lon, alt = pm.ned2geodetic(*ned3, *lla0)
-    assert lat == approx(lat1)
-    assert lon == approx(lon1)
-    assert alt == approx(alt1)
-    assert isinstance(lat, float)
-    assert isinstance(lon, float)
-    assert isinstance(alt, float)
+    lla2 = pm.ned2geodetic(*ned3, *lla0)
+    assert lla2 == approx(lla1)
+    assert all(isinstance(n, float) for n in lla2)
