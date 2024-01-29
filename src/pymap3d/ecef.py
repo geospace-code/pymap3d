@@ -138,15 +138,20 @@ def ecef2geodetic(
     # eqn. 4a
     u = sqrt(0.5 * (r**2 - E**2) + 0.5 * hypot(r**2 - E**2, 2 * E * z))
 
-    Q = hypot(x, y)
+    hxy = hypot(x, y)
 
     huE = hypot(u, E)
 
     # eqn. 4b
     try:
         Beta = empty_like(r)
-        ibad = isclose(u, 0) | isclose(Q, 0)
-        Beta[~ibad] = atan(huE[~ibad] / u[~ibad] * z[~ibad] / Q[~ibad])
+        ibad = isclose(u, 0) | isclose(hxy, 0)
+        Beta[~ibad] = atan(huE[~ibad] / u[~ibad] * z[~ibad] / hxy[~ibad])
+        # eqn. 13
+        Beta[~ibad] += (
+            (ell.semiminor_axis * u[~ibad] - ell.semimajor_axis * huE[~ibad] + E**2)
+            * sin(Beta[~ibad])
+        ) / (ell.semimajor_axis * huE[~ibad] * 1 / cos(Beta[~ibad]) - E**2 * cos(Beta[~ibad]))
         iz = ibad & isclose(z, 0)
         i1 = ibad & ~iz & (z > 0)
         i2 = ibad & ~iz & ~i1
@@ -158,7 +163,14 @@ def ecef2geodetic(
         try:
             with warnings.catch_warnings(record=True):
                 warnings.simplefilter("error")
-                Beta = atan(huE / u * z / Q)
+                Beta = atan(huE / u * z / hxy)
+                # eqn. 13
+                Beta += (
+                    (ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)
+                ) / (
+                    ell.semimajor_axis * huE * 1 / cos(Beta)
+                    - E**2 * cos(Beta)
+                )
         except (ArithmeticError, RuntimeWarning):
             if isclose(z, 0):
                 Beta = 0
@@ -167,20 +179,13 @@ def ecef2geodetic(
             else:
                 Beta = -pi / 2
 
-    # eqn. 13
-    dBeta = ((ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)) / (
-        ell.semimajor_axis * huE * 1 / cos(Beta) - E**2 * cos(Beta)
-    )
-
-    Beta += dBeta
-
     # eqn. 4c
     # %% final output
     lat = atan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
 
     try:
         # patch latitude for float32 precision loss
-        lim_pi2 = pi / 2 - finfo(dBeta.dtype).eps
+        lim_pi2 = pi / 2 - finfo(Beta.dtype).eps
         lat = where(Beta >= lim_pi2, pi / 2, lat)
         lat = where(Beta <= -lim_pi2, -pi / 2, lat)
     except NameError:
@@ -197,7 +202,7 @@ def ecef2geodetic(
     except NameError:
         pass
 
-    alt = hypot(z - ell.semiminor_axis * sin(Beta), Q - ell.semimajor_axis * cosBeta)
+    alt = hypot(z - ell.semiminor_axis * sin(Beta), hxy - ell.semimajor_axis * cosBeta)
 
     # inside ellipsoid?
     inside = (
