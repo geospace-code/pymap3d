@@ -151,7 +151,7 @@ class Ellipsoid:
     }
 
     @classmethod
-    def from_name(cls, name: str) -> Ellipsoid | None:
+    def from_name(cls, name: str) -> Ellipsoid:
         """Create an Ellipsoid from a name."""
 
         return cls(

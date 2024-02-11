@@ -167,28 +167,3 @@ def test_numpy_geodetic_parametric():
     pytest.importorskip("numpy")
     assert latitude.geodetic2parametric([45, 0]) == approx([44.9037878, 0])
     assert latitude.parametric2geodetic([44.9037878, 0]) == approx([45, 0])
-
-
-@pytest.mark.parametrize("lat", [91, -91])
-def test_badvals(lat):
-    # geodetic_isometric is not included on purpose
-    with pytest.raises(ValueError):
-        latitude.geodetic2geocentric(lat, 0)
-    with pytest.raises(ValueError):
-        latitude.geocentric2geodetic(lat, 0)
-    with pytest.raises(ValueError):
-        latitude.geodetic2conformal(lat)
-    with pytest.raises(ValueError):
-        latitude.conformal2geodetic(lat)
-    with pytest.raises(ValueError):
-        latitude.geodetic2rectifying(lat)
-    with pytest.raises(ValueError):
-        latitude.rectifying2geodetic(lat)
-    with pytest.raises(ValueError):
-        latitude.geodetic2authalic(lat)
-    with pytest.raises(ValueError):
-        latitude.authalic2geodetic(lat)
-    with pytest.raises(ValueError):
-        latitude.geodetic2parametric(lat)
-    with pytest.raises(ValueError):
-        latitude.parametric2geodetic(lat)

@@ -33,8 +33,10 @@ from .mathfun import (
 
 __all__ = ["vdist", "vreckon", "track2"]
 
+ELL = Ellipsoid.from_name("wgs84")
 
-def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid = None, deg: bool = True) -> tuple:
+
+def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid = ELL, deg: bool = True) -> tuple:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -105,9 +107,6 @@ def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid = None, deg: bool = True) -> tu
      11. Azimuths agree with the Mapping Toolbox, version 2.2 (R14SP3) to within about a hundred-thousandth of a degree, except when traversing to or from a pole, where the convention for this function is described in (10), and except in the cases noted above in (9).
      12. No warranties; use at your own risk.
     """
-
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
 
     # %% Input check:
     try:
@@ -284,7 +283,7 @@ def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid = None, deg: bool = True) -> tu
         return dist_m, a12
 
 
-def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid = None, deg: bool = True) -> tuple:
+def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid = ELL, deg: bool = True) -> tuple:
     """
     This is the Vincenty "forward" solution.
 
@@ -355,14 +354,9 @@ def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid = None, deg: bool = True) -> t
         if Rng < 0.0:
             raise ValueError("Ground distance must be positive")
 
-    if ell is not None:
-        a = ell.semimajor_axis
-        b = ell.semiminor_axis
-        f = ell.flattening
-    else:  # Supply WGS84 earth ellipsoid axis lengths in meters:
-        a = 6378137  # semimajor axis
-        b = 6356752.31424518  # WGS84 earth flattening coefficient definition
-        f = (a - b) / a
+    a = ell.semimajor_axis
+    b = ell.semiminor_axis
+    f = ell.flattening
 
     if deg:
         Lat1 = radians(Lat1)  # intial latitude in radians
@@ -480,7 +474,7 @@ def track2(
     lon1,
     lat2,
     lon2,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     npts: int = 100,
     deg: bool = True,
 ) -> tuple[list, list]:
@@ -515,9 +509,6 @@ def track2(
 
     Based on code posted to the GMT mailing list in Dec 1999 by Jim Levens and by Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
-
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
 
     if npts < 2:
         raise ValueError("npts must be greater than 1")

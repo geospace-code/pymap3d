@@ -22,8 +22,10 @@ __all__ = [
     "biaxial",
 ]
 
+ELL = Ellipsoid.from_name("wgs84")
 
-def eqavol(ell: Ellipsoid = None) -> float:
+
+def eqavol(ell: Ellipsoid = ELL) -> float:
     """computes the radius of the sphere with equal volume as the ellipsoid
 
     Parameters
@@ -36,15 +38,13 @@ def eqavol(ell: Ellipsoid = None) -> float:
     radius: float
         radius of sphere
     """
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
 
     f = ell.flattening
 
     return ell.semimajor_axis * (1 - f / 3 - f**2 / 9)
 
 
-def authalic(ell: Ellipsoid = None) -> float:
+def authalic(ell: Ellipsoid = ELL) -> float:
     """computes the radius of the sphere with equal surface area as the ellipsoid
 
     Parameters
@@ -57,8 +57,6 @@ def authalic(ell: Ellipsoid = None) -> float:
     radius: float
         radius of sphere
     """
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
 
     e = ell.eccentricity
 
@@ -71,7 +69,7 @@ def authalic(ell: Ellipsoid = None) -> float:
         return ell.semimajor_axis
 
 
-def rectifying(ell: Ellipsoid = None) -> float:
+def rectifying(ell: Ellipsoid = ELL) -> float:
     """computes the radius of the sphere with equal meridional distances as the ellipsoid
 
     Parameters
@@ -84,8 +82,7 @@ def rectifying(ell: Ellipsoid = None) -> float:
     radius: float
         radius of sphere
     """
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+
     return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
@@ -94,7 +91,7 @@ def euler(
     lon1,
     lat2,
     lon2,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     deg: bool = True,
 ):
     """computes the Euler radii of curvature at the midpoint of the
@@ -140,7 +137,7 @@ def euler(
     return rho * nu / den
 
 
-def curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"):
+def curve(lat, ell: Ellipsoid = ELL, deg: bool = True, method: str = "mean"):
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
@@ -175,7 +172,7 @@ def curve(lat, ell: Ellipsoid = None, deg: bool = True, method: str = "mean"):
         raise ValueError("method must be mean or norm")
 
 
-def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+def triaxial(ell: Ellipsoid = ELL, method: str = "mean") -> float:
     """computes triaxial average of the semimajor and semiminor axes of the ellipsoid
 
     Parameters
@@ -191,9 +188,6 @@ def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
         radius of sphere
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
-
     if method == "mean":
         return (2 * ell.semimajor_axis + ell.semiminor_axis) / 3
     elif method == "norm":
@@ -202,7 +196,7 @@ def triaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
         raise ValueError("method must be mean or norm")
 
 
-def biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
+def biaxial(ell: Ellipsoid = ELL, method: str = "mean") -> float:
     """computes biaxial average of the semimajor and semiminor axes of the ellipsoid
 
     Parameters
@@ -217,9 +211,6 @@ def biaxial(ell: Ellipsoid = None, method: str = "mean") -> float:
     radius: float
         radius of sphere
     """
-
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
 
     if method == "mean":
         return (ell.semimajor_axis + ell.semiminor_axis) / 2

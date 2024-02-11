@@ -4,15 +4,7 @@ all assume radians"""
 
 from __future__ import annotations
 
-from math import pi
-
-try:
-    from numpy import asarray
-except ImportError:
-    pass
-
-from .ellipsoid import Ellipsoid
-from .mathfun import atan2, cos, hypot, radians, sin
+from .mathfun import atan2, cos, hypot, sin
 
 __all__ = ["cart2pol", "pol2cart", "cart2sph", "sph2cart"]
 
@@ -43,25 +35,3 @@ def sph2cart(az, el, r) -> tuple:
     y = rcos_theta * sin(az)
     z = r * sin(el)
     return x, y, z
-
-
-def sanitize(lat, ell: Ellipsoid | None, deg: bool) -> tuple:
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
-
-    try:
-        lat = asarray(lat)
-    except NameError:
-        pass
-
-    if deg:
-        lat = radians(lat)
-
-    try:
-        if (abs(lat) > pi / 2).any():
-            raise ValueError("-pi/2 <= latitude <= pi/2")
-    except AttributeError:
-        if abs(lat) > pi / 2:
-            raise ValueError("-pi/2 <= latitude <= pi/2")
-
-    return lat, ell

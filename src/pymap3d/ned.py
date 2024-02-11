@@ -6,6 +6,18 @@ from .ecef import ecef2enu, ecef2enuv, ecef2geodetic, enu2ecef
 from .ellipsoid import Ellipsoid
 from .enu import aer2enu, enu2aer, geodetic2enu
 
+__all__ = [
+    "aer2ned",
+    "ned2aer",
+    "ned2geodetic",
+    "ned2ecef",
+    "ecef2ned",
+    "geodetic2ned",
+    "ecef2nedv",
+]
+
+ELL = Ellipsoid.from_name("wgs84")
+
 
 def aer2ned(az, elev, slantRange, deg: bool = True) -> tuple:
     """
@@ -73,7 +85,7 @@ def ned2geodetic(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     deg: bool = True,
 ) -> tuple:
     """
@@ -122,7 +134,7 @@ def ned2ecef(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     deg: bool = True,
 ) -> tuple:
     """
@@ -168,7 +180,7 @@ def ecef2ned(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     deg: bool = True,
 ) -> tuple:
     """
@@ -217,7 +229,7 @@ def geodetic2ned(
     lat0,
     lon0,
     h0,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     deg: bool = True,
 ) -> tuple:
     """

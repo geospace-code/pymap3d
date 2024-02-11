@@ -16,6 +16,8 @@ from .mathfun import sqrt
 
 __all__ = ["lookAtSpheroid"]
 
+ELL = Ellipsoid.from_name("wgs84")
+
 
 def lookAtSpheroid(
     lat0,
@@ -23,7 +25,7 @@ def lookAtSpheroid(
     h0,
     az,
     tilt,
-    ell: Ellipsoid = None,
+    ell: Ellipsoid = ELL,
     deg: bool = True,
 ) -> tuple:
     """
@@ -63,7 +65,7 @@ def lookAtSpheroid(
     """
 
     if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+        ell = ELL
 
     try:
         lat0 = asarray(lat0)
