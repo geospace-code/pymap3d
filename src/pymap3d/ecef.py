@@ -411,7 +411,16 @@ def uvw2enu(u, v, w, lat0, lon0, deg: bool = True) -> tuple:
 
 
 def eci2geodetic(
-    x, y, z, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True
+    x,
+    y,
+    z,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
@@ -432,6 +441,12 @@ def eci2geodetic(
         planet ellipsoid model
     deg : bool, optional
         if True, degrees. if False, radians
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Results
     -------
@@ -445,13 +460,22 @@ def eci2geodetic(
     eci2geodetic() a.k.a. eci2lla()
     """
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t)
+    xecef, yecef, zecef = eci2ecef(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
 
 def geodetic2eci(
-    lat, lon, alt, t: datetime, ell: Ellipsoid | None = None, *, deg: bool = True
+    lat,
+    lon,
+    alt,
+    t: datetime,
+    ell: Ellipsoid | None = None,
+    *,
+    deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
@@ -472,6 +496,12 @@ def geodetic2eci(
         planet ellipsoid model
     deg : bool, optional
         if True, degrees. if False, radians
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Results
     -------
@@ -487,7 +517,7 @@ def geodetic2eci(
 
     x, y, z = geodetic2ecef(lat, lon, alt, ell, deg)
 
-    return ecef2eci(x, y, z, t)
+    return ecef2eci(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
 
 def enu2ecef(

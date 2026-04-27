@@ -13,17 +13,28 @@ try:
 except ImportError:
     pass
 
-
-from .sidereal import greenwichsrt, juliandate
+from .earth_orientation import eci_to_ecef_matrix, matvec3, transpose3
 
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
-def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
+def eci2ecef(
+    x,
+    y,
+    z,
+    time: datetime,
+    force_non_astropy: bool = False,
+    *,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
+) -> tuple:
     """
     Observer => Point  ECI  =>  ECEF
 
-    J2000 frame
+    For the Astropy path, this converts from GCRS to ITRS.
+    For the pure-Python path, this uses a J2000-like inertial frame with
+    precession, truncated nutation, sidereal rotation, and optional polar motion.
 
     Parameters
     ----------
@@ -37,6 +48,12 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
         time of obsevation (UTC)
     force_non_astropy : bool
         if True, force use of less accurate Numpy implementation even if Astropy is available
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Results
     -------
@@ -50,15 +67,13 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     if "astropy" in sys.modules and not force_non_astropy:
         xe, ye, ze = eci2ecef_astropy(x, y, z, time)
-    elif "numpy" in sys.modules:
-        logging.warning(
-            f"{__name__}: Numpy implementation has much less accuracy than Astropy"
-        )
-        xe, ye, ze = eci2ecef_numpy(x, y, z, time)
     else:
-        raise ImportError("eci2ecef requires either Numpy or Astropy")
+        logging.warning(
+            f"{__name__}: using pure-Python ECI/ECEF fallback, less accurate than Astropy"
+        )
+        xe, ye, ze = eci2ecef_numpy(x, y, z, time, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
-    return xe.squeeze()[()], ye.squeeze()[()], ze.squeeze()[()]
+    return _squeeze_xyz(xe, ye, ze)
 
 
 def eci2ecef_astropy(x, y, z, t: datetime) -> tuple:
@@ -78,38 +93,37 @@ def eci2ecef_astropy(x, y, z, t: datetime) -> tuple:
     return x_ecef, y_ecef, z_ecef
 
 
-def eci2ecef_numpy(x, y, z, t: datetime) -> tuple:
+def eci2ecef_numpy(
+    x,
+    y,
+    z,
+    t: datetime,
+    *,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
+) -> tuple:
     """
-    eci2ecef using Numpy
+    eci2ecef using the internal pure-Python Earth orientation model.
 
     see eci2ecef() for description
     """
 
-    x = numpy.atleast_1d(x)
-    y = numpy.atleast_1d(y)
-    z = numpy.atleast_1d(z)
-    gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
-    assert x.shape == y.shape == z.shape, (
-        f"shape mismatch: x: ${x.shape}  y: {y.shape}  z: {z.shape}"
-    )
-
-    if gst.size == 1 and x.size != 1:
-        gst = numpy.broadcast_to(gst, x.shape[0])
-    assert x.size == gst.size, f"shape mismatch: x: {x.shape}  gst: {gst.shape}"
-
-    eci = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
-    ecef = numpy.empty((x.size, 3))
-    for i in range(eci.shape[0]):
-        ecef[i, :] = R3(gst[i]) @ eci[i, :].T
-
-    x_ecef = ecef[:, 0].reshape(x.shape)
-    y_ecef = ecef[:, 1].reshape(y.shape)
-    z_ecef = ecef[:, 2].reshape(z.shape)
-
-    return x_ecef.squeeze()[()], y_ecef.squeeze()[()], z_ecef.squeeze()[()]
+    rotation = eci_to_ecef_matrix(t, delta_ut1=delta_ut1, xp=xp, yp=yp)
+    return _squeeze_xyz(*_apply_rotation(rotation, x, y, z))
 
 
-def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
+def ecef2eci(
+    x,
+    y,
+    z,
+    time: datetime,
+    force_non_astropy: bool = False,
+    *,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
+) -> tuple:
     """
     Point => Point   ECEF => ECI
 
@@ -128,6 +142,12 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
         time of observation
     force_non_astropy : bool
         if True, force use of less accurate Numpy implementation even if Astropy is available
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Results
     -------
@@ -141,15 +161,13 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     if "astropy" in sys.modules and not force_non_astropy:
         xe, ye, ze = ecef2eci_astropy(x, y, z, time)
-    elif "numpy" in sys.modules:
-        logging.warning(
-            f"{__name__}: Numpy implementation has much less accuracy than Astropy"
-        )
-        xe, ye, ze = ecef2eci_numpy(x, y, z, time)
     else:
-        raise ImportError("ecef2eci requires either Numpy or Astropy")
+        logging.warning(
+            f"{__name__}: using pure-Python ECI/ECEF fallback, less accurate than Astropy"
+        )
+        xe, ye, ze = ecef2eci_numpy(x, y, z, time, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
-    return xe, ye, ze
+    return _squeeze_xyz(xe, ye, ze)
 
 
 def ecef2eci_astropy(x, y, z, t: datetime) -> tuple:
@@ -163,32 +181,53 @@ def ecef2eci_astropy(x, y, z, t: datetime) -> tuple:
     return eci.x.value, eci.y.value, eci.z.value
 
 
-def ecef2eci_numpy(x, y, z, t: datetime) -> tuple:
+def ecef2eci_numpy(
+    x,
+    y,
+    z,
+    t: datetime,
+    *,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
+) -> tuple:
     """ecef2eci using Numpy
     see ecef2eci() for description
     """
 
+    rotation = transpose3(eci_to_ecef_matrix(t, delta_ut1=delta_ut1, xp=xp, yp=yp))
+    return _squeeze_xyz(*_apply_rotation(rotation, x, y, z))
+
+
+def _apply_rotation(rotation, x, y, z):
+    """Apply a 3x3 rotation to scalar or NumPy coordinate inputs."""
+
+    if "numpy" not in sys.modules:
+        return matvec3(rotation, (x, y, z))
+
     x = numpy.atleast_1d(x)
     y = numpy.atleast_1d(y)
     z = numpy.atleast_1d(z)
-    gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
-    assert x.shape == y.shape == z.shape
-    assert x.size == gst.size
+    assert x.shape == y.shape == z.shape, (
+        f"shape mismatch: x: {x.shape}  y: {y.shape}  z: {z.shape}"
+    )
 
-    ecef = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
-    eci = numpy.empty((x.size, 3))
-    for i in range(x.size):
-        eci[i, :] = R3(gst[i]).T @ ecef[i, :]
+    vin = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
+    vout = numpy.empty((x.size, 3))
+    for i in range(vin.shape[0]):
+        vout[i, :] = matvec3(rotation, tuple(vin[i, :]))
 
     return (
-        eci[:, 0].reshape(x.shape).squeeze()[()],
-        eci[:, 1].reshape(y.shape).squeeze()[()],
-        eci[:, 2].reshape(z.shape).squeeze()[()],
+        vout[:, 0].reshape(x.shape),
+        vout[:, 1].reshape(y.shape),
+        vout[:, 2].reshape(z.shape),
     )
 
 
-def R3(x: float):
-    """Rotation matrix for ECI"""
-    return numpy.array(
-        [[numpy.cos(x), numpy.sin(x), 0], [-numpy.sin(x), numpy.cos(x), 0], [0, 0, 1]]
-    )
+def _squeeze_xyz(x, y, z):
+    """Preserve scalar inputs while supporting array outputs."""
+
+    try:
+        return x.squeeze()[()], y.squeeze()[()], z.squeeze()[()]
+    except AttributeError:
+        return x, y, z

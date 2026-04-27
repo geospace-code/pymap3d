@@ -28,6 +28,8 @@ def azel2radec(
     lon_deg: float,
     time: datetime,
     force_non_astropy: bool = False,
+    *,
+    delta_ut1: float = 0.0,
 ) -> tuple[float, float]:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
@@ -56,7 +58,9 @@ def azel2radec(
     """
 
     if force_non_astropy or "astropy" not in sys.modules:
-        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)
+        return vazel2radec(
+            az_deg, el_deg, lat_deg, lon_deg, time, delta_ut1=delta_ut1
+        )
     else:
         return azel2radec_astropy(az_deg, el_deg, lat_deg, lon_deg, time)
 
@@ -85,6 +89,8 @@ def radec2azel(
     lon_deg: float,
     time: datetime,
     force_non_astropy: bool = False,
+    *,
+    delta_ut1: float = 0.0,
 ) -> tuple[float, float]:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
@@ -113,7 +119,9 @@ def radec2azel(
     """
 
     if force_non_astropy or "astropy" not in sys.modules:
-        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
+        return vradec2azel(
+            ra_deg, dec_deg, lat_deg, lon_deg, time, delta_ut1=delta_ut1
+        )
     else:
         return radec2azel_astropy(ra_deg, dec_deg, lat_deg, lon_deg, time)
 

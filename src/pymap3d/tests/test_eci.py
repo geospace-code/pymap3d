@@ -25,13 +25,9 @@ def test_eci2ecef():
 
 
 def test_eci2ecef_numpy():
-    pytest.importorskip("numpy")
-
     ecef = pm.eci2ecef(*ECI, UTC, force_non_astropy=True)
 
-    rel = 0.025
-
-    assert ecef == approx(ECEF, rel=rel)
+    assert ecef == approx(ECEF, abs=60)
     assert isinstance(ecef[0], float)
     assert isinstance(ecef[1], float)
     assert isinstance(ecef[2], float)
@@ -62,13 +58,9 @@ def test_ecef2eci(force_non_astropy):
 
 
 def test_ecef2eci_numpy():
-    pytest.importorskip("numpy")
-
     eci = pm.eci.ecef2eci_numpy(*ECEF, UTC)
 
-    rel = 0.025
-
-    assert eci == approx(ECI, rel=rel)
+    assert eci == approx(ECI, abs=60)
     assert isinstance(eci[0], float)
     assert isinstance(eci[1], float)
     assert isinstance(eci[2], float)
@@ -88,25 +80,30 @@ def test_ecef2eci_astropy():
 
 
 def test_eci2geodetic():
-    pytest.importorskip("numpy")
-
     lla = pm.eci2geodetic(*ECI, UTC)
 
-    rel = 0.01 if astropy is None else 0.0001
+    rel = 2e-6 if astropy is None else 0.0001
 
     assert lla == approx([27.880801, -163.722058, 408850.646], rel=rel)
 
 
 def test_geodetic2eci():
-    pytest.importorskip("numpy")
-
     lla = [27.880801, -163.722058, 408850.646]
 
     eci = pm.geodetic2eci(*lla, UTC)
 
-    rel = 0.01 if astropy is None else 0.0001
+    rel = 2e-5 if astropy is None else 0.0001
 
     assert eci == approx([-2981784, 5207055, 3161595], rel=rel)
+
+
+def test_eci_ecef_eop_roundtrip():
+    eop = {"delta_ut1": -0.139198, "xp": 0.094, "yp": 0.324}
+
+    ecef = pm.eci2ecef(*ECI, UTC, force_non_astropy=True, **eop)
+    eci = pm.ecef2eci(*ecef, UTC, force_non_astropy=True, **eop)
+
+    assert eci == approx(ECI, abs=1e-6)
 
 
 def test_eci_aer():

@@ -22,6 +22,8 @@ def azel2radec(
     lat_deg: float,
     lon_deg: float,
     time: datetime,
+    *,
+    delta_ut1: float = 0.0,
 ) -> tuple[float, float]:
     """
     converts azimuth, elevation to right ascension, declination
@@ -68,7 +70,7 @@ def azel2radec(
         (sin(el) - sin(lat) * sin(dec)) / (cos(dec) * cos(lat)),
     )
 
-    lst = datetime2sidereal(time, lon)  # lon, ra in RADIANS
+    lst = datetime2sidereal(time, lon, delta_ut1=delta_ut1)  # lon, ra in RADIANS
 
     """ by definition right ascension [0, 360) degrees """
     return degrees(lst - lha) % 360, degrees(dec)
@@ -80,6 +82,8 @@ def radec2azel(
     lat_deg: float,
     lon_deg: float,
     time: datetime,
+    *,
+    delta_ut1: float = 0.0,
 ) -> tuple[float, float]:
     """
     converts right ascension, declination to azimuth, elevation
@@ -118,7 +122,7 @@ def radec2azel(
     lat = radians(lat_deg)
     lon = radians(lon_deg)
 
-    lst = datetime2sidereal(time, lon)  # RADIANS
+    lst = datetime2sidereal(time, lon, delta_ut1=delta_ut1)  # RADIANS
     # %% Eq. 4-11 p. 267 LOCAL HOUR ANGLE
     lha = lst - ra
     # %% #Eq. 4-12 p. 267
