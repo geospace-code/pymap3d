@@ -178,6 +178,13 @@ __all__ = [
 
 from .aer import aer2eci, eci2aer
 from .azelradec import azel2radec, radec2azel
-from .eci import ecef2eci, eci2ecef
+from .eci import ecef2eci, ecef2eci_state, eci2ecef, eci2ecef_state
 
-__all__ += ["aer2eci", "eci2aer", "ecef2eci", "eci2ecef"]
+__all__ += [
+    "aer2eci",
+    "eci2aer",
+    "ecef2eci",
+    "eci2ecef",
+    "ecef2eci_state",
+    "eci2ecef_state",
+]

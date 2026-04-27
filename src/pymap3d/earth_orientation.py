@@ -229,6 +229,18 @@ def matmul3(a, b):
     )
 
 
+def matsub3(a, b):
+    """3x3 matrix subtraction."""
+
+    return tuple(tuple(a[i][j] - b[i][j] for j in range(3)) for i in range(3))
+
+
+def matscale3(a, scale: float):
+    """3x3 matrix scalar multiply."""
+
+    return tuple(tuple(scale * a[i][j] for j in range(3)) for i in range(3))
+
+
 def matvec3(a, v):
     """3x3 matrix by 3-vector."""
 
@@ -300,3 +312,24 @@ def eci_to_ecef_matrix(
     pm = polar_motion_matrix(xp, yp)
 
     return matmul3(pm, matmul3(st, matmul3(n, p)))
+
+
+def eci_to_ecef_matrix_rate(
+    time: datetime,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
+    dt_seconds: float = 0.5,
+):
+    """
+    Time derivative of the ECI->ECEF rotation matrix.
+
+    Uses a central difference over the same Earth-orientation model as
+    ``eci_to_ecef_matrix()``.
+    """
+
+    dt = timedelta(seconds=dt_seconds)
+    c_plus = eci_to_ecef_matrix(time + dt, delta_ut1=delta_ut1, xp=xp, yp=yp)
+    c_minus = eci_to_ecef_matrix(time - dt, delta_ut1=delta_ut1, xp=xp, yp=yp)
+
+    return matscale3(matsub3(c_plus, c_minus), 1.0 / (2.0 * dt_seconds))
