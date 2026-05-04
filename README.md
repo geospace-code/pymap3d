@@ -88,11 +88,28 @@ converted to the desired coordinate system:
 
 ```
 aer2ecef  aer2enu  aer2geodetic  aer2ned
+         aer2nwu  aer2sez
+body2ecef body2ecefv body2enu body2geodetic body2ned
+         body2nwu body2sez
 ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
+         ecef2body ecef2bodyv
+         ecef2nwu  ecef2nwuv  ecef2sez  ecef2sezv
 ecef2eci  eci2ecef eci2aer aer2eci geodetic2eci eci2geodetic
 enu2aer  enu2ecef   enu2geodetic
-geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
+         enu2body  enu2body_matrix
+         ecef2enu_matrix  enu2ecef_matrix
+geodetic2aer  geodetic2body  geodetic2ecef  geodetic2enu  geodetic2ned
+              geodetic2nwu  geodetic2sez
 ned2aer  ned2ecef   ned2geodetic
+         ned2body  ned2body_matrix
+nwu2body nwu2body_matrix
+sez2body sez2body_matrix
+         ecef2ned_matrix  ned2ecef_matrix
+nwu2aer  nwu2ecef   nwu2geodetic
+         ecef2nwu_matrix  nwu2ecef_matrix
+sez2aer  sez2ecef   sez2geodetic
+         ecef2sez_matrix  sez2ecef_matrix
+body_matrix body2enu_matrix body2ned_matrix body2nwu_matrix body2sez_matrix
 azel2radec radec2azel
 lookAtSpheroid
 track2 departure meanm
@@ -123,7 +140,51 @@ Abbreviations:
 * [ECI: Earth-centered Inertial using IERS](https://www.iers.org/IERS/EN/Home/home_node.html) via `astropy`
 * [ENU: East North Up](https://en.wikipedia.org/wiki/Axes_conventions#Ground_reference_frames:_ENU_and_NED)
 * [NED: North East Down](https://en.wikipedia.org/wiki/North_east_down)
+* NWU: North West Up
+* SEZ: South East Zenith
 * [radec: right ascension, declination](https://en.wikipedia.org/wiki/Right_ascension)
+
+### Local Frames
+
+PyMap3D includes several local tangent-plane frames:
+
+* `ENU` East, North, Up
+* `NED` North, East, Down
+* `NWU` North, West, Up
+* `SEZ` South, East, Zenith
+
+For vector-only workflows, explicit 3x3 rotation matrices are also available:
+
+```python
+import pymap3d as pm
+
+r_ecef_to_enu = pm.ecef2enu_matrix(lat0, lon0)
+r_enu_to_ecef = pm.enu2ecef_matrix(lat0, lon0)
+```
+
+### Body Frame
+
+PyMap3D also includes an aerospace body frame:
+
+* `x` forward
+* `y` right
+* `z` down
+
+The default body attitude uses yaw / pitch / roll with `sequence="zyx"`:
+
+* positive yaw turns right
+* positive pitch is nose up
+* positive roll is right wing down
+
+```python
+import pymap3d as pm
+
+xb, yb, zb = pm.ned2body(n, e, d, yaw, pitch, roll)
+n, e, d = pm.body2ned(xb, yb, zb, yaw, pitch, roll)
+```
+
+The composed body transforms can use any of the supported local parent frames:
+`frame="ned"`, `frame="enu"`, `frame="nwu"`, or `frame="sez"`.
 
 ### Ellipsoid
 

@@ -11,9 +11,18 @@ except ImportError:
 
 from .ecef import ecef2geodetic, enu2ecef, geodetic2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
+from .frames import _ecef2enu_rotation, _enu2ecef_rotation
 from .mathfun import atan2, cos, degrees, hypot, radians, sin
 
-__all__ = ["enu2aer", "aer2enu", "enu2geodetic", "geodetic2enu", "enu2ecefv"]
+__all__ = [
+    "enu2aer",
+    "aer2enu",
+    "enu2geodetic",
+    "geodetic2enu",
+    "enu2ecefv",
+    "ecef2enu_matrix",
+    "enu2ecef_matrix",
+]
 
 
 def enu2aer(e, n, u, deg: bool = True) -> tuple:
@@ -241,3 +250,19 @@ def enu2ecefv(e, n, u, lat0, lon0, deg: bool = True) -> tuple:
     z = cos(lat0) * n + sin(lat0) * u
 
     return x, y, z
+
+
+def ecef2enu_matrix(lat0, lon0, deg: bool = True):
+    """
+    Rotation matrix that maps ECEF vectors into ENU coordinates.
+    """
+
+    return _ecef2enu_rotation(lat0, lon0, deg=deg)
+
+
+def enu2ecef_matrix(lat0, lon0, deg: bool = True):
+    """
+    Rotation matrix that maps ENU vectors into ECEF coordinates.
+    """
+
+    return _enu2ecef_rotation(lat0, lon0, deg=deg)

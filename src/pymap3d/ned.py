@@ -5,6 +5,7 @@ from __future__ import annotations
 from .ecef import ecef2enu, ecef2enuv, ecef2geodetic, enu2ecef
 from .ellipsoid import Ellipsoid
 from .enu import aer2enu, enu2aer, geodetic2enu
+from .frames import _ecef2ned_rotation, _ned2ecef_rotation
 
 __all__ = [
     "aer2ned",
@@ -14,6 +15,8 @@ __all__ = [
     "ecef2ned",
     "geodetic2ned",
     "ecef2nedv",
+    "ecef2ned_matrix",
+    "ned2ecef_matrix",
 ]
 
 
@@ -303,3 +306,19 @@ def ecef2nedv(x, y, z, lat0, lon0, deg: bool = True) -> tuple[float, float, floa
     e, n, u = ecef2enuv(x, y, z, lat0, lon0, deg=deg)
 
     return n, e, -u
+
+
+def ecef2ned_matrix(lat0, lon0, deg: bool = True):
+    """
+    Rotation matrix that maps ECEF vectors into NED coordinates.
+    """
+
+    return _ecef2ned_rotation(lat0, lon0, deg=deg)
+
+
+def ned2ecef_matrix(lat0, lon0, deg: bool = True):
+    """
+    Rotation matrix that maps NED vectors into ECEF coordinates.
+    """
+
+    return _ned2ecef_rotation(lat0, lon0, deg=deg)
