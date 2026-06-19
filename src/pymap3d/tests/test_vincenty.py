@@ -10,8 +10,8 @@ def test_track2_unit(deg):
 
     lat1, lon1 = 0.0, 80.0
     lat2, lon2 = 0.0, 81.0
-    lat0 = [0.0, 0.0, 0.0, 0.0]
-    lon0 = [80.0, 80.33333, 80.66666, 81.0]
+    lat0 = np.array([0.0, 0.0, 0.0, 0.0])
+    lon0 = np.array([80.0, 80.33333, 80.66666, 81.0])
     if not deg:
         lat1, lon1, lat2, lon2 = np.radians((lat1, lon1, lat2, lon2))
         lat0 = np.radians(lat0)

@@ -10,11 +10,6 @@ import logging
 from copy import copy
 from math import nan, pi, tau
 
-try:
-    from numpy import atleast_1d
-except ImportError:
-    pass
-
 from .ellipsoid import Ellipsoid
 from .mathfun import (
     asin,
@@ -106,15 +101,6 @@ def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid | None = None, deg: bool = True
      12. No warranties; use at your own risk.
     """
 
-    # %% Input check:
-    try:
-        Lat1 = atleast_1d(Lat1)
-        Lon1 = atleast_1d(Lon1)
-        Lat2 = atleast_1d(Lat2)
-        Lon2 = atleast_1d(Lon2)
-    except NameError:
-        pass
-
     if ell is None:
         ell = Ellipsoid.from_name("wgs84")
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
@@ -141,13 +127,14 @@ def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid | None = None, deg: bool = True
     try:
         i = abs(pi / 2 - abs(lat1)) < 1e-10
         lat1[i] = sign(lat1[i]) * (pi / 2 - 1e-10)
-
-        i = abs(pi / 2 - abs(lat2)) < 1e-10
-        lat2[i] = sign(lat2[i]) * (pi / 2 - 1e-10)
     except TypeError:
         if abs(pi / 2 - abs(lat1)) < 1e-10:
             lat1 = sign(lat1) * (pi / 2 - 1e-10)
 
+    try:
+        i = abs(pi / 2 - abs(lat2)) < 1e-10
+        lat2[i] = sign(lat2[i]) * (pi / 2 - 1e-10)
+    except TypeError:
         if abs(pi / 2 - abs(lat2)) < 1e-10:
             lat2 = sign(lat2) * (pi / 2 - 1e-10)
 
@@ -345,13 +332,9 @@ def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid | None = None, deg: bool = Tru
     """
 
     try:
-        Lat1 = atleast_1d(Lat1)
-        Lon1 = atleast_1d(Lon1)
-        Rng = atleast_1d(Rng)
-        Azim = atleast_1d(Azim)
         if (Rng < 0.0).any():
             raise ValueError("Ground distance must be positive")
-    except NameError:
+    except AttributeError:
         if Rng < 0.0:
             raise ValueError("Ground distance must be positive")
 

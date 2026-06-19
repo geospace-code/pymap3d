@@ -60,7 +60,7 @@ def eci2ecef(
     else:
         raise ImportError("eci2ecef requires either Numpy or Astropy")
 
-    return xe.squeeze()[()], ye.squeeze()[()], ze.squeeze()[()]
+    return xe, ye, ze
 
 
 def eci2ecef_astropy(
@@ -89,23 +89,15 @@ def eci2ecef_numpy(x, y, z, t: datetime) -> tuple:
     see eci2ecef() for description
     """
 
-    x = np.atleast_1d(x)
-    y = np.atleast_1d(y)
-    z = np.atleast_1d(z)
-    gst = np.atleast_1d(greenwichsrt(juliandate(t)))
-    assert x.shape == y.shape == z.shape
-    if gst.size == 1 and x.size != 1:
-        gst = np.broadcast_to(gst, x.shape[0])
-    assert x.size == gst.size
+    gst = greenwichsrt(juliandate(t))
 
     c = np.cos(gst)
     s = np.sin(gst)
 
-    x_ecef = (c * x.ravel() + s * y.ravel()).reshape(x.shape)
-    y_ecef = (-s * x.ravel() + c * y.ravel()).reshape(y.shape)
-    z_ecef = z.reshape(z.shape)
+    x_ecef = c * x + s * y
+    y_ecef = -s * x + c * y
 
-    return x_ecef.squeeze()[()], y_ecef.squeeze()[()], z_ecef.squeeze()[()]
+    return x_ecef, y_ecef, z
 
 
 def ecef2eci(
@@ -168,21 +160,13 @@ def ecef2eci_numpy(x, y, z, t: datetime) -> tuple:
     """ecef2eci using Numpy
     see ecef2eci() for description
     """
-    x = np.atleast_1d(x)
-    y = np.atleast_1d(y)
-    z = np.atleast_1d(z)
-    gst = np.atleast_1d(greenwichsrt(juliandate(t)))
 
-    assert x.shape == y.shape == z.shape
-    if gst.size == 1 and x.size != 1:
-        gst = np.broadcast_to(gst, x.shape[0])
-    assert x.size == gst.size
+    gst = greenwichsrt(juliandate(t))
 
     c = np.cos(gst)
     s = np.sin(gst)
 
-    x_eci = (c * x.ravel() - s * y.ravel()).reshape(x.shape)
-    y_eci = (s * x.ravel() + c * y.ravel()).reshape(y.shape)
-    z_eci = z.reshape(z.shape)
+    x_eci = c * x - s * y
+    y_eci = s * x + c * y
 
-    return x_eci.squeeze()[()], y_eci.squeeze()[()], z_eci.squeeze()[()]
+    return x_eci, y_eci, z
