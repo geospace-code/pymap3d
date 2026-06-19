@@ -71,13 +71,6 @@ except ImportError:
 
         return y
 
-    try:
-        import math.cbrt as cbrt  # type: ignore
-    except ImportError:
-
-        def cbrt(x) -> float:  # type: ignore
-            return x ** (1 / 3)
-
 
 __all__ = [
     "asin",
@@ -85,7 +78,7 @@ __all__ = [
     "atan",
     "atan2",
     "atanh",
-    "cbrt",
+    "cube_root",
     "cos",
     "degrees",
     "exp",
@@ -101,3 +94,14 @@ __all__ = [
     "sqrt",
     "tan",
 ]
+
+
+def cube_root(x):
+    """cube root function, handles negative numbers"""
+    try:
+        return cbrt(x)
+    except NameError:
+        if x < 0:
+            return -power(-x, 1.0 / 3.0)
+        else:
+            return power(x, 1.0 / 3.0)

@@ -7,7 +7,7 @@ radius).
 from __future__ import annotations
 
 from .ellipsoid import Ellipsoid
-from .mathfun import asin, atan2, cbrt, degrees, hypot, power, radians, sin, sqrt
+from .mathfun import asin, atan2, cube_root, degrees, hypot, power, radians, sin, sqrt
 
 __all__ = [
     "geodetic2spherical",
@@ -145,7 +145,7 @@ def spherical2geodetic(
     q_0 = (1 - ell.eccentricity**2) / ell.semimajor_axis**2 * Z**2
     r_0 = (p_0 + q_0 - ell.eccentricity**4) / 6
     s_0 = ell.eccentricity**4 * p_0 * q_0 / 4 / r_0**3
-    t_0 = cbrt(1 + s_0 + sqrt(2 * s_0 + s_0**2))
+    t_0 = cube_root(1 + s_0 + sqrt(2 * s_0 + s_0**2))
     u_0 = r_0 * (1 + t_0 + 1 / t_0)
     v_0 = sqrt(u_0**2 + q_0 * ell.eccentricity**4)
     w_0 = ell.eccentricity**2 * (u_0 + v_0 - q_0) / 2 / v_0

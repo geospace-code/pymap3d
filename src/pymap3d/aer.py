@@ -11,12 +11,7 @@ from .enu import aer2enu, enu2aer, geodetic2enu
 try:
     from .eci import ecef2eci, eci2ecef
 except ImportError:
-
-    def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
-        raise ImportError("Numpy required for eci2ecef")
-
-    def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
-        raise ImportError("Numpy required for ecef2eci")
+    from ._dummy import ecef2eci, eci2ecef
 
 
 __all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
