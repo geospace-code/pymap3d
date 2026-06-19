@@ -22,6 +22,7 @@ def test_rsphere_eqavol():
 def test_rsphere_authalic():
     assert rsphere.authalic() == approx(6371007.1809)
 
+
 def test_rsphere_curve():
     assert rsphere.curve(0) == approx(6356788.163646411)
     assert rsphere.curve(90) == approx(6399593.625758492)

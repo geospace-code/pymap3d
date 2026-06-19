@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from ._typing import FloatLike
 from .mathfun import degrees, radians, sin, cos, atan2, asin
 from .ecef import geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
 
 
-def geodetic2nvector(lat, lon, deg: bool = True) -> tuple:
+def geodetic2nvector(lat: FloatLike, lon: FloatLike, deg: bool = True) -> tuple:
     """
     Convert geodetic coordinates (latitude, longitude) to an n-vector.
 
@@ -37,7 +38,7 @@ def geodetic2nvector(lat, lon, deg: bool = True) -> tuple:
     return n1, n2, n3
 
 
-def nvector2geodetic(n1, n2, n3, deg=True) -> tuple:
+def nvector2geodetic(n1: FloatLike, n2: FloatLike, n3: FloatLike, deg: bool = True) -> tuple:
     """
     Convert an n-vector back to geodetic coordinates (latitude, longitude).
 
@@ -64,7 +65,9 @@ def nvector2geodetic(n1, n2, n3, deg=True) -> tuple:
     return lat, lon
 
 
-def ecef2nvector(x, y, z, ell: Ellipsoid | None = None, deg: bool = True):
+def ecef2nvector(
+    x: FloatLike, y: FloatLike, z: FloatLike, ell: Ellipsoid | None = None, deg: bool = True
+):
     """
     Convert ECEF coordinates to an n-vector.
 
@@ -85,7 +88,14 @@ def ecef2nvector(x, y, z, ell: Ellipsoid | None = None, deg: bool = True):
     return geodetic2nvector(lat, lon, deg=deg)
 
 
-def nvector2ecef(n1, n2, n3, alt=0, ell: Ellipsoid | None = None, deg: bool = True):
+def nvector2ecef(
+    n1: FloatLike,
+    n2: FloatLike,
+    n3: FloatLike,
+    alt: FloatLike = 0,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+):
     """
     Convert an n-vector to ECEF coordinates.
 

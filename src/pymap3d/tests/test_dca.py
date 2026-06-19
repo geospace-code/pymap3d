@@ -21,12 +21,25 @@ A, B = get_ellipsoid_params()
 )
 def test_enu_dca(enu, dca, heading):
 
-    assert pm.dca2enu(*dca, heading) == pytest.approx(enu)
-    assert pm.enu2dca(*enu, heading) == pytest.approx(dca)
+    assert pm.dca2enu(*dca, heading=heading) == pytest.approx(enu)
+    assert pm.enu2dca(*enu, heading=heading) == pytest.approx(dca)
 
     ned = enu[1], enu[0], -enu[2]
-    assert pm.dca2ned(*dca, heading) == pytest.approx(ned)
-    assert pm.ned2dca(*ned, heading) == pytest.approx(dca)
+    assert pm.dca2ned(*dca, heading=heading) == pytest.approx(ned)
+    assert pm.ned2dca(*ned, heading=heading) == pytest.approx(dca)
+
+
+def test_enu_dca_numpy():
+    np = pytest.importorskip("numpy")
+    e = np.array([0, 0, 0])
+    n = np.array([0, 0, 0])
+    u = np.array([0, 0, 0])
+    d = np.array([0, 0, 0])
+    c = np.array([0, 0, 0])
+    a = np.array([0, 0, 0])
+    heading = 15
+    assert pm.dca2enu(d, c, a, heading=heading) == pytest.approx((0, 0, 0))
+    assert pm.enu2dca(e, n, u, heading=heading) == pytest.approx((0, 0, 0))
 
 
 @pytest.mark.parametrize(

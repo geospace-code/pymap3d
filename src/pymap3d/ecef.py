@@ -88,9 +88,9 @@ def geodetic2ecef(
 
 
 def ecef2geodetic(
-    x: FloatArray,
-    y: FloatArray,
-    z: FloatArray,
+    x: FloatLike | FloatArray,
+    y: FloatLike | FloatArray,
+    z: FloatLike | FloatArray,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -138,7 +138,7 @@ def ecef2geodetic(
 
     huE = hypot(u, E)
 
-    def _inside_numpy(x: FloatArray, y: FloatArray, z: FloatArray):
+    def _inside_numpy(x, y, z) -> NDArray:
         # inside ellipsoid?
         return (
             x**2 / ell.semimajor_axis**2
@@ -156,7 +156,7 @@ def ecef2geodetic(
             < 1
         )
 
-    def _lat_alt_numpy(x: NDArray, y: NDArray, z: NDArray, Beta: NDArray) -> tuple:
+    def _lat_alt_numpy(x, y, z, Beta) -> tuple:
         """eqation 4c using Numpy"""
         lat = atan(ell.semimajor_axis / ell.semiminor_axis * tan(Beta))
         # patch latitude for float32 precision loss

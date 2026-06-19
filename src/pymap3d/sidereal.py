@@ -8,7 +8,7 @@ import sys
 import logging
 
 from .timeconv import str2dt
-from ._typing import  FloatLike, DatetimeLike
+from ._typing import FloatLike, DatetimeLike
 
 try:
     import astropy.units as u
