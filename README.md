@@ -80,25 +80,136 @@ Example scripts are in the [examples](./Examples) directory.
 Native Python float is typically [64 bit](https://docs.python.org/3/library/stdtypes.html#typesnumeric).
 Numpy can select real precision bits: 32, 64, 128, etc.
 
-### Functions
+There is also a command-line interface (CLI) for quick conversions without writing a Python script.
 
-Popular mapping toolbox functions ported to Python include the
+```sh
+python -m pymap3d geodetic2ecef 40.0 -105.0 1600.0
+```
+
+> -1266643.1360426995 -4727176.53876973 4079014.032375875
+
+## PyMap3D functions
+
+Functions include the
 following, where the source coordinate system (before the "2") is
 converted to the desired coordinate system:
 
+```sh
+python3 -m pymap3d -h
 ```
-aer2ecef  aer2enu  aer2geodetic  aer2ned
-ecef2aer  ecef2enu  ecef2enuv  ecef2geodetic  ecef2ned  ecef2nedv
-ecef2eci  eci2ecef eci2aer aer2eci geodetic2eci eci2geodetic
-enu2aer  enu2ecef   enu2geodetic
-geodetic2aer  geodetic2ecef  geodetic2enu  geodetic2ned
-ned2aer  ned2ecef   ned2geodetic
-azel2radec radec2azel
-lookAtSpheroid
-track2 departure meanm
-rcurve rsphere
-geod2geoc geoc2geod
-geodetic2spherical spherical2geodetic
+
+```
+usage: pymap3d [-h]
+               [--ellipsoid {maupertuis,plessis,everest1830,everest1830m,everest1967,airy,bessel,clarke1866,clarke1878,clarke1860,helmert,hayford,international1924,krassovsky1940,wgs66,australian,international1967,grs67,sa1969,wgs72,grs80,wgs84,wgs84_mean,iers1989,pz90.11,iers2003,gsk2011,mercury,venus,moon,mars,jupiter,io,saturn,uranus,neptune,pluto,jupyter}]
+               [--output {text,json}] [--precision PRECISION]
+               {aer2dca,aer2ecef,aer2eci,aer2enu,aer2geodetic,aer2ned,authalic2geodetic,azel2radec,conformal2geodetic,datetime2sidereal,dca2aer,dca2ecef,dca2enu,dca2geodetic,dca2ned,ecef2aer,ecef2dca,ecef2eci,ecef2enu,ecef2enuv,ecef2geodetic,ecef2ned,ecef2nedv,ecef2nvector,eci2aer,eci2ecef,eci2geodetic,enu2aer,enu2dca,enu2ecef,enu2ecefv,enu2geodetic,enu2uvw,geoc2geod,geocentric2geodetic,geocentric_radius,geod2geoc,geodetic2aer,geodetic2authalic,geodetic2conformal,geodetic2dca,geodetic2ecef,geodetic2eci,geodetic2enu,geodetic2geocentric,geodetic2isometric,geodetic2ned,geodetic2nvector,geodetic2parametric,geodetic2rectifying,geodetic2spherical,greenwichsrt,isometric2geodetic,meridian,ned2aer,ned2dca,ned2ecef,ned2geodetic,nvector2ecef,nvector2geodetic,parallel,parametric2geodetic,radec2azel,rectifying2geodetic,spherical2geodetic,str2dt,transverse,uvw2enu} ...
+
+pymap3d CLI - Geographic coordinate conversions
+
+positional arguments:
+  {aer2dca,aer2ecef,aer2eci,aer2enu,aer2geodetic,aer2ned,authalic2geodetic,azel2radec,conformal2geodetic,datetime2sidereal,dca2aer,dca2ecef,dca2enu,dca2geodetic,dca2ned,ecef2aer,ecef2dca,ecef2eci,ecef2enu,ecef2enuv,ecef2geodetic,ecef2ned,ecef2nedv,ecef2nvector,eci2aer,eci2ecef,eci2geodetic,enu2aer,enu2dca,enu2ecef,enu2ecefv,enu2geodetic,enu2uvw,geoc2geod,geocentric2geodetic,geocentric_radius,geod2geoc,geodetic2aer,geodetic2authalic,geodetic2conformal,geodetic2dca,geodetic2ecef,geodetic2eci,geodetic2enu,geodetic2geocentric,geodetic2isometric,geodetic2ned,geodetic2nvector,geodetic2parametric,geodetic2rectifying,geodetic2spherical,greenwichsrt,isometric2geodetic,meridian,ned2aer,ned2dca,ned2ecef,ned2geodetic,nvector2ecef,nvector2geodetic,parallel,parametric2geodetic,radec2azel,rectifying2geodetic,spherical2geodetic,str2dt,transverse,uvw2enu}
+                        Conversion command
+    aer2dca             Converts AER (Azimuth, Elevation, Range) coordinates to DCA (Downrange,
+                        Crossrange, Above).
+    aer2ecef            converts target azimuth, elevation, range from observer at lat0,lon0,alt0
+                        to ECEF coordinates.
+    aer2eci             gives ECI of a point from an observer at az, el, slant range
+    aer2enu             Azimuth, Elevation, Slant range to target to East, North, Up
+    aer2geodetic        gives geodetic coordinates of a point with az, el, range
+    aer2ned             converts azimuth, elevation, range to target from observer to North, East,
+                        Down
+    authalic2geodetic   converts from authalic latitude to geodetic latitude
+    azel2radec          viewing angle (az, el) to sky coordinates (ra, dec)
+    conformal2geodetic  converts from conformal latitude to geodetic latitude
+    datetime2sidereal   Convert ``datetime`` to local sidereal time
+    dca2aer             Converts DCA (Downrange, Crossrange, Above) coordinates to AER (Azimuth,
+                        Elevation, Range).
+    dca2ecef            Converts DCA (Downrange, Crossrange, Above) coordinates to ECEF (Earth-
+                        Centered, Earth-Fixed) coordinates.
+    dca2enu             Converts DCA (Downrange, Crossrange, Above) coordinates to ENU (East,
+                        North, Up).
+    dca2geodetic        Converts DCA (Downrange, Crossrange, Above) coordinates to geodetic
+                        coordinates (latitude, longitude, altitude).
+    dca2ned             Converts DCA (Downrange, Crossrange, Above) coordinates to NED (North,
+                        East, Down).
+    ecef2aer            compute azimuth, elevation and slant range from an Observer to a Point
+                        with ECEF coordinates.
+    ecef2dca            Converts ECEF (Earth-Centered, Earth-Fixed) coordinates to DCA (Downrange,
+                        Crossrange, Above).
+    ecef2eci            Point => Point ECEF => ECI
+    ecef2enu            from observer to target, ECEF => ENU
+    ecef2enuv           VECTOR from observer to target ECEF => ENU
+    ecef2geodetic       convert ECEF (meters) to geodetic coordinates
+    ecef2ned            Convert ECEF x,y,z to North, East, Down
+    ecef2nedv           for VECTOR between two points
+    ecef2nvector        Convert ECEF coordinates to an n-vector.
+    eci2aer             takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az,
+                        el, slant range from Observer
+    eci2ecef            Observer => Point ECI => ECEF
+    eci2geodetic        convert Earth Centered Internal ECI to geodetic coordinates
+    enu2aer             ENU to Azimuth, Elevation, Range
+    enu2dca             Converts ENU (East, North, Up) coordinates to DCA (Downrange, Crossrange,
+                        Above).
+    enu2ecef            ENU to ECEF
+    enu2ecefv           VECTOR from observer to target ENU => ECEF
+    enu2geodetic        East, North, Up to target to geodetic coordinates
+    enu2uvw             Parameters
+    geoc2geod           convert geocentric latitude to geodetic latitude, consider mean sea level
+                        altitude
+    geocentric2geodetic
+                        converts from geocentric latitude to geodetic latitude
+    geocentric_radius   compute geocentric radius at geodetic latitude
+    geod2geoc           convert geodetic latitude to geocentric latitude on spheroid surface
+    geodetic2aer        gives azimuth, elevation and slant range from an Observer to a Point with
+                        geodetic coordinates.
+    geodetic2authalic   converts from geodetic latitude to authalic latitude
+    geodetic2conformal  converts from geodetic latitude to conformal latitude
+    geodetic2dca        Converts geodetic coordinates (latitude, longitude, altitude) to DCA
+                        (Downrange, Crossrange, Above) coordinates.
+    geodetic2ecef       point transformation from Geodetic of specified ellipsoid (default WGS-84)
+                        to ECEF
+    geodetic2eci        convert geodetic coordinates to Earth Centered Internal ECI
+    geodetic2enu        Parameters
+    geodetic2geocentric
+                        convert geodetic latitude to geocentric latitude on spheroid surface
+    geodetic2isometric  computes isometric latitude on an ellipsoid
+    geodetic2ned        convert latitude, longitude, altitude of target to North, East, Down from
+                        observer
+    geodetic2nvector    Convert geodetic coordinates (latitude, longitude) to an n-vector.
+    geodetic2parametric
+                        converts from geodetic latitude to parametric latitude
+    geodetic2rectifying
+                        converts from geodetic latitude to rectifying latitude
+    geodetic2spherical  point transformation from Geodetic of specified ellipsoid (default WGS-84)
+    greenwichsrt        Convert Julian time to sidereal time
+    isometric2geodetic  converts from isometric latitude to geodetic latitude
+    meridian            computes the meridional radius of curvature for the ellipsoid
+    ned2aer             converts North, East, Down to azimuth, elevation, range
+    ned2dca             Converts NED (North, East, Down) coordinates to DCA (Downrange,
+                        Crossrange, Above).
+    ned2ecef            North, East, Down to target ECEF coordinates
+    ned2geodetic        Converts North, East, Down to target latitude, longitude, altitude
+    nvector2ecef        Convert an n-vector to ECEF coordinates.
+    nvector2geodetic    Convert an n-vector back to geodetic coordinates (latitude, longitude).
+    parallel            computes the radius of the small circle encompassing the globe at the
+                        specified latitude
+    parametric2geodetic
+                        converts from parametric latitude to geodetic latitude
+    radec2azel          sky coordinates (ra, dec) to viewing angle (az, el)
+    rectifying2geodetic
+                        converts from rectifying latitude to geodetic latitude
+    spherical2geodetic  point transformation from geocentric spherical of specified ellipsoid
+    str2dt              Converts times in string or list of strings to datetime(s)
+    transverse          computes the radius of the curve formed by a plane
+    uvw2enu             Parameters
+
+options:
+  -h, --help            show this help message and exit
+  --ellipsoid {maupertuis,plessis,everest1830,everest1830m,everest1967,airy,bessel,clarke1866,clarke1878,clarke1860,helmert,hayford,international1924,krassovsky1940,wgs66,australian,international1967,grs67,sa1969,wgs72,grs80,wgs84,wgs84_mean,iers1989,pz90.11,iers2003,gsk2011,mercury,venus,moon,mars,jupiter,io,saturn,uranus,neptune,pluto,jupyter}
+                        Ellipsoid model to use (default: wgs84)
+  --output {text,json}  Output format (default: text)
+  --precision PRECISION
+                        Decimal places for floating-point text output (default: None)
 ```
 
 Vincenty functions "vincenty.vreckon" and "vincenty.vdist" are accessed like:
