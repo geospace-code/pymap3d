@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ._typing import FloatArray, FloatLike
+
 import warnings
 
 from math import pi
@@ -332,7 +334,7 @@ def conformal2geodetic(conformal_lat, ell: Ellipsoid | None = None, deg: bool = 
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2conformal(geodetic_lat, ell: Ellipsoid | None = None, deg: bool = True):
+def geodetic2conformal(geodetic_lat: FloatLike, ell: Ellipsoid | None = None, deg: bool = True):
     """
     converts from geodetic latitude to conformal latitude
 
@@ -383,7 +385,9 @@ def geodetic2conformal(geodetic_lat, ell: Ellipsoid | None = None, deg: bool = T
 
 
 # %% rectifying
-def geodetic2rectifying(geodetic_lat, ell: Ellipsoid | None = None, deg: bool = True):
+def geodetic2rectifying(
+    geodetic_lat: FloatLike | FloatArray, ell: Ellipsoid | None = None, deg: bool = True
+):
     """
     converts from geodetic latitude to rectifying latitude
 

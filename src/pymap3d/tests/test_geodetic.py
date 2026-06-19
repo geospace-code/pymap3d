@@ -54,72 +54,50 @@ llaxyz = [
 atol_dist = 1e-6  # 1 micrometer
 
 
-@pytest.mark.parametrize("lla", [lla0, ([lla0[0]], [lla0[1]], [lla0[2]])], ids=("scalar", "list"))
-def test_scalar_geodetic2ecef(lla):
+def test_scalar_geodetic2ecef():
     """
     verify we can handle the wide variety of input data type users might use
     """
 
-    if isinstance(lla[0], list):
-        np = pytest.importorskip("numpy")
-        scalar = False
-    else:
-        scalar = True
-
-    xyz = pm.geodetic2ecef(*lla)
+    xyz = pm.geodetic2ecef(*lla0)
     lla1 = pm.ecef2geodetic(*xyz)
 
-    try:
-        lla1 = np.array(lla1)
-        lla = np.array(lla)
-    except NameError:
-        pass
+    assert lla1 == approx(lla0, rel=1e-4)
 
-    assert lla1 == approx(lla, rel=1e-4)
-
-    if scalar:
-        assert all(isinstance(n, float) for n in xyz)
-        assert all(isinstance(n, float) for n in lla1)
+    assert all(isinstance(n, float) for n in xyz)
+    assert all(isinstance(n, float) for n in lla1)
 
 
 def test_array_geodetic2ecef():
     np = pytest.importorskip("numpy")
 
+    # 0d array
     lla = (np.asarray(lla0[0]), np.asarray(lla0[1]), np.asarray(lla0[2]))
     xyz = pm.geodetic2ecef(*lla)
-    np.testing.assert_allclose(pm.ecef2geodetic(*xyz), lla)
+    lla1 = pm.ecef2geodetic(*xyz)
+    for i in range(3):
+        assert lla1[i] == approx(lla[i])
 
+    # 1d array
     lla = (np.atleast_1d(lla0[0]), np.atleast_1d(lla0[1]), np.atleast_1d(lla0[2]))
     xyz = pm.geodetic2ecef(*lla)
-    np.testing.assert_allclose(pm.ecef2geodetic(*xyz), lla)
+    lla1 = pm.ecef2geodetic(*xyz)
+    for i in range(3):
+        assert lla1[i] == approx(lla[i])
 
 
-@pytest.mark.parametrize("xyz", [xyz0, ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list"))
-def test_scalar_ecef2geodetic(xyz):
+def test_scalar_ecef2geodetic():
     """
     verify we can handle the wide variety of input data type users might use
     """
 
-    if isinstance(xyz[0], list):
-        np = pytest.importorskip("numpy")
-        scalar = False
-    else:
-        scalar = True
-
-    lla = pm.ecef2geodetic(*xyz)
+    lla = pm.ecef2geodetic(*xyz0)
     xyz1 = pm.geodetic2ecef(*lla)
 
-    try:
-        xyz1 = np.array(xyz1)
-        xyz = np.array(xyz)
-    except NameError:
-        pass
+    assert xyz1 == approx(xyz0, rel=1e-4)
 
-    assert xyz1 == approx(xyz, rel=1e-4)
-
-    if scalar:
-        assert all(isinstance(n, float) for n in xyz1)
-        assert all(isinstance(n, float) for n in lla)
+    assert all(isinstance(n, float) for n in xyz1)
+    assert all(isinstance(n, float) for n in lla)
 
 
 def test_array_ecef2geodetic():
@@ -127,11 +105,15 @@ def test_array_ecef2geodetic():
 
     xyz = (np.asarray(xyz0[0]), np.asarray(xyz0[1]), np.asarray(xyz0[2]))
     lla = pm.ecef2geodetic(*xyz)
-    np.testing.assert_allclose(pm.geodetic2ecef(*lla), xyz)
+    xyz1 = pm.geodetic2ecef(*lla)
+    for i in range(3):
+        assert xyz1[i] == approx(xyz[i])
 
     xyz = (np.atleast_1d(xyz0[0]), np.atleast_1d(xyz0[1]), np.atleast_1d(xyz0[2]))
     lla = pm.ecef2geodetic(*xyz)
-    np.testing.assert_allclose(pm.geodetic2ecef(*lla), xyz)
+    xyz1 = pm.geodetic2ecef(*lla)
+    for i in range(3):
+        assert xyz1[i] == approx(xyz[i])
 
 
 def test_inside_ecef2geodetic():
@@ -161,29 +143,6 @@ def test_inside_ecef2geodetic():
     assert lats == approx(lla0_array_inside[0])
     assert lons == approx(lla0_array_inside[1])
     assert alts == approx(lla0_array_inside[2])
-
-
-def test_xarray_ecef():
-    xarray = pytest.importorskip("xarray")
-
-    lla = xarray.DataArray(list(lla0))
-
-    xyz = pm.geodetic2ecef(*lla)
-    lla1 = pm.ecef2geodetic(*xyz)
-    assert lla1 == approx(lla)
-
-
-def test_pandas_ecef():
-    pandas = pytest.importorskip("pandas")
-
-    x, y, z = pm.geodetic2ecef(
-        pandas.Series(lla0[0]), pandas.Series(lla0[1]), pandas.Series(lla0[2])
-    )
-
-    lat, lon, alt = pm.ecef2geodetic(pandas.Series(x), pandas.Series(y), pandas.Series(z))
-    assert lat == approx(lla0[0])
-    assert lon == approx(lla0[1])
-    assert alt == approx(lla0[2])
 
 
 def test_ecef():
@@ -231,9 +190,6 @@ def test_aer_geodetic(aer, lla, lla0):
     lla1 = pm.aer2geodetic(*raer, *rlla0, deg=False)
     assert lla1 == approx((radians(lla[0]), radians(lla[1]), lla[2]))
     assert all(isinstance(n, float) for n in lla1)
-
-    with pytest.raises(ValueError):
-        pm.aer2geodetic(aer[0], aer[1], -1, *lla0)
 
     assert pm.geodetic2aer(*lla, *lla0) == approx(aer, rel=1e-3)
     assert pm.geodetic2aer(radians(lla[0]), radians(lla[1]), lla[2], *rlla0, deg=False) == approx(

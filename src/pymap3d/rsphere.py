@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-try:
-    from numpy import asarray
-except ImportError:
-    pass
-
 from . import rcurve
+
+from ._typing import FloatLike
 from .ellipsoid import Ellipsoid
 from .mathfun import cos, degrees, log, radians, sin, sqrt
 from .vincenty import vdist
@@ -94,10 +91,10 @@ def rectifying(ell: Ellipsoid | None = None) -> float:
 
 
 def euler(
-    lat1,
-    lon1,
-    lat2,
-    lon2,
+    lat1: FloatLike,
+    lon1: FloatLike,
+    lat2: FloatLike,
+    lon2: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ):
@@ -128,11 +125,6 @@ def euler(
             degrees(lon2),
         )
 
-    try:
-        lat1, lat2 = asarray(lat1), asarray(lat2)
-    except NameError:
-        pass
-
     latmid = lat1 + (lat2 - lat1) / 2  # compute the midpoint
 
     # compute azimuth
@@ -149,7 +141,7 @@ def euler(
     return rho * nu / den
 
 
-def curve(lat, ell: Ellipsoid | None = None, deg: bool = True, method: str = "mean"):
+def curve(lat: FloatLike, ell: Ellipsoid | None = None, deg: bool = True, method: str = "mean"):
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 

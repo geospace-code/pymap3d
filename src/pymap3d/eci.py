@@ -6,8 +6,10 @@ from datetime import datetime
 import sys
 import logging
 
+from ._typing import FloatLike, NDArray
+
 try:
-    import numpy
+    import numpy as np
     import astropy.units as u
     from astropy.coordinates import GCRS, ITRS, CartesianRepresentation, EarthLocation
 except ImportError:
@@ -19,7 +21,9 @@ from .sidereal import greenwichsrt, juliandate
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
-def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
+def eci2ecef(
+    x: FloatLike, y: FloatLike, z: FloatLike, time: datetime, force_non_astropy: bool = False
+) -> tuple:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -27,11 +31,11 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     Parameters
     ----------
-    x : float
+    x : array-like float
         ECI x-location [meters]
-    y : float
+    y : array-like float
         ECI y-location [meters]
-    z : float
+    z : array-like float
         ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
@@ -40,11 +44,11 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     Results
     -------
-    x_ecef : float
+    x_ecef : array-like float
         x ECEF coordinate
-    y_ecef : float
+    y_ecef : array-like float
         y ECEF coordinate
-    z_ecef : float
+    z_ecef : array-like float
         z ECEF coordinate
     """
 
@@ -59,7 +63,9 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
     return xe.squeeze()[()], ye.squeeze()[()], ze.squeeze()[()]
 
 
-def eci2ecef_astropy(x, y, z, t: datetime) -> tuple:
+def eci2ecef_astropy(
+    x: FloatLike, y: FloatLike, z: FloatLike, t: datetime
+) -> tuple[NDArray, NDArray, NDArray]:
     """
     eci2ecef using Astropy
 
@@ -83,31 +89,28 @@ def eci2ecef_numpy(x, y, z, t: datetime) -> tuple:
     see eci2ecef() for description
     """
 
-    x = numpy.atleast_1d(x)
-    y = numpy.atleast_1d(y)
-    z = numpy.atleast_1d(z)
-    gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
-    assert (
-        x.shape == y.shape == z.shape
-    ), f"shape mismatch: x: ${x.shape}  y: {y.shape}  z: {z.shape}"
-
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
+    z = np.atleast_1d(z)
+    gst = np.atleast_1d(greenwichsrt(juliandate(t)))
+    assert x.shape == y.shape == z.shape
     if gst.size == 1 and x.size != 1:
-        gst = numpy.broadcast_to(gst, x.shape[0])
-    assert x.size == gst.size, f"shape mismatch: x: {x.shape}  gst: {gst.shape}"
+        gst = np.broadcast_to(gst, x.shape[0])
+    assert x.size == gst.size
 
-    eci = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
-    ecef = numpy.empty((x.size, 3))
-    for i in range(eci.shape[0]):
-        ecef[i, :] = R3(gst[i]) @ eci[i, :].T
+    c = np.cos(gst)
+    s = np.sin(gst)
 
-    x_ecef = ecef[:, 0].reshape(x.shape)
-    y_ecef = ecef[:, 1].reshape(y.shape)
-    z_ecef = ecef[:, 2].reshape(z.shape)
+    x_ecef = (c * x.ravel() + s * y.ravel()).reshape(x.shape)
+    y_ecef = (-s * x.ravel() + c * y.ravel()).reshape(y.shape)
+    z_ecef = z.reshape(z.shape)
 
     return x_ecef.squeeze()[()], y_ecef.squeeze()[()], z_ecef.squeeze()[()]
 
 
-def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
+def ecef2eci(
+    x: FloatLike, y: FloatLike, z: FloatLike, time: datetime, force_non_astropy: bool = False
+) -> tuple:
     """
     Point => Point   ECEF => ECI
 
@@ -116,12 +119,12 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
     Parameters
     ----------
 
-    x : float
-        target x ECEF coordinate
-    y : float
-        target y ECEF coordinate
-    z : float
-        target z ECEF coordinate
+    x : array-like float
+        point x ECEF coordinate
+    y : array-like float
+        point y ECEF coordinate
+    z : array-like float
+        point z ECEF coordinate
     time : datetime.datetime
         time of observation
     force_non_astropy : bool
@@ -129,11 +132,11 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     Results
     -------
-    x_eci : float
+    x_eci : array-like float
         x ECI coordinate
-    y_eci : float
+    y_eci : array-like float
         y ECI coordinate
-    z_eci : float
+    z_eci : array-like float
         z ECI coordinate
     """
 
@@ -148,7 +151,9 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
     return xe, ye, ze
 
 
-def ecef2eci_astropy(x, y, z, t: datetime) -> tuple:
+def ecef2eci_astropy(
+    x: FloatLike, y: FloatLike, z: FloatLike, t: datetime
+) -> tuple[NDArray, NDArray, NDArray]:
     """ecef2eci using Astropy
     see ecef2eci() for description
     """
@@ -163,28 +168,21 @@ def ecef2eci_numpy(x, y, z, t: datetime) -> tuple:
     """ecef2eci using Numpy
     see ecef2eci() for description
     """
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
+    z = np.atleast_1d(z)
+    gst = np.atleast_1d(greenwichsrt(juliandate(t)))
 
-    x = numpy.atleast_1d(x)
-    y = numpy.atleast_1d(y)
-    z = numpy.atleast_1d(z)
-    gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
     assert x.shape == y.shape == z.shape
+    if gst.size == 1 and x.size != 1:
+        gst = np.broadcast_to(gst, x.shape[0])
     assert x.size == gst.size
 
-    ecef = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
-    eci = numpy.empty((x.size, 3))
-    for i in range(x.size):
-        eci[i, :] = R3(gst[i]).T @ ecef[i, :]
+    c = np.cos(gst)
+    s = np.sin(gst)
 
-    return (
-        eci[:, 0].reshape(x.shape).squeeze()[()],
-        eci[:, 1].reshape(y.shape).squeeze()[()],
-        eci[:, 2].reshape(z.shape).squeeze()[()],
-    )
+    x_eci = (c * x.ravel() - s * y.ravel()).reshape(x.shape)
+    y_eci = (s * x.ravel() + c * y.ravel()).reshape(y.shape)
+    z_eci = z.reshape(z.shape)
 
-
-def R3(x: float):
-    """Rotation matrix for ECI"""
-    return numpy.array(
-        [[numpy.cos(x), numpy.sin(x), 0], [-numpy.sin(x), numpy.cos(x), 0], [0, 0, 1]]
-    )
+    return x_eci.squeeze()[()], y_eci.squeeze()[()], z_eci.squeeze()[()]

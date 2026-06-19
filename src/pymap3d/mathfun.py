@@ -5,11 +5,8 @@ import from Numpy, and if not available fallback to math stdlib
 from __future__ import annotations
 
 try:
-    from numpy import arcsin as asin
-    from numpy import arcsinh as asinh
-    from numpy import arctan as atan
-    from numpy import arctan2 as atan2
-    from numpy import arctanh as atanh
+    from numpy import arcsin as asin, arcsinh as asinh
+    from numpy import arctan as atan, arctan2 as atan2, arctanh as atanh
     from numpy import (
         cbrt,
         cos,
@@ -21,6 +18,7 @@ try:
         isnan,
         linspace,
         log,
+        minimum,
         power,
         radians,
         sign,
@@ -48,6 +46,9 @@ except ImportError:
         sqrt,
         tan,
     )
+
+    def minimum(x, y):  # type: ignore
+        return min(x, y)
 
     def linspace(start: float, stop: float, num: int) -> list[float]:  # type: ignore
         """
@@ -87,6 +88,8 @@ __all__ = [
     "isclose",
     "isnan",
     "log",
+    "minimum",
+    "linspace",
     "power",
     "radians",
     "sign",

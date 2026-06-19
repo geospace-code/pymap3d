@@ -481,7 +481,7 @@ def track2(
     ell: Ellipsoid | None = None,
     npts: int = 100,
     deg: bool = True,
-) -> tuple[list, list]:
+) -> tuple:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 

@@ -4,11 +4,6 @@ from __future__ import annotations
 
 from math import nan, pi
 
-try:
-    from numpy import asarray
-except ImportError:
-    pass
-
 from .aer import aer2enu
 from .ecef import ecef2geodetic, enu2uvw, geodetic2ecef
 from .ellipsoid import Ellipsoid
@@ -66,14 +61,9 @@ def lookAtSpheroid(
         ell = Ellipsoid.from_name("wgs84")
 
     try:
-        lat0 = asarray(lat0)
-        lon0 = asarray(lon0)
-        h0 = asarray(h0)
-        az = asarray(az)
-        tilt = asarray(tilt)
         if (h0 < 0).any():
             raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
-    except NameError:
+    except AttributeError:
         if h0 < 0:
             raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
 

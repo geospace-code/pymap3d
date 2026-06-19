@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 try:
-    from numpy import array, broadcast_arrays
+    from numpy import broadcast_arrays
 except ImportError:
     pass
 
 from math import pi, tau
+
+from .mathfun import minimum
+
+from ._typing import FloatArray, FloatLike, NDArray
 
 from . import rcurve, rsphere
 from .ellipsoid import Ellipsoid
@@ -33,14 +37,14 @@ __all__ = [
 COS_EPS = 1e-9
 
 
-def meridian_dist(lat, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+def meridian_dist(lat: FloatLike | FloatArray, ell: Ellipsoid | None = None, deg: bool = True):
     """
     Computes the ground distance on an ellipsoid from the equator to the input latitude.
 
     Parameters
     ----------
-    lat : float
-        geodetic latitude
+    lat : array-like float
+        geodetic latitude (degrees)
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
     deg : bool, optional
@@ -48,19 +52,24 @@ def meridian_dist(lat, ell: Ellipsoid | None = None, deg: bool = True) -> float:
 
     Results
     -------
-    dist : float
+    dist : array-like float
          distance (meters)
     """
     return meridian_arc(0.0, lat, ell, deg)
 
 
-def meridian_arc(lat1, lat2, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+def meridian_arc(
+    lat1: FloatLike | FloatArray,
+    lat2: FloatLike | FloatArray,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+):
     """
     Computes the ground distance on an ellipsoid between two latitudes.
 
     Parameters
     ----------
-    lat1, lat2 : float
+    lat1, lat2 : array-like float
         geodetic latitudes
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -69,7 +78,7 @@ def meridian_arc(lat1, lat2, ell: Ellipsoid | None = None, deg: bool = True) -> 
 
     Results
     -------
-    dist : float
+    dist : array-like float
          distance (meters)
     """
 
@@ -83,13 +92,13 @@ def meridian_arc(lat1, lat2, ell: Ellipsoid | None = None, deg: bool = True) -> 
 
 
 def loxodrome_inverse(
-    lat1,
-    lon1,
-    lat2,
-    lon2,
+    lat1: FloatArray,
+    lon1: FloatArray,
+    lat2: FloatArray,
+    lon2: FloatArray,
     ell: Ellipsoid | None = None,
     deg: bool = True,
-) -> tuple[float, float]:
+) -> tuple:
     """
     computes the arc length and azimuth of the loxodrome
     between two points on the surface of the reference ellipsoid
@@ -99,13 +108,13 @@ def loxodrome_inverse(
     Parameters
     ----------
 
-    lat1 : float
+    lat1 : array-like float
         geodetic latitude of first point
-    lon1 : float
+    lon1 : array-like float
         geodetic longitude of first point
-    lat2 : float
+    lat2 : array-like float
         geodetic latitude of second point
-    lon2 : float
+    lon2 : array-like float
         geodetic longitude of second point
     ell : Ellipsoid, optional
          reference ellipsoid (default WGS84)
@@ -115,9 +124,9 @@ def loxodrome_inverse(
     Results
     -------
 
-    lox_s : float
+    lox_s : array-like float
         distance along loxodrome (meters)
-    az12 : float
+    az12 : array-like float
         azimuth of loxodrome (degrees/radians)
 
     Based on Deakin, R.E., 2010, 'The Loxodrome on an Ellipsoid', Lecture Notes,
@@ -136,23 +145,15 @@ def loxodrome_inverse(
     """
 
     if deg:
-        lat1, lon1, lat2, lon2 = (
-            radians(lat1),
-            radians(lon1),
-            radians(lat2),
-            radians(lon2),
-        )
+        lat1, lon1, lat2, lon2 = radians(lat1), radians(lon1), radians(lat2), radians(lon2)
 
     try:
         lat1, lon1, lat2, lon2 = broadcast_arrays(lat1, lon1, lat2, lon2)
-
     except NameError:
         pass
 
     # compute changes in isometric latitude and longitude between points
-    disolat = geodetic2isometric(lat2, deg=False, ell=ell) - geodetic2isometric(
-        lat1, deg=False, ell=ell
-    )
+    disolat = geodetic2isometric(lat2, ell, False) - geodetic2isometric(lat1, ell, False)
     dlon = lon2 - lon1
 
     # compute azimuth
@@ -180,10 +181,10 @@ def loxodrome_inverse(
 
 
 def loxodrome_direct(
-    lat1,
-    lon1,
-    rng,
-    a12,
+    lat1: FloatArray,
+    lon1: FloatArray,
+    rng: FloatArray,
+    a12: FloatArray,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -195,13 +196,13 @@ def loxodrome_direct(
 
     Parameters
     ----------
-    lat1 : float
+    lat1 : array-like float
         inital geodetic latitude (degrees)
-    lon1 : float
+    lon1 : array-like float
         initial geodetic longitude (degrees)
-    rng : float
+    rng : array-like float
         ground distance (meters)
-    a12 : float
+    a12 : array-like float
         azimuth (degrees) clockwide from north.
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -210,9 +211,9 @@ def loxodrome_direct(
 
     Results
     -------
-    lat2 : float
+    lat2 : array-like float
         final geodetic latitude (degrees)
-    lon2 : float
+    lon2 : array-like float
         final geodetic longitude (degrees)
     """
 
@@ -238,21 +239,23 @@ def loxodrome_direct(
 
     # compute the new points
     cosaz = cos(a12)
-    lat2 = reclat + (rng / rsphere.rectifying(ell)) * cosaz  # compute rectifying latitude
-    lat2 = rectifying2geodetic(lat2, ell, deg=False)  # transform to geodetic latitude
+    lat2 = reclat + (rng / rsphere.rectifying(ell)) * cosaz
+    # compute rectifying latitude
+    lat2 = rectifying2geodetic(lat2, ell, False)
+    # transform to geodetic latitude
 
-    newiso = geodetic2isometric(lat2, ell, deg=False)
-    iso = geodetic2isometric(lat1, ell, deg=False)
+    newiso = geodetic2isometric(lat2, ell, False)
+    iso = geodetic2isometric(lat1, ell, False)
 
     # stability near singularities
     i = abs(cos(a12)) < COS_EPS
     dlon = tan(a12) * (newiso - iso)
 
     try:
-        dlon[i] = sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell=ell, deg=False)
+        dlon[i] = sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell, False)
     except (AttributeError, TypeError):
         if i:  # straight east or west
-            dlon = sign(pi - a12) * rng / rcurve.parallel(lat1, ell=ell, deg=False)
+            dlon = sign(pi - a12) * rng / rcurve.parallel(lat1, ell, False)
 
     lon2 = lon1 + dlon
 
@@ -265,7 +268,13 @@ def loxodrome_direct(
         return lat2, lon2
 
 
-def departure(lon1, lon2, lat, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+def departure(
+    lon1: FloatLike | FloatArray,
+    lon2: FloatLike | FloatArray,
+    lat: FloatLike | FloatArray,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+):
     """
     Computes the distance along a specific parallel between two meridians.
 
@@ -273,9 +282,9 @@ def departure(lon1, lon2, lat, ell: Ellipsoid | None = None, deg: bool = True) -
 
     Parameters
     ----------
-    lon1, lon2 : float
+    lon1, lon2 : array-like float
         geodetic longitudes (degrees)
-    lat : float
+    lat : array-like float
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -290,10 +299,15 @@ def departure(lon1, lon2, lat, ell: Ellipsoid | None = None, deg: bool = True) -
     if deg:
         lon1, lon2, lat = radians(lon1), radians(lon2), radians(lat)
 
-    return rcurve.parallel(lat, ell=ell, deg=False) * (abs(lon2 - lon1) % pi)
+    # Shortest angular difference along the parallel (≤ 180°)
+    dlon = (lon2 - lon1) % (2 * pi)
+    dlon = minimum(dlon, 2 * pi - dlon)
+
+    adist = rcurve.parallel(lat, ell, False)  # radius of parallel at lat
+    return adist * dlon
 
 
-def meanm(lat, lon, ell: Ellipsoid | None = None, deg: bool = True) -> tuple:
+def meanm(lat: NDArray, lon: NDArray, ell: Ellipsoid | None = None, deg: bool = True) -> tuple:
     """
     Computes geographic mean for geographic points on an ellipsoid
 
@@ -301,9 +315,9 @@ def meanm(lat, lon, ell: Ellipsoid | None = None, deg: bool = True) -> tuple:
 
     Parameters
     ----------
-    lat : sequence of float
+    lat : array of float
         geodetic latitude (degrees)
-    lon : sequence of float
+    lon : array of float
         geodetic longitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -321,7 +335,7 @@ def meanm(lat, lon, ell: Ellipsoid | None = None, deg: bool = True) -> tuple:
 
     lat = geodetic2authalic(lat, ell, deg=False)
 
-    x, y, z = sph2cart(lon, lat, array(1.0))
+    x, y, z = sph2cart(lon, lat, 1.0)
     lonbar, latbar, _ = cart2sph(x.sum(), y.sum(), z.sum())
     latbar = authalic2geodetic(latbar, ell, deg=False)
 
