@@ -54,9 +54,7 @@ def test_geodetic_dca():
     lat, lon, h = 12.1, 15.1, 30.1
     dca = pm.geodetic2dca(lat, lon, h, lat0, lon0, h0, heading)
 
-    assert pm.dca2geodetic(*dca, lat0, lon0, h0, heading) == pytest.approx(
-        (lat, lon, h)
-    )
+    assert pm.dca2geodetic(*dca, lat0, lon0, h0, heading) == pytest.approx((lat, lon, h))
 
 
 def test_aer_dca():

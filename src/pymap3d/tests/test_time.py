@@ -18,9 +18,7 @@ def test_types():
     assert str2dt("2014-04-06T08:00:00") == t0
     ti = [str2dt("2014-04-06T08:00:00"), str2dt("2014-04-06T08:01:02")]
     to = [t0, datetime(2014, 4, 6, 8, 1, 2)]
-    assert (
-        ti == to
-    )  # even though ti is numpy array of datetime and to is list of datetime
+    assert ti == to  # even though ti is numpy array of datetime and to is list of datetime
 
     t1 = [t0, t0]
     assert (np.asarray(str2dt(t1)) == t0).all()

@@ -32,9 +32,7 @@ def test_unit_vdist(lat, lon, lat1, lon1, srange, az):
 
 def test_vector():
     pytest.importorskip("numpy")
-    asr, aaz = vincenty.vdist(
-        10, 20, [10.02137267, 10.01917819], [20.0168471, 20.0193493]
-    )
+    asr, aaz = vincenty.vdist(10, 20, [10.02137267, 10.01917819], [20.0168471, 20.0193493])
 
     assert 3e3 == approx(asr)
     assert aaz == approx([38, 45])

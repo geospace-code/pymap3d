@@ -72,14 +72,10 @@ def lookAtSpheroid(
         az = asarray(az)
         tilt = asarray(tilt)
         if (h0 < 0).any():
-            raise ValueError(
-                "Intersection calculation requires altitude  [0, Infinity)"
-            )
+            raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
     except NameError:
         if h0 < 0:
-            raise ValueError(
-                "Intersection calculation requires altitude  [0, Infinity)"
-            )
+            raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
 
     a = ell.semimajor_axis
     b = ell.semimajor_axis

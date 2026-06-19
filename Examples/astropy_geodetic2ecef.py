@@ -76,6 +76,4 @@ if matlab_engine in sys.modules:
             "\nAstroPy - Matlab Matmap3D Difference (ECI meters):",
             astropy_eci - eci_matmap3d,
         )
-        print(
-            "Numpy - Matlab Matmap3D Difference (ECI meters):", numpy_eci - eci_matmap3d
-        )
+        print("Numpy - Matlab Matmap3D Difference (ECI meters):", numpy_eci - eci_matmap3d)

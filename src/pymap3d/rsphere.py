@@ -90,9 +90,7 @@ def rectifying(ell: Ellipsoid | None = None) -> float:
     if ell is None:
         ell = Ellipsoid.from_name("wgs84")
 
-    return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (
-        2 / 3
-    )
+    return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
 def euler(

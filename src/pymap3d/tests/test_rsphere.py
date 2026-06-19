@@ -41,6 +41,4 @@ def test_rsphere_euler():
 
 def test_numpy_rsphere_euler():
     pytest.importorskip("numpy")
-    assert rsphere.euler([42, 0], [82, 0], 44, 100) == approx(
-        [6386606.829131, 6363111.70923164]
-    )
+    assert rsphere.euler([42, 0], [82, 0], 44, 100) == approx([6386606.829131, 6363111.70923164])

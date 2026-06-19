@@ -77,9 +77,7 @@ def test_numpy_loxodrome_inverse():
 
 def test_numpy_2d_loxodrome_inverse():
     pytest.importorskip("numpy")
-    d, a = lox.loxodrome_inverse(
-        [[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, -148
-    )
+    d, a = lox.loxodrome_inverse([[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, -148)
     assert d == approx(5248666.209)
     assert a == approx(302.00567)
 
@@ -89,9 +87,7 @@ def test_numpy_2d_loxodrome_inverse():
     d, a = lox.loxodrome_inverse(
         [[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, [[-148, -148], [-148, -148]]
     )
-    d, a = lox.loxodrome_inverse(
-        40, -80, [[65, 65], [65, 65]], [[-148, -148], [-148, -148]]
-    )
+    d, a = lox.loxodrome_inverse(40, -80, [[65, 65], [65, 65]], [[-148, -148], [-148, -148]])
 
 
 @pytest.mark.parametrize(

@@ -95,9 +95,7 @@ def geoc2geod(
     return degrees(geodetic_lat) if deg else geodetic_lat
 
 
-def geodetic2geocentric(
-    geodetic_lat, alt_m, ell: Ellipsoid | None = None, deg: bool = True
-):
+def geodetic2geocentric(geodetic_lat, alt_m, ell: Ellipsoid | None = None, deg: bool = True):
     """
     convert geodetic latitude to geocentric latitude on spheroid surface
 
@@ -134,9 +132,7 @@ def geodetic2geocentric(
         geodetic_lat = radians(geodetic_lat)
 
     r = rcurve.transverse(geodetic_lat, ell, deg=False)
-    geocentric_lat = atan(
-        (1 - ell.eccentricity**2 * (r / (r + alt_m))) * tan(geodetic_lat)
-    )
+    geocentric_lat = atan((1 - ell.eccentricity**2 * (r / (r + alt_m))) * tan(geodetic_lat))
 
     return degrees(geocentric_lat) if deg else geocentric_lat
 
@@ -144,9 +140,7 @@ def geodetic2geocentric(
 geod2geoc = geodetic2geocentric
 
 
-def geocentric2geodetic(
-    geocentric_lat, alt_m, ell: Ellipsoid | None = None, deg: bool = True
-):
+def geocentric2geodetic(geocentric_lat, alt_m, ell: Ellipsoid | None = None, deg: bool = True):
     """
     converts from geocentric latitude to geodetic latitude
 
@@ -183,9 +177,7 @@ def geocentric2geodetic(
         geocentric_lat = radians(geocentric_lat)
 
     r = rcurve.transverse(geocentric_lat, ell, deg=False)
-    geodetic_lat = atan(
-        tan(geocentric_lat) / (1 - ell.eccentricity**2 * (r / (r + alt_m)))
-    )
+    geodetic_lat = atan(tan(geocentric_lat) / (1 - ell.eccentricity**2 * (r / (r + alt_m))))
 
     return degrees(geodetic_lat) if deg else geodetic_lat
 

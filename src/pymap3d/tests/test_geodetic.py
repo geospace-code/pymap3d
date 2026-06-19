@@ -54,9 +54,7 @@ llaxyz = [
 atol_dist = 1e-6  # 1 micrometer
 
 
-@pytest.mark.parametrize(
-    "lla", [lla0, ([lla0[0]], [lla0[1]], [lla0[2]])], ids=("scalar", "list")
-)
+@pytest.mark.parametrize("lla", [lla0, ([lla0[0]], [lla0[1]], [lla0[2]])], ids=("scalar", "list"))
 def test_scalar_geodetic2ecef(lla):
     """
     verify we can handle the wide variety of input data type users might use
@@ -96,9 +94,7 @@ def test_array_geodetic2ecef():
     np.testing.assert_allclose(pm.ecef2geodetic(*xyz), lla)
 
 
-@pytest.mark.parametrize(
-    "xyz", [xyz0, ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list")
-)
+@pytest.mark.parametrize("xyz", [xyz0, ([xyz0[0]], [xyz0[1]], [xyz0[2]])], ids=("scalar", "list"))
 def test_scalar_ecef2geodetic(xyz):
     """
     verify we can handle the wide variety of input data type users might use
@@ -184,9 +180,7 @@ def test_pandas_ecef():
         pandas.Series(lla0[0]), pandas.Series(lla0[1]), pandas.Series(lla0[2])
     )
 
-    lat, lon, alt = pm.ecef2geodetic(
-        pandas.Series(x), pandas.Series(y), pandas.Series(z)
-    )
+    lat, lon, alt = pm.ecef2geodetic(pandas.Series(x), pandas.Series(y), pandas.Series(z))
     assert lat == approx(lla0[0])
     assert lon == approx(lla0[1])
     assert alt == approx(lla0[2])
@@ -204,9 +198,7 @@ def test_ecef():
     assert pm.ecef2geodetic(*xyz) == approx(lla0)
     assert pm.ecef2geodetic(*xyz, deg=False) == approx(rlla0)
 
-    assert pm.ecef2geodetic((A - 1) / sqrt(2), (A - 1) / sqrt(2), 0) == approx(
-        [0, 45, -1]
-    )
+    assert pm.ecef2geodetic((A - 1) / sqrt(2), (A - 1) / sqrt(2), 0) == approx([0, 45, -1])
 
 
 @pytest.mark.parametrize("lla, xyz", llaxyz)
@@ -244,9 +236,9 @@ def test_aer_geodetic(aer, lla, lla0):
         pm.aer2geodetic(aer[0], aer[1], -1, *lla0)
 
     assert pm.geodetic2aer(*lla, *lla0) == approx(aer, rel=1e-3)
-    assert pm.geodetic2aer(
-        radians(lla[0]), radians(lla[1]), lla[2], *rlla0, deg=False
-    ) == approx(raer, rel=1e-3)
+    assert pm.geodetic2aer(radians(lla[0]), radians(lla[1]), lla[2], *rlla0, deg=False) == approx(
+        raer, rel=1e-3
+    )
 
 
 def test_scalar_nan():

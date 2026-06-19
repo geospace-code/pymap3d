@@ -21,9 +21,7 @@ from .mathfun import asin, cos, degrees, radians, sqrt
 __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
 
-def anglesep_meeus(
-    lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True
-) -> float:
+def anglesep_meeus(lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True) -> float:
     """
     Parameters
     ----------

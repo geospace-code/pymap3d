@@ -51,9 +51,7 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
     if "astropy" in sys.modules and not force_non_astropy:
         xe, ye, ze = eci2ecef_astropy(x, y, z, time)
     elif "numpy" in sys.modules:
-        logging.warning(
-            f"{__name__}: Numpy implementation has much less accuracy than Astropy"
-        )
+        logging.warning(f"{__name__}: Numpy implementation has much less accuracy than Astropy")
         xe, ye, ze = eci2ecef_numpy(x, y, z, time)
     else:
         raise ImportError("eci2ecef requires either Numpy or Astropy")
@@ -89,9 +87,9 @@ def eci2ecef_numpy(x, y, z, t: datetime) -> tuple:
     y = numpy.atleast_1d(y)
     z = numpy.atleast_1d(z)
     gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
-    assert x.shape == y.shape == z.shape, (
-        f"shape mismatch: x: ${x.shape}  y: {y.shape}  z: {z.shape}"
-    )
+    assert (
+        x.shape == y.shape == z.shape
+    ), f"shape mismatch: x: ${x.shape}  y: {y.shape}  z: {z.shape}"
 
     if gst.size == 1 and x.size != 1:
         gst = numpy.broadcast_to(gst, x.shape[0])
@@ -142,9 +140,7 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
     if "astropy" in sys.modules and not force_non_astropy:
         xe, ye, ze = ecef2eci_astropy(x, y, z, time)
     elif "numpy" in sys.modules:
-        logging.warning(
-            f"{__name__}: Numpy implementation has much less accuracy than Astropy"
-        )
+        logging.warning(f"{__name__}: Numpy implementation has much less accuracy than Astropy")
         xe, ye, ze = ecef2eci_numpy(x, y, z, time)
     else:
         raise ImportError("ecef2eci requires either Numpy or Astropy")

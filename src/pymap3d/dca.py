@@ -86,9 +86,7 @@ def ned2dca(n, e, d, heading, deg: bool = True):
     return dr, cr, above
 
 
-def ecef2dca(
-    x, y, z, lat0, lon0, h0, heading, ell: Ellipsoid | None = None, deg: bool = True
-):
+def ecef2dca(x, y, z, lat0, lon0, h0, heading, ell: Ellipsoid | None = None, deg: bool = True):
     """
     Converts ECEF (Earth-Centered, Earth-Fixed) coordinates to DCA (Downrange, Crossrange, Above).
     """

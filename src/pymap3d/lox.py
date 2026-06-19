@@ -238,9 +238,7 @@ def loxodrome_direct(
 
     # compute the new points
     cosaz = cos(a12)
-    lat2 = (
-        reclat + (rng / rsphere.rectifying(ell)) * cosaz
-    )  # compute rectifying latitude
+    lat2 = reclat + (rng / rsphere.rectifying(ell)) * cosaz  # compute rectifying latitude
     lat2 = rectifying2geodetic(lat2, ell, deg=False)  # transform to geodetic latitude
 
     newiso = geodetic2isometric(lat2, ell, deg=False)
@@ -251,9 +249,7 @@ def loxodrome_direct(
     dlon = tan(a12) * (newiso - iso)
 
     try:
-        dlon[i] = (
-            sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell=ell, deg=False)
-        )
+        dlon[i] = sign(pi - a12[i]) * rng[i] / rcurve.parallel(lat1[i], ell=ell, deg=False)
     except (AttributeError, TypeError):
         if i:  # straight east or west
             dlon = sign(pi - a12) * rng / rcurve.parallel(lat1, ell=ell, deg=False)

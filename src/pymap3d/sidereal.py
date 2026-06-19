@@ -18,9 +18,7 @@ except ImportError:
 __all__ = ["datetime2sidereal", "juliandate", "greenwichsrt"]
 
 
-def datetime2sidereal(
-    time: datetime, lon_radians: float, force_non_astropy: bool = False
-):
+def datetime2sidereal(time: datetime, lon_radians: float, force_non_astropy: bool = False):
     """
     Convert ``datetime`` to local sidereal time
 
@@ -57,9 +55,7 @@ def datetime2sidereal_astropy(t: datetime, lon_radians: float):
     """
 
     at = Time(t)
-    tsr = at.sidereal_time(
-        kind="apparent", longitude=Longitude(lon_radians, unit=u.radian)
-    )
+    tsr = at.sidereal_time(kind="apparent", longitude=Longitude(lon_radians, unit=u.radian))
     return tsr.radian
 
 
@@ -106,18 +102,9 @@ def juliandate(time: datetime):
 
     A = int(year / 100.0)
     B = 2 - A + int(A / 4.0)
-    C = (
-        ((time.second + time.microsecond / 1e6) / 60.0 + time.minute) / 60.0 + time.hour
-    ) / 24.0
+    C = (((time.second + time.microsecond / 1e6) / 60.0 + time.minute) / 60.0 + time.hour) / 24.0
 
-    return (
-        int(365.25 * (year + 4716))
-        + int(30.6001 * (month + 1))
-        + time.day
-        + B
-        - 1524.5
-        + C
-    )
+    return int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + time.day + B - 1524.5 + C
 
 
 def greenwichsrt(Jdate: float):
