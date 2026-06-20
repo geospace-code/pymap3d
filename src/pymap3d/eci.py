@@ -3,13 +3,11 @@
 from __future__ import annotations
 
 from datetime import datetime
-import sys
-import logging
 
-from ._typing import FloatLike, NDArray
+from .mathfun import cos, sin
+from ._typing import FloatLike
 
 try:
-    import numpy as np
     import astropy.units as u
     from astropy.coordinates import GCRS, ITRS, CartesianRepresentation, EarthLocation
 except ImportError:
@@ -52,20 +50,16 @@ def eci2ecef(
         z ECEF coordinate
     """
 
-    if "astropy" in sys.modules and not force_non_astropy:
-        xe, ye, ze = eci2ecef_astropy(x, y, z, time)
-    elif "numpy" in sys.modules:
-        logging.warning(f"{__name__}: Numpy implementation has much less accuracy than Astropy")
-        xe, ye, ze = eci2ecef_numpy(x, y, z, time)
-    else:
-        raise ImportError("eci2ecef requires either Numpy or Astropy")
+    if force_non_astropy:
+        return eci2ecef_stdlib(x, y, z, time)
 
-    return xe, ye, ze
+    try:
+        return eci2ecef_astropy(x, y, z, time)
+    except NameError:
+        return eci2ecef_stdlib(x, y, z, time)
 
 
-def eci2ecef_astropy(
-    x: FloatLike, y: FloatLike, z: FloatLike, t: datetime
-) -> tuple[NDArray, NDArray, NDArray]:
+def eci2ecef_astropy(x, y, z, t: datetime) -> tuple:
     """
     eci2ecef using Astropy
 
@@ -82,17 +76,15 @@ def eci2ecef_astropy(
     return x_ecef, y_ecef, z_ecef
 
 
-def eci2ecef_numpy(x, y, z, t: datetime) -> tuple:
-    """
-    eci2ecef using Numpy
-
+def eci2ecef_stdlib(x, y, z, t: datetime) -> tuple:
+    """ eci2ecef without Astropy
     see eci2ecef() for description
     """
 
     gst = greenwichsrt(juliandate(t))
 
-    c = np.cos(gst)
-    s = np.sin(gst)
+    c = cos(gst)
+    s = sin(gst)
 
     x_ecef = c * x + s * y
     y_ecef = -s * x + c * y
@@ -132,20 +124,16 @@ def ecef2eci(
         z ECI coordinate
     """
 
-    if "astropy" in sys.modules and not force_non_astropy:
-        xe, ye, ze = ecef2eci_astropy(x, y, z, time)
-    elif "numpy" in sys.modules:
-        logging.warning(f"{__name__}: Numpy implementation has much less accuracy than Astropy")
-        xe, ye, ze = ecef2eci_numpy(x, y, z, time)
-    else:
-        raise ImportError("ecef2eci requires either Numpy or Astropy")
+    if force_non_astropy:
+        return ecef2eci_stdlib(x, y, z, time)
 
-    return xe, ye, ze
+    try:
+        return ecef2eci_astropy(x, y, z, time)
+    except NameError:
+        return ecef2eci_stdlib(x, y, z, time)
 
 
-def ecef2eci_astropy(
-    x: FloatLike, y: FloatLike, z: FloatLike, t: datetime
-) -> tuple[NDArray, NDArray, NDArray]:
+def ecef2eci_astropy(x, y, z, t: datetime) -> tuple:
     """ecef2eci using Astropy
     see ecef2eci() for description
     """
@@ -156,15 +144,15 @@ def ecef2eci_astropy(
     return eci.x.value, eci.y.value, eci.z.value
 
 
-def ecef2eci_numpy(x, y, z, t: datetime) -> tuple:
-    """ecef2eci using Numpy
+def ecef2eci_stdlib(x, y, z, t: datetime) -> tuple:
+    """ecef2eci without Astropy
     see ecef2eci() for description
     """
 
     gst = greenwichsrt(juliandate(t))
 
-    c = np.cos(gst)
-    s = np.sin(gst)
+    c = cos(gst)
+    s = sin(gst)
 
     x_eci = c * x - s * y
     y_eci = s * x + c * y
