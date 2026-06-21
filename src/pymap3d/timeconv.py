@@ -6,7 +6,6 @@ from datetime import datetime
 
 from ._typing import DatetimeArray, DatetimeLike
 
-
 __all__ = ["str2dt"]
 
 
