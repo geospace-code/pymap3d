@@ -74,9 +74,7 @@ if __name__ == "__main__":
     )
     p.add_argument("radius", help="search radius (kilometers)", type=int)
     p.add_argument("refloc", help="reference location (lat, lon)", nargs=2, type=float)
-    p.add_argument(
-        "-k", "--keyfn", help="Google Places API key file", default="~/googlemaps.key"
-    )
+    p.add_argument("-k", "--keyfn", help="Google Places API key file", default="~/googlemaps.key")
     a = p.parse_args()
 
     place_coords = get_place_coords(a.place_type, *a.searchloc, a.radius, a.keyfn)

@@ -16,9 +16,7 @@ reference ellipsoid is defined. The default ellipsoid is WGS-84
 
 deg : bool = True means degrees. False = radians.
 
-Most functions accept NumPy arrays of any shape, as well as compatible data types
-including AstroPy, Pandas and Xarray that have Numpy-like data properties.
-For clarity, we omit all these types in the docs, and just specify the scalar type.
+Most functions accept scalar float or NumPy NDArray.
 
 Other languages
 ---------------

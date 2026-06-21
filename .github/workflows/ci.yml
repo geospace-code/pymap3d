@@ -73,6 +73,6 @@ jobs:
       #   run: pytest --cov=src --cov-report=xml --cov-append
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           name: Python ${{ matrix.python-version }}

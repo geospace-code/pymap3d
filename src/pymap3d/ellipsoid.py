@@ -174,13 +174,16 @@ class Ellipsoid:
         "venus": {"name": "Venus", "a": 6051800.0, "b": 6051800.0},
         "moon": {"name": "Moon", "a": 1738100.0, "b": 1736000.0},
         "mars": {"name": "Mars", "a": 3396900.0, "b": 3376097.80585952},
-        "jupyter": {"name": "Jupiter", "a": 71492000.0, "b": 66770054.3475922},
+        "jupiter": {"name": "Jupiter", "a": 71492000.0, "b": 66770054.3475922},
         "io": {"name": "Io", "a": 1829.7, "b": 1815.8},
         "saturn": {"name": "Saturn", "a": 60268000.0, "b": 54364301.5271271},
         "uranus": {"name": "Uranus", "a": 25559000.0, "b": 24973000.0},
         "neptune": {"name": "Neptune", "a": 24764000.0, "b": 24341000.0},
         "pluto": {"name": "Pluto", "a": 1188000.0, "b": 1188000.0},
     }
+
+    # this was a typo in the PR commit 9978b5a
+    models["jupyter"] = models["jupiter"]
 
     @classmethod
     def from_name(cls, name: str) -> Ellipsoid:

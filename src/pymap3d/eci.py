@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from datetime import datetime
-import sys
-import logging
+
+from .mathfun import cos, sin
+from ._typing import FloatLike
 
 try:
-    import numpy
     import astropy.units as u
     from astropy.coordinates import GCRS, ITRS, CartesianRepresentation, EarthLocation
 except ImportError:
@@ -19,7 +19,9 @@ from .sidereal import greenwichsrt, juliandate
 __all__ = ["eci2ecef", "ecef2eci"]
 
 
-def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
+def eci2ecef(
+    x: FloatLike, y: FloatLike, z: FloatLike, time: datetime, force_non_astropy: bool = False
+) -> tuple:
     """
     Observer => Point  ECI  =>  ECEF
 
@@ -27,11 +29,11 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     Parameters
     ----------
-    x : float
+    x : array-like float
         ECI x-location [meters]
-    y : float
+    y : array-like float
         ECI y-location [meters]
-    z : float
+    z : array-like float
         ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
@@ -40,25 +42,21 @@ def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     Results
     -------
-    x_ecef : float
+    x_ecef : array-like float
         x ECEF coordinate
-    y_ecef : float
+    y_ecef : array-like float
         y ECEF coordinate
-    z_ecef : float
+    z_ecef : array-like float
         z ECEF coordinate
     """
 
-    if "astropy" in sys.modules and not force_non_astropy:
-        xe, ye, ze = eci2ecef_astropy(x, y, z, time)
-    elif "numpy" in sys.modules:
-        logging.warning(
-            f"{__name__}: Numpy implementation has much less accuracy than Astropy"
-        )
-        xe, ye, ze = eci2ecef_numpy(x, y, z, time)
-    else:
-        raise ImportError("eci2ecef requires either Numpy or Astropy")
+    if force_non_astropy:
+        return eci2ecef_stdlib(x, y, z, time)
 
-    return xe.squeeze()[()], ye.squeeze()[()], ze.squeeze()[()]
+    try:
+        return eci2ecef_astropy(x, y, z, time)
+    except NameError:
+        return eci2ecef_stdlib(x, y, z, time)
 
 
 def eci2ecef_astropy(x, y, z, t: datetime) -> tuple:
@@ -78,38 +76,25 @@ def eci2ecef_astropy(x, y, z, t: datetime) -> tuple:
     return x_ecef, y_ecef, z_ecef
 
 
-def eci2ecef_numpy(x, y, z, t: datetime) -> tuple:
-    """
-    eci2ecef using Numpy
-
+def eci2ecef_stdlib(x, y, z, t: datetime) -> tuple:
+    """ eci2ecef without Astropy
     see eci2ecef() for description
     """
 
-    x = numpy.atleast_1d(x)
-    y = numpy.atleast_1d(y)
-    z = numpy.atleast_1d(z)
-    gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
-    assert x.shape == y.shape == z.shape, (
-        f"shape mismatch: x: ${x.shape}  y: {y.shape}  z: {z.shape}"
-    )
+    gst = greenwichsrt(juliandate(t))
 
-    if gst.size == 1 and x.size != 1:
-        gst = numpy.broadcast_to(gst, x.shape[0])
-    assert x.size == gst.size, f"shape mismatch: x: {x.shape}  gst: {gst.shape}"
+    c = cos(gst)
+    s = sin(gst)
 
-    eci = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
-    ecef = numpy.empty((x.size, 3))
-    for i in range(eci.shape[0]):
-        ecef[i, :] = R3(gst[i]) @ eci[i, :].T
+    x_ecef = c * x + s * y
+    y_ecef = -s * x + c * y
 
-    x_ecef = ecef[:, 0].reshape(x.shape)
-    y_ecef = ecef[:, 1].reshape(y.shape)
-    z_ecef = ecef[:, 2].reshape(z.shape)
-
-    return x_ecef.squeeze()[()], y_ecef.squeeze()[()], z_ecef.squeeze()[()]
+    return x_ecef, y_ecef, z
 
 
-def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
+def ecef2eci(
+    x: FloatLike, y: FloatLike, z: FloatLike, time: datetime, force_non_astropy: bool = False
+) -> tuple:
     """
     Point => Point   ECEF => ECI
 
@@ -118,12 +103,12 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
     Parameters
     ----------
 
-    x : float
-        target x ECEF coordinate
-    y : float
-        target y ECEF coordinate
-    z : float
-        target z ECEF coordinate
+    x : array-like float
+        point x ECEF coordinate
+    y : array-like float
+        point y ECEF coordinate
+    z : array-like float
+        point z ECEF coordinate
     time : datetime.datetime
         time of observation
     force_non_astropy : bool
@@ -131,25 +116,21 @@ def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
 
     Results
     -------
-    x_eci : float
+    x_eci : array-like float
         x ECI coordinate
-    y_eci : float
+    y_eci : array-like float
         y ECI coordinate
-    z_eci : float
+    z_eci : array-like float
         z ECI coordinate
     """
 
-    if "astropy" in sys.modules and not force_non_astropy:
-        xe, ye, ze = ecef2eci_astropy(x, y, z, time)
-    elif "numpy" in sys.modules:
-        logging.warning(
-            f"{__name__}: Numpy implementation has much less accuracy than Astropy"
-        )
-        xe, ye, ze = ecef2eci_numpy(x, y, z, time)
-    else:
-        raise ImportError("ecef2eci requires either Numpy or Astropy")
+    if force_non_astropy:
+        return ecef2eci_stdlib(x, y, z, time)
 
-    return xe, ye, ze
+    try:
+        return ecef2eci_astropy(x, y, z, time)
+    except NameError:
+        return ecef2eci_stdlib(x, y, z, time)
 
 
 def ecef2eci_astropy(x, y, z, t: datetime) -> tuple:
@@ -163,32 +144,17 @@ def ecef2eci_astropy(x, y, z, t: datetime) -> tuple:
     return eci.x.value, eci.y.value, eci.z.value
 
 
-def ecef2eci_numpy(x, y, z, t: datetime) -> tuple:
-    """ecef2eci using Numpy
+def ecef2eci_stdlib(x, y, z, t: datetime) -> tuple:
+    """ecef2eci without Astropy
     see ecef2eci() for description
     """
 
-    x = numpy.atleast_1d(x)
-    y = numpy.atleast_1d(y)
-    z = numpy.atleast_1d(z)
-    gst = numpy.atleast_1d(greenwichsrt(juliandate(t)))
-    assert x.shape == y.shape == z.shape
-    assert x.size == gst.size
+    gst = greenwichsrt(juliandate(t))
 
-    ecef = numpy.column_stack((x.ravel(), y.ravel(), z.ravel()))
-    eci = numpy.empty((x.size, 3))
-    for i in range(x.size):
-        eci[i, :] = R3(gst[i]).T @ ecef[i, :]
+    c = cos(gst)
+    s = sin(gst)
 
-    return (
-        eci[:, 0].reshape(x.shape).squeeze()[()],
-        eci[:, 1].reshape(y.shape).squeeze()[()],
-        eci[:, 2].reshape(z.shape).squeeze()[()],
-    )
+    x_eci = c * x - s * y
+    y_eci = s * x + c * y
 
-
-def R3(x: float):
-    """Rotation matrix for ECI"""
-    return numpy.array(
-        [[numpy.cos(x), numpy.sin(x), 0], [-numpy.sin(x), numpy.cos(x), 0], [0, 0, 1]]
-    )
+    return x_eci, y_eci, z

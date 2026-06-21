@@ -10,11 +10,6 @@ import logging
 from copy import copy
 from math import nan, pi, tau
 
-try:
-    from numpy import atleast_1d
-except ImportError:
-    pass
-
 from .ellipsoid import Ellipsoid
 from .mathfun import (
     asin,
@@ -34,9 +29,7 @@ from .mathfun import (
 __all__ = ["vdist", "vreckon", "track2"]
 
 
-def vdist(
-    Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid | None = None, deg: bool = True
-) -> tuple:
+def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid | None = None, deg: bool = True) -> tuple:
     """
     Using the reference ellipsoid, compute the distance between two points
     within a few millimeters of accuracy, compute forward azimuth,
@@ -108,15 +101,6 @@ def vdist(
      12. No warranties; use at your own risk.
     """
 
-    # %% Input check:
-    try:
-        Lat1 = atleast_1d(Lat1)
-        Lon1 = atleast_1d(Lon1)
-        Lat2 = atleast_1d(Lat2)
-        Lon2 = atleast_1d(Lon2)
-    except NameError:
-        pass
-
     if ell is None:
         ell = Ellipsoid.from_name("wgs84")
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
@@ -143,13 +127,14 @@ def vdist(
     try:
         i = abs(pi / 2 - abs(lat1)) < 1e-10
         lat1[i] = sign(lat1[i]) * (pi / 2 - 1e-10)
-
-        i = abs(pi / 2 - abs(lat2)) < 1e-10
-        lat2[i] = sign(lat2[i]) * (pi / 2 - 1e-10)
     except TypeError:
         if abs(pi / 2 - abs(lat1)) < 1e-10:
             lat1 = sign(lat1) * (pi / 2 - 1e-10)
 
+    try:
+        i = abs(pi / 2 - abs(lat2)) < 1e-10
+        lat2[i] = sign(lat2[i]) * (pi / 2 - 1e-10)
+    except TypeError:
         if abs(pi / 2 - abs(lat2)) < 1e-10:
             lat2 = sign(lat2) * (pi / 2 - 1e-10)
 
@@ -173,9 +158,7 @@ def vdist(
         itercount += 1
         if itercount > 50:
             if not warninggiven:
-                logging.warning(
-                    "Essentially antipodal points--precision may be reduced slightly."
-                )
+                logging.warning("Essentially antipodal points--precision may be reduced slightly.")
 
             lamb = pi
             break
@@ -183,8 +166,7 @@ def vdist(
         lambdaold = copy(lamb)
 
         sinsigma = sqrt(
-            (cos(U2) * sin(lamb)) ** 2
-            + (cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)) ** 2
+            (cos(U2) * sin(lamb)) ** 2 + (cos(U1) * sin(U2) - sin(U1) * cos(U2) * cos(lamb)) ** 2
         )
 
         cossigma = sin(U1) * sin(U2) + cos(U1) * cos(U2) * cos(lamb)
@@ -223,10 +205,7 @@ def vdist(
         C = f / 16 * cos(alpha) ** 2 * (4 + f * (4 - 3 * cos(alpha) ** 2))
 
         lamb = L + (1 - C) * f * sin(alpha) * (
-            sigma
-            + C
-            * sin(sigma)
-            * (cos2sigmam + C * cos(sigma) * (-1 + 2.0 * cos2sigmam**2))
+            sigma + C * sin(sigma) * (cos2sigmam + C * cos(sigma) * (-1 + 2.0 * cos2sigmam**2))
         )
         # print(f'then, lambda(21752) = {lamb[21752],20})
         # correct for convergence failure for essentially antipodal points
@@ -260,11 +239,7 @@ def vdist(
             / 4
             * (
                 cos(sigma) * (-1 + 2 * cos2sigmam**2)
-                - B
-                / 6
-                * cos2sigmam
-                * (-3 + 4 * sin(sigma) ** 2)
-                * (-3 + 4 * cos2sigmam**2)
+                - B / 6 * cos2sigmam * (-3 + 4 * sin(sigma) ** 2) * (-3 + 4 * cos2sigmam**2)
             )
         )
     )
@@ -296,9 +271,7 @@ def vdist(
         return dist_m, a12
 
 
-def vreckon(
-    Lat1, Lon1, Rng, Azim, ell: Ellipsoid | None = None, deg: bool = True
-) -> tuple:
+def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid | None = None, deg: bool = True) -> tuple:
     """
     This is the Vincenty "forward" solution.
 
@@ -359,13 +332,9 @@ def vreckon(
     """
 
     try:
-        Lat1 = atleast_1d(Lat1)
-        Lon1 = atleast_1d(Lon1)
-        Rng = atleast_1d(Rng)
-        Azim = atleast_1d(Azim)
         if (Rng < 0.0).any():
             raise ValueError("Ground distance must be positive")
-    except NameError:
+    except AttributeError:
         if Rng < 0.0:
             raise ValueError("Ground distance must be positive")
 
@@ -466,12 +435,7 @@ def vreckon(
         f
         * (1 - C)
         * sinAlpha
-        * (
-            sigma
-            + C
-            * sinSigma
-            * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM))
-        )
+        * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)))
     )
 
     lon2 = lon1 + L
@@ -500,7 +464,7 @@ def track2(
     ell: Ellipsoid | None = None,
     npts: int = 100,
     deg: bool = True,
-) -> tuple[list, list]:
+) -> tuple:
     """
     computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
 
@@ -545,10 +509,7 @@ def track2(
         lon2 = radians(lon2)
 
     gcarclen = 2.0 * asin(
-        sqrt(
-            (sin((lat1 - lat2) / 2)) ** 2
-            + cos(lat1) * cos(lat2) * (sin((lon1 - lon2) / 2)) ** 2
-        )
+        sqrt((sin((lat1 - lat2) / 2)) ** 2 + cos(lat1) * cos(lat2) * (sin((lon1 - lon2) / 2)) ** 2)
     )
     # check to see if points are antipodal (if so, route is undefined).
     if abs(gcarclen - pi) < 1e-12:

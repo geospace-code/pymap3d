@@ -4,15 +4,13 @@ from __future__ import annotations
 
 from datetime import datetime
 
-try:
-    import dateutil.parser
-except ImportError:
-    pass
+from ._typing import DatetimeArray, DatetimeLike
+
 
 __all__ = ["str2dt"]
 
 
-def str2dt(time: str | datetime) -> datetime:
+def str2dt(time: DatetimeLike) -> DatetimeArray:
     """
     Converts times in string or list of strings to datetime(s)
 
@@ -24,38 +22,12 @@ def str2dt(time: str | datetime) -> datetime:
     Results
     -------
 
-    t : datetime.datetime
-
+    t : datetime.datetime or numpy.datetime64
     """
+
     if isinstance(time, datetime):
         return time
     elif isinstance(time, str):
-        try:
-            return dateutil.parser.parse(time)
-        except NameError:
-            raise ImportError("pip install python-dateutil")
-
-    # some sort of iterable
-    try:
-        if isinstance(time[0], datetime):
-            return time
-        elif isinstance(time[0], str):
-            return [dateutil.parser.parse(t) for t in time]
-    except IndexError:
-        pass
-    except NameError:
-        raise ImportError("pip install python-dateutil")
-
-    # pandas/xarray
-    try:
-        return time.values.astype("datetime64[us]").astype(datetime)
-    except AttributeError:
-        pass
-
-    # Numpy.datetime64
-    try:
+        return datetime.fromisoformat(time)
+    else:
         return time.astype(datetime)
-    except AttributeError:
-        pass
-
-    return time

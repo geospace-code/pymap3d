@@ -10,19 +10,20 @@ The Journal of Navigation, Volume 63, Issue 03, pp 395-417, July 2010.
 
 from __future__ import annotations
 
+from ._typing import FloatLike
 from .mathfun import acos, asin, atan2, cos, degrees, radians, sin, sqrt
 from .ecef import geodetic2ecef, ecef2geodetic
 from .ellipsoid import Ellipsoid
 
 
-def geodetic2nvector(lat, lon, deg: bool = True) -> tuple:
+def geodetic2nvector(lat: FloatLike, lon: FloatLike, deg: bool = True) -> tuple:
     """
     Convert geodetic coordinates (latitude, longitude) to an n-vector.
 
     Parameters:
-        lat : float or array-like
+        lat : array-like float
             Geodetic latitude(s).
-        lon : float or array-like
+        lon : array-like float
             Geodetic longitude(s).
         ell : str or tuple, optional
             Reference ellipsoid (default is None, which uses WGS84).
@@ -47,12 +48,12 @@ def geodetic2nvector(lat, lon, deg: bool = True) -> tuple:
     return n1, n2, n3
 
 
-def nvector2geodetic(n1, n2, n3, deg=True) -> tuple:
+def nvector2geodetic(n1: FloatLike, n2: FloatLike, n3: FloatLike, deg: bool = True) -> tuple:
     """
     Convert an n-vector back to geodetic coordinates (latitude, longitude).
 
     Parameters:
-        n1, n2, n3 : float or array-like
+        n1, n2, n3 : array-like float
             Components of the n-vector in the Earth-Centered Earth-Fixed (ECEF) coordinate system.
         ell : str or tuple, optional
             Reference ellipsoid (default is None, which uses WGS84).
@@ -74,12 +75,14 @@ def nvector2geodetic(n1, n2, n3, deg=True) -> tuple:
     return lat, lon
 
 
-def ecef2nvector(x, y, z, ell: Ellipsoid | None = None, deg: bool = True):
+def ecef2nvector(
+    x: FloatLike, y: FloatLike, z: FloatLike, ell: Ellipsoid | None = None, deg: bool = True
+):
     """
     Convert ECEF coordinates to an n-vector.
 
     Parameters:
-        x, y, z : float or array-like
+        x, y, z : array-like float
             ECEF coordinates in meters.
         ell : str or tuple, optional
             Reference ellipsoid (default is None, which uses WGS84).
@@ -95,14 +98,21 @@ def ecef2nvector(x, y, z, ell: Ellipsoid | None = None, deg: bool = True):
     return geodetic2nvector(lat, lon, deg=deg)
 
 
-def nvector2ecef(n1, n2, n3, alt=0, ell: Ellipsoid | None = None, deg: bool = True):
+def nvector2ecef(
+    n1: FloatLike,
+    n2: FloatLike,
+    n3: FloatLike,
+    alt: FloatLike = 0,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
+):
     """
     Convert an n-vector to ECEF coordinates.
 
     Parameters:
-        n1, n2, n3 : float or array-like
+        n1, n2, n3 : array-like float
             Components of the n-vector in the Earth-Centered Earth-Fixed (ECEF) coordinate system.
-        alt : float or array-like, optional
+        alt : array-like float, optional
             Altitude in meters (default is 0).
         ell : str or tuple, optional
             Reference ellipsoid (default is None, which uses WGS84).

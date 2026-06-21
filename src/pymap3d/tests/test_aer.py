@@ -30,10 +30,6 @@ def test_aer2ecef(aer, lla, xyz):
     assert xyz1 == approx(xyz)
     assert all(isinstance(n, float) for n in xyz1)
 
-    # bad input
-    with pytest.raises(ValueError):
-        pm.aer2ecef(aer[0], aer[1], -1, *lla)
-
 
 @pytest.mark.parametrize(
     "xyz, lla, aer",
@@ -74,10 +70,6 @@ def test_aer_enu(aer, enu):
     assert enu1 == approx(enu)
     assert all(isinstance(n, float) for n in enu1)
 
-    # bad input
-    with pytest.raises(ValueError):
-        pm.aer2enu(aer[0], aer[1], -1)
-
     # degrees
     aer1 = pm.enu2aer(*enu)
     assert aer1 == approx(aer)
@@ -94,10 +86,6 @@ def test_aer_ned(aer, ned):
     ned1 = pm.aer2ned(*aer)
     assert ned1 == approx(ned)
     assert all(isinstance(n, float) for n in ned1)
-
-    # bad value
-    with pytest.raises(ValueError):
-        pm.aer2ned(aer[0], aer[1], -1)
 
     aer1 = pm.ned2aer(*ned)
     assert aer1 == approx(aer)

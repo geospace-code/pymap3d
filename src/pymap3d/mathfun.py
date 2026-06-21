@@ -24,6 +24,7 @@ try:
         isnan,
         linspace,
         log,
+        minimum,
         power,
         radians,
         sign,
@@ -55,6 +56,9 @@ except ImportError:
         tan,
     )
 
+    def minimum(x, y):  # type: ignore
+        return min(x, y)
+
     def linspace(start: float, stop: float, num: int) -> list[float]:  # type: ignore
         """
         create a list of "num" evenly spaced numbers using range and increment,
@@ -77,13 +81,6 @@ except ImportError:
 
         return y
 
-    try:
-        import math.cbrt as cbrt  # type: ignore
-    except ImportError:
-
-        def cbrt(x) -> float:  # type: ignore
-            return x ** (1 / 3)
-
 
 __all__ = [
     "acos",
@@ -103,6 +100,8 @@ __all__ = [
     "isclose",
     "isnan",
     "log",
+    "minimum",
+    "linspace",
     "power",
     "radians",
     "sign",
@@ -110,3 +109,14 @@ __all__ = [
     "sqrt",
     "tan",
 ]
+
+
+def cube_root(x):
+    """cube root function, handles negative numbers"""
+    try:
+        return cbrt(x)
+    except NameError:
+        if x < 0:
+            return -power(-x, 1.0 / 3.0)
+        else:
+            return power(x, 1.0 / 3.0)

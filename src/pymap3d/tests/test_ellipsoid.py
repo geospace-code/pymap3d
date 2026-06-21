@@ -37,7 +37,7 @@ xyz0 = (660e3, -4700e3, 4247e3)
         ("venus", 0.0),
         ("moon", 0.0012082158679017317),
         ("mars", 0.006123875928193323),
-        ("jupyter", 0.06604858798757626),
+        ("jupiter", 0.06604858798757626),
         ("io", 0.0075968738044488665),
         ("uranus", 0.022927344575296372),
         ("neptune", 0.01708124697141011),
@@ -63,9 +63,9 @@ def test_ellipsoid():
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("everest1830")) == approx(
         [42.01302648557789, -82.00647850636021, 1032.4153744896425]
     )
-    assert pm.ecef2geodetic(
-        *xyz0, ell=pm.Ellipsoid.from_name("everest1830m")
-    ) == approx([42.0130266467127, -82.00647850636021, 1027.7254294115853])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("everest1830m")) == approx(
+        [42.0130266467127, -82.00647850636021, 1027.7254294115853]
+    )
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("everest1967")) == approx(
         [42.01302648557363, -82.00647850636021, 1033.2243733811288]
     )
@@ -90,21 +90,21 @@ def test_ellipsoid():
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("hayford")) == approx(
         [42.01548834310426, -82.00647850636021, 66.77070154259877]
     )
-    assert pm.ecef2geodetic(
-        *xyz0, ell=pm.Ellipsoid.from_name("international1924")
-    ) == approx([42.01548834310426, -82.00647850636021, 66.77070154259877])
-    assert pm.ecef2geodetic(
-        *xyz0, ell=pm.Ellipsoid.from_name("krassovsky1940")
-    ) == approx([42.01464632634865, -82.00647850636021, 167.7043859419633])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("international1924")) == approx(
+        [42.01548834310426, -82.00647850636021, 66.77070154259877]
+    )
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("krassovsky1940")) == approx(
+        [42.01464632634865, -82.00647850636021, 167.7043859419633]
+    )
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("wgs66")) == approx(
         [42.014675415414274, -82.00647850636021, 269.1575142686737]
     )
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("australian")) == approx(
         [42.01467586302664, -82.00647850636021, 254.17989315657786]
     )
-    assert pm.ecef2geodetic(
-        *xyz0, ell=pm.Ellipsoid.from_name("international1967")
-    ) == approx([42.01467603307557, -82.00647850636021, 256.6883857005818])
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("international1967")) == approx(
+        [42.01467603307557, -82.00647850636021, 256.6883857005818]
+    )
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("grs67")) == approx(
         [42.01467768000789, -82.00647850636021, 254.27066653452297]
     )
@@ -141,7 +141,7 @@ def test_ellipsoid():
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("mars")) == approx(
         [42.00945156056578, -82.00647850636021, 2981246.073616111]
     )
-    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("jupyter")) == approx(
+    assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("jupiter")) == approx(
         [75.3013267078341, -82.00647850636021, -61782040.202975556]
     )
     assert pm.ecef2geodetic(*xyz0, ell=pm.Ellipsoid.from_name("io")) == approx(
