@@ -86,7 +86,17 @@ from .latitude import (
     geoc2geod,
 )
 
-from .nvector import geodetic2nvector, nvector2geodetic, ecef2nvector, nvector2ecef
+from .nvector import (
+    geodetic2nvector,
+    nvector2geodetic,
+    ecef2nvector,
+    nvector2ecef,
+    nvector_distance,
+    nvector_interpolate,
+    nvector_mean,
+    nvector_cross_track_distance,
+    nvector_intersection,
+)
 
 from .rcurve import parallel, meridian, transverse, geocentric_radius
 
@@ -156,6 +166,11 @@ __all__ = [
     "dca2geodetic",
     "aer2dca",
     "dca2aer",
+    "nvector_distance",
+    "nvector_interpolate",
+    "nvector_mean",
+    "nvector_cross_track_distance",
+    "nvector_intersection",
 ]
 
 
