@@ -6,13 +6,18 @@ from __future__ import annotations
 
 import warnings
 
-from ._typing import FloatArray, FloatLike
 import logging
 from copy import copy
 
 from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import isnan, linspace, degrees, radians, sign, sqrt, atan2, cos, sin, tan, asin, atan
 from math import pi, tau, nan
+
+try:
+    from numpy import asarray
+except ImportError:
+    pass
+
 
 __all__ = ["vdist", "vreckon", "track2"]
 
@@ -447,7 +452,8 @@ def track2(
     deg: bool = True,
 ) -> tuple:
     """
-    computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2
+    computes great circle tracks starting at the point lat1, lon1 and ending at lat2, lon2.
+    track2() REQUIRES NumPy.
 
     Parameters
     ----------
@@ -501,7 +507,7 @@ def track2(
     distance, azimuth = vdist(lat1, lon1, lat2, lon2, ell, deg=False)
     dists = linspace(0, distance, npts)
 
-    lats, lons = vreckon(lat1, lon1, dists, azimuth, ell, deg=False)
+    lats, lons = vreckon(lat1, lon1, asarray(dists), azimuth, ell, deg=False)
 
     if deg:
         lats = degrees(lats)
