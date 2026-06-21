@@ -115,10 +115,8 @@ class TestGeodesicArea:
         assert perim > 0
 
     def test_too_few_points(self):
-        area, perim = karney.geodesic_area([0, 1], [0, 1])
-        assert area == 0.0
-        assert perim == 0.0
-
+        with pytest.raises(ValueError):
+            area, perim = karney.geodesic_area([0, 1], [0, 1])
 
 class TestGeodesicCache:
     def test_default_ellipsoid_cache_reuse(self):

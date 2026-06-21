@@ -15,7 +15,7 @@ points and nearly-equatorial lines.
 
 from __future__ import annotations
 
-import math as _math
+import math
 
 from .ellipsoid import Ellipsoid, get_cached_geodesic
 from .mathfun import copysign, fmod, hypot, isnan, sqrt
@@ -84,8 +84,8 @@ def _sincosd(x):
     r = fmod(x, 360.0)
     q = 0 if isnan(r) else int(round(r / 90.0))
     r -= 90.0 * q
-    r = _math.radians(r)
-    s, c = _math.sin(r), _math.cos(r)
+    r = math.radians(r)
+    s, c = math.sin(r), math.cos(r)
     q = q % 4
     if q == 1:
         s, c = c, -s
@@ -108,7 +108,7 @@ def _atan2d(y, x):
     if x < 0:
         x = -x
         q += 1
-    ang = _math.degrees(_math.atan2(y, x))
+    ang = math.degrees(math.atan2(y, x))
     if q == 1:
         ang = copysign(180.0, y) - ang
     elif q == 2:
@@ -289,8 +289,8 @@ def _Astroid(x, y):
             T = T3 ** (1.0 / 3.0) if T3 >= 0 else -((-T3) ** (1.0 / 3.0))
             u += T + (r2 / T if T != 0 else 0.0)
         else:
-            ang = _math.atan2(sqrt(-disc), -(S + r3))
-            u += 2.0 * r * _math.cos(ang / 3.0)
+            ang = math.atan2(sqrt(-disc), -(S + r3))
+            u += 2.0 * r * math.cos(ang / 3.0)
         v = sqrt(u * u + q)
         uv = u + v if u >= 0 else q / (v - u)
         w = (uv - q) / (2.0 * v)
@@ -319,10 +319,10 @@ class _Geodesic:
             self._c2 = self.a ** 2
         elif self._e2 > 0:
             e = sqrt(self._e2)
-            self._c2 = (self.a ** 2 + self._b ** 2 * _math.atanh(e) / e) / 2.0
+            self._c2 = (self.a ** 2 + self._b ** 2 * math.atanh(e) / e) / 2.0
         else:
             e = sqrt(-self._e2)
-            self._c2 = (self.a ** 2 + self._b ** 2 * _math.atan(e) / e) / 2.0
+            self._c2 = (self.a ** 2 + self._b ** 2 * math.atan(e) / e) / 2.0
         self._etol2 = 0.1 * _tol2 / sqrt(
             max(0.001, abs(self.f)) * min(1.0, 1.0 - self.f / 2.0) / 2.0)
 
@@ -389,7 +389,7 @@ class _Geodesic:
 
     def _Lengths(self, eps, sig12, ssig1, csig1, dn1, ssig2, csig2, dn2,
                  cbet1, cbet2, outmask, C1a, C2a):
-        s12b = m12b = m0 = M12 = M21 = _math.nan
+        s12b = m12b = m0 = M12 = M21 = math.nan
         A1 = _A1m1f(eps)
         _C1f(eps, C1a)
         if outmask & (_REDUCEDLENGTH | _GEODESICSCALE):
@@ -430,7 +430,7 @@ class _Geodesic:
                       lam12, slam12, clam12, C1a, C2a):
         sig12 = -1.0
         salp1 = 2.0
-        calp1 = salp2 = calp2 = dnm = _math.nan
+        calp1 = salp2 = calp2 = dnm = math.nan
 
         sbet12 = sbet2 * cbet1 - cbet2 * sbet1
         cbet12 = cbet2 * cbet1 + sbet2 * sbet1
@@ -442,8 +442,8 @@ class _Geodesic:
             sbetm2 /= sbetm2 + (cbet1 + cbet2) ** 2
             dnm = sqrt(1.0 + self._ep2 * sbetm2)
             omg12 = lam12 / (self._f1 * dnm)
-            somg12 = _math.sin(omg12)
-            comg12 = _math.cos(omg12)
+            somg12 = math.sin(omg12)
+            comg12 = math.cos(omg12)
         else:
             somg12 = slam12
             comg12 = clam12
@@ -461,26 +461,26 @@ class _Geodesic:
             # Short line case
             pass
 
-        if not (csig12 >= 0 or ssig12 >= 6 * abs(self.f) * _math.pi * cbet1 ** 2):
+        if not (csig12 >= 0 or ssig12 >= 6 * abs(self.f) * math.pi * cbet1 ** 2):
             if self.f >= 0:
                 k2 = sbet1 ** 2 * self._ep2
                 eps = k2 / (2.0 * (1.0 + sqrt(1.0 + k2)) + k2)
-                lamscale = self.f * cbet1 * self._A3f(eps) * _math.pi
+                lamscale = self.f * cbet1 * self._A3f(eps) * math.pi
                 betscale = lamscale * cbet1
-                x = (lam12 - _math.pi) / lamscale
+                x = (lam12 - math.pi) / lamscale
                 y = sbet12a / betscale
             else:
                 cbet12a = cbet2 * cbet1 - sbet2 * sbet1
-                bet12a = _math.atan2(sbet12a, cbet12a)
+                bet12a = math.atan2(sbet12a, cbet12a)
                 _, m12b, m0, _, _ = self._Lengths(
-                    self._n, _math.pi + bet12a,
+                    self._n, math.pi + bet12a,
                     sbet1, -cbet1, dn1, sbet2, cbet2, dn2,
                     cbet1, cbet2, _REDUCEDLENGTH, C1a, C2a)
-                x = -1.0 + m12b / (cbet1 * cbet2 * m0 * _math.pi)
+                x = -1.0 + m12b / (cbet1 * cbet2 * m0 * math.pi)
                 betscale = (sbet12a / x if x < -0.01
-                            else -self.f * cbet1 ** 2 * _math.pi)
+                            else -self.f * cbet1 ** 2 * math.pi)
                 lamscale = betscale / cbet1
-                y = (lam12 - _math.pi) / lamscale
+                y = (lam12 - math.pi) / lamscale
 
             if y < -_tol1 and x > -1.0 - _xthresh:
                 if self.f >= 0:
@@ -494,8 +494,8 @@ class _Geodesic:
                 omg12a = lamscale * (
                     -x * k / (1.0 + k) if self.f >= 0
                     else -y * (1.0 + k) / k)
-                somg12 = _math.sin(omg12a)
-                comg12 = -_math.cos(omg12a)
+                somg12 = math.sin(omg12a)
+                comg12 = -math.cos(omg12a)
                 salp1 = cbet2 * somg12
                 calp1 = sbet12a - cbet2 * sbet1 * somg12 ** 2 / (1.0 - comg12)
 
@@ -532,13 +532,13 @@ class _Geodesic:
         csig2 = comg2 = calp2 * cbet2
         ssig2, csig2 = _norm2(ssig2, csig2)
 
-        sig12 = _math.atan2(
+        sig12 = math.atan2(
             max(0.0, csig1 * ssig2 - ssig1 * csig2),
             csig1 * csig2 + ssig1 * ssig2)
 
         somg12 = max(0.0, comg1 * somg2 - somg1 * comg2)
         comg12 = comg1 * comg2 + somg1 * somg2
-        eta = _math.atan2(
+        eta = math.atan2(
             somg12 * clam120 - comg12 * slam120,
             comg12 * clam120 + somg12 * slam120)
 
@@ -560,7 +560,7 @@ class _Geodesic:
                     cbet1, cbet2, _REDUCEDLENGTH, C1a, C2a)
                 dlam12 *= self._f1 / (calp2 * cbet2)
         else:
-            dlam12 = _math.nan
+            dlam12 = math.nan
 
         return (lam12, salp2, calp2, sig12, ssig1, csig1, ssig2, csig2,
                 eps, somg12, comg12, dlam12)
@@ -570,7 +570,7 @@ class _Geodesic:
         lonsign = 1.0 if lon12 >= 0 else -1.0
         lon12 = lonsign * _AngRound(lon12)
         lon12s = _AngRound((180.0 - lon12) - lonsign * lon12s)
-        lam12 = _math.radians(lon12)
+        lam12 = math.radians(lon12)
         if lon12 > 90:
             slam12, clam12 = _sincosd(lon12s)
             clam12 = -clam12
@@ -612,8 +612,8 @@ class _Geodesic:
         C2a = [0.0] * (_nC2 + 1)
         C3a = [0.0] * _nC3
 
-        s12x = m12x = a12 = _math.nan
-        M12 = M21 = _math.nan
+        s12x = m12x = a12 = math.nan
+        M12 = M21 = math.nan
 
         if meridian:
             calp1 = clam12
@@ -626,7 +626,7 @@ class _Geodesic:
             ssig2 = sbet2
             csig2 = calp2 * cbet2
 
-            sig12 = _math.atan2(
+            sig12 = math.atan2(
                 max(0.0, csig1 * ssig2 - ssig1 * csig2),
                 csig1 * csig2 + ssig1 * ssig2)
 
@@ -640,7 +640,7 @@ class _Geodesic:
                     sig12 = m12x = 0.0
                 m12x *= self._b
                 s12x *= self._b
-                a12 = _math.degrees(sig12)
+                a12 = math.degrees(sig12)
             else:
                 meridian = False
 
@@ -652,8 +652,8 @@ class _Geodesic:
             salp1 = salp2 = 1.0
             s12x = self.a * lam12
             sig12 = lam12 / self._f1
-            m12x = self._b * _math.sin(sig12)
-            M12 = M21 = _math.cos(sig12)
+            m12x = self._b * math.sin(sig12)
+            M12 = M21 = math.cos(sig12)
             a12 = lon12 / self._f1
 
         elif not meridian:
@@ -662,11 +662,11 @@ class _Geodesic:
                 lam12, slam12, clam12, C1a, C2a)
 
             if sig12 >= 0:
-                B1 = _SinCosSeries(True, _math.sin(sig12), _math.cos(sig12), C1a, _nC1)
+                B1 = _SinCosSeries(True, math.sin(sig12), math.cos(sig12), C1a, _nC1)
                 s12x = self._b * (1 + _A1m1f(self._n)) * (sig12 + B1)
                 m12x = 0.0
                 M12 = M21 = 1.0
-                a12 = _math.degrees(sig12)
+                a12 = math.degrees(sig12)
             else:
                 tripb = False
                 salp1a = _tiny
@@ -694,8 +694,8 @@ class _Geodesic:
 
                     if numit < _maxit1 and dlam12 != 0:
                         dalp1 = -v / dlam12
-                        sdalp1 = _math.sin(dalp1)
-                        cdalp1 = _math.cos(dalp1)
+                        sdalp1 = math.sin(dalp1)
+                        cdalp1 = math.cos(dalp1)
                         nsalp1 = salp1 * cdalp1 + calp1 * sdalp1
                         if nsalp1 > 0:
                             calp1 = calp1 * cdalp1 - salp1 * sdalp1
@@ -716,7 +716,7 @@ class _Geodesic:
                     cbet1, cbet2, _OUT, C1a, C2a)
                 m12x *= self._b
                 s12x *= self._b
-                a12 = _math.degrees(sig12)
+                a12 = math.degrees(sig12)
 
         if swapp < 0:
             salp1, salp2 = salp2, salp1
@@ -764,22 +764,22 @@ class _Geodesic:
 
         A1p1 = 1.0 + A1
         B11 = _SinCosSeries(True, ssig1, csig1, C1a, _nC1)
-        s_B11 = _math.sin(B11)
-        c_B11 = _math.cos(B11)
+        s_B11 = math.sin(B11)
+        c_B11 = math.cos(B11)
         stau1 = ssig1 * c_B11 + csig1 * s_B11
         ctau1 = csig1 * c_B11 - ssig1 * s_B11
 
         tau12 = s12 / (self._b * A1p1)
-        s_tau12 = _math.sin(tau12)
-        c_tau12 = _math.cos(tau12)
+        s_tau12 = math.sin(tau12)
+        c_tau12 = math.cos(tau12)
 
         stau2 = stau1 * c_tau12 + ctau1 * s_tau12
         ctau2 = ctau1 * c_tau12 - stau1 * s_tau12
 
         B12 = -_SinCosSeries(True, stau2, ctau2, C1pa, _nC1p)
         sig12 = tau12 - (B12 - B11)
-        ssig12 = _math.sin(sig12)
-        csig12 = _math.cos(sig12)
+        ssig12 = math.sin(sig12)
+        csig12 = math.cos(sig12)
 
         if abs(self.f) > 0.01:
             ssig2 = ssig1 * csig12 + csig1 * ssig12
@@ -787,8 +787,8 @@ class _Geodesic:
             B12 = _SinCosSeries(True, ssig2, csig2, C1a, _nC1)
             serr = (1.0 + A1) * (sig12 + (B12 - B11)) - s12 / self._b
             sig12 -= serr / sqrt(1.0 + k2 * ssig2 ** 2)
-            ssig12 = _math.sin(sig12)
-            csig12 = _math.cos(sig12)
+            ssig12 = math.sin(sig12)
+            csig12 = math.cos(sig12)
 
         ssig2 = ssig1 * csig12 + csig1 * ssig12
         csig2 = csig1 * csig12 - ssig1 * ssig12
@@ -814,11 +814,11 @@ class _Geodesic:
         # Use LONG_UNROLL method for robustness (handles equatorial case)
         E = copysign(1.0, salp0)
         omg12 = E * (sig12
-                     - (_math.atan2(ssig2, csig2) - _math.atan2(ssig1, csig1))
-                     + (_math.atan2(E * somg2, comg2) - _math.atan2(E * somg1, comg1)))
+                     - (math.atan2(ssig2, csig2) - math.atan2(ssig1, csig1))
+                     + (math.atan2(E * somg2, comg2) - math.atan2(E * somg1, comg1)))
         lam12 = omg12 - self.f * A3c * salp0 * (sig12 + (B32 - B31))
 
-        lon12 = _math.degrees(lam12)
+        lon12 = math.degrees(lam12)
         lat2 = _atan2d(sbet2, self._f1 * cbet2)
         lon2 = _AngNormalize(lon1 + lon12)
         azi2 = _atan2d(salp2, calp2)
@@ -871,11 +871,11 @@ def geodesic_inverse(
     """
     g = _get_geodesic(ell)
     if not deg:
-        lat1, lon1 = _math.degrees(lat1), _math.degrees(lon1)
-        lat2, lon2 = _math.degrees(lat2), _math.degrees(lon2)
+        lat1, lon1 = math.degrees(lat1), math.degrees(lon1)
+        lat2, lon2 = math.degrees(lat2), math.degrees(lon2)
     dist, azi1, azi2 = g._Inverse(lat1, lon1, lat2, lon2)
     if not deg:
-        azi1, azi2 = _math.radians(azi1), _math.radians(azi2)
+        azi1, azi2 = math.radians(azi1), math.radians(azi2)
     return dist, azi1, azi2
 
 
@@ -915,11 +915,11 @@ def geodesic_direct(
     """
     g = _get_geodesic(ell)
     if not deg:
-        lat1, lon1 = _math.degrees(lat1), _math.degrees(lon1)
-        azi1 = _math.degrees(azi1)
+        lat1, lon1 = math.degrees(lat1), math.degrees(lon1)
+        azi1 = math.degrees(azi1)
     lat2, lon2, azi2 = g._Direct(lat1, lon1, azi1, dist)
     if not deg:
-        lat2, lon2, azi2 = _math.radians(lat2), _math.radians(lon2), _math.radians(azi2)
+        lat2, lon2, azi2 = math.radians(lat2), math.radians(lon2), math.radians(azi2)
     return lat2, lon2, azi2
 
 
@@ -966,15 +966,16 @@ def geodesic_area(
 ) -> tuple:
     """
     Compute the area and perimeter of a geodesic polygon.
+    Polygon must have at least 3 vertices.
 
     Counterclockwise vertex ordering gives positive area.
 
     Parameters
     ----------
     lats : array-like
-        Latitudes of polygon vertices.
+        Latitudes of polygon vertices: 1-D array or list.
     lons : array-like
-        Longitudes of polygon vertices.
+        Longitudes of polygon vertices: 1-D array or list.
     ell : Ellipsoid, optional
         Reference ellipsoid (default WGS84).
     deg : bool, optional
@@ -987,9 +988,10 @@ def geodesic_area(
     perimeter : float
         Perimeter in meters.
     """
+
     n = len(lats)
     if n < 3:
-        return 0.0, 0.0
+        raise ValueError("Polygon must have at least 3 vertices")
 
     g = _get_geodesic(ell)
     perimeter = 0.0
@@ -1012,8 +1014,8 @@ def geodesic_area(
     diff, _ = _AngDiff(azi2_prev, azi1_first)
     area_sum += diff
 
-    area = g._c2 * _math.radians(area_sum)
-    area0 = 4.0 * _math.pi * g._c2
+    area = g._c2 * math.radians(area_sum)
+    area0 = 4.0 * math.pi * g._c2
     if abs(area) > area0 / 2:
         area -= copysign(area0, area)
     return area, perimeter
