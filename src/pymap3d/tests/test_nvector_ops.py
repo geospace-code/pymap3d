@@ -14,7 +14,6 @@ from pymap3d.nvector import (
 import pytest
 from pytest import approx
 
-
 # Mean Earth radius (equal-volume sphere)
 R = 6371000.8
 

@@ -114,7 +114,4 @@ def lookAtSpheroid(
     # %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
-    try:
-        return lat.squeeze()[()], lon.squeeze()[()], d.squeeze()[()]
-    except AttributeError:
-        return lat, lon, d
+    return lat, lon, d

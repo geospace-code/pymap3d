@@ -44,7 +44,7 @@ def test_vreckon_unit(deg, lat, lon, srange, az, lato, lono):
 
 
 def test_az_vector():
-    np =pytest.importorskip("numpy")
+    np = pytest.importorskip("numpy")
     az = np.array(az1)
     a, b = vincenty.vreckon(*ll0, sr1[0], az)
     assert a == approx(lat2)

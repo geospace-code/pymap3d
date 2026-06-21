@@ -13,6 +13,7 @@ ECI = (-2981784.0, 5207055.0, 3161595.0)
 ECEF = [-5762640.0, -1682738.0, 3156028.0]
 UTC = datetime.datetime(2019, 1, 4, 12, tzinfo=datetime.timezone.utc)
 
+
 @pytest.mark.parametrize("force_non_astropy", [True, False])
 def test_eci2ecef(force_non_astropy):
     ecef = pm.eci2ecef(*ECI, UTC, force_non_astropy=force_non_astropy)

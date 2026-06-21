@@ -238,10 +238,7 @@ def geodetic2isometric(geodetic_lat: FloatArray, ell: Ellipsoid | None = None, d
     if deg:
         isometric_lat = degrees(isometric_lat)
 
-    try:
-        return isometric_lat.squeeze()[()]
-    except AttributeError:
-        return isometric_lat
+    return isometric_lat
 
 
 def isometric2geodetic(isometric_lat: FloatLike, ell: Ellipsoid | None = None, deg: bool = True):
@@ -647,4 +644,3 @@ def parametric2geodetic(parametric_lat: FloatLike, ell: Ellipsoid | None = None,
     geodetic_lat = atan(tan(parametric_lat) / sqrt(1 - (ell.eccentricity) ** 2))
 
     return degrees(geodetic_lat) if deg else geodetic_lat
-
