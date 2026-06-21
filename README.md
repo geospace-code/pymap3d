@@ -258,6 +258,22 @@ import pymap3d as pm
 ell = pm.Ellipsoid.from_name('grs80')
 ```
 
+#### Ellipsoid Cache Behavior
+
+pymap3d caches named ellipsoid instances returned by `Ellipsoid.from_name()`.
+This means repeated calls like `Ellipsoid.from_name("wgs84")` reuse the same object.
+
+Karney geodesic objects are also cached by ellipsoid geometry
+(`semimajor_axis`, `flattening`) to avoid repeated setup cost.
+
+For deterministic tests or long-running processes, clear both caches with:
+
+```python
+from pymap3d.ellipsoid import clear_ellipsoid_caches
+
+clear_ellipsoid_caches()
+```
+
 ### array vs scalar
 
 Use of pymap3d on embedded systems or other streaming data applications often deal with scalar position data.

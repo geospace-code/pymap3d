@@ -10,7 +10,7 @@ import logging
 from copy import copy
 from math import nan, pi, tau
 
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import (
     asin,
     atan,
@@ -101,8 +101,7 @@ def vdist(Lat1, Lon1, Lat2, Lon2, ell: Ellipsoid | None = None, deg: bool = True
      12. No warranties; use at your own risk.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
     # %% Supply WGS84 earth ellipsoid axis lengths in meters:
     a = ell.semimajor_axis
     b = ell.semiminor_axis
@@ -338,8 +337,7 @@ def vreckon(Lat1, Lon1, Rng, Azim, ell: Ellipsoid | None = None, deg: bool = Tru
         if Rng < 0.0:
             raise ValueError("Ground distance must be positive")
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     a = ell.semimajor_axis
     b = ell.semiminor_axis

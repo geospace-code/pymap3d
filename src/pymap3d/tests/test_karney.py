@@ -2,6 +2,8 @@
 
 import math
 
+import pymap3d as pm
+import pymap3d.ellipsoid as ellipsoid
 import pymap3d.karney as karney
 import pytest
 from pytest import approx
@@ -116,3 +118,23 @@ class TestGeodesicArea:
         area, perim = karney.geodesic_area([0, 1], [0, 1])
         assert area == 0.0
         assert perim == 0.0
+
+
+class TestGeodesicCache:
+    def test_default_ellipsoid_cache_reuse(self):
+        g1 = karney._get_geodesic(None)
+        g2 = karney._get_geodesic(None)
+        assert g1 is g2
+
+    def test_value_equivalent_ellipsoid_cache_reuse(self):
+        wgs84 = pm.Ellipsoid.from_name("wgs84")
+        equivalent = pm.Ellipsoid(wgs84.semimajor_axis, wgs84.semiminor_axis)
+        g1 = karney._get_geodesic(wgs84)
+        g2 = karney._get_geodesic(equivalent)
+        assert g1 is g2
+
+    def test_clear_ellipsoid_caches_resets_geodesic_cache(self):
+        g1 = karney._get_geodesic(None)
+        ellipsoid.clear_ellipsoid_caches()
+        g2 = karney._get_geodesic(None)
+        assert g1 is not g2

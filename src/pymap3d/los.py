@@ -6,7 +6,7 @@ from math import nan, pi
 
 from .aer import aer2enu
 from .ecef import ecef2geodetic, enu2uvw, geodetic2ecef
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import sqrt
 
 __all__ = ["lookAtSpheroid"]
@@ -57,8 +57,7 @@ def lookAtSpheroid(
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     try:
         if (h0 < 0).any():

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import math as _math
 
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, get_cached_geodesic
 from .mathfun import copysign, fmod, hypot, isnan, sqrt
 
 __all__ = ["geodesic_direct", "geodesic_inverse", "geodesic_line", "geodesic_area"]
@@ -827,14 +827,9 @@ class _Geodesic:
 
 # --- Cache ---
 
-_cache = {}
-
 
 def _get_geodesic(ell: Ellipsoid | None) -> _Geodesic:
-    key = None if ell is None else (ell.semimajor_axis, ell.flattening)
-    if key not in _cache:
-        _cache[key] = _Geodesic(ell)
-    return _cache[key]
+    return get_cached_geodesic(ell)
 
 
 # --- Public API ---

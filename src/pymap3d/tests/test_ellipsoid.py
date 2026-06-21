@@ -1,6 +1,7 @@
 import pytest
 from pytest import approx
 import pymap3d as pm
+import pymap3d.ellipsoid as ellipsoid
 
 xyz0 = (660e3, -4700e3, 4247e3)
 
@@ -51,6 +52,19 @@ def test_reference(model, f):
 def test_bad_name():
     with pytest.raises(KeyError):
         pm.Ellipsoid.from_name("badname")
+
+
+def test_from_name_is_singleton_per_model():
+    ell1 = pm.Ellipsoid.from_name("wgs84")
+    ell2 = pm.Ellipsoid.from_name("wgs84")
+    assert ell1 is ell2
+
+
+def test_clear_ellipsoid_caches_resets_named_singleton():
+    ell1 = pm.Ellipsoid.from_name("wgs84")
+    ellipsoid.clear_ellipsoid_caches()
+    ell2 = pm.Ellipsoid.from_name("wgs84")
+    assert ell1 is not ell2
 
 
 def test_ellipsoid():

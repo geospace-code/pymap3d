@@ -16,7 +16,7 @@ from math import pi
 
 from ._typing import FloatArray, FloatLike, NDArray
 from .eci import ecef2eci, eci2ecef
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import atan, atan2, cos, degrees, hypot, isclose, radians, sin, sqrt, tan
 
 __all__ = [
@@ -74,8 +74,7 @@ def geodetic2ecef(
         lat = radians(lat)
         lon = radians(lon)
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     # radius of curvature of the prime vertical section
     N = ell.semimajor_axis**2 / hypot(ell.semimajor_axis * cos(lat), ell.semiminor_axis * sin(lat))
@@ -124,8 +123,7 @@ def ecef2geodetic(
     Journal of Surveying Engineering. doi: 10.1061/(ASCE)0733-9453
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     r = sqrt(x**2 + y**2 + z**2)
 
@@ -138,7 +136,7 @@ def ecef2geodetic(
 
     huE = hypot(u, E)
 
-    def _inside_numpy(x, y, z) -> NDArray:
+    def _inside_numpy(x, y, z):
         # inside ellipsoid?
         return (
             x**2 / ell.semimajor_axis**2

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from ._typing import FloatLike
 
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import asin, atan2, cube_root, degrees, hypot, power, radians, sin, sqrt
 
 __all__ = [
@@ -61,8 +61,7 @@ def geodetic2spherical(
     doi:10.1007/s00190-002-0273-6
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)
@@ -131,8 +130,7 @@ def spherical2geodetic(
     doi:10.1007/s00190-002-0273-6
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)

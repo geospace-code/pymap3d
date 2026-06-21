@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ._typing import FloatLike, FloatArray
 
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import cos, sin, sqrt, radians
 
 __all__ = ["parallel", "meridian", "transverse", "geocentric_radius"]
@@ -17,8 +17,7 @@ def geocentric_radius(geodetic_lat: FloatLike, ell: Ellipsoid | None = None, deg
     https://en.wikipedia.org/wiki/Earth_radius#Geocentric_radius
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -82,8 +81,7 @@ def meridian(lat, ell: Ellipsoid | None = None, deg: bool = True):
         radius of ellipsoid
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)
@@ -115,8 +113,7 @@ def transverse(lat: FloatLike | FloatArray, ell: Ellipsoid | None = None, deg: b
         radius of ellipsoid (meters)
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)

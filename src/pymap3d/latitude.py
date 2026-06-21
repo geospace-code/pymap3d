@@ -9,7 +9,7 @@ import warnings
 from math import pi
 
 from . import rcurve
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import (
     asinh,
     atan,
@@ -80,8 +80,7 @@ def geoc2geod(
         doi: 10.1007/BF01230214"
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geocentric_lat = radians(geocentric_lat)
@@ -127,8 +126,7 @@ def geodetic2geocentric(geodetic_lat: FloatLike, alt_m: FloatLike, ell: Ellipsoi
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -172,8 +170,7 @@ def geocentric2geodetic(geocentric_lat: FloatLike, alt_m, ell: Ellipsoid | None 
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geocentric_lat = radians(geocentric_lat)
@@ -214,8 +211,7 @@ def geodetic2isometric(geodetic_lat: FloatArray, ell: Ellipsoid | None = None, d
     January 2010
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -311,8 +307,7 @@ def conformal2geodetic(conformal_lat: FloatLike, ell: Ellipsoid | None = None, d
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         conformal_lat = radians(conformal_lat)
@@ -361,8 +356,7 @@ def geodetic2conformal(geodetic_lat: FloatLike, ell: Ellipsoid | None = None, de
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -414,8 +408,7 @@ def geodetic2rectifying(
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -464,8 +457,7 @@ def rectifying2geodetic(rectifying_lat: FloatLike, ell: Ellipsoid | None = None,
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         rectifying_lat = radians(rectifying_lat)
@@ -515,8 +507,7 @@ def geodetic2authalic(geodetic_lat: FloatArray, ell: Ellipsoid | None = None, de
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -563,8 +554,7 @@ def authalic2geodetic(authalic_lat: FloatLike, ell: Ellipsoid | None = None, deg
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         authalic_lat = radians(authalic_lat)
@@ -612,8 +602,7 @@ def geodetic2parametric(geodetic_lat: FloatLike, ell: Ellipsoid | None = None, d
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -650,8 +639,7 @@ def parametric2geodetic(parametric_lat: FloatLike, ell: Ellipsoid | None = None,
     Office, Washington, DC, 1987, pp. 13-18.
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         parametric_lat = radians(parametric_lat)
@@ -659,3 +647,4 @@ def parametric2geodetic(parametric_lat: FloatLike, ell: Ellipsoid | None = None,
     geodetic_lat = atan(tan(parametric_lat) / sqrt(1 - (ell.eccentricity) ** 2))
 
     return degrees(geodetic_lat) if deg else geodetic_lat
+
