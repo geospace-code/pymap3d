@@ -175,17 +175,17 @@ def ecef2body(
     """Convert a target ECEF point into body coordinates."""
 
     if frame == "ned":
-        local = ecef2ned(x, y, z, lat0, lon0, h0, ell, deg=deg)
-        return ned2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        n, e, d = ecef2ned(x, y, z, lat0, lon0, h0, ell, deg=deg)
+        return ned2body(n, e, d, yaw, pitch, roll, sequence=sequence, deg=deg)
     if frame == "enu":
-        local = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
-        return enu2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
+        return enu2body(e, n, u, yaw, pitch, roll, sequence=sequence, deg=deg)
     if frame == "sez":
-        local = ecef2sez(x, y, z, lat0, lon0, h0, ell, deg=deg)
-        return sez2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        s, e, z = ecef2sez(x, y, z, lat0, lon0, h0, ell, deg=deg)
+        return sez2body(s, e, z, yaw, pitch, roll, sequence=sequence, deg=deg)
     if frame == "nwu":
-        local = ecef2nwu(x, y, z, lat0, lon0, h0, ell, deg=deg)
-        return nwu2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        n, w, u = ecef2nwu(x, y, z, lat0, lon0, h0, ell, deg=deg)
+        return nwu2body(n, w, u, yaw, pitch, roll, sequence=sequence, deg=deg)
 
     raise ValueError("frame must be one of 'ned', 'enu', 'sez', or 'nwu'")
 
@@ -208,17 +208,17 @@ def body2ecef(
     """Convert body coordinates into a target ECEF point."""
 
     if frame == "ned":
-        local = body2ned(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return ned2ecef(*local, lat0, lon0, h0, ell, deg=deg)
+        n, e, d = body2ned(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return ned2ecef(n, e, d, lat0, lon0, h0, ell, deg=deg)
     if frame == "enu":
-        local = body2enu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return enu2ecef(*local, lat0, lon0, h0, ell, deg=deg)
+        e, n, u = body2enu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return enu2ecef(e, n, u, lat0, lon0, h0, ell, deg=deg)
     if frame == "sez":
-        local = body2sez(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return sez2ecef(*local, lat0, lon0, h0, ell, deg=deg)
+        s, e, z = body2sez(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return sez2ecef(s, e, z, lat0, lon0, h0, ell, deg=deg)
     if frame == "nwu":
-        local = body2nwu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return nwu2ecef(*local, lat0, lon0, h0, ell, deg=deg)
+        n, w, u = body2nwu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return nwu2ecef(n, w, u, lat0, lon0, h0, ell, deg=deg)
 
     raise ValueError("frame must be one of 'ned', 'enu', 'sez', or 'nwu'")
 
@@ -283,17 +283,17 @@ def geodetic2body(
     """Convert a target geodetic point into body coordinates."""
 
     if frame == "ned":
-        local = geodetic2ned(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
-        return ned2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        n, e, d = geodetic2ned(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
+        return ned2body(n, e, d, yaw, pitch, roll, sequence=sequence, deg=deg)
     if frame == "enu":
-        local = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
-        return enu2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
+        return enu2body(e, n, u, yaw, pitch, roll, sequence=sequence, deg=deg)
     if frame == "sez":
-        local = geodetic2sez(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
-        return sez2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        s, e, z = geodetic2sez(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
+        return sez2body(s, e, z, yaw, pitch, roll, sequence=sequence, deg=deg)
     if frame == "nwu":
-        local = geodetic2nwu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
-        return nwu2body(*local, yaw, pitch, roll, sequence=sequence, deg=deg)
+        n, w, u = geodetic2nwu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
+        return nwu2body(n, w, u, yaw, pitch, roll, sequence=sequence, deg=deg)
 
     raise ValueError("frame must be one of 'ned', 'enu', 'sez', or 'nwu'")
 
@@ -316,16 +316,16 @@ def body2geodetic(
     """Convert body coordinates into a target geodetic point."""
 
     if frame == "ned":
-        local = body2ned(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return ned2geodetic(*local, lat0, lon0, h0, ell, deg=deg)
+        n, e, d = body2ned(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return ned2geodetic(n, e, d, lat0, lon0, h0, ell, deg=deg)
     if frame == "enu":
-        local = body2enu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return enu2geodetic(*local, lat0, lon0, h0, ell, deg=deg)
+        e, n, u = body2enu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return enu2geodetic(e, n, u, lat0, lon0, h0, ell, deg=deg)
     if frame == "sez":
-        local = body2sez(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return sez2geodetic(*local, lat0, lon0, h0, ell, deg=deg)
+        s, e, z = body2sez(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return sez2geodetic(s, e, z, lat0, lon0, h0, ell, deg=deg)
     if frame == "nwu":
-        local = body2nwu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
-        return nwu2geodetic(*local, lat0, lon0, h0, ell, deg=deg)
+        n, w, u = body2nwu(xb, yb, zb, yaw, pitch, roll, sequence=sequence, deg=deg)
+        return nwu2geodetic(n, w, u, lat0, lon0, h0, ell, deg=deg)
 
     raise ValueError("frame must be one of 'ned', 'enu', 'sez', or 'nwu'")
