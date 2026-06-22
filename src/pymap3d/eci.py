@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from datetime import datetime
+
 import sys
-import logging
 
 try:
     import numpy
@@ -44,11 +44,11 @@ def eci2ecef(
 
     Parameters
     ----------
-    x : float
+    x : array-like float
         ECI x-location [meters]
-    y : float
+    y : array-like float
         ECI y-location [meters]
-    z : float
+    z : array-like float
         ECI z-location [meters]
     time : datetime.datetime
         time of obsevation (UTC)
@@ -63,20 +63,17 @@ def eci2ecef(
 
     Results
     -------
-    x_ecef : float
+    x_ecef : array-like float
         x ECEF coordinate
-    y_ecef : float
+    y_ecef : array-like float
         y ECEF coordinate
-    z_ecef : float
+    z_ecef : array-like float
         z ECEF coordinate
     """
 
     if "astropy" in sys.modules and not force_non_astropy:
         xe, ye, ze = eci2ecef_astropy(x, y, z, time)
     else:
-        logging.warning(
-            f"{__name__}: using pure-Python ECI/ECEF fallback, less accurate than Astropy"
-        )
         xe, ye, ze = eci2ecef_numpy(x, y, z, time, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
     return _squeeze_xyz(xe, ye, ze)
@@ -138,12 +135,12 @@ def ecef2eci(
     Parameters
     ----------
 
-    x : float
-        target x ECEF coordinate
-    y : float
-        target y ECEF coordinate
-    z : float
-        target z ECEF coordinate
+    x : array-like float
+        point x ECEF coordinate
+    y : array-like float
+        point y ECEF coordinate
+    z : array-like float
+        point z ECEF coordinate
     time : datetime.datetime
         time of observation
     force_non_astropy : bool
@@ -157,20 +154,17 @@ def ecef2eci(
 
     Results
     -------
-    x_eci : float
+    x_eci : array-like float
         x ECI coordinate
-    y_eci : float
+    y_eci : array-like float
         y ECI coordinate
-    z_eci : float
+    z_eci : array-like float
         z ECI coordinate
     """
 
     if "astropy" in sys.modules and not force_non_astropy:
         xe, ye, ze = ecef2eci_astropy(x, y, z, time)
     else:
-        logging.warning(
-            f"{__name__}: using pure-Python ECI/ECEF fallback, less accurate than Astropy"
-        )
         xe, ye, ze = ecef2eci_numpy(x, y, z, time, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
     return _squeeze_xyz(xe, ye, ze)

@@ -2,21 +2,22 @@
 
 from __future__ import annotations
 
-from .ellipsoid import Ellipsoid
+from ._typing import FloatLike, FloatArray
+
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import cos, sin, sqrt, radians
 
 __all__ = ["parallel", "meridian", "transverse", "geocentric_radius"]
 
 
-def geocentric_radius(geodetic_lat, ell: Ellipsoid | None = None, deg: bool = True):
+def geocentric_radius(geodetic_lat: FloatLike, ell: Ellipsoid | None = None, deg: bool = True):
     """
     compute geocentric radius at geodetic latitude
 
     https://en.wikipedia.org/wiki/Earth_radius#Geocentric_radius
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         geodetic_lat = radians(geodetic_lat)
@@ -33,7 +34,7 @@ def geocentric_radius(geodetic_lat, ell: Ellipsoid | None = None, deg: bool = Tr
     )
 
 
-def parallel(lat, ell: Ellipsoid | None = None, deg: bool = True) -> float:
+def parallel(lat: FloatLike | FloatArray, ell: Ellipsoid | None = None, deg: bool = True):
     """
     computes the radius of the small circle encompassing the globe at the specified latitude
 
@@ -67,7 +68,7 @@ def meridian(lat, ell: Ellipsoid | None = None, deg: bool = True):
 
     Parameters
     ----------
-    lat : float
+    lat : array-like float
         geodetic latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -76,12 +77,11 @@ def meridian(lat, ell: Ellipsoid | None = None, deg: bool = True):
 
     Returns
     -------
-    radius: float
+    radius: array-like float
         radius of ellipsoid
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)
@@ -91,7 +91,7 @@ def meridian(lat, ell: Ellipsoid | None = None, deg: bool = True):
     return f1 / sqrt(f2**3)
 
 
-def transverse(lat, ell: Ellipsoid | None = None, deg: bool = True):
+def transverse(lat: FloatLike | FloatArray, ell: Ellipsoid | None = None, deg: bool = True):
     """computes the radius of the curve formed by a plane
     intersecting the ellipsoid at the latitude which is
     normal to the surface of the ellipsoid
@@ -100,7 +100,7 @@ def transverse(lat, ell: Ellipsoid | None = None, deg: bool = True):
 
     Parameters
     ----------
-    lat : float
+    lat : array-like float
         latitude (degrees)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -109,12 +109,11 @@ def transverse(lat, ell: Ellipsoid | None = None, deg: bool = True):
 
     Returns
     -------
-    radius: float
+    radius: array-like float
         radius of ellipsoid (meters)
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)

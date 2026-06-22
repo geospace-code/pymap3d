@@ -1,10 +1,13 @@
 """manipulations of sidereal time"""
 
+from __future__ import annotations
+
 from datetime import datetime
 from math import tau
 import sys
 import logging
 
+from ._typing import FloatLike, DatetimeLike
 from .timeconv import str2dt
 from .earth_orientation import (
     greenwich_apparent_sidereal_time,
@@ -40,7 +43,7 @@ def datetime2sidereal(
 
     time : datetime.datetime
         time to convert
-    lon_radians : float
+    lon_radians : array-like float
         longitude (radians)
     force_non_astropy : bool
         if True, force use of less accurate Numpy implementation even if Astropy is available
@@ -50,7 +53,7 @@ def datetime2sidereal(
     Results
     -------
 
-    tsr : float
+    tsr : array-like float
         Local sidereal time
     """
 
@@ -68,7 +71,6 @@ def datetime2sidereal(
     if "astropy" in sys.modules and not force_non_astropy:
         return datetime2sidereal_astropy(time, lon_radians)
     else:
-        logging.debug(f"{__name__}: pure-Python apparent sidereal implementation")
         return datetime2sidereal_vallado(time, lon_radians, delta_ut1=delta_ut1)
 
 
@@ -97,7 +99,7 @@ def datetime2sidereal_vallado(
     return (gst + lon_radians) % tau
 
 
-def juliandate(time: datetime):
+def juliandate(time: datetime) -> float:
     """
     Python datetime to Julian time (days since Jan 1, 4713 BCE)
 

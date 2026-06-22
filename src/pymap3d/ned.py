@@ -1,6 +1,11 @@
-"""Transforms involving NED North East Down"""
+"""Transforms involving NED North East Down
+They are typically just reordered and sign-changed versions of ENU functions,
+included for convenience and readability
+"""
 
 from __future__ import annotations
+
+from ._typing import FloatLike
 
 from .ecef import ecef2enu, ecef2enuv, ecef2geodetic, enu2ecef
 from .ellipsoid import Ellipsoid
@@ -17,29 +22,29 @@ __all__ = [
 ]
 
 
-def aer2ned(az, elev, slantRange, deg: bool = True) -> tuple:
+def aer2ned(az: FloatLike, elev: FloatLike, slantRange: FloatLike, deg: bool = True) -> tuple:
     """
     converts azimuth, elevation, range to target from observer to North, East, Down
 
     Parameters
     -----------
 
-    az : float
-         azimuth
-    elev : float
-         elevation
-    slantRange : float
-         slant range [meters]
+    az : array-like float
+        azimuth
+    elev : array-like float
+        elevation
+    slantRange : array-like float
+        slant range [meters]
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
     Results
     -------
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
     """
     e, n, u = aer2enu(az, elev, slantRange, deg=deg)
@@ -47,18 +52,18 @@ def aer2ned(az, elev, slantRange, deg: bool = True) -> tuple:
     return n, e, -u
 
 
-def ned2aer(n, e, d, deg: bool = True) -> tuple:
+def ned2aer(n: FloatLike, e: FloatLike, d: FloatLike, deg: bool = True) -> tuple:
     """
     converts North, East, Down to azimuth, elevation, range
 
     Parameters
     ----------
 
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
     deg : bool, optional
         degrees input/output  (False: radians in/out)
@@ -66,23 +71,24 @@ def ned2aer(n, e, d, deg: bool = True) -> tuple:
     Results
     -------
 
-    az : float
-         azimuth
-    elev : float
-         elevation
-    slantRange : float
+    az : array-like float
+        azimuth
+    elev : array-like float
+        elevation
+    slantRange : array-like float
          slant range [meters]
     """
+
     return enu2aer(e, n, -d, deg=deg)
 
 
 def ned2geodetic(
-    n,
-    e,
-    d,
-    lat0,
-    lon0,
-    h0,
+    n: FloatLike,
+    e: FloatLike,
+    d: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -92,33 +98,32 @@ def ned2geodetic(
     Parameters
     ----------
 
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
-    h0 : float
-         observer altitude above geodetic ellipsoid (meters)
+    h0 : array-like float
+        Observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
-          reference ellipsoid
+        reference ellipsoid
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
     Results
     -------
 
-    lat : float
+    lat : array-like float
         target geodetic latitude
-    lon : float
+    lon : array-like float
         target geodetic longitude
-    h : float
+    h : array-like float
         target altitude above geodetic ellipsoid (meters)
-
     """
     x, y, z = enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
@@ -126,12 +131,12 @@ def ned2geodetic(
 
 
 def ned2ecef(
-    n,
-    e,
-    d,
-    lat0,
-    lon0,
-    h0,
+    n: FloatLike,
+    e: FloatLike,
+    d: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -141,43 +146,43 @@ def ned2ecef(
     Parameters
     ----------
 
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
-    h0 : float
-         observer altitude above geodetic ellipsoid (meters)
+    h0 : array-like float
+        Observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
-          reference ellipsoid
+        reference ellipsoid
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
     Results
     -------
 
-    x : float
+    x : array-like float
         ECEF x coordinate (meters)
-    y : float
+    y : array-like float
         ECEF y coordinate (meters)
-    z : float
+    z : array-like float
         ECEF z coordinate (meters)
     """
     return enu2ecef(e, n, -d, lat0, lon0, h0, ell, deg=deg)
 
 
 def ecef2ned(
-    x,
-    y,
-    z,
-    lat0,
-    lon0,
-    h0,
+    x: FloatLike,
+    y: FloatLike,
+    z: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -187,17 +192,17 @@ def ecef2ned(
     Parameters
     ----------
 
-    x : float
+    x : array-like float
         ECEF x coordinate (meters)
-    y : float
+    y : array-like float
         ECEF y coordinate (meters)
-    z : float
+    z : array-like float
         ECEF z coordinate (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -207,13 +212,12 @@ def ecef2ned(
     Results
     -------
 
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
-
     """
     e, n, u = ecef2enu(x, y, z, lat0, lon0, h0, ell, deg=deg)
 
@@ -221,12 +225,12 @@ def ecef2ned(
 
 
 def geodetic2ned(
-    lat,
-    lon,
-    h,
-    lat0,
-    lon0,
-    h0,
+    lat: FloatLike,
+    lon: FloatLike,
+    h: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -236,32 +240,32 @@ def geodetic2ned(
     Parameters
     ----------
 
-    lat : float
+    lat : array-like float
         target geodetic latitude
-    lon : float
+    lon : array-like float
         target geodetic longitude
-    h : float
+    h : array-like float
         target altitude above geodetic ellipsoid (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
-    h0 : float
-         observer altitude above geodetic ellipsoid (meters)
+    h0 : array-like float
+        Observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
-          reference ellipsoid
+        reference ellipsoid
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
 
     Results
     -------
 
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
@@ -269,21 +273,23 @@ def geodetic2ned(
     return n, e, -u
 
 
-def ecef2nedv(x, y, z, lat0, lon0, deg: bool = True) -> tuple[float, float, float]:
+def ecef2nedv(
+    x: FloatLike, y: FloatLike, z: FloatLike, lat0: FloatLike, lon0: FloatLike, deg: bool = True
+) -> tuple:
     """
     for VECTOR between two points
 
     Parameters
     ----------
-    x : float
+    x : array-like float
         ECEF x coordinate (meters)
-    y : float
+    y : array-like float
         ECEF y coordinate (meters)
-    z : float
+    z : array-like float
         ECEF z coordinate (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
     deg : bool, optional
           degrees input/output  (False: radians in/out)
@@ -293,11 +299,11 @@ def ecef2nedv(x, y, z, lat0, lon0, deg: bool = True) -> tuple[float, float, floa
 
     (Vector)
 
-    n : float
+    n : array-like float
         North NED coordinate (meters)
-    e : float
+    e : array-like float
         East NED coordinate (meters)
-    d : float
+    d : array-like float
         Down NED coordinate (meters)
     """
     e, n, u = ecef2enuv(x, y, z, lat0, lon0, deg=deg)

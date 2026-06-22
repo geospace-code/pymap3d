@@ -20,9 +20,7 @@ except RuntimeError:
 import pymap3d.vincenty
 
 
-def track2(
-    eng, lat1: float, lon1: float, lat2: float, lon2: float, npts: int, deg: bool
-) -> tuple:
+def track2(eng, lat1: float, lon1: float, lat2: float, lon2: float, npts: int, deg: bool) -> tuple:
     """Using Matlab Engine to do same thing as Pymap3d"""
     d = "degrees" if deg else "radians"
 

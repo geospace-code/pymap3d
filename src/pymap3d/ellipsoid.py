@@ -3,7 +3,11 @@
 from __future__ import annotations
 from math import sqrt
 from dataclasses import dataclass, field
-from typing import TypedDict
+from functools import lru_cache
+from typing import TYPE_CHECKING, Any, TypedDict, cast
+
+if TYPE_CHECKING:
+    from .karney import _Geodesic
 
 
 class Model(TypedDict):
@@ -174,7 +178,7 @@ class Ellipsoid:
         "venus": {"name": "Venus", "a": 6051800.0, "b": 6051800.0},
         "moon": {"name": "Moon", "a": 1738100.0, "b": 1736000.0},
         "mars": {"name": "Mars", "a": 3396900.0, "b": 3376097.80585952},
-        "jupyter": {"name": "Jupiter", "a": 71492000.0, "b": 66770054.3475922},
+        "jupiter": {"name": "Jupiter", "a": 71492000.0, "b": 66770054.3475922},
         "io": {"name": "Io", "a": 1829.7, "b": 1815.8},
         "saturn": {"name": "Saturn", "a": 60268000.0, "b": 54364301.5271271},
         "uranus": {"name": "Uranus", "a": 25559000.0, "b": 24973000.0},
@@ -182,9 +186,15 @@ class Ellipsoid:
         "pluto": {"name": "Pluto", "a": 1188000.0, "b": 1188000.0},
     }
 
+    # this was a typo in the PR commit 9978b5a
+    models["jupyter"] = models["jupiter"]
+
     @classmethod
     def from_name(cls, name: str) -> Ellipsoid:
         """Create an Ellipsoid from a name."""
+
+        if cls is Ellipsoid:
+            return _from_name_cached(name)
 
         return cls(
             cls.models[name]["a"],
@@ -192,3 +202,46 @@ class Ellipsoid:
             name=cls.models[name]["name"],
             model=name,
         )
+
+
+@lru_cache(maxsize=None)
+def _from_name_cached(name: str) -> Ellipsoid:
+    model = Ellipsoid.models[name]
+    return Ellipsoid(model["a"], model["b"], name=model["name"], model=name)
+
+
+def resolve_ellipsoid(ell: Ellipsoid | None) -> Ellipsoid:
+    """Resolve None to the default WGS84 ellipsoid singleton."""
+    return Ellipsoid.from_name("wgs84") if ell is None else ell
+
+
+def ellipsoid_cache_key(ell: Ellipsoid | None) -> tuple[float, float]:
+    """Return a value-based cache key for ellipsoid-dependent objects."""
+    resolved = resolve_ellipsoid(ell)
+    return resolved.semimajor_axis, resolved.flattening
+
+
+_geodesic_cache: dict[tuple[float, float], Any] = {}
+
+
+def get_cached_geodesic(ell: Ellipsoid | None) -> _Geodesic:
+    """Get or build a cached Karney geodesic object for an ellipsoid."""
+    key = ellipsoid_cache_key(ell)
+    geodesic = _geodesic_cache.get(key)
+    if geodesic is None:
+        from .karney import _Geodesic
+
+        geodesic = _Geodesic(resolve_ellipsoid(ell))
+        _geodesic_cache[key] = geodesic
+
+    return cast("_Geodesic", geodesic)
+
+
+def clear_ellipsoid_caches() -> None:
+    """Clear internal ellipsoid and geodesic caches.
+
+    This is useful for deterministic tests and for freeing cache memory
+    in long-running processes.
+    """
+    _from_name_cached.cache_clear()
+    _geodesic_cache.clear()

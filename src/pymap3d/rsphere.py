@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-try:
-    from numpy import asarray
-except ImportError:
-    pass
-
 from . import rcurve
-from .ellipsoid import Ellipsoid
+
+from ._typing import FloatLike
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import cos, degrees, log, radians, sin, sqrt
 from .vincenty import vdist
 
@@ -37,8 +34,7 @@ def eqavol(ell: Ellipsoid | None = None) -> float:
         radius of sphere
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     f = ell.flattening
 
@@ -59,8 +55,7 @@ def authalic(ell: Ellipsoid | None = None) -> float:
         radius of sphere
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     e = ell.eccentricity
 
@@ -87,19 +82,16 @@ def rectifying(ell: Ellipsoid | None = None) -> float:
         radius of sphere
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
-    return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (
-        2 / 3
-    )
+    return ((ell.semimajor_axis ** (3 / 2) + ell.semiminor_axis ** (3 / 2)) / 2) ** (2 / 3)
 
 
 def euler(
-    lat1,
-    lon1,
-    lat2,
-    lon2,
+    lat1: FloatLike,
+    lon1: FloatLike,
+    lat2: FloatLike,
+    lon2: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ):
@@ -130,11 +122,6 @@ def euler(
             degrees(lon2),
         )
 
-    try:
-        lat1, lat2 = asarray(lat1), asarray(lat2)
-    except NameError:
-        pass
-
     latmid = lat1 + (lat2 - lat1) / 2  # compute the midpoint
 
     # compute azimuth
@@ -151,7 +138,7 @@ def euler(
     return rho * nu / den
 
 
-def curve(lat, ell: Ellipsoid | None = None, deg: bool = True, method: str = "mean"):
+def curve(lat: FloatLike, ell: Ellipsoid | None = None, deg: bool = True, method: str = "mean"):
     """computes the arithmetic average of the transverse and meridional
     radii of curvature at a specified latitude point
 
@@ -202,8 +189,7 @@ def triaxial(ell: Ellipsoid | None = None, method: str = "mean") -> float:
         radius of sphere
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if method == "mean":
         return (2 * ell.semimajor_axis + ell.semiminor_axis) / 3
@@ -229,8 +215,7 @@ def biaxial(ell: Ellipsoid | None = None, method: str = "mean") -> float:
         radius of sphere
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if method == "mean":
         return (ell.semimajor_axis + ell.semiminor_axis) / 2

@@ -25,8 +25,8 @@ version = {attr = "pymap3d.__version__"}
 tests = ["pytest", "mypy"]
 coverage = ["pytest-cov"]
 format = ["black[jupyter]", "isort"]
-core = ["python-dateutil", "numpy >= 1.10.0"]
-full = ["astropy", "xarray"]
+core = ["python-dateutil", "numpy >= 1.21.0"]
+full = ["astropy"]
 proj = ["pyproj"]
 
 [tool.black]

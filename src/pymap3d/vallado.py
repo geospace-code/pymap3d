@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from ._typing import FloatLike
+
 from .mathfun import asin, atan2, cos, degrees, radians, sin
 from .sidereal import datetime2sidereal
 
@@ -17,27 +19,27 @@ __all__ = ["azel2radec", "radec2azel"]
 
 
 def azel2radec(
-    az_deg: float,
-    el_deg: float,
-    lat_deg: float,
-    lon_deg: float,
+    az_deg,
+    el_deg,
+    lat_deg,
+    lon_deg,
     time: datetime,
     *,
     delta_ut1: float = 0.0,
-) -> tuple[float, float]:
+) -> tuple:
     """
     converts azimuth, elevation to right ascension, declination
 
     Parameters
     ----------
 
-    az_deg : float
+    az_deg : array-like float
         azimuth (clockwise) to point [degrees]
-    el_deg : float
+    el_deg : array-like float
         elevation above horizon to point [degrees]
-    lat_deg : float
+    lat_deg : array-like float
         observer WGS84 latitude [degrees]
-    lon_deg : float
+    lon_deg : array-like float
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
@@ -46,9 +48,9 @@ def azel2radec(
     Results
     -------
 
-    ra_deg : float
+    ra_deg : array-like float
         right ascension to target [degrees]
-    dec_deg : float
+    dec_deg : array-like float
         declination of target [degrees]
 
     from D.Vallado Fundamentals of Astrodynamics and Applications
@@ -77,27 +79,27 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: float,
-    dec_deg: float,
-    lat_deg: float,
-    lon_deg: float,
+    ra_deg,
+    dec_deg,
+    lat_deg,
+    lon_deg,
     time: datetime,
     *,
     delta_ut1: float = 0.0,
-) -> tuple[float, float]:
+) -> tuple:
     """
     converts right ascension, declination to azimuth, elevation
 
     Parameters
     ----------
 
-    ra_deg : float
+    ra_deg : array-like float
         right ascension to target [degrees]
-    dec_deg : float
+    dec_deg : array-like float
         declination to target [degrees]
-    lat_deg : float
+    lat_deg : array-like float
         observer WGS84 latitude [degrees]
-    lon_deg : float
+    lon_deg : array-like float
         observer WGS84 longitude [degrees]
     time : datetime.datetime
         time of observation
@@ -105,9 +107,9 @@ def radec2azel(
     Results
     -------
 
-    az_deg : float
+    az_deg : array-like float
         azimuth clockwise from north to point [degrees]
-    el_deg : float
+    el_deg : array-like float
         elevation above horizon to point [degrees]
 
 

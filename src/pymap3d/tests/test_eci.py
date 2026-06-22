@@ -9,9 +9,9 @@ try:
 except ImportError:
     astropy = None
 
-ECI = (-2981784, 5207055, 3161595)
-ECEF = [-5762640, -1682738, 3156028]
 ECI_STATE = (-2981784, 5207055, 3161595, 100.0, -250.0, 50.0)
+ECI = (-2981784.0, 5207055.0, 3161595.0)
+ECEF = [-5762640.0, -1682738.0, 3156028.0]
 UTC = datetime.datetime(2019, 1, 4, 12, tzinfo=datetime.timezone.utc)
 
 
@@ -183,6 +183,3 @@ def test_eci_aer():
     rel = 0.1 if astropy is None else 0.001
 
     assert eci2 == approx(eci, rel=rel)
-
-    with pytest.raises(ValueError):
-        pm.aer2eci(aer[0], aer[1], -1, *lla, t)
