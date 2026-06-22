@@ -28,6 +28,8 @@ def azel2radec(
     lon_deg: FloatLike,
     time: datetime,
     force_non_astropy: bool = False,
+    *,
+    delta_ut1: float = 0.0,
 ) -> tuple:
     """
     viewing angle (az, el) to sky coordinates (ra, dec)
@@ -56,7 +58,9 @@ def azel2radec(
     """
 
     if force_non_astropy or "astropy" not in sys.modules:
-        return vazel2radec(az_deg, el_deg, lat_deg, lon_deg, time)
+        return vazel2radec(
+            az_deg, el_deg, lat_deg, lon_deg, time, delta_ut1=delta_ut1
+        )
     else:
         return azel2radec_astropy(az_deg, el_deg, lat_deg, lon_deg, time)
 
@@ -69,7 +73,9 @@ def azel2radec_astropy(
     """
     obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    direc = AltAz(location=obs, obstime=Time(time), az=az_deg * u.deg, alt=el_deg * u.deg)
+    direc = AltAz(
+        location=obs, obstime=Time(time), az=az_deg * u.deg, alt=el_deg * u.deg
+    )
 
     sky = SkyCoord(direc.transform_to(ICRS()))
 
@@ -83,6 +89,8 @@ def radec2azel(
     lon_deg: FloatLike,
     time: datetime,
     force_non_astropy: bool = False,
+    *,
+    delta_ut1: float = 0.0,
 ) -> tuple:
     """
     sky coordinates (ra, dec) to viewing angle (az, el)
@@ -111,7 +119,9 @@ def radec2azel(
     """
 
     if force_non_astropy or "astropy" not in sys.modules:
-        return vradec2azel(ra_deg, dec_deg, lat_deg, lon_deg, time)
+        return vradec2azel(
+            ra_deg, dec_deg, lat_deg, lon_deg, time, delta_ut1=delta_ut1
+        )
     else:
         return radec2azel_astropy(ra_deg, dec_deg, lat_deg, lon_deg, time)
 
@@ -130,7 +140,9 @@ def radec2azel_astropy(
 
     obs = EarthLocation(lat=lat_deg * u.deg, lon=lon_deg * u.deg)
 
-    points = SkyCoord(Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox="J2000.0")
+    points = SkyCoord(
+        Angle(ra_deg, unit=u.deg), Angle(dec_deg, unit=u.deg), equinox="J2000.0"
+    )
 
     altaz = points.transform_to(AltAz(location=obs, obstime=Time(time)))
 

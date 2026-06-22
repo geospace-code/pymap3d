@@ -77,7 +77,9 @@ def geodetic2ecef(
     ell = resolve_ellipsoid(ell)
 
     # radius of curvature of the prime vertical section
-    N = ell.semimajor_axis**2 / hypot(ell.semimajor_axis * cos(lat), ell.semiminor_axis * sin(lat))
+    N = ell.semimajor_axis**2 / hypot(
+        ell.semimajor_axis * cos(lat), ell.semiminor_axis * sin(lat)
+    )
     # Compute cartesian (geocentric) coordinates given (curvilinear) geodetic coordinates.
     x = (N + alt) * cos(lat) * cos(lon)
     y = (N + alt) * cos(lat) * sin(lon)
@@ -187,7 +189,10 @@ def ecef2geodetic(
         Beta[~ibad] += (
             (ell.semiminor_axis * u[~ibad] - ell.semimajor_axis * huE[~ibad] + E**2)
             * sin(Beta[~ibad])
-        ) / (ell.semimajor_axis * huE[~ibad] * 1 / cos(Beta[~ibad]) - E**2 * cos(Beta[~ibad]))
+        ) / (
+            ell.semimajor_axis * huE[~ibad] * 1 / cos(Beta[~ibad])
+            - E**2 * cos(Beta[~ibad])
+        )
         iz = ibad & isclose(z, 0)
         i1 = ibad & ~iz & (z > 0)
         i2 = ibad & ~iz & ~i1
@@ -210,7 +215,8 @@ def ecef2geodetic(
                 Beta = atan(huE / u * z / hxy)
                 # eqn. 13
                 Beta += (
-                    (ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2) * sin(Beta)
+                    (ell.semiminor_axis * u - ell.semimajor_axis * huE + E**2)
+                    * sin(Beta)
                 ) / (ell.semimajor_axis * huE * 1 / cos(Beta) - E**2 * cos(Beta))
         except (ArithmeticError, RuntimeWarning):
             if isclose(z, 0):
@@ -444,6 +450,9 @@ def eci2geodetic(
     ell: Ellipsoid | None = None,
     *,
     deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
     convert Earth Centered Internal ECI to geodetic coordinates
@@ -464,6 +473,12 @@ def eci2geodetic(
         planet ellipsoid model
     deg : bool, optional
         if True, degrees. if False, radians
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Results
     -------
@@ -477,7 +492,7 @@ def eci2geodetic(
     eci2geodetic() is also known as eci2lla() by other packages e.g. MATLAB Aerospace Toolbox.
     """
 
-    xecef, yecef, zecef = eci2ecef(x, y, z, t)
+    xecef, yecef, zecef = eci2ecef(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
     return ecef2geodetic(xecef, yecef, zecef, ell, deg)
 
@@ -490,6 +505,9 @@ def geodetic2eci(
     ell: Ellipsoid | None = None,
     *,
     deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
     convert geodetic coordinates to Earth Centered Internal ECI
@@ -510,6 +528,12 @@ def geodetic2eci(
         planet ellipsoid model
     deg : bool, optional
         if True, degrees. if False, radians
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Results
     -------

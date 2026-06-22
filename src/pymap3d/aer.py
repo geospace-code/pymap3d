@@ -176,9 +176,13 @@ def eci2aer(
     t: datetime,
     *,
     deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
-    takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
+    takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el,
+    slant range from Observer
 
     Parameters
     ----------
@@ -199,6 +203,12 @@ def eci2aer(
         Observation time
     deg : bool, optional
         true: degrees, false: radians
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Returns
     -------
@@ -210,7 +220,7 @@ def eci2aer(
          slant range [meters]
     """
 
-    xe, ye, ze = eci2ecef(x, y, z, t)
+    xe, ye, ze = eci2ecef(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
     return ecef2aer(xe, ye, ze, lat0, lon0, h0, deg=deg)
 
@@ -226,6 +236,9 @@ def aer2eci(
     ell: Ellipsoid | None = None,
     *,
     deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
     gives ECI of a point from an observer at az, el, slant range
@@ -250,6 +263,12 @@ def aer2eci(
           reference ellipsoid
     deg : bool, optional
           degrees input/output  (False: radians in/out)
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Returns
     -------
@@ -266,7 +285,7 @@ def aer2eci(
 
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg=deg)
 
-    return ecef2eci(x, y, z, t)
+    return ecef2eci(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
 
 def aer2ecef(
