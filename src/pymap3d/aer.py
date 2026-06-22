@@ -7,28 +7,24 @@ from datetime import datetime
 from .ecef import ecef2enu, ecef2geodetic, enu2uvw, geodetic2ecef
 from .ellipsoid import Ellipsoid
 from .enu import aer2enu, enu2aer, geodetic2enu
+from ._typing import FloatLike
 
 try:
     from .eci import ecef2eci, eci2ecef
 except ImportError:
-
-    def eci2ecef(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
-        raise ImportError("Numpy required for eci2ecef")
-
-    def ecef2eci(x, y, z, time: datetime, force_non_astropy: bool = False) -> tuple:
-        raise ImportError("Numpy required for ecef2eci")
+    from ._dummy import ecef2eci, eci2ecef
 
 
 __all__ = ["aer2ecef", "ecef2aer", "geodetic2aer", "aer2geodetic", "eci2aer", "aer2eci"]
 
 
 def ecef2aer(
-    x,
-    y,
-    z,
-    lat0,
-    lon0,
-    h0,
+    x: FloatLike,
+    y: FloatLike,
+    z: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -40,17 +36,17 @@ def ecef2aer(
     Parameters
     ----------
 
-    x : float
+    x : array-like float
         ECEF x coordinate (meters)
-    y : float
+    y : array-like float
         ECEF y coordinate (meters)
-    z : float
+    z : array-like float
         ECEF z coordinate (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
         reference ellipsoid
@@ -59,11 +55,11 @@ def ecef2aer(
 
     Returns
     -------
-    az : float
+    az : array-like float
          azimuth to target
-    el : float
+    el : array-like float
          elevation to target
-    srange : float
+    srange : array-like float
          slant range [meters]
     """
 
@@ -73,12 +69,12 @@ def ecef2aer(
 
 
 def geodetic2aer(
-    lat,
-    lon,
-    h,
-    lat0,
-    lon0,
-    h0,
+    lat: FloatLike,
+    lon: FloatLike,
+    h: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -89,17 +85,17 @@ def geodetic2aer(
     Parameters
     ----------
 
-    lat : float
+    lat : array-like float
         target geodetic latitude
-    lon : float
+    lon : array-like float
         target geodetic longitude
-    h : float
+    h : array-like float
         target altitude above geodetic ellipsoid (meters)
-    lat0 : float
+    lat0 : array-like float
         Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
         Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -108,11 +104,11 @@ def geodetic2aer(
 
     Returns
     -------
-    az : float
+    az : array-like float
          azimuth
-    el : float
+    el : array-like float
          elevation
-    srange : float
+    srange : array-like float
          slant range [meters]
     """
     e, n, u = geodetic2enu(lat, lon, h, lat0, lon0, h0, ell, deg=deg)
@@ -121,12 +117,12 @@ def geodetic2aer(
 
 
 def aer2geodetic(
-    az,
-    el,
-    srange,
-    lat0,
-    lon0,
-    h0,
+    az: FloatLike,
+    el: FloatLike,
+    srange: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -136,17 +132,17 @@ def aer2geodetic(
 
     Parameters
     ----------
-    az : float
+    az : array-like float
          azimuth to target
-    el : float
+    el : array-like float
          elevation to target
-    srange : float
+    srange : array-like float
          slant range [meters]
-    lat0 : float
+    lat0 : array-like float
            Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
            Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -158,11 +154,11 @@ def aer2geodetic(
 
     In reference ellipsoid system:
 
-    lat : float
+    lat : array-like float
           geodetic latitude
-    lon : float
+    lon : array-like float
           geodetic longitude
-    alt : float
+    alt : array-like float
           altitude above ellipsoid  (meters)
     """
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell=ell, deg=deg)
@@ -170,73 +166,96 @@ def aer2geodetic(
     return ecef2geodetic(x, y, z, ell=ell, deg=deg)
 
 
-def eci2aer(x, y, z, lat0, lon0, h0, t: datetime, *, deg: bool = True) -> tuple:
+def eci2aer(
+    x: FloatLike,
+    y: FloatLike,
+    z: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
+    t: datetime,
+    *,
+    deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
+) -> tuple:
     """
-    takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el, slant range from Observer
+    takes Earth Centered Inertial x,y,z ECI coordinates of point and gives az, el,
+    slant range from Observer
 
     Parameters
     ----------
 
-    x : float
+    x : array-like float
         ECI x-location [meters]
-    y : float
+    y : array-like float
         ECI y-location [meters]
-    z : float
+    z : array-like float
         ECI z-location [meters]
-    lat0 : float
+    lat0 : array-like float
            Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
            Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     t : datetime.datetime
         Observation time
     deg : bool, optional
         true: degrees, false: radians
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Returns
     -------
-    az : float
+    az : array-like float
          azimuth to target
-    el : float
+    el : array-like float
          elevation to target
-    srange : float
+    srange : array-like float
          slant range [meters]
     """
 
-    xe, ye, ze = eci2ecef(x, y, z, t)
+    xe, ye, ze = eci2ecef(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
     return ecef2aer(xe, ye, ze, lat0, lon0, h0, deg=deg)
 
 
 def aer2eci(
-    az,
-    el,
-    srange,
-    lat0,
-    lon0,
-    h0,
+    az: FloatLike,
+    el: FloatLike,
+    srange: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     t: datetime,
     ell: Ellipsoid | None = None,
     *,
     deg: bool = True,
+    delta_ut1: float = 0.0,
+    xp: float = 0.0,
+    yp: float = 0.0,
 ) -> tuple:
     """
     gives ECI of a point from an observer at az, el, slant range
 
     Parameters
     ----------
-    az : float
+    az : array-like float
          azimuth to target
-    el : float
+    el : array-like float
          elevation to target
-    srange : float
+    srange : array-like float
          slant range [meters]
-    lat0 : float
+    lat0 : array-like float
            Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
            Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     t : datetime.datetime
         Observation time
@@ -244,32 +263,38 @@ def aer2eci(
           reference ellipsoid
     deg : bool, optional
           degrees input/output  (False: radians in/out)
+    delta_ut1 : float, optional
+        UT1-UTC in seconds for the pure-Python path. Defaults to ``0.0``.
+    xp : float, optional
+        Polar motion x coordinate in arcseconds for the pure-Python path.
+    yp : float, optional
+        Polar motion y coordinate in arcseconds for the pure-Python path.
 
     Returns
     -------
 
     Earth Centered Inertial x,y,z
 
-    x : float
+    x : array-like float
         ECEF x coordinate (meters)
-    y : float
+    y : array-like float
         ECEF y coordinate (meters)
-    z : float
+    z : array-like float
         ECEF z coordinate (meters)
     """
 
     x, y, z = aer2ecef(az, el, srange, lat0, lon0, h0, ell, deg=deg)
 
-    return ecef2eci(x, y, z, t)
+    return ecef2eci(x, y, z, t, delta_ut1=delta_ut1, xp=xp, yp=yp)
 
 
 def aer2ecef(
-    az,
-    el,
-    srange,
-    lat0,
-    lon0,
-    alt0,
+    az: FloatLike,
+    el: FloatLike,
+    srange: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    alt0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -278,17 +303,17 @@ def aer2ecef(
 
     Parameters
     ----------
-    az : float
+    az : array-like float
          azimuth to target
-    el : float
+    el : array-like float
          elevation to target
-    srange : float
+    srange : array-like float
          slant range [meters]
-    lat0 : float
+    lat0 : array-like float
            Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
            Observer geodetic longitude
-    alt0 : float
+    alt0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -300,11 +325,11 @@ def aer2ecef(
 
     ECEF (Earth centered, Earth fixed)  x,y,z
 
-    x : float
+    x : array-like float
         ECEF x coordinate (meters)
-    y : float
+    y : array-like float
         ECEF y coordinate (meters)
-    z : float
+    z : array-like float
         ECEF z coordinate (meters)
 
 

@@ -77,9 +77,7 @@ def test_numpy_loxodrome_inverse():
 
 def test_numpy_2d_loxodrome_inverse():
     pytest.importorskip("numpy")
-    d, a = lox.loxodrome_inverse(
-        [[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, -148
-    )
+    d, a = lox.loxodrome_inverse([[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, -148)
     assert d == approx(5248666.209)
     assert a == approx(302.00567)
 
@@ -89,9 +87,7 @@ def test_numpy_2d_loxodrome_inverse():
     d, a = lox.loxodrome_inverse(
         [[40, 40], [40, 40]], [[-80, -80], [-80, -80]], 65, [[-148, -148], [-148, -148]]
     )
-    d, a = lox.loxodrome_inverse(
-        40, -80, [[65, 65], [65, 65]], [[-148, -148], [-148, -148]]
-    )
+    d, a = lox.loxodrome_inverse(40, -80, [[65, 65], [65, 65]], [[-148, -148], [-148, -148]])
 
 
 @pytest.mark.parametrize(
@@ -133,5 +129,7 @@ def test_numpy_loxodrome_direct():
 
 @pytest.mark.parametrize("lat,lon", [([0, 45, 90], [0, 45, 90])])
 def test_meanm(lat, lon):
-    pytest.importorskip("numpy")
-    assert lox.meanm(lat, lon) == approx([47.26967, 18.460557])
+    np = pytest.importorskip("numpy")
+    alat = np.array(lat)
+    alon = np.array(lon)
+    assert lox.meanm(alat, alon) == approx([47.26967, 18.460557])

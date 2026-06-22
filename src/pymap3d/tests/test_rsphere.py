@@ -23,6 +23,13 @@ def test_rsphere_authalic():
     assert rsphere.authalic() == approx(6371007.1809)
 
 
+def test_rsphere_curve():
+    assert rsphere.curve(0) == approx(6356788.163646411)
+    assert rsphere.curve(90) == approx(6399593.625758492)
+    assert rsphere.curve(45) == approx(6378110.052870348)
+    assert rsphere.curve(30) == approx(6367429.010702812)
+
+
 def test_rsphere_rectifying():
     assert rsphere.rectifying() == approx(6367449.1458)
 
@@ -40,7 +47,7 @@ def test_rsphere_euler():
 
 
 def test_numpy_rsphere_euler():
-    pytest.importorskip("numpy")
-    assert rsphere.euler([42, 0], [82, 0], 44, 100) == approx(
-        [6386606.829131, 6363111.70923164]
-    )
+    np = pytest.importorskip("numpy")
+    lat1 = np.array([42, 0])
+    lon1 = np.array([82, 0])
+    assert rsphere.euler(lat1, lon1, 44, 100) == approx([6386606.829131, 6363111.70923164])

@@ -11,6 +11,8 @@ within double precision arithmetic limitations
 
 import sys
 
+from ._typing import FloatLike
+
 try:
     from astropy.coordinates import angular_separation
 except ImportError:
@@ -22,7 +24,7 @@ __all__ = ["anglesep", "anglesep_meeus", "haversine"]
 
 
 def anglesep_meeus(
-    lon0: float, lat0: float, lon1: float, lat1: float, deg: bool = True
+    lon0: FloatLike, lat0: FloatLike, lon1: FloatLike, lat1: FloatLike, deg: bool = True
 ) -> float:
     """
     Parameters
@@ -71,13 +73,13 @@ def anglesep_meeus(
 
 
 def anglesep(
-    lon0: float,
-    lat0: float,
-    lon1: float,
-    lat1: float,
+    lon0: FloatLike,
+    lat0: FloatLike,
+    lon1: FloatLike,
+    lat1: FloatLike,
     deg: bool = True,
     force_non_astropy: bool = False,
-) -> float:
+):
     """
     Parameters
     ----------
@@ -119,20 +121,20 @@ def anglesep(
     return degrees(sep_rad) if deg else sep_rad
 
 
-def haversine(theta: float) -> float:
+def haversine(theta: FloatLike):
     """
-    Compute haversine
+    Compute haversine (half versine) of an angle
 
     Parameters
     ----------
 
-    theta : float
+    theta : array-like float
         angle (radians)
 
     Results
     -------
 
-    htheta : float
+    htheta : array-like float
         haversine of `theta`
 
     https://en.wikipedia.org/wiki/Haversine

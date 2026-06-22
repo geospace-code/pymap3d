@@ -16,9 +16,7 @@ reference ellipsoid is defined. The default ellipsoid is WGS-84
 
 deg : bool = True means degrees. False = radians.
 
-Most functions accept NumPy arrays of any shape, as well as compatible data types
-including AstroPy, Pandas and Xarray that have Numpy-like data properties.
-For clarity, we omit all these types in the docs, and just specify the scalar type.
+Most functions accept scalar float or NumPy NDArray.
 
 Other languages
 ---------------
@@ -147,7 +145,17 @@ from .latitude import (
     geoc2geod,
 )
 
-from .nvector import geodetic2nvector, nvector2geodetic, ecef2nvector, nvector2ecef
+from .nvector import (
+    geodetic2nvector,
+    nvector2geodetic,
+    ecef2nvector,
+    nvector2ecef,
+    nvector_distance,
+    nvector_interpolate,
+    nvector_mean,
+    nvector_cross_track_distance,
+    nvector_intersection,
+)
 
 from .rcurve import parallel, meridian, transverse, geocentric_radius
 
@@ -264,11 +272,23 @@ __all__ = [
     "dca2geodetic",
     "aer2dca",
     "dca2aer",
+    "nvector_distance",
+    "nvector_interpolate",
+    "nvector_mean",
+    "nvector_cross_track_distance",
+    "nvector_intersection",
 ]
 
 
 from .aer import aer2eci, eci2aer
 from .azelradec import azel2radec, radec2azel
-from .eci import ecef2eci, eci2ecef
+from .eci import ecef2eci, ecef2eci_state, eci2ecef, eci2ecef_state
 
-__all__ += ["aer2eci", "eci2aer", "ecef2eci", "eci2ecef"]
+__all__ += [
+    "aer2eci",
+    "eci2aer",
+    "ecef2eci",
+    "eci2ecef",
+    "ecef2eci_state",
+    "eci2ecef_state",
+]

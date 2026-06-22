@@ -6,8 +6,10 @@ radius).
 
 from __future__ import annotations
 
-from .ellipsoid import Ellipsoid
-from .mathfun import asin, atan2, cbrt, degrees, hypot, power, radians, sin, sqrt
+from ._typing import FloatLike
+
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
+from .mathfun import asin, atan2, cube_root, degrees, hypot, power, radians, sin, sqrt
 
 __all__ = [
     "geodetic2spherical",
@@ -16,9 +18,9 @@ __all__ = [
 
 
 def geodetic2spherical(
-    lat,
-    lon,
-    alt,
+    lat: FloatLike,
+    lon: FloatLike,
+    alt: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -29,16 +31,16 @@ def geodetic2spherical(
     Parameters
     ----------
 
-    lat
-           target geodetic latitude
-    lon
-           target geodetic longitude
-    alt
+    lat : array-like float
+        target geodetic latitude
+    lon : array-like float
+        target geodetic longitude
+    alt : array-like float
          target altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
-          reference ellipsoid
+        reference ellipsoid
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
 
     Returns
@@ -46,12 +48,12 @@ def geodetic2spherical(
 
     Geocentric spherical (spherical latitude, longitude, radius
 
-    lat
-           target spherical latitude
-    lon
-           target longitude
-    radius
-         target distance to the geocenter (meters)
+    lat : array-like float
+        target spherical latitude
+    lon : array-like float
+        target longitude
+    radius : array-like float
+        target distance to the geocenter (meters)
 
     based on:
     Vermeille, H., 2002. Direct transformation from geocentric coordinates to
@@ -59,8 +61,7 @@ def geodetic2spherical(
     doi:10.1007/s00190-002-0273-6
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)
@@ -91,9 +92,9 @@ def geodetic2spherical(
 
 
 def spherical2geodetic(
-    lat,
-    lon,
-    radius,
+    lat: FloatLike,
+    lon: FloatLike,
+    radius: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -103,12 +104,12 @@ def spherical2geodetic(
 
     Parameters
     ----------
-    lat
-           target spherical latitude
-    lon
-           target longitude
-    radius
-         target distance to the geocenter (meters)
+    lat : array-like float
+        target spherical latitude
+    lon : array-like float
+        target longitude
+    radius : array-like float
+        target distance to the geocenter (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
     deg : bool, optional
@@ -116,12 +117,12 @@ def spherical2geodetic(
 
     Returns
     -------
-    lat
-           target geodetic latitude
-    lon
-           target geodetic longitude
-    alt
-         target altitude above geodetic ellipsoid (meters)
+    lat : array-like float
+        target geodetic latitude
+    lon : array-like float
+        target geodetic longitude
+    alt : array-like float
+        target altitude above geodetic ellipsoid (meters)
 
     based on:
     Vermeille, H., 2002. Direct transformation from geocentric coordinates to
@@ -129,8 +130,7 @@ def spherical2geodetic(
     doi:10.1007/s00190-002-0273-6
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     if deg:
         lat = radians(lat)
@@ -145,7 +145,7 @@ def spherical2geodetic(
     q_0 = (1 - ell.eccentricity**2) / ell.semimajor_axis**2 * Z**2
     r_0 = (p_0 + q_0 - ell.eccentricity**4) / 6
     s_0 = ell.eccentricity**4 * p_0 * q_0 / 4 / r_0**3
-    t_0 = cbrt(1 + s_0 + sqrt(2 * s_0 + s_0**2))
+    t_0 = cube_root(1 + s_0 + sqrt(2 * s_0 + s_0**2))
     u_0 = r_0 * (1 + t_0 + 1 / t_0)
     v_0 = sqrt(u_0**2 + q_0 * ell.eccentricity**4)
     w_0 = ell.eccentricity**2 * (u_0 + v_0 - q_0) / 2 / v_0

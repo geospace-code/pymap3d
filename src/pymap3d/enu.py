@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from math import tau
 
-try:
-    from numpy import asarray
-except ImportError:
-    pass
+from ._typing import FloatLike
 
 from .ecef import ecef2geodetic, enu2ecef, geodetic2ecef, uvw2enu
 from .ellipsoid import Ellipsoid
@@ -25,18 +22,18 @@ __all__ = [
 ]
 
 
-def enu2aer(e, n, u, deg: bool = True) -> tuple:
+def enu2aer(e: FloatLike, n: FloatLike, u: FloatLike, deg: bool = True) -> tuple:
     """
     ENU to Azimuth, Elevation, Range
 
     Parameters
     ----------
 
-    e : float
+    e : array-like float
         ENU East coordinate (meters)
-    n : float
+    n : array-like float
         ENU North coordinate (meters)
-    u : float
+    u : array-like float
         ENU Up coordinate (meters)
     deg : bool, optional
         degrees input/output  (False: radians in/out)
@@ -44,27 +41,30 @@ def enu2aer(e, n, u, deg: bool = True) -> tuple:
     Results
     -------
 
-    azimuth : float
+    azimuth : array-like float
         azimuth to rarget
-    elevation : float
+    elevation : array-like float
         elevation to target
-    srange : float
+    srange : array-like float
         slant range [meters]
     """
 
     # 1 millimeter precision for singularity stability
 
+    def _zero_trim_numpy(x, y, z) -> tuple:
+        x[abs(x) < 1e-3] = 0.0
+        y[abs(y) < 1e-3] = 0.0
+        z[abs(z) < 1e-3] = 0.0
+        return x, y, z
+
+    def _zero_trim_scalar(*values: float, threshold: float = 1e-3) -> tuple[float, ...]:
+        """Trim small values (|x| < threshold) to zero."""
+        return tuple(0.0 if abs(v) < threshold else float(v) for v in values)
+
     try:
-        e[abs(e) < 1e-3] = 0.0
-        n[abs(n) < 1e-3] = 0.0
-        u[abs(u) < 1e-3] = 0.0
+        e, n, u = _zero_trim_numpy(e, n, u)
     except TypeError:
-        if abs(e) < 1e-3:
-            e = 0.0
-        if abs(n) < 1e-3:
-            n = 0.0
-        if abs(u) < 1e-3:
-            u = 0.0
+        e, n, u = _zero_trim_scalar(float(e), float(n), float(u))
 
     r = hypot(e, n)
     slantRange = hypot(r, u)
@@ -78,40 +78,34 @@ def enu2aer(e, n, u, deg: bool = True) -> tuple:
     return az, elev, slantRange
 
 
-def aer2enu(az, el, srange, deg: bool = True) -> tuple:
+def aer2enu(az: FloatLike, el: FloatLike, srange: FloatLike, deg: bool = True) -> tuple:
     """
     Azimuth, Elevation, Slant range to target to East, North, Up
 
     Parameters
     ----------
-    az : float
-            azimuth clockwise from north (degrees)
-    el : float
+    az : array-like float
+        azimuth clockwise from north (degrees)
+    el : array-like float
         elevation angle above horizon, neglecting aberrations (degrees)
-    srange : float
-        slant range [meters]
+    srange : array-like float
+        slant range [meters]. expected to be non-negative.
     deg : bool, optional
         degrees input/output  (False: radians in/out)
 
     Returns
     --------
-    e : float
+    e : array-like float
         East ENU coordinate (meters)
-    n : float
+    n : array-like float
         North ENU coordinate (meters)
-    u : float
+    u : array-like float
         Up ENU coordinate (meters)
     """
+
     if deg:
         el = radians(el)
         az = radians(az)
-
-    try:
-        if (asarray(srange) < 0).any():
-            raise ValueError("Slant range  [0, Infinity)")
-    except NameError:
-        if srange < 0:
-            raise ValueError("Slant range  [0, Infinity)")
 
     r = srange * cos(el)
 
@@ -119,12 +113,12 @@ def aer2enu(az, el, srange, deg: bool = True) -> tuple:
 
 
 def enu2geodetic(
-    e,
-    n,
-    u,
-    lat0,
-    lon0,
-    h0,
+    e: FloatLike,
+    n: FloatLike,
+    u: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
@@ -133,31 +127,31 @@ def enu2geodetic(
 
     Parameters
     ----------
-    e : float
+    e : array-like float
         East ENU coordinate (meters)
-    n : float
+    n : array-like float
         North ENU coordinate (meters)
-    u : float
+    u : array-like float
         Up ENU coordinate (meters)
-    lat0 : float
-           Observer geodetic latitude
-    lon0 : float
-           Observer geodetic longitude
-    h0 : float
-         observer altitude above geodetic ellipsoid (meters)
+    lat0 : array-like float
+        Observer geodetic latitude
+    lon0 : array-like float
+        Observer geodetic longitude
+    h0 : array-like float
+        observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
-          reference ellipsoid
+        reference ellipsoid
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
 
     Results
     -------
-    lat : float
+    lat : array-like float
           geodetic latitude
-    lon : float
+    lon : array-like float
           geodetic longitude
-    alt : float
+    alt : array-like float
           altitude above ellipsoid  (meters)
     """
 
@@ -167,29 +161,29 @@ def enu2geodetic(
 
 
 def geodetic2enu(
-    lat,
-    lon,
-    h,
-    lat0,
-    lon0,
-    h0,
+    lat: FloatLike,
+    lon: FloatLike,
+    h: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ) -> tuple:
     """
     Parameters
     ----------
-    lat : float
+    lat : array-like float
           target geodetic latitude
-    lon : float
+    lon : array-like float
           target geodetic longitude
-    h : float
+    h : array-like float
           target altitude above ellipsoid  (meters)
-    lat0 : float
+    lat0 : array-like float
            Observer geodetic latitude
-    lon0 : float
+    lon0 : array-like float
            Observer geodetic longitude
-    h0 : float
+    h0 : array-like float
          observer altitude above geodetic ellipsoid (meters)
     ell : Ellipsoid, optional
           reference ellipsoid
@@ -199,11 +193,11 @@ def geodetic2enu(
 
     Results
     -------
-    e : float
+    e : array-like float
         East ENU
-    n : float
+    n : array-like float
         North ENU
-    u : float
+    u : array-like float
         Up ENU
     """
     x1, y1, z1 = geodetic2ecef(lat, lon, h, ell, deg=deg)
@@ -212,32 +206,34 @@ def geodetic2enu(
     return uvw2enu(x1 - x2, y1 - y2, z1 - z2, lat0, lon0, deg=deg)
 
 
-def enu2ecefv(e, n, u, lat0, lon0, deg: bool = True) -> tuple:
+def enu2ecefv(
+    e: FloatLike, n: FloatLike, u: FloatLike, lat0: FloatLike, lon0: FloatLike, deg: bool = True
+) -> tuple:
     """
     VECTOR from observer to target ENU => ECEF
 
     Parameters
     ----------
-    e
+    e : array-like float
         target e ENU coordinate
-    n
+    n : array-like float
         target n ENU coordinate
-    u
+    u : array-like float
         target u ENU coordinate
-    lat0
-           Observer geodetic latitude
-    lon0
-           Observer geodetic longitude
+    lat0 : array-like float
+        Observer geodetic latitude
+    lon0 : array-like float
+        Observer geodetic longitude
     deg : bool, optional
-          degrees input/output  (False: radians in/out)
+        degrees input/output  (False: radians in/out)
 
     Returns
     -------
-    x
+    x : array-like float
         target x ECEF coordinate
-    y
+    y : array-like float
         target y ECEF coordinate
-    z
+    z : array-like float
         target z ECEF coordinate
 
     """

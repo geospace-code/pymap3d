@@ -23,6 +23,8 @@ Functions:
 
 from __future__ import annotations
 
+from ._typing import FloatLike
+
 from .mathfun import sin, cos, radians
 from .ecef import ecef2enu, enu2ecef
 from .enu import geodetic2enu, enu2geodetic, aer2enu, enu2aer
@@ -42,7 +44,7 @@ __all__ = [
 ]
 
 
-def enu2dca(e, n, u, heading, deg: bool = True):
+def enu2dca(e: FloatLike, n: FloatLike, u: FloatLike, heading: FloatLike, deg: bool = True):
     """
     Converts ENU (East, North, Up) coordinates to DCA (Downrange, Crossrange, Above).
     """
@@ -56,7 +58,7 @@ def enu2dca(e, n, u, heading, deg: bool = True):
     return dr, cr, u
 
 
-def dca2enu(dr, cr, above, heading, deg: bool = True):
+def dca2enu(dr: FloatLike, cr: FloatLike, above: FloatLike, heading: FloatLike, deg: bool = True):
     """
     Converts DCA (Downrange, Crossrange, Above) coordinates to ENU (East, North, Up).
     """
@@ -70,7 +72,7 @@ def dca2enu(dr, cr, above, heading, deg: bool = True):
     return e, n, above
 
 
-def dca2ned(dr, cr, above, heading, deg: bool = True):
+def dca2ned(dr: FloatLike, cr: FloatLike, above: FloatLike, heading: FloatLike, deg: bool = True):
     """
     Converts DCA (Downrange, Crossrange, Above) coordinates to NED (North, East, Down).
     """
@@ -78,7 +80,7 @@ def dca2ned(dr, cr, above, heading, deg: bool = True):
     return n, e, -u
 
 
-def ned2dca(n, e, d, heading, deg: bool = True):
+def ned2dca(n: FloatLike, e: FloatLike, d: FloatLike, heading: FloatLike, deg: bool = True):
     """
     Converts NED (North, East, Down) coordinates to DCA (Downrange, Crossrange, Above).
     """
@@ -87,7 +89,15 @@ def ned2dca(n, e, d, heading, deg: bool = True):
 
 
 def ecef2dca(
-    x, y, z, lat0, lon0, h0, heading, ell: Ellipsoid | None = None, deg: bool = True
+    x: FloatLike,
+    y: FloatLike,
+    z: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
+    heading: FloatLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
 ):
     """
     Converts ECEF (Earth-Centered, Earth-Fixed) coordinates to DCA (Downrange, Crossrange, Above).
@@ -98,13 +108,13 @@ def ecef2dca(
 
 
 def dca2ecef(
-    dr,
-    cr,
-    above,
-    lat0,
-    lon0,
-    h0,
-    heading,
+    dr: FloatLike,
+    cr: FloatLike,
+    above: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
+    heading: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ):
@@ -117,7 +127,15 @@ def dca2ecef(
 
 
 def geodetic2dca(
-    lat, lon, h, lat0, lon0, h0, heading, ell: Ellipsoid | None = None, deg: bool = True
+    lat: FloatLike,
+    lon: FloatLike,
+    h: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
+    heading: FloatLike,
+    ell: Ellipsoid | None = None,
+    deg: bool = True,
 ):
     """
     Converts geodetic coordinates (latitude, longitude, altitude) to DCA (Downrange, Crossrange, Above) coordinates.
@@ -127,13 +145,13 @@ def geodetic2dca(
 
 
 def dca2geodetic(
-    dr,
-    cr,
-    above,
-    lat0,
-    lon0,
-    h0,
-    heading,
+    dr: FloatLike,
+    cr: FloatLike,
+    above: FloatLike,
+    lat0: FloatLike,
+    lon0: FloatLike,
+    h0: FloatLike,
+    heading: FloatLike,
     ell: Ellipsoid | None = None,
     deg: bool = True,
 ):
@@ -144,7 +162,7 @@ def dca2geodetic(
     return enu2geodetic(e, n, u, lat0, lon0, h0, ell, deg=deg)
 
 
-def aer2dca(az, el, srange, heading, deg: bool = True):
+def aer2dca(az: FloatLike, el: FloatLike, srange: FloatLike, heading: FloatLike, deg: bool = True):
     """
     Converts AER (Azimuth, Elevation, Range) coordinates to DCA (Downrange, Crossrange, Above).
     """
@@ -152,7 +170,7 @@ def aer2dca(az, el, srange, heading, deg: bool = True):
     return enu2dca(e, n, u, heading, deg=deg)
 
 
-def dca2aer(dr, cr, above, heading, deg: bool = True):
+def dca2aer(dr: FloatLike, cr: FloatLike, above: FloatLike, heading: FloatLike, deg: bool = True):
     """
     Converts DCA (Downrange, Crossrange, Above) coordinates to AER (Azimuth, Elevation, Range).
     """

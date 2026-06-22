@@ -4,14 +4,9 @@ from __future__ import annotations
 
 from math import nan, pi
 
-try:
-    from numpy import asarray
-except ImportError:
-    pass
-
 from .aer import aer2enu
 from .ecef import ecef2geodetic, enu2uvw, geodetic2ecef
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid, resolve_ellipsoid
 from .mathfun import sqrt
 
 __all__ = ["lookAtSpheroid"]
@@ -62,24 +57,14 @@ def lookAtSpheroid(
     Algorithm based on https://medium.com/@stephenhartzell/satellite-line-of-sight-intersection-with-earth-d786b4a6a9b6 Stephen Hartzell
     """
 
-    if ell is None:
-        ell = Ellipsoid.from_name("wgs84")
+    ell = resolve_ellipsoid(ell)
 
     try:
-        lat0 = asarray(lat0)
-        lon0 = asarray(lon0)
-        h0 = asarray(h0)
-        az = asarray(az)
-        tilt = asarray(tilt)
         if (h0 < 0).any():
-            raise ValueError(
-                "Intersection calculation requires altitude  [0, Infinity)"
-            )
-    except NameError:
+            raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
+    except AttributeError:
         if h0 < 0:
-            raise ValueError(
-                "Intersection calculation requires altitude  [0, Infinity)"
-            )
+            raise ValueError("Intersection calculation requires altitude  [0, Infinity)")
 
     a = ell.semimajor_axis
     b = ell.semimajor_axis
@@ -129,7 +114,4 @@ def lookAtSpheroid(
     # %% cartesian to ellipsodal
     lat, lon, _ = ecef2geodetic(x + d * u, y + d * v, z + d * w, deg=deg)
 
-    try:
-        return lat.squeeze()[()], lon.squeeze()[()], d.squeeze()[()]
-    except AttributeError:
-        return lat, lon, d
+    return lat, lon, d

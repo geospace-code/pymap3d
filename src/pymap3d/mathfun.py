@@ -5,6 +5,7 @@ import from Numpy, and if not available fallback to math stdlib
 from __future__ import annotations
 
 try:
+    from numpy import arccos as acos
     from numpy import arcsin as asin
     from numpy import arcsinh as asinh
     from numpy import arctan as atan
@@ -12,15 +13,18 @@ try:
     from numpy import arctanh as atanh
     from numpy import (
         cbrt,
+        copysign,
         cos,
         degrees,
         exp,
+        fmod,
         hypot,
         inf,
         isclose,
         isnan,
         linspace,
         log,
+        minimum,
         power,
         radians,
         sign,
@@ -30,14 +34,17 @@ try:
     )
 except ImportError:
     from math import (  # type: ignore
+        acos,
         asin,
         asinh,
         atan,
         atan2,
         atanh,
+        copysign,
         cos,
         degrees,
         exp,
+        fmod,
         hypot,
         inf,
         isclose,
@@ -48,6 +55,9 @@ except ImportError:
         sqrt,
         tan,
     )
+
+    def minimum(x, y):  # type: ignore
+        return min(x, y)
 
     def linspace(start: float, stop: float, num: int) -> list[float]:  # type: ignore
         """
@@ -71,29 +81,27 @@ except ImportError:
 
         return y
 
-    try:
-        import math.cbrt as cbrt  # type: ignore
-    except ImportError:
-
-        def cbrt(x) -> float:  # type: ignore
-            return x ** (1 / 3)
-
 
 __all__ = [
+    "acos",
     "asin",
     "asinh",
     "atan",
     "atan2",
     "atanh",
     "cbrt",
+    "copysign",
     "cos",
     "degrees",
     "exp",
+    "fmod",
     "hypot",
     "inf",
     "isclose",
     "isnan",
     "log",
+    "minimum",
+    "linspace",
     "power",
     "radians",
     "sign",
@@ -101,3 +109,14 @@ __all__ = [
     "sqrt",
     "tan",
 ]
+
+
+def cube_root(x):
+    """cube root function, handles negative numbers"""
+    try:
+        return cbrt(x)
+    except NameError:
+        if x < 0:
+            return -power(-x, 1.0 / 3.0)
+        else:
+            return power(x, 1.0 / 3.0)
