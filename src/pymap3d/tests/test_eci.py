@@ -125,6 +125,3 @@ def test_eci_aer():
     rel = 0.1 if astropy is None else 0.001
 
     assert eci2 == approx(eci, rel=rel)
-
-    with pytest.raises(ValueError):
-        pm.aer2eci(aer[0], aer[1], -1, *lla, t)

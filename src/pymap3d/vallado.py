@@ -19,10 +19,10 @@ __all__ = ["azel2radec", "radec2azel"]
 
 
 def azel2radec(
-    az_deg: FloatLike,
-    el_deg: FloatLike,
-    lat_deg: FloatLike,
-    lon_deg: FloatLike,
+    az_deg,
+    el_deg,
+    lat_deg,
+    lon_deg,
     time: datetime,
     *,
     delta_ut1: float = 0.0,
@@ -79,10 +79,10 @@ def azel2radec(
 
 
 def radec2azel(
-    ra_deg: FloatLike,
-    dec_deg: FloatLike,
-    lat_deg: FloatLike,
-    lon_deg: FloatLike,
+    ra_deg,
+    dec_deg,
+    lat_deg,
+    lon_deg,
     time: datetime,
     *,
     delta_ut1: float = 0.0,

@@ -9,7 +9,7 @@ from ._typing import DatetimeArray, DatetimeLike
 __all__ = ["str2dt"]
 
 
-def str2dt(time: DatetimeLike) -> DatetimeArray:
+def str2dt(time: DatetimeLike):
     """
     Converts times in string or list of strings to datetime(s)
 

@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from .mathfun import cos, sin
-from ._typing import FloatLike
+import sys
 
 try:
     import numpy
