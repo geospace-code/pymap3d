@@ -221,12 +221,9 @@ def eci2ecef_state(
     """
 
     if "astropy" in sys.modules and not force_non_astropy:
-        state = eci2ecef_state_astropy(x, y, z, vx, vy, vz, time)
+        x, y, z, vx, vy, vz = eci2ecef_state_astropy(x, y, z, vx, vy, vz, time)
     else:
-        logging.warning(
-            f"{__name__}: using pure-Python ECI/ECEF fallback, less accurate than Astropy"
-        )
-        state = eci2ecef_state_numpy(
+        x, y, z, vx, vy, vz = eci2ecef_state_numpy(
             x,
             y,
             z,
@@ -239,7 +236,7 @@ def eci2ecef_state(
             yp=yp,
         )
 
-    return _squeeze_state(*state)
+    return _squeeze_state(x, y, z, vx, vy, vz)
 
 
 def eci2ecef_state_astropy(x, y, z, vx, vy, vz, t: datetime) -> tuple:
@@ -285,8 +282,7 @@ def eci2ecef_state_numpy(
 
     rotation = eci_to_ecef_matrix(t, delta_ut1=delta_ut1, xp=xp, yp=yp)
     rotation_rate = eci_to_ecef_matrix_rate(t, delta_ut1=delta_ut1, xp=xp, yp=yp)
-    return _squeeze_state(
-        *_apply_state_rotation(
+    return _apply_state_rotation(
             rotation,
             rotation_rate,
             x,
@@ -297,7 +293,6 @@ def eci2ecef_state_numpy(
             vz,
             inverse=False,
         )
-    )
 
 
 def ecef2eci_state(
@@ -322,12 +317,9 @@ def ecef2eci_state(
     """
 
     if "astropy" in sys.modules and not force_non_astropy:
-        state = ecef2eci_state_astropy(x, y, z, vx, vy, vz, time)
+        x, y, z, vx, vy, vz = ecef2eci_state_astropy(x, y, z, vx, vy, vz, time)
     else:
-        logging.warning(
-            f"{__name__}: using pure-Python ECI/ECEF fallback, less accurate than Astropy"
-        )
-        state = ecef2eci_state_numpy(
+        x, y, z, vx, vy, vz = ecef2eci_state_numpy(
             x,
             y,
             z,
@@ -340,7 +332,7 @@ def ecef2eci_state(
             yp=yp,
         )
 
-    return _squeeze_state(*state)
+    return _squeeze_state(x, y, z, vx, vy, vz)
 
 
 def ecef2eci_state_astropy(x, y, z, vx, vy, vz, t: datetime) -> tuple:
@@ -386,8 +378,7 @@ def ecef2eci_state_numpy(
 
     rotation = eci_to_ecef_matrix(t, delta_ut1=delta_ut1, xp=xp, yp=yp)
     rotation_rate = eci_to_ecef_matrix_rate(t, delta_ut1=delta_ut1, xp=xp, yp=yp)
-    return _squeeze_state(
-        *_apply_state_rotation(
+    return _apply_state_rotation(
             rotation,
             rotation_rate,
             x,
@@ -398,7 +389,6 @@ def ecef2eci_state_numpy(
             vz,
             inverse=True,
         )
-    )
 
 
 def _apply_rotation(rotation, x, y, z):
@@ -508,7 +498,7 @@ def _apply_state_rotation_scalar(
         rotated_velocity = matvec3(rotation, (vx, vy, vz))
         velocity = tuple(rotated_velocity[i] + spin[i] for i in range(3))
 
-    return position, velocity
+    return *position, *velocity
 
 
 def _squeeze_xyz(x, y, z):
