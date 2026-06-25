@@ -23,11 +23,11 @@ az3 = (218.00292856, 225.0011203)
     [
         (0, 0, 0, 0, 0, 0),
         (0, 0, 1.001875e7, 90, 0, 90),
-        (0, 0, 1.001875e7, 270, 0, 270),
-        (0, 0, 1.001875e7, -90, 0, 270),
+        (0, 0, 1.001875e7, 270, 0, -90),
+        (0, 0, 1.001875e7, -90, 0, -90),
         (0, 0, 2.00375e7, 90, 0, 180),
-        (0, 0, 2.00375e7, 270, 0, 180),
-        (0, 0, 2.00375e7, -90, 0, 180),
+        (0, 0, 2.00375e7, 270, 0, -180),
+        (0, 0, 2.00375e7, -90, 0, -180),
     ],
 )
 def test_vreckon_unit(deg, lat, lon, srange, az, lato, lono):
@@ -41,6 +41,15 @@ def test_vreckon_unit(deg, lat, lon, srange, az, lato, lono):
 
     assert lon1 == approx(lono, rel=0.001)
     assert isinstance(lon1, float)
+
+
+def test_negative_lon_stays_negative():
+    """Regression test for issue #88: vreckon with negative start longitude
+    must return a negative (or near-zero) destination longitude, not 358+."""
+    lat2, lon2 = vincenty.vreckon(52.22610277777778, -1.2696583333333333, 839.63, 63.02)
+    assert lat2 == approx(52.22952562862266, rel=1e-6)
+    assert -180 <= lon2 <= 0, f"lon2={lon2} should be negative for a point west of prime meridian"
+    assert lon2 == approx(-1.258707, abs=1e-3)
 
 
 def test_az_vector():
