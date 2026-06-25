@@ -433,7 +433,7 @@ def vreckon(
     #    lon2 = pi*((absolute(lon2)/pi) -
     #       2*ceil(((absolute(lon2)/pi)-1)/2)) * sign(lon2)
 
-    lon2 %= tau  # follow [0, 360) convention
+    lon2 = (lon2 + pi) % tau - pi  # normalize to [-180, 180) convention
 
     if deg:
         lat2 = degrees(lat2)
