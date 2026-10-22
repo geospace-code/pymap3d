@@ -14,7 +14,7 @@ from .mathfun import isnan, linspace, degrees, radians, sign, sqrt, atan2, cos, 
 from math import pi, tau, nan
 
 try:
-    from numpy import asarray
+    from numpy import asarray, errstate
 except ImportError:
     pass
 
@@ -166,15 +166,16 @@ def vdist(lat1, lon1, lat2, lon2, ell: Ellipsoid | None = None, deg: bool = True
         sigma = atan2(sinsigma, cossigma)
 
         try:
-            with warnings.catch_warnings(record=True):
-                warnings.simplefilter("error")
+            with errstate(divide="ignore", invalid="ignore"):
+                # Coincident pairs produce NaN, handled per element below.
+                # Keep valid pairs in the same array from taking the fallback.
                 sinAlpha = cos(U1) * cos(U2) * sin(lamb) / sin(sigma)
 
                 alpha = asin(sinAlpha)
             alpha[isnan(sinAlpha)] = 0
             alpha[(sinAlpha > 1) | (abs(sinAlpha - 1) < 1e-16)] = pi / 2
 
-        except (ArithmeticError, RuntimeWarning, TypeError, ValueError):
+        except (ArithmeticError, RuntimeWarning, TypeError, ValueError, NameError):
             try:
                 with warnings.catch_warnings(record=True):
                     warnings.simplefilter("error")
