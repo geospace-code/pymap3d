@@ -48,3 +48,31 @@ def test_identity(lat, lon, slantrange, az):
 
     assert dist == approx(slantrange)
     assert az1 == approx(az)
+
+
+@pytest.mark.parametrize("shape", [(4,), (2, 2), (1, 2, 2)])
+@pytest.mark.parametrize("deg", [True, False])
+def test_vector_antipodal_fallback(shape, deg, caplog):
+    np = pytest.importorskip("numpy")
+    # Include both the longitude overshoot and the iteration-limit fallback.
+    coords = np.array(
+        [
+            [0, -34.13151687522635, 0, 10],
+            [0, 64.95037118426757, 0, 20],
+            [0.5, 33.534040999707386, 0, 11],
+            [179.5, 244.83379787398945, 179.398, 21],
+        ]
+    )
+    if not deg:
+        coords = np.radians(coords)
+    expected = np.array([vincenty.vdist(*pair, deg=deg) for pair in coords.T]).T
+    original = coords.copy()
+    caplog.clear()
+    distance, azimuth = vincenty.vdist(
+        *(values.reshape(shape) for values in coords), deg=deg
+    )
+    assert distance.shape == azimuth.shape == shape
+    np.testing.assert_allclose(distance.ravel(), expected[0], rtol=0, atol=1e-5)
+    np.testing.assert_allclose(azimuth.ravel(), expected[1], rtol=0, atol=1e-8)
+    np.testing.assert_array_equal(coords, original)
+    assert len(caplog.records) == 1

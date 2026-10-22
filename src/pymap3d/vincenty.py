@@ -140,8 +140,11 @@ def vdist(lat1, lon1, lat2, lon2, ell: Ellipsoid | None = None, deg: bool = True
             L = 2 * pi - L
 
     lamb = copy(L)  # NOTE: program will fail without copy!
+    lambdaold = copy(lamb)
     itercount = 0
     warninggiven = False
+    antipodal = None
+    antipodal_values: tuple = ()
     notdone = True
     while notdone:  # force at least one execution
         itercount += 1
@@ -149,7 +152,10 @@ def vdist(lat1, lon1, lat2, lon2, ell: Ellipsoid | None = None, deg: bool = True
             if not warninggiven:
                 logging.warning("Essentially antipodal points--precision may be reduced slightly.")
 
-            lamb = pi
+            if getattr(lamb, "ndim", 0):
+                lamb[abs(lamb - lambdaold) > 1e-12] = pi
+            else:
+                lamb = pi
             break
 
         lambdaold = copy(lamb)
@@ -204,17 +210,40 @@ def vdist(lat1, lon1, lat2, lon2, ell: Ellipsoid | None = None, deg: bool = True
             i = lamb > pi
 
         if i:
-            logging.warning(
-                "Essentially antipodal points encountered. Precision may be reduced slightly."
-            )
+            if not warninggiven:
+                logging.warning(
+                    "Essentially antipodal points encountered. Precision may be reduced slightly."
+                )
             warninggiven = True
-            lambdaold = pi
-            lamb = pi
+            if getattr(lamb, "ndim", 0):
+                mask = lamb > pi
+                values = (alpha, sigma, cos2sigmam)
+                # Save the first fallback, even for pairs that reach it later.
+                if antipodal is None:
+                    antipodal = copy(mask)
+                    antipodal_values = tuple(copy(value) for value in values)
+                else:
+                    new = mask & ~antipodal
+                    for value, saved in zip(values, antipodal_values):
+                        saved[new] = value[new]
+                    antipodal |= mask
+            else:
+                lambdaold = pi
+                lamb = pi
+
+        if antipodal is not None:
+            lambdaold[antipodal] = pi
+            lamb[antipodal] = pi
 
         try:
             notdone = (abs(lamb - lambdaold) > 1e-12).any()
         except AttributeError:
             notdone = abs(lamb - lambdaold) > 1e-12
+
+    # Retain each antipodal pair's scalar fallback while other pairs converge.
+    if antipodal is not None:
+        for value, saved in zip((alpha, sigma, cos2sigmam), antipodal_values):
+            value[antipodal] = saved[antipodal]
 
     u2 = cos(alpha) ** 2 * (a**2 - b**2) / b**2
     A = 1 + u2 / 16384 * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)))
